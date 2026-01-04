@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>No-code AI Founder</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #0A1628 0%, #1a1a2e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            padding: 4rem 0;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #00D4FF 0%, #B24BF3 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            color: #a0aec0;
+            margin-bottom: 1rem;
+        }
+
+        .description {
+            max-width: 600px;
+            margin: 0 auto;
+            color: #cbd5e0;
+        }
+
+        .section {
+            padding: 3rem 0;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: #00D4FF;
+        }
+
+        .projects {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .project-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            border-color: #00D4FF;
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+        }
+
+        .project-card.featured {
+            border-color: #B24BF3;
+            background: rgba(178, 75, 243, 0.1);
+        }
+
+        .project-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .project-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+        }
+
+        .project-status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .status-ready {
+            background: #10b981;
+            color: white;
+        }
+
+        .status-dev {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .project-description {
+            color: #cbd5e0;
+            margin-bottom: 1rem;
+        }
+
+        .project-link {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, #00D4FF 0%, #B24BF3 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .project-link:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .contact {
+            text-align: center;
+            padding: 3rem 0;
+            border-top: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .contact-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .contact-link {
+            color: #00D4FF;
+            text-decoration: none;
+            font-size: 1.125rem;
+            transition: color 0.3s ease;
+        }
+
+        .contact-link:hover {
+            color: #B24BF3;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #718096;
+            border-top: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .projects {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-links {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>No-code AI Founder</h1>
+            <p class="subtitle">AI без кода для строительства</p>
+            <p class="description">
+                Мне 35, я никогда не писал кода. Работаю в строительстве и создаю AI-инструменты для автоматизации рутинных задач.
+            </p>
+        </header>
+
+        <section class="section">
+            <h2 class="section-title">🚀 Мои Проекты</h2>
+            <div class="projects">
+                <!-- Kanban Board -->
+                <div class="project-card featured">
+                    <div class="project-icon">📋</div>
+                    <h3 class="project-title">Kanban-доска с AI</h3>
+                    <span class="project-status status-ready">Готов • Бесплатно</span>
+                    <p class="project-description">
+                        Бесплатный инструмент для управления задачами с встроенным AI. Визуальные доски, генерация задач, простота и скорость.
+                    </p>
+                    <a href="https://lavr-ai-kanban-doska.lavr5000xxx.workers.dev/" class="project-link" target="_blank">
+                        Попробовать →
+                    </a>
+                </div>
+
+                <!-- Apartment Auditor -->
+                <div class="project-card">
+                    <div class="project-icon">🏢</div>
+                    <h3 class="project-title">Apartment Auditor</h3>
+                    <span class="project-status status-ready">Готов</span>
+                    <p class="project-description">
+                        Мобильное приложение для приемки квартир от застройщиков. React Native приложение для проверки качества.
+                    </p>
+                </div>
+
+                <!-- IDGenerator -->
+                <div class="project-card">
+                    <div class="project-icon">🚀</div>
+                    <h3 class="project-title">IDGenerator</h3>
+                    <span class="project-status status-dev">В разработке</span>
+                    <p class="project-description">
+                        Автоматизация исполнительной документации КС-2 для строителей. AI для генерации и проверки документов.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">🎯 Цель</h2>
+            <p style="text-align: center; color: #cbd5e0; max-width: 700px; margin: 0 auto;">
+                Платформа из 20+ AI-сервисов для строительства. Автоматизация документации, управление проектами, приемка работ — все в одном месте.
+            </p>
+        </section>
+
+        <section class="contact">
+            <h2 class="section-title">📬 Контакты</h2>
+            <div class="contact-links">
+                <a href="https://t.me/ai_vibes_coding_ru" class="contact-link" target="_blank">Telegram</a>
+                <a href="https://www.youtube.com/channel/UCO8VXzaB7PnshrT6x0MhWqw" class="contact-link" target="_blank">YouTube</a>
+            </div>
+        </section>
+
+        <footer>
+            <p>© 2026 No-code AI Founder • Build in Public</p>
+        </footer>
+    </div>
+</body>
+</html>
