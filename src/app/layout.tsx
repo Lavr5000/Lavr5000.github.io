@@ -17,6 +17,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ru">
+      <head>
+        <link rel="icon" href="/icon.png" />
+      </head>
       <body>
         <Providers>{children}</Providers>
       </body>
