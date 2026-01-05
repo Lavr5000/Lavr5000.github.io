@@ -6,7 +6,11 @@ export const metadata: Metadata = {
   title: "АвтоДок - Исполнительная документация",
   description: "Автоматическое формирование комплекта исполнительной документации строительства",
   icons: {
-    icon: "/favicon-32x32.png",
+    icon: [
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon.ico", sizes: "32x32", type: "image/x-icon" },
+    ],
+    shortcut: "/favicon.ico",
     apple: "/apple-touch-icon.png",
   },
 };
