@@ -6,7 +6,8 @@ export const metadata: Metadata = {
   title: "АвтоДок - Исполнительная документация",
   description: "Автоматическое формирование комплекта исполнительной документации строительства",
   icons: {
-    icon: "/icon.png",
+    icon: "/favicon-32x32.png",
+    apple: "/apple-touch-icon.png",
   },
 };
 
