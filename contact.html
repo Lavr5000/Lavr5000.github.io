@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>No-code AI Founder — Главная</title>
+    <title>Контакты — No-code AI Founder</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -131,136 +131,144 @@
         }
 
         /* Hero Section */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 8rem 0 4rem;
-        }
-
-        .hero-content {
-            max-width: 900px;
+        .page-hero {
+            padding: 10rem 0 4rem;
             text-align: center;
         }
 
-        .badge {
-            display: inline-block;
-            padding: 0.5rem 1.25rem;
-            background: rgba(0, 212, 255, 0.1);
-            border: 1px solid rgba(0, 212, 255, 0.3);
-            border-radius: 50px;
-            font-size: 0.85rem;
-            color: var(--accent-primary);
-            font-weight: 600;
-            margin-bottom: 2rem;
-            letter-spacing: 0.05em;
-        }
-
-        .hero h1 {
+        .page-title {
             font-family: var(--font-display);
-            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-size: clamp(2.5rem, 6vw, 4rem);
             font-weight: 800;
-            line-height: 1.05;
-            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            margin-bottom: 1rem;
             background: var(--gradient-1);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
-        .hero-subtitle {
-            font-size: 1.25rem;
+        .page-subtitle {
             color: var(--text-secondary);
-            margin-bottom: 1rem;
-            font-weight: 300;
-            letter-spacing: 0.02em;
-        }
-
-        .hero-description {
-            font-size: 1.1rem;
-            color: var(--text-muted);
+            font-size: 1.2rem;
             max-width: 600px;
-            margin: 0 auto 2.5rem;
-            line-height: 1.7;
+            margin: 0 auto 3rem;
         }
 
-        .cta-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
+        /* Contact Section */
+        .contact-section {
+            padding: 4rem 0 6rem;
         }
 
-        .btn {
-            padding: 1rem 2rem;
-            border-radius: 12px;
-            font-family: var(--font-body);
-            font-size: 1rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .contact-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
             position: relative;
             overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .btn-primary {
+        .contact-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-1);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 0;
+        }
+
+        .contact-card:hover::before {
+            opacity: 0.05;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(0, 212, 255, 0.3);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .contact-card > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .contact-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .contact-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .contact-description {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .contact-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
             background: var(--gradient-1);
             color: white;
-            border: none;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
             box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3);
         }
 
-        .btn-primary:hover {
+        .contact-link:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 30px rgba(0, 212, 255, 0.4);
         }
 
-        .btn-secondary {
-            background: transparent;
-            color: var(--text-primary);
-            border: 1px solid var(--border-medium);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: var(--accent-primary);
-        }
-
-        /* Stats Section */
-        .stats {
-            padding: 4rem 0;
-            border-top: 1px solid var(--border-subtle);
-            border-bottom: 1px solid var(--border-subtle);
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
+        /* About Section */
+        .about-section {
+            max-width: 800px;
+            margin: 0 auto 6rem;
             text-align: center;
+            padding: 3rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
         }
 
-        .stat-item {
-            padding: 1.5rem;
-        }
-
-        .stat-value {
+        .about-title {
             font-family: var(--font-display);
-            font-size: 3rem;
-            font-weight: 800;
-            background: var(--gradient-1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.5rem;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
         }
 
-        .stat-label {
+        .about-text {
             color: var(--text-secondary);
-            font-size: 0.9rem;
-            font-weight: 500;
-            letter-spacing: 0.05em;
+            line-height: 1.8;
+            font-size: 1.05rem;
         }
 
         /* Footer */
@@ -284,29 +292,10 @@
             }
         }
 
-        .animate-in {
-            animation: fadeInUp 0.8s ease-out forwards;
-        }
-
-        .hero-content > * {
-            opacity: 0;
-            animation: fadeInUp 0.8s ease-out forwards;
-        }
-
-        .hero-content > *:nth-child(1) { animation-delay: 0.1s; }
-        .hero-content > *:nth-child(2) { animation-delay: 0.2s; }
-        .hero-content > *:nth-child(3) { animation-delay: 0.3s; }
-        .hero-content > *:nth-child(4) { animation-delay: 0.4s; }
-        .hero-content > *:nth-child(5) { animation-delay: 0.5s; }
-
         /* Responsive */
         @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
+            .contact-grid {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -315,16 +304,9 @@
                 padding: 0 1.5rem;
             }
 
-            .hero {
-                padding: 6rem 0 3rem;
-            }
-
-            .cta-buttons {
-                flex-direction: column;
-            }
-
-            .btn {
-                width: 100%;
+            .contact-card,
+            .about-section {
+                padding: 2rem;
             }
         }
     </style>
@@ -337,47 +319,64 @@
         <div class="nav-content">
             <div class="logo">No-code AI Founder</div>
             <div class="nav-links">
-                <a href="index.html" class="active">Главная</a>
+                <a href="index.html">Главная</a>
                 <a href="projects.html">Проекты</a>
-                <a href="contact.html">Контакты</a>
+                <a href="contact.html" class="active">Контакты</a>
             </div>
         </div>
     </nav>
 
     <div class="container">
-        <section class="hero">
-            <div class="hero-content">
-                <div class="badge">🚀 AI без кода для строительства</div>
-                <h1>Создаю AI-продукты<br>не умея программировать</h1>
-                <p class="hero-subtitle">Мне 35, и я доказал что это возможно</p>
-                <p class="hero-description">
-                    Работаю в строительстве, создаю AI-инструменты для автоматизации рутинных задач.
-                    Никакого кода — только нейросети и правильные вопросы.
-                </p>
-                <div class="cta-buttons">
-                    <a href="projects.html" class="btn btn-primary">Смотреть проекты</a>
-                    <a href="https://t.me/ai_vibes_coding_ru" class="btn btn-secondary" target="_blank">Telegram</a>
-                </div>
-            </div>
+        <section class="page-hero">
+            <h1 class="page-title">На связи</h1>
+            <p class="page-subtitle">Следите за созданием следующего юникорна</p>
         </section>
 
-        <section class="stats">
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <div class="stat-value">3</div>
-                    <div class="stat-label">AI-проекта</div>
+        <section class="about-section">
+            <h2 class="about-title">Обо мне</h2>
+            <p class="about-text">
+                Мне 35, я работаю в строительстве и создаю AI-инструменты для автоматизации рутинных задач.
+                Никогда не писал кода — только нейросети и правильные вопросы.
+                Строю платформу из 20+ AI-сервисов для строительства и показываю процесс открыто.
+            </p>
+        </section>
+
+        <section class="contact-section">
+            <div class="contact-grid">
+                <div class="contact-card">
+                    <span class="contact-icon">📱</span>
+                    <h2 class="contact-title">Telegram</h2>
+                    <p class="contact-description">
+                        Ежедневные посты о создании AI-продуктов без кода.<br>
+                        Build in Public, промпты, инструменты.
+                    </p>
+                    <a href="https://t.me/ai_vibes_coding_ru" class="contact-link" target="_blank">
+                        Подписаться
+                    </a>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-value">6</div>
-                    <div class="stat-label">месяцев работы</div>
+
+                <div class="contact-card">
+                    <span class="contact-icon">🎥</span>
+                    <h2 class="contact-title">YouTube</h2>
+                    <p class="contact-description">
+                        Видео-кейсы, демо продуктов, история создания.<br>
+                        Показываю как работать с AI без программирования.
+                    </p>
+                    <a href="https://www.youtube.com/channel/UCO8VXzaB7PnshrT6x0MhWqw" class="contact-link" target="_blank">
+                        Смотреть
+                    </a>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-value">20+</div>
-                    <div class="stat-label">сервисов в плане</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">∞</div>
-                    <div class="stat-label">Build in Public</div>
+
+                <div class="contact-card">
+                    <span class="contact-icon">💬</span>
+                    <h2 class="contact-title">Kanban-доска</h2>
+                    <p class="contact-description">
+                        Мой первый готовый продукт — бесплатная Kanban-доска с AI.<br>
+                        Попробуй прямо сейчас!
+                    </p>
+                    <a href="https://lavr-ai-kanban-doska.lavr5000xxx.workers.dev/" class="contact-link" target="_blank">
+                        Попробовать
+                    </a>
                 </div>
             </div>
         </section>
@@ -403,10 +402,10 @@
             });
         }, observerOptions);
 
-        document.querySelectorAll('.stat-item').forEach(el => {
+        document.querySelectorAll('.contact-card, .about-section').forEach((el, index) => {
             el.style.opacity = '0';
-            el.style.transform = 'translateY(20px)';
-            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`;
             observer.observe(el);
         });
     </script>
