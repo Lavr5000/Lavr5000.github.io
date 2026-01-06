@@ -48,7 +48,7 @@ export default function HomePage() {
           </div>
           <div className="stat-item">
             <div className="stat-value">20+</div>
-            <div className="stat-label">AI-сервисов опробовано</div>
+            <div className="stat-label">сервисов в плане</div>
           </div>
           <div className="stat-item">
             <div className="stat-value">∞</div>
