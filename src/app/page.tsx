@@ -316,7 +316,7 @@ export default function HomePage() {
           <a href="https://t.me/ai_vibes_coding_ru" className="contact-link" target="_blank" rel="noopener noreferrer">
             Telegram канал
           </a>
-          <a href="https://boosty.to/ai_vibes" className="contact-link" target="_blank" rel="noopener noreferrer">
+          <a href="https://boosty.to/no_code_ai_founder" className="contact-link" target="_blank" rel="noopener noreferrer">
             Boosty
           </a>
         </div>
