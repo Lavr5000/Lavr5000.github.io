@@ -8,7 +8,7 @@ export default function HomePage() {
       {/* Navigation */}
       <nav>
         <div className="nav-content">
-          <div className="logo">Lavr AI</div>
+          <div className="logo">AI Vibes</div>
           <div className="nav-links">
             <a href="#projects">Проекты</a>
             <a href="#contact">Контакты</a>
@@ -156,7 +156,7 @@ export default function HomePage() {
                 <circle cx="24" cy="40" r="3.5" fill="url(#gBrain)" opacity="0.9"/>
               </svg>
             </div>
-            <h3 className="project-title">AI-геймботы</h3>
+            <h3 className="project-title">AI-гемботы</h3>
             <div className="project-status status-ready">✨ Активно использую</div>
             <p className="project-description">
               Рабочие пространства в разных AI (Gemini, DeepSeek, ChatGPT).
@@ -316,7 +316,7 @@ export default function HomePage() {
           <a href="https://t.me/ai_vibes_coding_ru" className="contact-link" target="_blank" rel="noopener noreferrer">
             Telegram канал
           </a>
-          <a href="https://boosty.to/no_code_ai_founder" className="contact-link" target="_blank" rel="noopener noreferrer">
+          <a href="https://boosty.to/ai_vibes" className="contact-link" target="_blank" rel="noopener noreferrer">
             Boosty
           </a>
         </div>
@@ -324,7 +324,7 @@ export default function HomePage() {
 
       {/* Footer */}
       <footer>
-        <p>© 2026 Lavr AI • Build in Public</p>
+        <p>© 2026 AI Vibes • Build in Public</p>
       </footer>
     </>
   );
