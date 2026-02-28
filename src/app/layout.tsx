@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Lavr AI — AI-инструменты для реальной жизни",
+  title: "AI Vibes — AI-инструменты для реальной жизни",
   description: "Создаю AI-инструменты, которые реально работают. Transkribator, AI Box и другие проекты.",
   icons: {
     icon: [
