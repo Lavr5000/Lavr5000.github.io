@@ -8,7 +8,7 @@ export default function HomePage() {
       {/* Navigation */}
       <nav>
         <div className="nav-content">
-          <div className="logo">No-code AI Founder</div>
+          <div className="logo">Lavr AI</div>
           <div className="nav-links">
             <a href="#projects">Проекты</a>
             <a href="#contact">Контакты</a>
@@ -19,12 +19,12 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="hero">
         <div className="hero-content">
-          <div className="badge">🚀 AI без кода для строительства</div>
-          <h1>Создаю AI-продукты<br/>не умея программировать</h1>
-          <p className="hero-subtitle">Мне 35, и я доказал что это возможно</p>
+          <div className="badge">🚀 AI-инструменты для реальной жизни</div>
+          <h1>Создаю AI-инструменты,<br/>которые реально работают</h1>
+          <p className="hero-subtitle">Transkribator, AI Box и другие проекты</p>
           <p className="hero-description">
-            Работаю в строительстве, создаю AI-инструменты для автоматизации рутинных задач.
-            Никакого кода — только нейросети и правильные вопросы.
+            Разрабатываю AI-инструменты для автоматизации рутинных задач.
+            От голосового ввода до домашних серверов — всё open source и build in public.
           </p>
           <div className="cta-buttons">
             <a href="#projects" className="btn btn-primary">Смотреть проекты</a>
@@ -140,6 +140,16 @@ export default function HomePage() {
           </div>
 
           <div className="project-card">
+            <span className="project-icon">🖥</span>
+            <h3 className="project-title">AI Box</h3>
+            <div className="project-status status-dev">🔄 В разработке</div>
+            <p className="project-description">
+              Домашний сервер с AI-мозгом. Ubuntu + AI-агент + умный дом + NAS + медиасервер.
+              5 сервисов в 1 устройстве, работает локально.
+            </p>
+          </div>
+
+          <div className="project-card">
             <span className="project-icon">🔍</span>
             <h3 className="project-title">Vector</h3>
             <div className="project-status status-plan">📋 В планах</div>
@@ -154,7 +164,7 @@ export default function HomePage() {
       {/* Contact Section */}
       <section className="contact-section" id="contact">
         <h2 className="section-title">На связи</h2>
-        <p className="section-subtitle">Следите за созданием AI-продуктов без кода</p>
+        <p className="section-subtitle">Следите за развитием AI-инструментов</p>
         <div className="contact-links">
           <a href="https://www.youtube.com/@Lavr5000" className="contact-link" target="_blank" rel="noopener noreferrer">
             YouTube
@@ -170,7 +180,7 @@ export default function HomePage() {
 
       {/* Footer */}
       <footer>
-        <p>© 2026 No-code AI Founder • Build in Public</p>
+        <p>© 2026 Lavr AI • Build in Public</p>
       </footer>
     </>
   );
