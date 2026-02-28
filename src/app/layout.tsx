@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Providers } from "@/components/providers";
 
 export const metadata: Metadata = {
-  title: "АвтоДок - Исполнительная документация",
-  description: "Автоматическое формирование комплекта исполнительной документации строительства",
+  title: "No-code AI Founder - Создаю AI-продукты без кода",
+  description: "Работаю в строительстве, создаю AI-инструменты для автоматизации рутинных задач. Никакого кода — только нейросети и правильные вопросы.",
   icons: {
     icon: [
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
@@ -22,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <body>
-        <Providers>{children}</Providers>
+        {children}
       </body>
     </html>
   );

@@ -39,7 +39,7 @@ export default function HomePage() {
       <section className="stats">
         <div className="stats-grid">
           <div className="stat-item">
-            <div className="stat-value">3</div>
+            <div className="stat-value">4</div>
             <div className="stat-label">созданных проекта</div>
           </div>
           <div className="stat-item">
@@ -64,6 +64,19 @@ export default function HomePage() {
           <p className="section-subtitle">AI-инструменты, которые экономят время каждый день</p>
         </div>
         <div className="projects-grid">
+          <div className="project-card featured">
+            <span className="project-icon">🎙</span>
+            <h3 className="project-title">Transkribator</h3>
+            <div className="project-status status-ready">✨ Готово • Бесплатно</div>
+            <p className="project-description">
+              Голос → текст на рабочем столе. Нажми горячую клавишу, говори — текст
+              появляется в любом окне. 100% офлайн, бесплатно, оптимизировано для русского.
+            </p>
+            <a href="https://github.com/Lavr5000/Transkribator/releases/latest" className="project-link" target="_blank" rel="noopener noreferrer">
+              Скачать бесплатно
+            </a>
+          </div>
+
           <div className="project-card featured">
             <span className="project-icon">📋</span>
             <h3 className="project-title">Kanban-доска с AI</h3>
