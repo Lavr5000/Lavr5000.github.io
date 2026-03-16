@@ -98,6 +98,22 @@ body {
         transform: none;
         transition: none;
     }
+
+    .hero-scene,
+    .robot-body,
+    .robot-antenna-ball,
+    .robot-chest-pulse,
+    .robot-eyes {
+        animation: none !important;
+    }
+
+    .hero-particles {
+        display: none;
+    }
+
+    .hero-scene {
+        opacity: 1;
+    }
 }
 
 /* Navigation */
@@ -157,13 +173,16 @@ nav {
     justify-content: center;
     padding: 8rem 2rem 6rem;
     position: relative;
+    gap: 4rem;
 }
 
 .hero-content {
-    max-width: 800px;
-    text-align: center;
+    max-width: 560px;
+    text-align: left;
     position: relative;
     z-index: 2;
+    flex: 1;
+    min-width: 0;
 }
 
 .badge {
@@ -216,14 +235,14 @@ nav {
     font-size: 1rem;
     color: var(--text-muted);
     max-width: 560px;
-    margin: 0 auto 2.5rem;
+    margin: 0 0 2.5rem;
     line-height: 1.7;
 }
 
 .cta-buttons {
     display: flex;
     gap: 1rem;
-    justify-content: center;
+    justify-content: flex-start;
     flex-wrap: wrap;
 }
 
@@ -260,6 +279,126 @@ nav {
 .btn-secondary:hover {
     background: rgba(255, 255, 255, 0.04);
     border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Hero Robot Scene */
+.hero-scene {
+    width: 380px;
+    height: 480px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+    --mouse-x: 0;
+    --mouse-y: 0;
+}
+
+.hero-particles {
+    position: absolute;
+    inset: -40px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.hero-robot {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.15));
+}
+
+.hero-robot-glow {
+    position: absolute;
+    top: 15%;
+    left: 10%;
+    width: 80%;
+    height: 60%;
+    background: radial-gradient(ellipse, rgba(0, 212, 255, 0.08) 0%, rgba(178, 75, 243, 0.04) 40%, transparent 70%);
+    filter: blur(40px);
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* Robot parallax layers */
+.robot-glow-layer {
+    transition: transform 0.1s linear;
+    transform: translate(calc(var(--mouse-x) * 2px), calc(var(--mouse-y) * 2px));
+    will-change: transform;
+}
+
+.robot-body {
+    transition: transform 0.1s linear;
+    transform: translate(calc(var(--mouse-x) * 4px), calc(var(--mouse-y) * 3px));
+    will-change: transform;
+    animation: robotBreathe 4s ease-in-out infinite;
+}
+
+.robot-neck {
+    transition: transform 0.1s linear;
+    transform: translate(calc(var(--mouse-x) * 6px), calc(var(--mouse-y) * 5px));
+    will-change: transform;
+}
+
+.robot-head {
+    transition: transform 0.1s linear;
+    transform: translate(calc(var(--mouse-x) * 10px), calc(var(--mouse-y) * 8px))
+               rotateY(calc(var(--mouse-x) * 5deg))
+               rotateX(calc(var(--mouse-y) * -3deg));
+    transform-origin: center center;
+    will-change: transform;
+}
+
+.robot-antenna {
+    transition: transform 0.1s linear;
+    transform: translate(calc(var(--mouse-x) * 14px), calc(var(--mouse-y) * 10px));
+    will-change: transform;
+}
+
+.robot-eyes {
+    transition: transform 0.1s linear;
+    transform: translate(calc(var(--mouse-x) * 18px), calc(var(--mouse-y) * 12px));
+    will-change: transform;
+}
+
+/* Robot pupil tracking (extra offset on top of layer) */
+.robot-pupil-left,
+.robot-pupil-right {
+    filter: drop-shadow(0 0 6px rgba(0, 212, 255, 0.8));
+}
+
+/* Robot keyframe animations */
+@keyframes robotBreathe {
+    0%, 100% { transform: translate(calc(var(--mouse-x) * 4px), calc(var(--mouse-y) * 3px)) translateY(0); }
+    50% { transform: translate(calc(var(--mouse-x) * 4px), calc(var(--mouse-y) * 3px)) translateY(-4px); }
+}
+
+.robot-antenna-ball {
+    animation: antennaPulse 2s ease-in-out infinite;
+}
+
+@keyframes antennaPulse {
+    0%, 100% { opacity: 0.6; filter: drop-shadow(0 0 4px rgba(0, 212, 255, 0.3)); }
+    50% { opacity: 1; filter: drop-shadow(0 0 12px rgba(0, 212, 255, 0.8)); }
+}
+
+.robot-chest-pulse {
+    animation: antennaPulse 3s ease-in-out infinite;
+}
+
+/* Mobile idle eye animation (when no mouse tracking) */
+@keyframes eyesLookAround {
+    0%, 100% { transform: translate(0, 0); }
+    25% { transform: translate(6px, -2px); }
+    50% { transform: translate(-4px, 3px); }
+    75% { transform: translate(3px, 1px); }
+}
+
+/* Hero entrance: also animate the scene */
+.hero-scene {
+    opacity: 0;
+    animation: fadeInUp 0.7s var(--ease-out) forwards;
+    animation-delay: 0.6s;
 }
 
 /* Stats Section */
@@ -633,7 +772,63 @@ footer {
 .hero-content > *:nth-child(5) { animation-delay: 0.5s; }
 
 /* Responsive */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .hero-scene {
+        width: 280px;
+        height: 360px;
+    }
+
+    .hero {
+        gap: 2rem;
+    }
+}
+
 @media (max-width: 768px) {
+    .hero {
+        flex-direction: column;
+        text-align: center;
+        padding-top: 6rem;
+        gap: 0;
+    }
+
+    .hero-content {
+        max-width: 100%;
+        text-align: center;
+    }
+
+    .hero-description {
+        margin: 0 auto 2.5rem;
+    }
+
+    .cta-buttons {
+        justify-content: center;
+    }
+
+    .hero-scene {
+        width: 200px;
+        height: 260px;
+        margin: 0 auto 2rem;
+        order: -1;
+    }
+
+    /* Disable parallax on mobile, enable idle eye animation */
+    .robot-glow-layer,
+    .robot-body,
+    .robot-neck,
+    .robot-head,
+    .robot-antenna {
+        transform: none !important;
+    }
+
+    .robot-eyes {
+        transform: none !important;
+        animation: eyesLookAround 6s ease-in-out infinite;
+    }
+
+    .robot-body {
+        animation: robotBreatheMobile 4s ease-in-out infinite;
+    }
+
     .hero h1 {
         font-size: 2.2rem;
     }
@@ -669,6 +864,11 @@ footer {
     .contact-island {
         padding: 2rem;
     }
+}
+
+@keyframes robotBreatheMobile {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
 }
 
 @media (max-width: 480px) {

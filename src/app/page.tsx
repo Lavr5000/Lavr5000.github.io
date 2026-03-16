@@ -1,4 +1,5 @@
 import ScrollReveal from './components/ScrollReveal';
+import HeroScene from './components/HeroScene';
 
 export default function HomePage() {
   return (
@@ -38,6 +39,7 @@ export default function HomePage() {
             </a>
           </div>
         </div>
+        <HeroScene />
       </section>
 
       {/* Stats Section */}
