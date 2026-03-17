@@ -2,6 +2,7 @@
 
 import { useRef, useEffect } from 'react';
 import HeroRobot from './HeroRobot';
+import HeroParticles from './HeroParticles';
 
 export default function HeroScene() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -48,6 +49,7 @@ export default function HeroScene() {
 
   return (
     <div className="hero-scene" ref={containerRef} style={{ '--mouse-x': '0', '--mouse-y': '0' } as React.CSSProperties}>
+      <HeroParticles className="hero-particles" />
       <HeroRobot className="hero-robot" />
     </div>
   );

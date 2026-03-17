@@ -25,7 +25,7 @@ export default function HeroParticles({ className }: { className?: string }) {
     let animId: number;
     const dpr = window.devicePixelRatio || 1;
     const isMobile = window.innerWidth < 768;
-    const count = isMobile ? 25 : 50;
+    const count = isMobile ? 12 : 25;
     const colors = ['#00d4ff', '#b24bf3'];
 
     function resize() {
@@ -52,7 +52,7 @@ export default function HeroParticles({ className }: { className?: string }) {
         vx: (Math.random() - 0.5) * 0.4,
         vy: (Math.random() - 0.5) * 0.3,
         radius: 0.5 + Math.random() * 2,
-        opacity: 0.1 + Math.random() * 0.4,
+        opacity: 0.05 + Math.random() * 0.15,
         color: colors[i % 2],
       });
     }
@@ -89,7 +89,7 @@ export default function HeroParticles({ className }: { className?: string }) {
         ctx.fillStyle = p.color;
         ctx.globalAlpha = p.opacity;
         ctx.shadowColor = p.color;
-        ctx.shadowBlur = 8;
+        ctx.shadowBlur = 3;
         ctx.fill();
       }
 
