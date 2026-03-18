@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://lavr5000-portfolio.pages.dev"),
+  metadataBase: new URL("https://lavr5000.github.io"),
   title: "AI Vibes — AI-инструменты для реальной жизни",
   description: "Создаю AI-инструменты, которые реально работают. Transkribator, AI Box и другие проекты.",
   icons: {
