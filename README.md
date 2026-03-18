@@ -2,7 +2,7 @@
 
 **GitHub:** https://github.com/Lavr5000/MyWebsite
 
-**Live Site:** https://lavr5000-portfolio.pages.dev/
+**Live Site:** https://lavr5000.github.io/
 
 **Privacy:** Private repository
 
@@ -19,7 +19,7 @@
 - **Framework:** Next.js 14 (App Router + Static Export)
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS (custom CSS variables)
-- **Deployment:** Cloudflare Pages
+- **Deployment:** GitHub Pages (via GitHub Actions)
 
 **Минимальные зависимости:** только Next.js, React и TypeScript
 
@@ -93,14 +93,16 @@ my-website/
 
 ## 📦 Deployment
 
-### Cloudflare Pages (recommended)
+### GitHub Pages (recommended)
 
-Сайт автоматически деплоится на Cloudflare Pages.
+Сайт автоматически деплоится на GitHub Pages через GitHub Actions workflow (`deploy-pages.yml`).
 
-**Build Settings:**
-- **Build command:** `npm run build`
-- **Build output directory:** `out`
-- **Node.js version:** 18
+**Процесс:**
+1. Push в branch `master` → GitHub Actions запускает build
+2. Workflow собирает `npm run build` → `out/`
+3. Деплой на GitHub Pages автоматически
+
+**Repository:** `Lavr5000/Lavr5000.github.io`
 
 ### Manual Deployment
 
@@ -162,4 +164,4 @@ Private project
 **Assisted by:** Claude Code (Anthropic)
 
 **Repository:** https://github.com/Lavr5000/MyWebsite
-**Live Site:** https://lavr5000-portfolio.pages.dev/
+**Live Site:** https://lavr5000.github.io/

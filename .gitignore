@@ -8,7 +8,7 @@
 
 # next.js
 /.next/
-# /out/  <-- Commented out for static export to Cloudflare Pages
+/out/
 
 # production
 /build
@@ -37,3 +37,6 @@ next-env.d.ts
 /test-results
 /playwright-report
 /playwright/.cache
+
+# claude
+.claude/

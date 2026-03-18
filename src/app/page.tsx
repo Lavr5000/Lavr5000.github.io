@@ -173,7 +173,7 @@ export default function HomePage() {
                 Бесплатный инструмент для управления задачами с встроенным AI.
                 Визуальные доски, генерация задач, простота и скорость.
               </p>
-              <a href="https://lavr-ai-kanban-doska.lavr5000xxx.workers.dev/" className="project-link" target="_blank" rel="noopener noreferrer">
+              <a href="https://kanban-board-peach-three.vercel.app/" className="project-link" target="_blank" rel="noopener noreferrer">
                 Попробовать сейчас
               </a>
             </div>
