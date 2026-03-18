@@ -341,24 +341,6 @@ nav {
     filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.2));
 }
 
-/* Head tracking: all heads hidden, only active one visible */
-.robot-head {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.15s ease-out;
-}
-
-[data-head-idx="0"] .robot-head-0 { opacity: 1; }
-[data-head-idx="1"] .robot-head-1 { opacity: 1; }
-[data-head-idx="2"] .robot-head-2 { opacity: 1; }
-[data-head-idx="3"] .robot-head-3 { opacity: 1; }
-[data-head-idx="4"] .robot-head-4 { opacity: 1; }
-
 /* Robot float animation */
 @keyframes robotFloat {
     0%, 100% { transform: translate(calc(var(--mouse-x) * 6px), calc(var(--mouse-y) * 4px)) translateY(0); }
