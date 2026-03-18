@@ -335,13 +335,29 @@ nav {
 }
 
 .robot-layer-head {
-    transform: translate(calc(var(--mouse-x) * 12px), calc(var(--mouse-y) * 8px))
-               rotateY(calc(var(--mouse-x) * 5deg))
-               rotateX(calc(var(--mouse-y) * -3deg));
+    transform: translate(calc(var(--mouse-x) * 12px), calc(var(--mouse-y) * 8px));
     transform-origin: center center;
     z-index: 2;
     filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.2));
 }
+
+/* Head tracking: all heads hidden, only active one visible */
+.robot-head {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s ease-out;
+}
+
+[data-head-idx="0"] .robot-head-0 { opacity: 1; }
+[data-head-idx="1"] .robot-head-1 { opacity: 1; }
+[data-head-idx="2"] .robot-head-2 { opacity: 1; }
+[data-head-idx="3"] .robot-head-3 { opacity: 1; }
+[data-head-idx="4"] .robot-head-4 { opacity: 1; }
 
 /* Robot float animation */
 @keyframes robotFloat {

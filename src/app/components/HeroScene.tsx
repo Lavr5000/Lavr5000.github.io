@@ -16,7 +16,10 @@ export default function HeroScene() {
 
     // Skip mouse tracking on mobile
     const isMobile = window.innerWidth < 768;
-    if (isMobile) return;
+    if (isMobile) {
+      container.dataset.headIdx = '2';
+      return;
+    }
 
     function onMouseMove(e: MouseEvent) {
       // Normalize to [-1, 1] relative to viewport center
@@ -33,6 +36,16 @@ export default function HeroScene() {
       if (container) {
         container.style.setProperty('--mouse-x', mouseSmooth.current.x.toFixed(4));
         container.style.setProperty('--mouse-y', mouseSmooth.current.y.toFixed(4));
+
+        // Head tracking: pick 1 of 5 head angles based on mouse X
+        const mx = mouseSmooth.current.x;
+        let idx = 2;
+        if (mx < -0.6) idx = 0;
+        else if (mx < -0.2) idx = 1;
+        else if (mx <= 0.2) idx = 2;
+        else if (mx <= 0.6) idx = 3;
+        else idx = 4;
+        container.dataset.headIdx = String(idx);
       }
 
       rafId.current = requestAnimationFrame(loop);
@@ -48,7 +61,7 @@ export default function HeroScene() {
   }, []);
 
   return (
-    <div className="hero-scene" ref={containerRef} style={{ '--mouse-x': '0', '--mouse-y': '0' } as React.CSSProperties}>
+    <div className="hero-scene" ref={containerRef} data-head-idx="2" style={{ '--mouse-x': '0', '--mouse-y': '0' } as React.CSSProperties}>
       <HeroParticles className="hero-particles" />
       <HeroRobot className="hero-robot" />
     </div>
