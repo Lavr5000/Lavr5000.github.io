@@ -39,7 +39,11 @@ export default function RootLayout({
     <html lang="ru">
       <body>
         <noscript>
-          <style>{`.scroll-reveal { opacity: 1 !important; transform: none !important; }`}</style>
+          <style>{`
+            .scroll-reveal, .robot-entrance, .hero-content > *, .project-card {
+              opacity: 1 !important; transform: none !important;
+            }
+          `}</style>
         </noscript>
         {children}
       </body>

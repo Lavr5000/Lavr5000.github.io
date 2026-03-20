@@ -80,36 +80,22 @@ body {
         radial-gradient(ellipse at 50% 50%, rgba(232, 168, 56, 0.02) 0%, transparent 40%);
 }
 
-/* Scroll Reveal */
+/* Scroll Reveal (GSAP handles animation) */
 .scroll-reveal {
     opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out);
-}
-
-.scroll-reveal.revealed {
-    opacity: 1;
-    transform: translateY(0);
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .scroll-reveal {
-        opacity: 1;
-        transform: none;
-        transition: none;
-    }
-
-    .hero-scene,
-    .robot-layer-torso {
-        animation: none !important;
+    .scroll-reveal,
+    .hero-content > *,
+    .project-card {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
     }
 
     .hero-particles {
         display: none;
-    }
-
-    .hero-scene {
-        opacity: 1;
     }
 }
 
@@ -280,15 +266,11 @@ nav {
 
 /* Hero Robot Scene */
 .hero-scene {
-    width: 380px;
-    height: 480px;
+    width: 480px;
+    height: 580px;
     flex-shrink: 0;
     position: relative;
     z-index: 1;
-    perspective: 1200px;
-    perspective-origin: 50% 50%;
-    --mouse-x: 0;
-    --mouse-y: 0;
 }
 
 .hero-particles {
@@ -308,51 +290,6 @@ nav {
     z-index: 1;
 }
 
-/* 3D Robot layers */
-.robot-layer {
-    position: absolute;
-    inset: 0;
-    transition: transform 0.1s linear;
-    will-change: transform;
-}
-
-.robot-layer img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    pointer-events: none;
-}
-
-.robot-layer-legs {
-    transform: translate(calc(var(--mouse-x) * 3px), calc(var(--mouse-y) * 2px));
-    z-index: 0;
-}
-
-.robot-layer-torso {
-    transform: translate(calc(var(--mouse-x) * 6px), calc(var(--mouse-y) * 4px));
-    z-index: 1;
-    animation: robotFloat 4s ease-in-out infinite;
-}
-
-.robot-layer-head {
-    transform: translate(calc(var(--mouse-x) * 12px), calc(var(--mouse-y) * 8px));
-    transform-origin: center center;
-    z-index: 2;
-    filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.2));
-}
-
-/* Robot float animation */
-@keyframes robotFloat {
-    0%, 100% { transform: translate(calc(var(--mouse-x) * 6px), calc(var(--mouse-y) * 4px)) translateY(0); }
-    50% { transform: translate(calc(var(--mouse-x) * 6px), calc(var(--mouse-y) * 4px)) translateY(-6px); }
-}
-
-/* Hero entrance: also animate the scene */
-.hero-scene {
-    opacity: 0;
-    animation: fadeInUp 0.7s var(--ease-out) forwards;
-    animation-delay: 0.6s;
-}
 
 /* Stats Section */
 .stats {
@@ -502,6 +439,7 @@ nav {
 
 /* Glass morphism cards */
 .project-card {
+    opacity: 0;
     background: var(--bg-card);
     border: 0.8px solid var(--border-subtle);
     border-radius: 20px;
@@ -701,34 +639,16 @@ footer {
     letter-spacing: 0.02em;
 }
 
-/* Hero entrance animations */
+/* Hero content — initial hidden state for GSAP entrance */
 .hero-content > * {
     opacity: 0;
-    animation: fadeInUp 0.7s var(--ease-out) forwards;
 }
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.hero-content > *:nth-child(1) { animation-delay: 0.1s; }
-.hero-content > *:nth-child(2) { animation-delay: 0.2s; }
-.hero-content > *:nth-child(3) { animation-delay: 0.3s; }
-.hero-content > *:nth-child(4) { animation-delay: 0.4s; }
-.hero-content > *:nth-child(5) { animation-delay: 0.5s; }
 
 /* Responsive */
 @media (min-width: 769px) and (max-width: 1024px) {
     .hero-scene {
-        width: 280px;
-        height: 360px;
+        width: 340px;
+        height: 420px;
     }
 
     .hero {
@@ -758,21 +678,10 @@ footer {
     }
 
     .hero-scene {
-        width: 200px;
-        height: 260px;
+        width: 260px;
+        height: 340px;
         margin: 0 auto 2rem;
         order: -1;
-    }
-
-    /* Disable parallax on mobile, keep float */
-    .robot-layer-legs,
-    .robot-layer-head {
-        transform: none !important;
-    }
-
-    .robot-layer-torso {
-        transform: none !important;
-        animation: robotFloatMobile 4s ease-in-out infinite;
     }
 
     .hero h1 {
@@ -810,11 +719,6 @@ footer {
     .contact-island {
         padding: 2rem;
     }
-}
-
-@keyframes robotFloatMobile {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
 }
 
 @media (max-width: 480px) {
