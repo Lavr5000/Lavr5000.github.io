@@ -17,6 +17,7 @@ export default function HomePage() {
           <div className="nav-links">
             <a href="#projects">Проекты</a>
             <a href="#approach">Подход</a>
+            <a href="#services">Услуги</a>
             <a href="#contact">Контакты</a>
           </div>
         </div>
@@ -377,6 +378,124 @@ export default function HomePage() {
             </p>
           </div>
         </div>
+      </section>
+
+      {/* Services Section */}
+      <section className="services-section" id="services">
+        <ScrollReveal>
+          <div className="section-header">
+            <h2 className="section-title">Настройка AI-ассистента Claude Code</h2>
+            <p className="section-subtitle">
+              Настрою Claude Code под ваши задачи — от документов до автоматизации бизнес-процессов.
+              Вы получите работающий инструмент, а не просто установленную программу.
+            </p>
+          </div>
+        </ScrollReveal>
+
+        <div className="services-grid">
+          <ScrollReveal delay={100}>
+            <div className="service-card">
+              <div className="service-card-header">
+                <h3 className="service-card-name">Базовый</h3>
+                <div className="service-card-price">3 000 <span className="price-currency">руб</span></div>
+                <p className="service-card-desc">Для тех, кто хочет попробовать</p>
+              </div>
+              <ul className="service-features">
+                <li>Установка Claude Code (CLI + Desktop)</li>
+                <li>Консультация по выбору подписки</li>
+                <li>Базовая конфигурация под задачи</li>
+                <li>Проверка работоспособности</li>
+              </ul>
+              <div className="service-card-footer">
+                <span className="service-timeline">Срок: 1 день</span>
+                <a href="https://t.me/ai_vibes_coding_ru" className="btn btn-secondary service-btn" target="_blank" rel="noopener noreferrer">
+                  Выбрать
+                </a>
+              </div>
+            </div>
+          </ScrollReveal>
+
+          <ScrollReveal delay={200}>
+            <div className="service-card service-card-popular">
+              <div className="service-popular-badge">Популярное</div>
+              <div className="service-card-header">
+                <h3 className="service-card-name">Стандарт</h3>
+                <div className="service-card-price">7 000 <span className="price-currency">руб</span></div>
+                <p className="service-card-desc">Для ежедневной работы с документами</p>
+              </div>
+              <ul className="service-features">
+                <li>Всё из «Базового»</li>
+                <li>Скиллы документов: Word, Excel, PDF, PPTX</li>
+                <li>Автоматизация браузера</li>
+                <li>1 час консультации по задачам</li>
+                <li>Инструкция (PDF)</li>
+              </ul>
+              <div className="service-card-footer">
+                <span className="service-timeline">Срок: 2 дня</span>
+                <a href="https://t.me/ai_vibes_coding_ru" className="btn btn-primary service-btn" target="_blank" rel="noopener noreferrer">
+                  Выбрать
+                </a>
+              </div>
+            </div>
+          </ScrollReveal>
+
+          <ScrollReveal delay={300}>
+            <div className="service-card">
+              <div className="service-card-header">
+                <h3 className="service-card-name">Про</h3>
+                <div className="service-card-price">15 000 <span className="price-currency">руб</span></div>
+                <p className="service-card-desc">Полная автоматизация под ваш бизнес</p>
+              </div>
+              <ul className="service-features">
+                <li>Всё из «Стандарта»</li>
+                <li>Кастомные скиллы под бизнес-процессы</li>
+                <li>Telegram-интеграция</li>
+                <li>2 часа обучения (видеозвонок)</li>
+                <li>7 дней поддержки</li>
+                <li>Обновление через месяц</li>
+              </ul>
+              <div className="service-card-footer">
+                <span className="service-timeline">Срок: 3 дня</span>
+                <a href="https://t.me/ai_vibes_coding_ru" className="btn btn-secondary service-btn" target="_blank" rel="noopener noreferrer">
+                  Выбрать
+                </a>
+              </div>
+            </div>
+          </ScrollReveal>
+        </div>
+
+        <ScrollReveal delay={150}>
+          <div className="services-trust">
+            <div className="trust-item">
+              <div className="trust-value">250+</div>
+              <div className="trust-label">Сессий работы</div>
+            </div>
+            <div className="trust-item">
+              <div className="trust-value">70+</div>
+              <div className="trust-label">Скиллов автоматизации</div>
+            </div>
+            <div className="trust-item">
+              <div className="trust-value">4ч → 20мин</div>
+              <div className="trust-label">Кейс: ежедневный отчёт</div>
+            </div>
+            <div className="trust-item">
+              <div className="trust-value">1-2ч</div>
+              <div className="trust-label">Время настройки</div>
+            </div>
+          </div>
+        </ScrollReveal>
+
+        <ScrollReveal delay={200}>
+          <div className="services-cta">
+            <h3 className="services-cta-title">Готовы начать?</h3>
+            <p className="services-cta-desc">
+              Напишите мне в Telegram — обсудим ваши задачи и подберём подходящий пакет. Консультация бесплатная.
+            </p>
+            <a href="https://t.me/ai_vibes_coding_ru" className="btn btn-primary" target="_blank" rel="noopener noreferrer">
+              Написать в Telegram
+            </a>
+          </div>
+        </ScrollReveal>
       </section>
 
       {/* Contact Section */}
