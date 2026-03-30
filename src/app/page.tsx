@@ -244,6 +244,36 @@ export default function HomePage() {
               Значительно ускорила проверку, облегчила труд. Стоит копейки.
             </p>
           </div>
+
+          <div className="project-card featured">
+            <div className="project-icon">
+              <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="gApt" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#00d4ff"/>
+                    <stop offset="1" stopColor="#b24bf3"/>
+                  </linearGradient>
+                </defs>
+                <rect x="8" y="10" width="22" height="34" rx="2" stroke="url(#gApt)" strokeWidth="2.5"/>
+                <rect x="13" y="16" width="5" height="5" rx="1" fill="url(#gApt)" opacity="0.5"/>
+                <rect x="21" y="16" width="5" height="5" rx="1" fill="url(#gApt)" opacity="0.5"/>
+                <rect x="13" y="26" width="5" height="5" rx="1" fill="url(#gApt)" opacity="0.5"/>
+                <rect x="21" y="26" width="5" height="5" rx="1" fill="url(#gApt)" opacity="0.5"/>
+                <rect x="16" y="36" width="6" height="8" rx="1" fill="url(#gApt)" opacity="0.3"/>
+                <circle cx="36" cy="14" r="8" fill="#0b0b12" stroke="url(#gApt)" strokeWidth="2.5"/>
+                <path d="M32 14l3 3 5-6" stroke="url(#gApt)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <h3 className="project-title">Apartment Auditor</h3>
+            <div className="project-status status-ready">Опубликовано в RuStore</div>
+            <p className="project-description">
+              Мобильное приложение для приёмки квартир. 220 нормативных чекпоинтов (СП, ГОСТ),
+              7 PDF-шаблонов, 447 тестов. Бесплатно и без рекламы.
+            </p>
+            <a href="https://www.rustore.ru/catalog/app/com.lavr5000xxx.apartmentauditor" className="project-link" target="_blank" rel="noopener noreferrer">
+              Скачать в RuStore
+            </a>
+          </div>
         </div>
       </section>
 
@@ -256,42 +286,6 @@ export default function HomePage() {
           </div>
         </ScrollReveal>
         <div className="projects-grid">
-          <div className="project-card">
-            <div className="project-icon">
-              <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <linearGradient id="gBld" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#00d4ff"/>
-                    <stop offset="1" stopColor="#b24bf3"/>
-                  </linearGradient>
-                </defs>
-                <rect x="8" y="10" width="22" height="34" rx="2" stroke="url(#gBld)" strokeWidth="2.5"/>
-                <rect x="13" y="16" width="5" height="5" rx="1" fill="url(#gBld)" opacity="0.5"/>
-                <rect x="21" y="16" width="5" height="5" rx="1" fill="url(#gBld)" opacity="0.5"/>
-                <rect x="13" y="26" width="5" height="5" rx="1" fill="url(#gBld)" opacity="0.5"/>
-                <rect x="21" y="26" width="5" height="5" rx="1" fill="url(#gBld)" opacity="0.5"/>
-                <rect x="16" y="36" width="6" height="8" rx="1" fill="url(#gBld)" opacity="0.3"/>
-                <circle cx="36" cy="14" r="8" fill="#0b0b12" stroke="url(#gBld)" strokeWidth="2.5"/>
-                <path d="M32 14l3 3 5-6" stroke="url(#gBld)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </div>
-            <h3 className="project-title">Apartment Auditor</h3>
-            <div className="project-status status-dev">В разработке</div>
-            <div className="progress-bar-container">
-              <div className="progress-bar-label">
-                <span>Прогресс</span>
-                <span>85%</span>
-              </div>
-              <div className="progress-bar">
-                <div className="progress-bar-fill" style={{ width: '85%' }}></div>
-              </div>
-            </div>
-            <p className="project-description">
-              Мобильное приложение для приемки квартир от застройщиков.
-              База реальных дефектов для профессиональной приемки.
-            </p>
-          </div>
-
           <div className="project-card">
             <div className="project-icon">
               <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
