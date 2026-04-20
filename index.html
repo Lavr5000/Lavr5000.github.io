@@ -2049,7 +2049,7 @@ function Robot() {
         if (el.shadowRoot.querySelector('style[data-force-show]')) return;
         const s = document.createElement('style');
         s.setAttribute('data-force-show', '1');
-        s.textContent = 'canvas{display:block !important;background:transparent !important;} :host{background:transparent !important;} #default-poster{display:none !important;background:transparent !important;opacity:0 !important;visibility:hidden !important;} .slot.poster{display:none !important;}';
+        s.textContent = 'canvas:not(#webgl-canvas){display:none !important;} canvas#webgl-canvas{display:block !important;background:transparent !important;} :host{background:transparent !important;} #default-poster{display:none !important;background:transparent !important;opacity:0 !important;visibility:hidden !important;} .slot.poster{display:none !important;}';
         el.shadowRoot.appendChild(s);
       };
       forceShow();
