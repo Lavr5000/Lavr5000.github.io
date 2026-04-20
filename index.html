@@ -1,0 +1,2588 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Денис Лавров — Автоматизация строительства и AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script type="module" src="https://unpkg.com/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
+
+<style>
+:root {
+  --bg: #08080B;
+  --bg-elev: #0D0D11;
+  --bg-card: #101015;
+  --bg-card-hover: #14141B;
+  --border: #1C1C24;
+  --border-strong: #25252F;
+  --text: #EDEDEF;
+  --text-2: #A1A1AA;
+  --text-3: #6B6B75;
+  --accent: #FF6B35;
+  --accent-2: #FF9770;
+  --accent-soft: rgba(255,107,53,0.12);
+  --accent-glow: rgba(255,107,53,0.35);
+  --red: #F87171;
+  --green: #7DD87D;
+  --amber: #F5B94F;
+  --radius: 10px;
+  --radius-lg: 16px;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --container: 1180px;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: var(--font-sans); font-size: 16px; line-height: 1.55; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; letter-spacing: -0.005em; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+::selection { background: var(--accent); color: white; }
+.section { max-width: var(--container); margin: 0 auto; padding: 120px 32px; border-top: 1px solid var(--border); }
+.section:first-of-type { border-top: none; }
+@media (max-width: 768px) { .section { padding: 80px 20px; } }
+
+/* Nav */
+.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 50; transition: background 0.2s, border-color 0.2s; border-bottom: 1px solid transparent; }
+.nav-scrolled { background: rgba(8,8,11,0.72); backdrop-filter: saturate(180%) blur(12px); -webkit-backdrop-filter: saturate(180%) blur(12px); border-bottom-color: var(--border); }
+.nav-inner { max-width: var(--container); margin: 0 auto; padding: 14px 32px; display: flex; align-items: center; gap: 32px; }
+.nav-logo { display: flex; align-items: center; gap: 10px; font-weight: 500; }
+.logo-mark { width: 26px; height: 26px; display: grid; place-items: center; background: var(--accent); color: white; border-radius: 6px; font-family: var(--font-mono); font-size: 11px; font-weight: 700; box-shadow: 0 0 24px var(--accent-glow); }
+.logo-text { font-size: 14px; }
+.nav-links { display: flex; gap: 28px; margin-left: auto; }
+.nav-links a { font-size: 13px; color: var(--text-2); transition: color 0.15s; }
+.nav-links a:hover { color: var(--text); }
+.nav-actions { display: flex; align-items: center; gap: 12px; }
+.lang-toggle { display: flex; background: var(--bg-card); border: 1px solid var(--border); border-radius: 7px; padding: 2px; }
+.lang-toggle button { background: transparent; color: var(--text-2); border: 0; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em; padding: 4px 8px; border-radius: 5px; transition: background 0.15s, color 0.15s; }
+.lang-toggle button.on { background: var(--border-strong); color: var(--text); }
+@media (max-width: 900px) { .nav-links { display: none; } }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; transition: all 0.15s; border: 1px solid transparent; white-space: nowrap; }
+.btn-sm { padding: 7px 12px; font-size: 13px; }
+.btn-lg { padding: 14px 22px; font-size: 15px; }
+.btn-primary { background: var(--accent); color: white; box-shadow: 0 0 0 1px rgba(255,255,255,0.05) inset, 0 8px 24px -8px var(--accent-glow); }
+.btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.btn-ghost { background: transparent; color: var(--text); border-color: var(--border-strong); }
+.btn-ghost:hover { background: var(--bg-card); border-color: var(--text-3); }
+
+/* Typography */
+.kicker { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; color: var(--text-3); margin-bottom: 24px; text-transform: uppercase; }
+.eyebrow { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; color: var(--text-2); background: var(--bg-card); border: 1px solid var(--border); padding: 6px 10px; border-radius: 100px; margin-bottom: 28px; text-transform: uppercase; }
+.pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 0 var(--accent-glow); animation: pulse 2s infinite; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 var(--accent-glow); } 70% { box-shadow: 0 0 0 10px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+.display { font-size: clamp(42px, 6vw, 76px); line-height: 1.02; letter-spacing: -0.035em; font-weight: 500; margin: 0 0 24px; }
+.display-xl { font-size: clamp(48px, 7.5vw, 96px); }
+.accent-gradient { background: linear-gradient(180deg, #EDEDEF 0%, var(--accent-2) 110%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.h2 { font-size: clamp(30px, 3.6vw, 46px); line-height: 1.1; letter-spacing: -0.025em; font-weight: 500; margin: 0 0 24px; max-width: 840px; text-wrap: pretty; }
+.lede { font-size: 18px; line-height: 1.6; color: var(--text-2); max-width: 680px; margin: 0 0 40px; text-wrap: pretty; }
+
+/* Hero */
+.hero { position: relative; padding: 160px 32px 80px; max-width: var(--container); margin: 0 auto; overflow: hidden; }
+.hero-inner { position: relative; z-index: 1; display: grid; grid-template-columns: 1.1fr 1fr; gap: 64px; align-items: center; }
+.hero-inner.center { grid-template-columns: 1fr; text-align: center; justify-items: center; }
+.hero-inner.center .hero-sub, .hero-inner.center .display { max-width: 1000px; }
+.hero-inner.center .metrics { margin-top: 48px; }
+.grid-bg { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,107,53,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,107,53,0.05) 1px, transparent 1px); background-size: 64px 64px; mask-image: radial-gradient(ellipse at 30% 20%, black 0%, transparent 70%); -webkit-mask-image: radial-gradient(ellipse at 30% 20%, black 0%, transparent 70%); pointer-events: none; }
+.hero-sub { font-size: 19px; color: var(--text-2); max-width: 560px; margin: 0 0 32px; text-wrap: pretty; }
+.hero-ctas { display: flex; gap: 12px; margin-bottom: 56px; flex-wrap: wrap; }
+.metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; padding-top: 32px; border-top: 1px solid var(--border); max-width: 560px; }
+.hero-inner.center .metrics { max-width: 720px; width: 100%; }
+.metric-val { font-size: 32px; font-weight: 500; letter-spacing: -0.02em; color: var(--text); font-feature-settings: 'tnum'; }
+.metric-label { font-size: 12px; color: var(--text-3); margin-top: 2px; text-wrap: balance; }
+@media (max-width: 900px) { .hero-inner { grid-template-columns: 1fr; } .hero { padding-top: 120px; } }
+
+/* Robot */
+.robot-stage { width: 100%; max-width: 520px; margin: 56px auto 0; aspect-ratio: 1 / 0.85; position: relative; perspective: 900px; }
+.robot-stage.inline { margin: 0; }
+.robot-glow { position: absolute; inset: 10% 10% 0 10%; background: radial-gradient(ellipse at 50% 50%, var(--accent-glow) 0%, transparent 60%); filter: blur(40px); pointer-events: none; }
+/* model-viewer robot */
+.mv-robot { width: 100%; height: 100%; position: absolute; inset: 0; background: transparent; opacity: 0; transition: opacity 0.7s ease; --poster-color: transparent; --poster-image: none; }
+.mv-robot.ready { opacity: 1; }
+.mv-robot::part(default-progress-bar) { display: none !important; }
+.mv-robot::part(default-poster) { display: none !important; background: transparent !important; }
+.mv-error-state { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--font-mono); color: var(--text-3); gap: 10px; text-align: center; }
+.mv-error-icon { width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--text-3); display: grid; place-items: center; font-size: 22px; font-weight: 500; opacity: 0.5; }
+.mv-error-text { font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; opacity: 0.6; }
+
+/* System diagram */
+.sys-diagram { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; font-family: var(--font-mono); font-size: 11px; box-shadow: 0 40px 80px -40px rgba(0,0,0,0.8), 0 0 60px -20px var(--accent-glow); }
+.sys-diagram.wide { width: 100%; max-width: 880px; margin: 64px auto 0; }
+.sys-head { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text-3); letter-spacing: 0.02em; }
+.sys-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); }
+.sys-badge { margin-left: auto; background: rgba(125,216,125,0.1); color: var(--green); padding: 2px 8px; border-radius: 100px; font-size: 10px; }
+.sys-body { display: flex; align-items: center; gap: 12px; padding: 28px 20px; }
+.node { background: var(--bg-elev); border: 1px solid var(--border-strong); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 4px; min-width: 110px; transition: border-color 0.2s; }
+.node-core { border-color: var(--accent); background: linear-gradient(180deg, var(--accent-soft), transparent); box-shadow: 0 0 32px -8px var(--accent-glow); }
+.node-code { font-size: 10px; color: var(--text-3); letter-spacing: 0.08em; }
+.node-core .node-code { color: var(--accent-2); }
+.node-name { font-family: var(--font-sans); font-size: 13px; color: var(--text); font-weight: 500; }
+.node-sub { font-size: 10px; color: var(--text-3); }
+.node-col { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.node-col .node { min-width: 0; padding: 10px 12px; }
+.node-out { flex-direction: row; justify-content: space-between; align-items: center; }
+.flow { position: relative; flex: 1; height: 1px; min-width: 24px; }
+.flow-line { position: absolute; inset: 0; background: linear-gradient(90deg, var(--border-strong), var(--accent), var(--border-strong)); }
+.flow-dot { position: absolute; top: -2px; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent-glow); animation: flowMove 2.4s linear infinite; }
+.flow-dot.d2 { animation-delay: 1.2s; }
+@keyframes flowMove { 0% { left: 0%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { left: 100%; opacity: 0; } }
+@media (max-width: 640px) { .sys-body { flex-direction: column; align-items: stretch; } .flow { width: 1px; height: 24px; } .flow-line { width: 1px; height: 100%; background: linear-gradient(180deg, var(--border-strong), var(--accent), var(--border-strong)); } .flow-dot { top: 0; left: -2px !important; animation-name: flowMoveV; } @keyframes flowMoveV { 0% { top: 0; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } } .node-col { width: 100%; } }
+
+/* Pillars */
+.pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-top: 24px; }
+.pillar { background: var(--bg-card); padding: 28px; transition: background 0.2s; }
+.pillar:hover { background: var(--bg-card-hover); }
+.pillar-label { font-family: var(--font-mono); font-size: 11px; color: var(--accent-2); letter-spacing: 0.04em; margin-bottom: 12px; text-transform: uppercase; }
+.pillar-text { color: var(--text-2); font-size: 15px; }
+@media (max-width: 800px) { .pillars { grid-template-columns: 1fr; } }
+
+/* Projects */
+.projects-wrap { display: grid; grid-template-columns: 1.05fr 1fr; gap: 40px; margin-top: 24px; align-items: flex-start; }
+.projects-list { display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; background: var(--bg-card); }
+.project-row { all: unset; display: grid; grid-template-columns: auto 1fr auto auto auto; align-items: center; gap: 14px; padding: 18px 20px; cursor: pointer; border-bottom: 1px solid var(--border); transition: background 0.15s; color: var(--text-2); position: relative; }
+.project-row:last-child { border-bottom: none; }
+.project-row:hover { background: var(--bg-card-hover); color: var(--text); }
+.project-row.active { background: var(--bg-card-hover); color: var(--text); }
+.project-row.active .project-arrow { color: var(--accent-2); transform: translateX(2px); }
+.project-row.active::after {
+  content: '';
+  position: absolute;
+  right: -40px;
+  top: 50%;
+  width: 40px;
+  height: 1.5px;
+  background: linear-gradient(90deg, var(--accent) 0%, transparent 100%);
+  transform: translateY(-50%);
+  animation: pc-grow 0.25s ease-out;
+  z-index: 2;
+}
+@keyframes pc-grow { from { width: 0; } to { width: 40px; } }
+/* hint pulse on first inactive row */
+.projects-list .project-row:nth-child(2):not(.active).hint-pulse {
+  animation: rowHint 2.4s ease-in-out 2;
+  animation-delay: 0.6s;
+}
+@keyframes rowHint {
+  0%, 100% { background: transparent; }
+  50% { background: rgba(255,107,53,0.08); }
+}
+.projects-hint {
+  font-family: var(--font-mono); font-size: 11px; color: var(--text-3);
+  letter-spacing: 0.04em; text-transform: uppercase; margin-top: 12px;
+  padding-left: 4px; opacity: 0.6; transition: opacity 0.3s;
+}
+.projects-hint.hidden { opacity: 0; pointer-events: none; }
+
+/* Project mockup */
+.project-mockup { margin: 0 0 24px; border-radius: 10px; overflow: hidden; background: #05050a; border: 1px solid var(--border-strong); }
+.mockup-chrome { display: flex; align-items: center; gap: 6px; padding: 9px 12px; background: #0b0b12; border-bottom: 1px solid var(--border); }
+.mockup-dot { width: 10px; height: 10px; border-radius: 50%; }
+.mockup-dot.r { background: #ff5f56; } .mockup-dot.y { background: #ffbd2e; } .mockup-dot.g { background: #27c93f; }
+.mockup-title { font-family: var(--font-mono); font-size: 11px; color: var(--text-3); margin-left: 8px; }
+.mockup-body { padding: 16px 18px; font-family: var(--font-mono); font-size: 12px; line-height: 1.65; color: var(--text-2); min-height: 120px; }
+.mockup-prompt { color: var(--accent-2); margin-right: 8px; }
+.mockup-cmd { color: var(--text); }
+.mockup-out { color: var(--text-3); }
+.mockup-out.ok { color: var(--green); }
+.mockup-out.warn { color: var(--amber); }
+
+/* Phone mockup for Apartment Auditor */
+.phone-mockup { padding: 18px; background: linear-gradient(180deg, #0b0b12 0%, #05050a 100%); display: flex; justify-content: center; }
+.phone-frame { width: 200px; background: #0f0f18; border-radius: 22px; border: 1px solid var(--border-strong); overflow: hidden; padding: 10px 10px; box-shadow: 0 20px 40px -10px rgba(0,0,0,0.6); }
+.phone-notch { height: 14px; display: flex; justify-content: center; align-items: center; }
+.phone-notch::before { content: ''; width: 40px; height: 4px; border-radius: 100px; background: #000; }
+.phone-screen { background: #101018; border-radius: 12px; padding: 12px; font-family: var(--font-mono); }
+.phone-title { font-size: 11px; color: var(--text); letter-spacing: 0.02em; margin-bottom: 8px; font-weight: 500; }
+.phone-sub { font-size: 9px; color: var(--text-3); margin-bottom: 10px; }
+.phone-row { display: flex; align-items: center; gap: 6px; padding: 6px 0; border-top: 1px solid rgba(255,255,255,0.05); font-size: 10px; color: var(--text-2); }
+.phone-row:first-of-type { border-top: none; }
+.phone-check { width: 10px; height: 10px; border-radius: 3px; border: 1px solid var(--text-3); flex-shrink: 0; }
+.phone-check.ok { background: var(--green); border-color: var(--green); }
+.phone-check.warn { background: var(--amber); border-color: var(--amber); }
+.phone-cta { margin-top: 10px; padding: 7px; background: var(--accent); color: #fff; text-align: center; border-radius: 6px; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 500; }
+
+/* Telegram mockup */
+.tg-mockup { padding: 14px; background: #0f0f18; }
+.tg-msg { background: #1a1a24; padding: 8px 12px; border-radius: 10px 10px 10px 2px; margin-bottom: 8px; max-width: 80%; font-size: 11px; color: var(--text-2); }
+.tg-msg.me { background: #2b5278; color: #fff; margin-left: auto; border-radius: 10px 10px 2px 10px; }
+.tg-time { font-size: 9px; color: var(--text-3); margin-top: 3px; text-align: right; }
+
+/* Project nav (prev/next) */
+.project-nav-row { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); }
+.pn-btn { all: unset; cursor: pointer; font-family: var(--font-mono); font-size: 12px; color: var(--text-3); letter-spacing: 0.04em; text-transform: uppercase; padding: 8px 12px; border-radius: 6px; transition: all 0.15s; }
+.pn-btn:hover { color: var(--accent-2); background: var(--accent-soft); }
+.project-progress { font-family: var(--font-mono); font-size: 11px; color: var(--text-3); letter-spacing: 0.04em; margin-left: auto; }
+.project-progress .pp-cur { color: var(--accent-2); font-weight: 600; }
+.project-code { font-family: var(--font-mono); font-size: 11px; color: var(--text-3); letter-spacing: 0.04em; }
+.project-name { font-size: 15px; font-weight: 500; color: var(--text); }
+.project-tag { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); letter-spacing: 0.04em; text-transform: uppercase; }
+.project-status { font-family: var(--font-mono); font-size: 10px; padding: 3px 8px; border-radius: 100px; letter-spacing: 0.04em; border: 1px solid; white-space: nowrap; }
+.project-status.s-production { color: var(--green); border-color: rgba(125,216,125,0.3); background: rgba(125,216,125,0.08); }
+.project-status.s-beta { color: var(--amber); border-color: rgba(245,185,79,0.3); background: rgba(245,185,79,0.08); }
+.project-status.s-dev { color: var(--accent-2); border-color: rgba(255,151,112,0.3); background: rgba(255,107,53,0.08); }
+.project-status.s-planned { color: var(--text-2); border-color: var(--border-strong); background: var(--bg-elev); }
+.project-arrow { color: var(--text-3); font-size: 14px; transition: all 0.15s; }
+.project-detail { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px; position: sticky; top: 80px; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+.project-detail-head { display: flex; gap: 16px; align-items: center; margin-bottom: 28px; }
+.project-code-lg { width: 48px; height: 48px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent-2); border-radius: 10px; font-family: var(--font-mono); font-size: 13px; font-weight: 600; }
+.project-title { font-size: 24px; font-weight: 500; margin: 0 0 4px; letter-spacing: -0.02em; }
+.project-blocks { display: flex; flex-direction: column; gap: 16px; }
+.pb { padding: 16px 18px; border-radius: 10px; background: var(--bg-elev); border: 1px solid var(--border); }
+.pb-label { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 8px; }
+.pb-mark { width: 6px; height: 6px; border-radius: 2px; }
+.pb-red .pb-label { color: var(--red); } .pb-red .pb-mark { background: var(--red); }
+.pb-purple .pb-label { color: var(--accent-2); } .pb-purple .pb-mark { background: var(--accent-2); }
+.pb-green .pb-label { color: var(--green); } .pb-green .pb-mark { background: var(--green); }
+.pb-text { color: var(--text); font-size: 14px; line-height: 1.55; }
+@media (max-width: 960px) { .projects-wrap { grid-template-columns: 1fr; } .project-detail { position: static; } .project-row { grid-template-columns: auto 1fr auto; } .project-tag, .project-arrow { display: none; } .project-row.active::after { display: none; } .phone-frame { width: 180px; } }
+
+/* System thinking */
+.principles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-top: 24px; }
+.principle { background: var(--bg-card); padding: 36px 32px; min-height: 240px; position: relative; }
+.principle-n { font-family: var(--font-mono); font-size: 12px; color: var(--accent-2); letter-spacing: 0.06em; margin-bottom: 48px; }
+.principle-name { font-size: 22px; font-weight: 500; letter-spacing: -0.02em; margin-bottom: 12px; }
+.principle-text { color: var(--text-2); font-size: 15px; }
+@media (max-width: 800px) { .principles { grid-template-columns: 1fr; } }
+
+/* Stack */
+.stack-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-top: 24px; }
+.stack-group { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; transition: border-color 0.2s, background 0.2s; }
+.stack-group:hover { border-color: var(--border-strong); background: var(--bg-card-hover); }
+.stack-group-name { font-family: var(--font-mono); font-size: 11px; color: var(--accent-2); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+.stack-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.stack-list li { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--text); }
+.stack-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--text-3); flex-shrink: 0; }
+@media (max-width: 1000px) { .stack-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 600px) { .stack-grid { grid-template-columns: repeat(2, 1fr); } }
+
+/* Gov */
+.gov-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+.gov-list { list-style: none; padding: 0; margin: 0; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; background: var(--bg-card); }
+.gov-list li { display: flex; gap: 20px; padding: 18px 20px; border-bottom: 1px solid var(--border); font-size: 15px; color: var(--text); align-items: flex-start; transition: background 0.15s; }
+.gov-list li:last-child { border-bottom: none; }
+.gov-list li:hover { background: var(--bg-card-hover); }
+.gov-num { font-family: var(--font-mono); font-size: 11px; color: var(--accent-2); letter-spacing: 0.04em; padding-top: 3px; min-width: 24px; }
+@media (max-width: 800px) { .gov-wrap { grid-template-columns: 1fr; } }
+
+/* Demo */
+.demo-section .h2 { margin-bottom: 12px; }
+.demo-section .lede { margin-bottom: 32px; }
+.demo-tabs { display: flex; flex-wrap: wrap; gap: 8px; padding: 4px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; margin: 0 0 24px; }
+.demo-tab { flex: 1; min-width: 180px; display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: transparent; border: 1px solid transparent; border-radius: 8px; color: var(--text-2); text-align: left; transition: all 0.18s; }
+.demo-tab:hover { color: var(--text); background: var(--bg-elev); }
+.demo-tab.on { background: var(--bg); border-color: var(--border-strong); color: var(--text); box-shadow: 0 6px 20px -10px var(--accent-glow); }
+.demo-tab-code { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; color: var(--accent-2); padding: 3px 7px; border-radius: 5px; background: var(--accent-soft); }
+.demo-tab-name { font-size: 14px; font-weight: 500; }
+.demo-tab-hint { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+.demo-tab-text { display: flex; flex-direction: column; line-height: 1.2; flex: 1; min-width: 0; }
+.demo-sub { font-size: 14px; color: var(--text-2); max-width: 760px; margin: 0 0 20px; text-wrap: pretty; }
+.demo-cta-row { display: flex; align-items: center; gap: 14px; margin-top: 24px; flex-wrap: wrap; }
+.demo-cta-row .btn-ghost { font-size: 13px; }
+.demo-cta-row .note { font-family: var(--font-mono); font-size: 11px; color: var(--text-3); letter-spacing: 0.04em; }
+
+.dot-live { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); animation: pulseLive 2s infinite; }
+@keyframes pulseLive { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+@keyframes msgIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes bounce { 0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
+
+/* ── Telegram shell ─────────────────────────────────────────────────────── */
+.tg-shell { display: grid; grid-template-columns: 280px 1fr; background: #0f1014; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 40px 90px -40px rgba(0,0,0,0.9), 0 0 60px -30px var(--accent-glow); height: 640px; min-height: 0; }
+.tg-shell > * { min-height: 0; min-width: 0; }
+@media (max-width: 900px) { .tg-shell { grid-template-columns: 1fr; height: 640px; } .tg-side { display: none; } }
+.tg-side { background: #0b0c10; border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; min-height: 0; }
+.tg-side-head { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--border); }
+.tg-side-title { font-size: 13px; font-weight: 600; letter-spacing: -0.01em; }
+.tg-side-search { margin: 10px 12px 6px; padding: 8px 12px; background: #15161c; border: 1px solid var(--border); border-radius: 20px; font-family: var(--font-mono); font-size: 11px; color: var(--text-3); display: flex; align-items: center; gap: 8px; }
+.tg-side-search::before { content: '⌕'; font-size: 12px; }
+.tg-chat { display: flex; gap: 10px; padding: 10px 12px; border-left: 3px solid transparent; cursor: pointer; transition: background 0.15s; }
+.tg-chat:hover { background: #14151b; }
+.tg-chat.on { background: #191a22; border-left-color: var(--accent); }
+.tg-ava { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; color: white; font-weight: 600; font-size: 13px; font-family: var(--font-mono); flex-shrink: 0; }
+.tg-chat-body { flex: 1; min-width: 0; }
+.tg-chat-top { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; color: var(--text); }
+.tg-chat-name { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tg-chat-time { font-size: 10px; color: var(--text-3); font-family: var(--font-mono); flex-shrink: 0; }
+.tg-chat-bot { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--text-3); margin-top: 2px; }
+.tg-chat-preview { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tg-chat-badge { background: var(--accent); color: white; font-size: 10px; font-family: var(--font-mono); padding: 1px 6px; border-radius: 100px; min-width: 18px; text-align: center; }
+
+.tg-main { display: flex; flex-direction: column; background-color: #0f1014; background-image: radial-gradient(circle at 12% 18%, rgba(124,92,255,0.05) 0, transparent 40%), radial-gradient(circle at 82% 72%, rgba(255,107,53,0.05) 0, transparent 40%); min-height: 0; overflow: hidden; }
+.tg-head { display: flex; align-items: center; gap: 12px; padding: 12px 18px; border-bottom: 1px solid var(--border); background: #14151b; }
+.tg-head-meta { flex: 1; }
+.tg-head-name { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+.tg-check { color: var(--accent-2); font-size: 11px; }
+.tg-head-sub { font-size: 11px; color: var(--green); font-family: var(--font-mono); display: flex; align-items: center; gap: 6px; }
+.tg-head-icons { display: flex; gap: 14px; color: var(--text-3); font-size: 14px; }
+
+.tg-body { flex: 1; overflow-y: auto; padding: 18px 18px 12px; display: flex; flex-direction: column; gap: 8px; scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent; scroll-behavior: smooth; min-height: 0; }
+.tg-body::-webkit-scrollbar { width: 6px; }
+.tg-body::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+.tg-day { align-self: center; font-family: var(--font-mono); font-size: 10px; color: var(--text-3); background: rgba(21,22,28,0.85); padding: 3px 10px; border-radius: 100px; margin: 4px 0; }
+
+.tg-msg { display: flex; max-width: 85%; }
+.tg-msg.in { align-self: flex-start; }
+.tg-msg.out { align-self: flex-end; }
+.tg-bubble { padding: 9px 12px; border-radius: 14px; font-size: 13.5px; line-height: 1.5; position: relative; animation: msgIn 0.22s ease; }
+.tg-msg.in .tg-bubble { background: #1d1e26; color: var(--text); border-bottom-left-radius: 4px; }
+.tg-msg.out .tg-bubble { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff; border-bottom-right-radius: 4px; box-shadow: 0 8px 24px -12px var(--accent-glow); }
+.tg-bubble.system { background: rgba(29,30,38,0.6); color: var(--text-2); font-size: 12.5px; }
+.tg-bubble-meta { display: flex; align-items: center; gap: 4px; justify-content: flex-end; font-family: var(--font-mono); font-size: 10px; color: rgba(255,255,255,0.8); margin-top: 4px; }
+.tg-msg.in .tg-bubble-meta { color: var(--text-3); }
+.tg-voice { display: flex; align-items: center; gap: 12px; min-width: 220px; }
+.tg-voice-play { width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.22); border: 0; color: #fff; display: grid; place-items: center; font-size: 12px; flex-shrink: 0; }
+.tg-voice-wave { display: flex; align-items: center; gap: 2px; flex: 1; height: 24px; }
+.tg-voice-wave span { flex: 1; background: rgba(255,255,255,0.8); border-radius: 2px; }
+.tg-voice-wave.playing span { animation: wave 1.2s ease-in-out infinite; }
+@keyframes wave { 0%, 100% { height: 30%; } 50% { height: 100%; } }
+.tg-voice-meta { font-family: var(--font-mono); font-size: 10px; opacity: 0.9; white-space: nowrap; }
+.tg-reply { background: rgba(255,255,255,0.08); border-left: 2px solid rgba(255,255,255,0.35); padding: 4px 8px; border-radius: 4px; margin-bottom: 6px; font-size: 11px; opacity: 0.9; }
+.tg-msg.in .tg-reply { background: rgba(124,92,255,0.12); border-left-color: var(--accent-2); }
+
+.tg-typing { display: inline-flex; align-items: center; gap: 5px; padding: 9px 14px; background: #1d1e26; border-radius: 14px; border-bottom-left-radius: 4px; width: fit-content; }
+.tg-typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-2); animation: bounce 1.2s infinite ease-in-out; }
+.tg-typing span:nth-child(2) { animation-delay: 0.15s; }
+.tg-typing span:nth-child(3) { animation-delay: 0.3s; }
+
+.tg-input { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-top: 1px solid var(--border); background: #14151b; }
+.tg-input-icon { color: var(--text-3); font-size: 15px; }
+.tg-input-field { flex: 1; padding: 9px 14px; background: #0f1014; border: 1px solid var(--border); border-radius: 20px; color: var(--text-3); font-size: 13px; }
+.tg-mic { width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: #fff; display: grid; place-items: center; border: 0; box-shadow: 0 4px 16px -4px var(--accent-glow); font-size: 15px; }
+
+.tg-presets { display: flex; gap: 8px; flex-wrap: wrap; padding: 10px 18px; background: #0b0c10; border-top: 1px solid var(--border); }
+.tg-presets .preset-label { width: 100%; font-family: var(--font-mono); font-size: 10px; color: var(--text-3); letter-spacing: 0.06em; text-transform: uppercase; margin: 0 0 2px; }
+.chip { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-2); font-size: 12px; padding: 6px 12px; border-radius: 100px; transition: all 0.15s; display: inline-flex; align-items: center; gap: 6px; }
+.chip:hover:not(:disabled) { border-color: var(--accent); color: var(--text); background: var(--accent-soft); }
+.chip:disabled { opacity: 0.5; cursor: not-allowed; }
+.chip-icon { color: var(--accent-2); font-size: 10px; }
+
+/* Letter inside Telegram */
+.letter { background: #0b0b10; border: 1px solid var(--border-strong); border-radius: 12px; padding: 0; overflow: hidden; margin-top: 4px; width: 100%; max-width: 540px; }
+.letter-head { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--border); background: var(--bg-elev); font-family: var(--font-mono); font-size: 11px; color: var(--text-3); }
+.letter-head-icon { width: 20px; height: 20px; border-radius: 4px; background: var(--accent-soft); color: var(--accent-2); display: grid; place-items: center; font-size: 10px; }
+.letter-head-tag { margin-left: auto; color: var(--green); font-size: 10px; padding: 2px 8px; background: rgba(125,216,125,0.1); border-radius: 100px; }
+.letter-style { display: flex; background: #0f1014; border-top: 1px solid var(--border); padding: 8px 14px; gap: 6px; }
+.letter-style .ls-label { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); letter-spacing: 0.04em; text-transform: uppercase; align-self: center; margin-right: 4px; }
+.letter-style button { background: transparent; border: 1px solid var(--border); color: var(--text-2); padding: 4px 10px; border-radius: 100px; font-size: 11px; font-family: var(--font-mono); transition: all 0.15s; }
+.letter-style button.on { border-color: var(--accent); color: var(--accent-2); background: var(--accent-soft); }
+.letter-body { padding: 16px 18px; font-family: 'Inter', sans-serif; font-size: 13px; line-height: 1.55; color: var(--text); }
+.letter-body .lh { color: var(--text-3); font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 2px; }
+.letter-body .lrow { margin-bottom: 10px; }
+.letter-body .lp { color: var(--text-2); font-size: 13px; margin: 10px 0 0; }
+.letter-body .ldots { color: var(--text-3); letter-spacing: 0.1em; margin: 8px 0; }
+.letter-body .lreq { margin: 12px 0 0; padding-left: 18px; color: var(--text); }
+.letter-body .lreq li { margin-bottom: 4px; font-size: 13px; }
+.letter-sig { padding: 10px 18px 14px; font-size: 12px; color: var(--text-2); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px; border-top: 1px solid var(--border); }
+.letter-actions { display: flex; gap: 6px; padding: 10px 14px; border-top: 1px solid var(--border); background: var(--bg-elev); flex-wrap: wrap; }
+.letter-btn { background: transparent; border: 1px solid var(--border-strong); color: var(--text-2); padding: 5px 10px; border-radius: 6px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.04em; transition: all 0.15s; }
+.letter-btn:hover { color: var(--text); border-color: var(--text-3); background: var(--bg-card); }
+.letter-btn.primary { border-color: var(--accent); color: var(--accent-2); }
+.letter-btn.primary:hover { background: var(--accent-soft); }
+.letter-btn.copied { color: var(--green); border-color: var(--green); }
+
+/* ── Phone (Auditor) ─────────────────────────────────────────────────────── */
+.auditor-wrap { display: grid; grid-template-columns: 300px 1fr; gap: 40px; align-items: start; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px; overflow: hidden; }
+@media (max-width: 900px) { .auditor-wrap { grid-template-columns: 1fr; gap: 24px; padding: 20px; } }
+.phone { position: relative; width: 300px; height: 620px; background: #1a1a22; border-radius: 44px; padding: 14px; margin: 0 auto; box-shadow: 0 30px 60px -20px rgba(0,0,0,0.7), 0 0 0 1px var(--border-strong), inset 0 0 0 2px #0b0b10; }
+.phone::before { content: ''; position: absolute; top: 22px; left: 50%; transform: translateX(-50%); width: 100px; height: 28px; background: #05050a; border-radius: 100px; z-index: 2; }
+.phone-screen { width: 100%; height: 100%; background: #0a0a0f; border-radius: 32px; overflow: hidden; position: relative; display: flex; flex-direction: column; }
+.phone-status { display: flex; justify-content: space-between; padding: 10px 28px 6px; font-family: var(--font-mono); font-size: 10px; color: var(--text); }
+.phone-nav { display: flex; align-items: center; gap: 10px; padding: 8px 16px; border-bottom: 1px solid var(--border); }
+.phone-nav-title { flex: 1; font-size: 13px; font-weight: 600; }
+.phone-nav-meta { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); }
+.phone-back { color: var(--accent-2); font-size: 14px; }
+.phone-prog { height: 3px; background: var(--border); position: relative; }
+.phone-prog-bar { position: absolute; inset: 0 auto 0 0; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width 0.4s; }
+.phone-body { flex: 1; overflow-y: auto; padding: 12px; scrollbar-width: none; }
+.phone-body::-webkit-scrollbar { display: none; }
+.phone-body::-webkit-scrollbar-thumb { background: var(--border-strong); }
+
+.cl-cat { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.08em; margin: 10px 4px 6px; }
+.cl-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: #0f1014; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 6px; }
+.cl-check { width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0; display: grid; place-items: center; font-size: 10px; font-weight: 700; }
+.cl-check.ok { background: rgba(125,216,125,0.12); color: var(--green); border: 1px solid rgba(125,216,125,0.4); }
+.cl-check.ok::after { content: '✓'; }
+.cl-check.defect { background: rgba(248,113,113,0.12); color: var(--red); border: 1px solid rgba(248,113,113,0.4); }
+.cl-check.defect::after { content: '!'; }
+.cl-check.wait { background: transparent; border: 1px dashed var(--border-strong); color: var(--text-3); }
+.cl-name { flex: 1; font-size: 12px; color: var(--text); }
+.cl-count { font-family: var(--font-mono); font-size: 10px; color: var(--red); }
+
+.dp-hero { position: relative; margin: -12px -12px 0; height: 140px; background: linear-gradient(180deg, #2a1e15 0%, #15110e 100%); display: grid; place-items: center; overflow: hidden; }
+.dp-hero::before { content: ''; position: absolute; inset: 0; background-image: repeating-linear-gradient(45deg, transparent 0, transparent 12px, rgba(255,107,53,0.04) 12px, rgba(255,107,53,0.04) 24px); }
+.dp-hero-crack { position: absolute; width: 80%; height: 3px; background: linear-gradient(90deg, transparent, rgba(248,113,113,0.7) 30%, rgba(248,113,113,0.9) 50%, rgba(248,113,113,0.7) 70%, transparent); transform: rotate(-6deg); box-shadow: 0 0 8px rgba(248,113,113,0.3); }
+.dp-hero-label { position: absolute; top: 10px; left: 12px; font-family: var(--font-mono); font-size: 10px; color: var(--text-3); letter-spacing: 0.08em; text-transform: uppercase; }
+.dp-hero-tag { position: absolute; top: 10px; right: 12px; background: var(--red); color: #fff; padding: 2px 8px; border-radius: 100px; font-size: 10px; font-family: var(--font-mono); font-weight: 600; }
+.dp-title { padding: 14px 4px 10px; }
+.dp-cat { font-size: 13px; color: var(--text); font-weight: 500; }
+.dp-norm { font-family: var(--font-mono); font-size: 10px; color: var(--accent-2); margin-top: 2px; }
+.dp-plan { background: #0f1014; border: 1px solid var(--border); border-radius: 8px; padding: 10px; margin: 8px 0; position: relative; }
+.dp-plan-label { font-family: var(--font-mono); font-size: 9px; color: var(--text-3); letter-spacing: 0.08em; text-transform: uppercase; }
+.dp-plan-svg { display: block; width: 100%; margin-top: 6px; }
+.dp-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; margin: 8px 0 10px; }
+.dp-field .dk { font-family: var(--font-mono); font-size: 9px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; }
+.dp-field .dv { font-size: 12px; color: var(--text); }
+.dp-note { font-size: 11px; color: var(--text-2); line-height: 1.5; padding: 8px 10px; background: rgba(248,113,113,0.06); border-left: 2px solid var(--red); border-radius: 4px; margin-bottom: 8px; }
+
+.rp-head { padding: 10px 4px; }
+.rp-title { font-size: 13px; color: var(--text); font-weight: 500; }
+.rp-meta { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); margin-top: 2px; }
+.rp-sum { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 10px 0; }
+.rp-sum-cell { background: #0f1014; border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; }
+.rp-sum-k { font-family: var(--font-mono); font-size: 9px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; }
+.rp-sum-v { font-size: 17px; font-weight: 500; margin-top: 2px; color: var(--text); }
+.rp-sum-v.crit { color: var(--red); }
+.rp-sum-v.sig { color: var(--amber); }
+.rp-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+.rp-row { display: flex; gap: 8px; padding: 8px 10px; background: #0f1014; border: 1px solid var(--border); border-radius: 8px; font-size: 11px; color: var(--text); }
+.rp-row-n { font-family: var(--font-mono); color: var(--text-3); font-size: 10px; }
+.rp-row-t { flex: 1; }
+.rp-row-sev { font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.04em; }
+.rp-row-sev.significant, .rp-row-sev.значительный { color: var(--amber); }
+.rp-row-sev.critical, .rp-row-sev.критический { color: var(--red); }
+.rp-row-sev.minor, .rp-row-sev.незначительный { color: var(--text-3); }
+.rp-act { padding: 10px 12px; display: grid; gap: 6px; }
+.rp-act button { padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-strong); background: #0f1014; color: var(--text); font-size: 11px; font-family: var(--font-mono); }
+.rp-act button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+.phone-dock { display: flex; justify-content: center; gap: 16px; padding: 8px 0 12px; border-top: 1px solid var(--border); background: #05050a; }
+.phone-dock-dot { width: 22px; height: 22px; border-radius: 50%; background: #1a1a22; display: grid; place-items: center; font-size: 10px; color: var(--text-3); }
+
+/* Aud sidebar */
+.aud-side { display: flex; flex-direction: column; gap: 16px; }
+.aud-steps { display: flex; flex-direction: column; gap: 8px; }
+.aud-step { display: flex; gap: 12px; padding: 14px 16px; background: var(--bg-elev); border: 1px solid var(--border); border-radius: 10px; cursor: pointer; text-align: left; transition: all 0.18s; color: var(--text-2); }
+.aud-step:hover { border-color: var(--border-strong); color: var(--text); }
+.aud-step.on { background: var(--bg); border-color: var(--accent); color: var(--text); box-shadow: 0 8px 24px -12px var(--accent-glow); }
+.aud-step-code { font-family: var(--font-mono); font-size: 10px; color: var(--accent-2); letter-spacing: 0.08em; padding-top: 2px; }
+.aud-step-name { font-size: 14px; font-weight: 500; line-height: 1.2; }
+.aud-step-hint { font-size: 11px; color: var(--text-3); margin-top: 3px; }
+.aud-title { font-size: 18px; font-weight: 500; letter-spacing: -0.02em; margin: 0 0 8px; }
+.aud-sub { font-size: 13px; color: var(--text-2); margin: 0 0 16px; line-height: 1.5; text-wrap: pretty; }
+.aud-meta-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 20px; }
+.aud-meta-cell { padding: 12px 14px; background: var(--bg-elev); border: 1px solid var(--border); border-radius: 8px; }
+.aud-meta-cell .mk { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.04em; }
+.aud-meta-cell .mv { font-size: 15px; color: var(--text); margin-top: 2px; font-weight: 500; }
+
+/* ── IDGenerator ────────────────────────────────────────────────────────── */
+.idg-wrap { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px; }
+@media (max-width: 800px) { .idg-wrap { padding: 20px; } }
+.idg-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; gap: 16px; flex-wrap: wrap; }
+.idg-head-left { flex: 1; min-width: 0; }
+.idg-state { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--bg-elev); border: 1px solid var(--border); border-radius: 100px; font-family: var(--font-mono); font-size: 11px; color: var(--text-3); }
+.idg-state .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-3); }
+.idg-state.running .dot { background: var(--accent); animation: pulseLive 1s infinite; box-shadow: 0 0 8px var(--accent-glow); }
+.idg-state.done .dot { background: var(--green); box-shadow: 0 0 8px var(--green); }
+
+.dropzones { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 12px 0 20px; }
+@media (max-width: 700px) { .dropzones { grid-template-columns: 1fr; } }
+.dz { background: var(--bg-elev); border: 1.5px dashed var(--border-strong); border-radius: 12px; padding: 20px; transition: all 0.2s; cursor: pointer; position: relative; overflow: hidden; }
+.dz.empty-cta { animation: dzPulse 2.4s ease-in-out infinite; }
+@keyframes dzPulse {
+  0%, 100% { border-color: var(--border-strong); box-shadow: none; }
+  50% { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(255,107,53,0.08), 0 0 20px -4px var(--accent-glow); }
+}
+.dropzones.touched .dz.empty-cta { animation: none; }
+.idg-hint { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding: 11px 14px; background: var(--accent-soft); border: 1px solid rgba(255,107,53,0.22); border-radius: 8px; }
+.idg-hint-icon { font-size: 13px; color: var(--accent-2); font-family: var(--font-mono); }
+.idg-hint-text { font-family: var(--font-mono); font-size: 12px; color: var(--accent-2); letter-spacing: 0.02em; }
+.dz-empty { font-size: 13px; color: var(--text-3); display: flex; flex-direction: column; gap: 4px; }
+.dz-empty-cta { font-size: 13px; font-weight: 500; color: var(--accent-2); font-family: var(--font-mono); letter-spacing: 0.02em; }
+.dz-empty-sub { font-size: 11px; color: var(--text-3); font-family: var(--font-mono); }
+.dz:hover { border-color: var(--accent); background: #12121a; }
+.dz.filled { border-style: solid; border-color: var(--accent); background: #12121a; }
+.dz.filled::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at top, var(--accent-soft), transparent 60%); pointer-events: none; }
+.dz-label { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; display: flex; justify-content: space-between; }
+.dz-accept { color: var(--accent-2); }
+.dz-body { display: flex; align-items: center; gap: 12px; min-height: 40px; }
+.dz-icon { width: 36px; height: 36px; border-radius: 8px; background: var(--bg); border: 1px solid var(--border); display: grid; place-items: center; font-family: var(--font-mono); font-size: 11px; color: var(--text-3); flex-shrink: 0; }
+.dz.filled .dz-icon { border-color: var(--accent); color: var(--accent-2); background: var(--accent-soft); }
+.dz-file-name { font-size: 13px; color: var(--text); word-break: break-word; }
+.dz-file-size { font-family: var(--font-mono); font-size: 11px; color: var(--text-3); margin-top: 2px; }
+.dz-empty b { color: var(--text); font-weight: 500; }
+/* overridden above — keep for filled-state text support */
+
+.idg-run-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; gap: 16px; flex-wrap: wrap; }
+.idg-pipeline { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 28px; position: relative; }
+@media (max-width: 900px) { .idg-pipeline { grid-template-columns: 1fr; } }
+.pipe-stage { padding: 14px 16px; background: var(--bg-elev); border: 1px solid var(--border); border-radius: 10px; position: relative; transition: all 0.3s; }
+.pipe-stage.running { border-color: var(--accent); background: #12121a; box-shadow: 0 12px 30px -15px var(--accent-glow); }
+.pipe-stage.done { border-color: rgba(125,216,125,0.4); }
+.pipe-stage.running .pipe-name { color: var(--text); }
+.pipe-stage.done .pipe-check { background: var(--green); color: #0a0a0f; border-color: var(--green); }
+.pipe-stage.running .pipe-check { background: var(--accent); color: #fff; border-color: var(--accent); animation: pulseLive 1s infinite; }
+.pipe-top { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+.pipe-check { width: 18px; height: 18px; border-radius: 50%; border: 1px solid var(--border-strong); display: grid; place-items: center; font-size: 10px; font-weight: 700; color: var(--text-3); flex-shrink: 0; }
+.pipe-check::before { content: attr(data-n); }
+.pipe-stage.done .pipe-check::before { content: '✓'; }
+.pipe-name { font-size: 13px; color: var(--text-2); font-weight: 500; line-height: 1.2; }
+.pipe-detail { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); letter-spacing: 0.02em; }
+.pipe-bar { height: 2px; background: var(--border); border-radius: 2px; margin-top: 10px; overflow: hidden; }
+.pipe-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); width: 0; transition: width 0.2s linear; }
+
+.idg-outputs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+@media (max-width: 900px) { .idg-outputs { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 500px) { .idg-outputs { grid-template-columns: 1fr; } }
+.out-card { padding: 16px; background: var(--bg-elev); border: 1px solid var(--border); border-radius: 10px; opacity: 0.4; transition: all 0.4s; position: relative; overflow: hidden; }
+.out-card.ready { opacity: 1; border-color: var(--border-strong); }
+.out-card.ready::before { content: ''; position: absolute; top: 0; right: 0; width: 60px; height: 60px; background: radial-gradient(circle at top right, var(--accent-soft), transparent 70%); pointer-events: none; }
+.out-code { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; color: var(--accent-2); background: var(--accent-soft); padding: 2px 7px; border-radius: 5px; display: inline-block; }
+.out-name { font-size: 13px; color: var(--text); margin: 8px 0 2px; line-height: 1.3; }
+.out-count { font-family: var(--font-mono); font-size: 11px; color: var(--text-3); }
+
+/* Pricing */
+.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; }
+.price-card { position: relative; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); overflow: hidden; }
+.price-card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% -20%, var(--accent-soft), transparent 60%); opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+.price-card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: 0 20px 50px -20px var(--accent-glow); }
+.price-card:hover::before { opacity: 1; }
+.price-card.featured { border-color: var(--border-strong); }
+.price-card.featured::after { content: 'Популярный'; position: absolute; top: 16px; right: 16px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent-2); background: var(--accent-soft); padding: 3px 8px; border-radius: 100px; }
+.price-tier { font-family: var(--font-mono); font-size: 11px; color: var(--text-3); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 16px; }
+.price-val { font-size: 36px; font-weight: 500; letter-spacing: -0.02em; margin-bottom: 6px; display: flex; align-items: baseline; gap: 6px; }
+.price-val .rub { font-size: 18px; color: var(--text-3); }
+.price-sub { font-size: 13px; color: var(--text-3); margin-bottom: 20px; }
+.price-features { list-style: none; padding: 0; margin: 0 0 24px; display: flex; flex-direction: column; gap: 10px; border-top: 1px solid var(--border); padding-top: 20px; }
+.price-features li { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--text-2); }
+.price-features li::before { content: '→'; color: var(--accent-2); font-family: var(--font-mono); flex-shrink: 0; transition: transform 0.2s; }
+.price-card:hover .price-features li::before { transform: translateX(4px); }
+.price-cta { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 16px; background: var(--bg-elev); border: 1px solid var(--border-strong); border-radius: 8px; color: var(--text); font-size: 14px; font-weight: 500; transition: all 0.2s; }
+.price-cta .arr { transition: transform 0.2s; }
+.price-card:hover .price-cta { background: var(--accent); border-color: var(--accent); color: white; }
+.price-card:hover .price-cta .arr { transform: translateX(4px); }
+@media (max-width: 900px) { .pricing-grid { grid-template-columns: 1fr; } }
+
+/* Contact */
+.contact-section { text-align: center; }
+.contact-wrap { max-width: 680px; margin: 0 auto; }
+.contact-title { margin-left: auto; margin-right: auto; }
+.contact-section .lede { margin-left: auto; margin-right: auto; }
+.contact-rows { margin: 40px 0; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; background: var(--bg-card); }
+.contact-row { display: grid; grid-template-columns: 120px 1fr auto; align-items: center; gap: 16px; padding: 18px 24px; border-bottom: 1px solid var(--border); text-align: left; transition: background 0.15s; }
+.contact-row:last-child { border-bottom: none; }
+.contact-row:hover { background: var(--bg-card-hover); }
+.contact-row:hover .cr-arrow { color: var(--accent-2); transform: translateX(3px); }
+.cr-label { font-family: var(--font-mono); font-size: 11px; color: var(--text-3); letter-spacing: 0.04em; text-transform: uppercase; }
+.cr-val { font-size: 15px; color: var(--text); font-family: var(--font-mono); }
+.cr-arrow { color: var(--text-3); transition: all 0.15s; }
+
+/* Footer */
+.footer { border-top: 1px solid var(--border); padding: 32px; color: var(--text-3); font-size: 13px; }
+.footer-inner { max-width: var(--container); margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+.footer-right { display: flex; align-items: center; gap: 8px; }
+
+/* Tweaks panel */
+.tweaks-panel { position: fixed; bottom: 20px; right: 20px; z-index: 100; background: var(--bg-card); border: 1px solid var(--border-strong); border-radius: 12px; padding: 16px; width: 260px; box-shadow: 0 20px 60px rgba(0,0,0,0.6); font-size: 13px; }
+.tweaks-head { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; color: var(--text-2); text-transform: uppercase; }
+.tweaks-head .sys-dot { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+.tweak-row { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.tweak-label { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); letter-spacing: 0.04em; text-transform: uppercase; }
+.tweak-seg { display: flex; background: var(--bg); border: 1px solid var(--border); border-radius: 7px; padding: 2px; }
+.tweak-seg button { flex: 1; background: transparent; border: 0; color: var(--text-2); font-family: var(--font-mono); font-size: 11px; padding: 5px 8px; border-radius: 5px; transition: all 0.15s; }
+.tweak-seg button.on { background: var(--border-strong); color: var(--text); }
+.tweak-swatches { display: flex; gap: 6px; }
+.tweak-swatch { width: 26px; height: 26px; border-radius: 6px; border: 2px solid transparent; cursor: pointer; transition: border 0.15s; }
+.tweak-swatch.on { border-color: var(--text); }
+  
+/* Bento Grid for Projects right panel */
+.project-detail.bento { animation: bentoFade 0.42s cubic-bezier(0.2,0.8,0.2,1); }
+@keyframes bentoFade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.bento-head { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 20px; }
+.bento-status { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.st-pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 100px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.04em; border: 1px solid; backdrop-filter: blur(10px); }
+.st-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+.st-pill.s-production { color: var(--green); border-color: rgba(125,216,125,0.35); background: rgba(125,216,125,0.06); }
+.st-pill.s-production .st-dot { background: var(--green); box-shadow: 0 0 8px var(--green); }
+.st-pill.s-beta { color: var(--accent-2); border-color: rgba(255,151,112,0.35); background: rgba(255,107,53,0.06); }
+.st-pill.s-beta .st-dot { background: var(--accent-2); box-shadow: 0 0 8px var(--accent-glow); }
+.st-pill.s-dev { color: var(--accent-2); border-color: rgba(255,151,112,0.35); background: rgba(255,107,53,0.06); }
+.st-pill.s-dev .st-dot { background: var(--accent-2); box-shadow: 0 0 8px var(--accent-glow); animation: pulseDot 1.8s ease-in-out infinite; }
+@keyframes pulseDot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+.st-pill.s-planned { color: var(--text-2); border-color: var(--border-strong); background: var(--bg-elev); }
+.st-pill.s-planned .st-dot { background: var(--text-3); }
+.bento-grid { display: flex; flex-direction: column; gap: 12px; }
+.bento-card { position: relative; padding: 20px 22px 22px; border-radius: 14px; background: rgba(255,255,255,0.025); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,0.06); overflow: hidden; transition: border-color 0.25s, background 0.25s; width: 100%; }
+.bento-card:hover { border-color: rgba(255,255,255,0.12); background: rgba(255,255,255,0.04); }
+.bento-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent); }
+.bento-solution { background: rgba(255,107,53,0.035); border-color: rgba(255,151,112,0.14); }
+.bento-solution::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at top right, var(--accent-soft), transparent 60%); opacity: 0.5; pointer-events: none; }
+.bento-label { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); margin-bottom: 10px; }
+.bl-mark { width: 6px; height: 6px; border-radius: 2px; }
+.bm-red { background: var(--red); box-shadow: 0 0 8px rgba(248,113,113,0.5); }
+.bm-accent { background: var(--accent-2); box-shadow: 0 0 8px var(--accent-glow); }
+.bm-green { background: var(--green); box-shadow: 0 0 8px rgba(125,216,125,0.5); }
+.bento-text { color: var(--text); font-size: 14px; line-height: 1.55; font-weight: 400; }
+.bento-solution .bento-text { font-size: 14.5px; }
+.bento-problem .bento-text { color: var(--text-2); }
+.bento-result .bento-text { color: var(--text); font-weight: 500; }
+@media (max-width: 900px) { .bento-grid { grid-template-columns: 1fr; } .bento-problem, .bento-solution, .bento-result { grid-column: 1; grid-row: auto; } }
+
+/* Letter text + typewriter cursor */
+.letter-text { font-size: 13px; line-height: 1.6; white-space: pre-wrap; color: var(--text); padding: 8px 0; font-family: var(--font-sans); }
+.cursor-blink { display: inline-block; color: var(--accent-2); animation: cursorBlink 0.8s steps(2) infinite; margin-left: 1px; font-weight: 400; }
+@keyframes cursorBlink { 50% { opacity: 0; } }
+
+/* Style buttons — orange neon border when active */
+.letter-style button.on { border-color: var(--accent) !important; color: var(--accent-2) !important; background: var(--accent-soft) !important; box-shadow: 0 0 0 1px var(--accent), 0 0 16px -4px var(--accent-glow); }
+</style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <script>
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "lang": "ru",
+      "heroVariant": "B",
+      "accent": "#FF6B35"
+    }/*EDITMODE-END*/;
+  </script>
+
+  <script>
+// Scenarios data for StroyOps-Bot demo
+// 3 cases × 3 styles × 2 languages
+window.STROYOPS_SCENARIOS = {
+  ru: [
+    {
+      id: 'case1',
+      label: 'Кейс 1 · КОР · колодец К-12',
+      tag: 'КОР',
+      transcript: 'Так, по К-12... короче, у нас тут засада. Смотрю по чертежу — колодец полторашка, тысяча пятьсот. А приходит у нас три трубы: магистраль тысячная, и две сбоку — шестисотая и четырёхсотая. Они в полторашку физически не лезут, угол примыкания не выдерживается, лоток не разводится. Нужна двухтысячная, минимум. У меня монтажники стоят, кольца лежат привезённые — полторашка, как в РД. По уму — надо письмо в АэроКомпозит, чтобы корректировку выдали и смету пересчитали, потому что разница в кольцах копеечная не получится. Сегодня же, иначе завтра у меня бригада простаивает, экскаватор тоже. Ну и СД, конечно, чтобы потом КС-2 закрыли без проблем.',
+      duration: '0:45',
+      header: {
+        number: '№ 148/26.00',
+        date: '09 апреля 2026 г.',
+        to: 'АО «ТехноСтрой-Альфа»',
+        attn: 'Иванову А. Н., зам. ген. директора — директору филиала в г. Ульяновск',
+        subject: 'КОР · корректировка РД 22.041.1-ИНЖ-НВК.1, узел 3 (колодец К-12). Несоответствие диаметра колодца габаритам присоединяемых трубопроводов'
+      },
+      letters: {
+        official: `Уважаемый Александр Николаевич!
+
+В соответствии с Договором подряда № 161-24 от 31.07.2024 г., в ходе подготовки к производству работ по устройству наружных сетей водоотведения на объекте «Е10-Е1» Подрядчиком проведён анализ рабочей документации шифр 22.041.1-ИНЖ-НВК.1, лист 14, узел 3 (колодец К-12).
+
+Установлено следующее. Согласно листу 14 указанного раздела, колодец К-12 предусмотрен сборным железобетонным, внутренним диаметром 1500 мм. При этом в данный колодец проектом запроектировано присоединение трёх трубопроводов: магистрального Ду1000 мм, а также подключающих Ду600 мм и Ду400 мм. Геометрическая проверка узла по СП 32.13330.2018 (п. 6.3.4) показала, что компоновка трёх присоединений в колодце Ø1500 мм нарушает минимально допустимые осевые расстояния между присоединениями. Минимальный внутренний диаметр колодца должен составлять 2000 мм.
+
+Руководствуясь п. 3.5 Договора и ст. 743 ГК РФ, просим:
+1. Обеспечить выдачу скорректированной РД шифр 22.041.1-ИНЖ-НВК.1 (узел 3 листа 14) с заменой К-12 на Ø2000 мм.
+2. Обеспечить выдачу скорректированной сметной документации с учётом изменения позиций ФЕР 23-03-002-04.
+3. До получения откорректированной РД и СД работы по устройству колодца К-12 считать приостановленными.
+
+Срок ожидаемого ответа — 3 рабочих дня. В случае задержки выдачи документации Подрядчик будет вынужден руководствоваться ст. 716 и ст. 719 ГК РФ с фиксацией простоя.
+
+Приложения:
+1. Графическая схема предлагаемого узла К-12 (Ø2000) — 1 л.
+2. Расчёт-обоснование по СП 32.13330.2018 — 1 л.
+3. Фотофиксация привезённых ж/б колец Ø1500 — 1 л.
+
+С уважением,
+Лавров Д. А., зам. директора по производству ООО «СтройПроект-Регион»`,
+        soft: `Уважаемый Александр Николаевич!
+
+При подготовке к монтажу узла К-12 выявлено несоответствие: по РД колодец Ø1500, фактически в него заводятся три трубопровода (Ду1000 + Ду600 + Ду400), что нарушает п. 6.3.4 СП 32.13330.2018. Требуется типоразмер Ø2000.
+
+Предлагаю совместно рассмотреть вариант замены колодца на Ø2000 мм. В течение 3 рабочих дней будем признательны за выдачу корректировки РД 22.041.1-ИНЖ-НВК.1 (л. 14, узел 3) и пересчитанной СД. До выдачи документации работы на узле приостановлены (ст. 716 ГК РФ).
+
+Готовы обсудить детали на рабочем совещании в удобное для Вас время.
+
+С уважением,
+Лавров Д. А.`,
+        hard: `Уважаемый Александр Николаевич!
+
+Настоящим фиксируем: рабочая документация 22.041.1-ИНЖ-НВК.1 (лист 14, узел 3) содержит неустранимое несоответствие — колодец К-12 запроектирован Ø1500 мм при необходимости присоединения трёх трубопроводов Ду1000/600/400, что прямо нарушает п. 6.3.4 СП 32.13330.2018 и делает узел физически нереализуемым.
+
+С 09.04.2026 г. работы по устройству К-12 и сопрягаемых участков сетей водоотведения приостановлены на основании ст. 716, 719 ГК РФ и п. 3.2.2.2 Договора № 161-24. Бригада из 6 человек, экскаватор и доставленные ж/б кольца находятся в состоянии вынужденного простоя.
+
+Требуем в течение 24 часов с момента получения письма:
+1. Назначить совещание с участием Автора проекта (ООО ПСК «Инжиниринг») для согласования замены К-12 на Ø2000 мм.
+2. Зафиксировать дату фактической выдачи скорректированных РД и СД в протоколе.
+
+Дальнейший простой и связанный с ним перенос срока сдачи этапа подлежит компенсации в порядке ст. 718 ГК РФ. Ответственность за нарушение графика производства работ возлагается на Заказчика.
+
+С уважением,
+Пиянзин С. С., генеральный директор ООО «СтройПроект-Регион»
+М.П.`
+      }
+    },
+    {
+      id: 'case2',
+      label: 'Кейс 2 · ДОП · огнезащита ригелей',
+      tag: 'ДОП',
+      transcript: 'Денис, тут такая история по второму этажу АБЧ. Монтажники балки уже выставили, ригели стоят, к сварке готовы. Я полез в смету — а там по огнезащите вообще ничего. Ноль. По проекту ПБшка пишет: R90 на ригели. Я нашёл альбом по «Терме» — расход три двести на квадрат, два слоя. Это материала тонн на полста, плюс работа — пескоструйка, грунт огнезащитный, нанесение. По-хорошему — это допы, надо письмо им в АэроКомпозит, чтобы согласовали, выдали либо изменения, либо ДС. Потому что иначе мы ригели зашьём гипсокартоном, инженерку уложим — а потом надзор приедет и завернёт всё к чёрту. Прикинул по-быстрому: миллиона на четыре с половиной потянет минимум. Срочно нужно решение, потому что у меня бригада уже простаивает третий день.',
+      duration: '0:50',
+      header: {
+        number: '№ 152/26.00',
+        date: '10 апреля 2026 г.',
+        to: 'АО «ТехноСтрой-Альфа»',
+        attn: 'Иванову А. Н., зам. ген. директора — директору филиала в г. Ульяновск',
+        subject: 'ДОП · работы по огнезащите металлических ригелей перекрытия 2 этажа АБЧ объекта Е10-Е1'
+      },
+      letters: {
+        official: `Уважаемый Александр Николаевич!
+
+В соответствии с Договором подряда № 161-24 от 31.07.2024 г., в ходе исполнения работ по устройству перекрытия второго этажа АБЧ объекта «Е10-Е1» Подрядчиком выявлено наличие проектных требований, не подкреплённых сметной документацией.
+
+Согласно разделу 22.023.1-ИНЖ-ПБ.2 (л. 9), для несущих металлических ригелей перекрытия установлен предел огнестойкости R90 (ст. 87 ФЗ-123). Достижение R90 для двутавров 35Б1 (приведённая толщина 4,2 мм) по альбому производителя «Терма-Стандарт» обеспечивается двухслойным нанесением состава с расходом 3,2 кг/м².
+
+Анализ ЛСР № 02-01-02 КМ показал: учтены монтаж металлоконструкций и грунтовка ГФ-021. Позиции на огнезащитный состав, пескоструйную очистку, нанесение в два слоя и контроль DFT — отсутствуют. Расчётный объём — 1 580 м².
+
+Руководствуясь ст. 743 п. 3, ст. 709 ГК РФ и п. 7.5 Договора, просим:
+1. Согласовать выполнение работ по огнезащите ригелей как дополнительных.
+2. Обеспечить выдачу проектного решения (марка состава, расход, схема нанесения, контроль DFT).
+3. Обеспечить разработку и выдачу сметной документации.
+
+Ориентировочная стоимость — 4 480 000 руб. без НДС. Срок ожидаемого ответа — 3 рабочих дня. До получения проектного решения работы по устройству подвесного потолка и инженерных сетей в зоне ригелей не возобновляются.
+
+Приложения:
+1. Расчёт объёма поверхности ригелей — 2 л.
+2. Выписка из альбома «Терма-Стандарт» — 3 л.
+3. Калькуляция предварительной стоимости — 1 л.
+
+С уважением,
+Лавров Д. А., зам. директора по производству ООО «СтройПроект-Регион»`,
+        soft: `Уважаемый Александр Николаевич!
+
+По разделу 22.023.1-ИНЖ-ПБ.2 (л. 9) для ригелей перекрытия требуется R90. В ЛСР-02-01-02 КМ позиции на огнезащитный состав, подготовку поверхности и нанесение отсутствуют. Расчётный объём — 1 580 м², ориентировочная стоимость — порядка 4,48 млн руб. без НДС.
+
+Просим рассмотреть выполнение указанных работ как дополнительных в порядке ст. 743 п. 3 ГК РФ и п. 7.5 Договора. В течение 3 рабочих дней были бы признательны за выдачу проектного решения и СД. До получения документации закрытие ригелей отделкой и сетями приостановлено.
+
+Готовы предоставить дополнительные расчёты и встретиться для обсуждения решения.
+
+С уважением,
+Лавров Д. А.`,
+        hard: `Уважаемый Александр Николаевич!
+
+Настоящим официально уведомляем: в РД 22.023.1-ИНЖ-ПБ.2 (л. 9) для несущих ригелей перекрытия 2 этажа АБЧ установлен предел огнестойкости R90 (требование ст. 87 ФЗ-123), при этом в ЛСР-02-01-02 КМ соответствующие материалы и работы полностью отсутствуют.
+
+Выполнение последующих этапов (подвесные потолки, прокладка кабельных трасс) без огнезащиты ригелей является грубым нарушением требований пожарной безопасности и неизбежно повлечёт отказ органов госстройнадзора в выдаче ЗОС. Ранее данный риск частично затрагивался в письме Исх. № 119/26.00 от 18.03.2026 г.
+
+Требуем в течение 24 часов:
+1. Подтвердить признание работ по огнезащите ригелей дополнительными в порядке ст. 743 п. 3 ГК РФ.
+2. Назначить рабочее совещание с Автором проекта для выдачи проектного решения и СД в срок не более 5 рабочих дней.
+
+Работы в зоне ригелей перекрытия 2 этажа АБЧ остановлены с 10.04.2026 г. Простой бригады (8 чел.) и связанный с ним перенос срока сдачи этапа фиксируются и подлежат компенсации в порядке ст. 718 ГК РФ.
+
+С уважением,
+Пиянзин С. С., генеральный директор ООО «СтройПроект-Регион»
+М.П.`
+      }
+    },
+    {
+      id: 'case3',
+      label: 'Кейс 3 · СТОП · узел примыкания кровли',
+      tag: 'СТОП',
+      transcript: 'Денис, кровля встала намертво. Смотри: мы доходим сэндвичем до парапета сущки — а там в проекте узла нет. Вообще. В альбоме АС только привязка к новому парапету, к нашему. А к существующему — пустота. Звонил в инжиниринг автору, он говорит «решайте на месте». Ну, на месте я не могу — там и фартук другой, и высоты не бьются сантиметров на восемьдесят, и капельника нет. Если оставить как есть — первый же ливень утеплитель замочит, потом протечки в цеха пойдут. У них там оборудование, кстати, дорогое, лазерные станки. Я работы по этому участку остановил, монтажников снял. Надо письмо — приостановка официальная, чтобы потом, если сроки поплывут, было на что ссылаться. И срочно решение от автора, иначе кровля до зимы не закроется.',
+      duration: '0:55',
+      header: {
+        number: '№ 156/26.00',
+        date: '11 апреля 2026 г.',
+        to: 'АО «ТехноСтрой-Альфа»',
+        attn: 'Иванову А. Н., зам. ген. директора — директору филиала в г. Ульяновск',
+        subject: 'СТОП · приостановка работ по устройству кровли в зоне примыкания к парапету существующего корпуса'
+      },
+      letters: {
+        official: `Уважаемый Александр Николаевич!
+
+В соответствии с Договором подряда № 160-24 от 31.07.2024 г., руководствуясь п. 3.2.2.2 Договора, ст. 716 и п. 1 ст. 719 ГК РФ, уведомляем Вас о приостановке работ по устройству кровельного покрытия в осях 14–22 / Е–К объекта «Е10-Е1» с 11 апреля 2026 г.
+
+При выполнении работ по устройству кровли из сэндвич-панелей в зоне сопряжения нового складского корпуса с существующим производственным зданием выявлено отсутствие в РД проектного решения по узлу примыкания. Альбом узлов раздела 22.023.2-ИНЖ-АС.1 (л. 18–24) содержит исключительно узлы примыкания к новому парапету. Узел примыкания к существующему парапету в составе РД отсутствует.
+
+Самостоятельное конструирование узла Подрядчиком невозможно:
+1. Разница отметок верха парапетов составляет ~780 мм, требуется компенсирующая конструкция.
+2. Существующий парапет не имеет оголовка с капельником — риск намокания утеплителя.
+3. Требуется конструктивный расчёт по СП 20.13330.2016 — компетенция Автора проекта.
+
+По прогнозу метеослужбы на ближайшие 7 суток — осадки. Продолжение работ создаёт прямую угрозу подтопления действующих производственных помещений Заказчика с лазерным раскройным оборудованием.
+
+Руководствуясь ст. 716, п. 1 ст. 719 ГК РФ и п. 3.5 Договора, просим:
+1. В кратчайший срок организовать выдачу Автором проекта (ООО ПСК «Инжиниринг») проектного решения по узлу примыкания.
+2. Обеспечить корректировку сметной документации.
+3. До получения проектного решения работы по устройству кровли в указанной зоне считать приостановленными.
+
+В соответствии со ст. 718 ГК РФ простой по причине неисполнения Заказчиком встречных обязанностей влечёт перенос сроков и компенсацию убытков.
+
+Приложения:
+1. Фотофиксация зоны примыкания (5 ракурсов) — 3 л.
+2. Схема разницы отметок парапетов с обмерами — 1 л.
+3. Прогноз осадков по г. Ульяновск на 11.04.2026–18.04.2026 — 1 л.
+
+С уважением,
+Пиянзин С. С., генеральный директор ООО «СтройПроект-Регион»
+М.П.`,
+        soft: `Уважаемый Александр Николаевич!
+
+В РД 22.023.2-ИНЖ-АС.1 (л. 18–24) отсутствует узел примыкания нового кровельного покрытия к существующему парапету. Разница отметок ~780 мм, капельника нет. Самостоятельное решение узла невозможно (требуется конструктивный расчёт по СП 20.13330.2016).
+
+С 11.04.2026 г. работы по кровле в осях 14–22 / Е–К вынуждены приостановить (ст. 716, 719 ГК РФ; п. 3.2.2.2 Договора). Были бы признательны за содействие в выдаче проектного решения Автором проекта в кратчайший срок. Ожидаются осадки — есть риск подтопления действующего производства Заказчика.
+
+Готовы организовать выездное совещание на объекте в удобное для Вас время.
+
+С уважением,
+Пиянзин С. С.`,
+        hard: `Уважаемый Александр Николаевич!
+
+Настоящим официально уведомляем: с 11.04.2026 г. работы по устройству кровли в зоне сопряжения нового корпуса с существующим производственным зданием (оси 14–22 / Е–К) объекта «Е10-Е1» полностью приостановлены на основании ст. 716, 719 ГК РФ и п. 3.2.2.2 Договора № 160-24.
+
+Причина — отсутствие в составе РД 22.023.2-ИНЖ-АС.1 проектного решения по узлу примыкания к существующему парапету при разнице отметок ~780 мм и отсутствии оголовка с капельником. Прогноз осадков на ближайшие 7 суток — неблагоприятный.
+
+Прямой риск: намокание утеплителя сэндвич-панелей и протечки в действующие производственные помещения Заказчика, в которых размещено лазерное раскройное оборудование. Возможный ущерб от выхода оборудования из строя превышает стоимость работ по узлу более чем на порядок.
+
+Требуем в течение 24 часов:
+1. Назначить выезд представителя Автора проекта (ООО ПСК «Инжиниринг») на объект для разработки проектного решения.
+2. Установить срок выдачи РД и СД — не более 5 рабочих дней.
+3. Подтвердить готовность Заказчика принять на себя риски ущерба от осадков на период простоя в порядке ст. 718 ГК РФ.
+
+Все убытки, вызванные простоем бригады кровельщиков (12 чел.), а также возможным повреждением имущества Заказчика, подлежат отнесению на сторону, не исполнившую обязанность по передаче полной технической документации (ст. 743 ГК РФ).
+
+С уважением,
+Пиянзин С. С., генеральный директор ООО «СтройПроект-Регион»
+М.П.`
+      }
+    }
+  ],
+  en: [
+    {
+      id: 'case1',
+      label: 'Case 1 · CHANGE-REQUEST · Manhole MH-12',
+      tag: 'CHANGE',
+      transcript: 'OK, about MH-12 — we\'ve got a problem. Per the drawings, the manhole is a 1500. But three pipes come in: the main is a 1000, plus a 600 and a 400 on the sides. They physically don\'t fit a 1500. We need a 2000, minimum. My crew is standing around, the rings we got delivered are 1500 per the drawings. We need to write so they issue a revision and recalculate the BoQ. Today, otherwise tomorrow the crew is idle and so is the excavator.',
+      duration: '0:45',
+      header: {
+        number: 'Ref. No. 148/26.00',
+        date: 'April 9, 2026',
+        to: 'TechnoStroy-Alpha JSC',
+        attn: 'Mr. A. N. Ivanov, Deputy CEO — Director of Ulyanovsk Branch',
+        subject: 'CHANGE-REQUEST · revision to detailed design 22.041.1-ENG-EWS.1, node 3 (manhole MH-12)'
+      },
+      letters: {
+        official: `Dear Mr. Ivanov,
+
+Pursuant to Construction Contract No. 161-24 dated July 31, 2024, in the course of preparing for stormwater network installation at the "E10-E1" facility, the Contractor has analyzed detailed design code 22.041.1-ENG-EWS.1, sheet 14, node 3 (manhole MH-12).
+
+Per sheet 14, manhole MH-12 is specified as precast reinforced concrete with an internal diameter of 1500 mm. However, the design provides for the connection of three pipelines: a main DN1000 mm and two branch lines DN600 mm and DN400 mm. Geometric verification per SP 32.13330.2018 (clause 6.3.4) showed that accommodating three connections in a Ø1500 mm manhole violates the minimum axial distances. Minimum internal diameter must be 2000 mm.
+
+Pursuant to clause 3.5 of the Contract and Article 743 of the Civil Code, we kindly request:
+1. Issue a revised detailed design 22.041.1-ENG-EWS.1 (node 3, sheet 14) replacing MH-12 with Ø2000 mm.
+2. Issue revised cost estimates reflecting the changes to FER 23-03-002-04.
+3. Until the revised DD and BoQ are received, works on MH-12 are suspended.
+
+Expected response — 3 business days. Should issuance be delayed, the Contractor will invoke Articles 716 and 719 of the Civil Code.
+
+Enclosures:
+1. Graphic diagram of the proposed MH-12 node (Ø2000) — 1 p.
+2. Calculation rationale per SP 32.13330.2018 — 1 p.
+3. Photographic record of delivered Ø1500 RC rings — 1 p.
+
+Yours sincerely,
+D. A. Lavrov, Deputy Director for Production, StroyProekt-Region LLC`,
+        soft: `Dear Mr. Ivanov,
+
+In preparing installation of node MH-12, a discrepancy has been identified: per the DD the manhole is Ø1500, but three pipelines (DN1000 + DN600 + DN400) are routed into it, violating clause 6.3.4 of SP 32.13330.2018. Size Ø2000 is required.
+
+We propose jointly reviewing a replacement with Ø2000 mm. Within 3 business days we would appreciate issuance of the revised DD and BoQ. Until then, works at the node are suspended (Article 716 of the Civil Code).
+
+Happy to discuss details at a working meeting at your convenience.
+
+Yours sincerely,
+D. A. Lavrov`,
+        hard: `Dear Mr. Ivanov,
+
+We hereby record that detailed design 22.041.1-ENG-EWS.1 (sheet 14, node 3) contains an unresolvable discrepancy — manhole MH-12 is designed at Ø1500 mm while requiring connection of three pipelines DN1000/600/400, in direct violation of clause 6.3.4 of SP 32.13330.2018, rendering the node physically unbuildable.
+
+Effective April 9, 2026, works on MH-12 and connected stormwater segments are SUSPENDED pursuant to Articles 716, 719 of the Civil Code and clause 3.2.2.2 of Contract No. 161-24. A 6-person crew, an excavator and delivered RC rings are in forced idle status.
+
+We DEMAND, within 24 hours:
+1. Convene a meeting with the Project Author (Engineering DC LLC) to agree on replacement of MH-12 with Ø2000 mm.
+2. Record the actual issuance date of the revised DD and BoQ in the minutes.
+
+Further idle time and the resulting schedule shift shall be compensated under Article 718. Responsibility for the schedule breach rests with the Client.
+
+Yours sincerely,
+S. S. Piyanzin, CEO, StroyProekt-Region LLC
+[Seal]`
+      }
+    },
+    {
+      id: 'case2',
+      label: 'Case 2 · ADDITIONAL-WORKS · fire protection',
+      tag: 'ADD',
+      transcript: 'Denis, here\'s the situation on the second floor of the office block. The crew has the beams up, ready for welding. I went into the BoQ — nothing on fire protection. Zero. The fire safety section says R90 on the girders. I found the manufacturer\'s manual for "Therma" — 3.2 kg per square meter, two coats. About fifty tons of material plus labor. Properly speaking this is additional works. Quick estimate — at least 4.5 million. We need a decision urgently.',
+      duration: '0:50',
+      header: {
+        number: 'Ref. No. 152/26.00',
+        date: 'April 10, 2026',
+        to: 'TechnoStroy-Alpha JSC',
+        attn: 'Mr. A. N. Ivanov, Deputy CEO — Director of Ulyanovsk Branch',
+        subject: 'ADDITIONAL-WORKS · fire protection of steel girders, 2nd floor office block, "E10-E1"'
+      },
+      letters: {
+        official: `Dear Mr. Ivanov,
+
+Pursuant to Construction Contract No. 161-24 dated July 31, 2024, in the course of work on the 2nd floor floor structure of the office block of the "E10-E1" facility, the Contractor has identified design requirements not supported by the cost estimates.
+
+Per section 22.023.1-ENG-FS.2 (sheet 9), the steel girders require a fire resistance rating of R90 (Article 87 of FL No. 123-FZ). For I-beam 35B1 (reduced metal thickness 4.2 mm), per the manufacturer's manual "Therma-Standard", R90 is achieved by two-coat application at 3.2 kg/m².
+
+Analysis of cost estimate No. 02-01-02 SC shows: steel installation and GF-021 primer are accounted for; the fire-protective coating, sandblasting, two-coat application and DFT control are NOT. Calculated area — 1,580 m².
+
+Pursuant to Article 743 § 3, Article 709 of the Civil Code and clause 7.5, we kindly request:
+1. Approve the fire protection as additional works.
+2. Issue the design solution (coating brand, consumption, application scheme, DFT control).
+3. Issue cost estimate documentation.
+
+Estimated cost — RUB 4,480,000 excl. VAT. Expected response — 3 business days. Until the design solution is received, works on suspended ceilings and utilities in the girder zone shall not resume.
+
+Enclosures:
+1. Calculation of girder surface area — 2 p.
+2. Extract from "Therma-Standard" manual — 3 p.
+3. Preliminary cost estimate — 1 p.
+
+Yours sincerely,
+D. A. Lavrov, Deputy Director for Production, StroyProekt-Region LLC`,
+        soft: `Dear Mr. Ivanov,
+
+Per section 22.023.1-ENG-FS.2 (sheet 9) the floor girders require R90. In cost estimate 02-01-02 SC, items for the fire-protective coating, surface preparation and application are absent. Area — 1,580 m², estimated cost — approx. RUB 4.48 mn excl. VAT.
+
+We kindly ask to consider these works as additional pursuant to Article 743 § 3 of the Civil Code and clause 7.5. Within 3 business days we would appreciate issuance of the design solution and BoQ. Closure of the girders with finishes and utilities is paused.
+
+Happy to share further calculations and meet to discuss.
+
+Yours sincerely,
+D. A. Lavrov`,
+        hard: `Dear Mr. Ivanov,
+
+We hereby formally notify you: per DD 22.023.1-ENG-FS.2 (sheet 9) the load-bearing girders require fire resistance R90 (Article 87 of FL-123), while in cost estimate 02-01-02 SC the corresponding materials and works are entirely absent.
+
+Performing subsequent stages (suspended ceilings, cable trays) without fire protection constitutes a gross violation of fire safety requirements and will inevitably result in refusal by state construction supervision authorities to issue a Compliance Certificate. This risk was previously raised in letter Ref. No. 119/26.00 dated March 18, 2026.
+
+We DEMAND within 24 hours:
+1. Confirm recognition of girder fire protection works as additional pursuant to Article 743 § 3.
+2. Schedule a working meeting with the Project Author for issuance of the design solution and BoQ within no more than 5 business days.
+
+Works in the 2nd floor girder zone are suspended as of April 10, 2026. Idle time of the 8-person crew and schedule shift are recorded and subject to compensation under Article 718.
+
+Yours sincerely,
+S. S. Piyanzin, CEO, StroyProekt-Region LLC
+[Seal]`
+      }
+    },
+    {
+      id: 'case3',
+      label: 'Case 3 · STOP · roof-to-parapet junction',
+      tag: 'STOP',
+      transcript: 'Denis, the roof has come to a standstill. We\'re running the sandwich panels up to the existing parapet — no node in the project. The architectural details album only covers the connection to the new parapet. I called the project author, he says "decide on site". On site I can\'t — heights don\'t match by about 80 cm, no drip edge. First storm will soak the insulation, then leaks into the production halls. They\'ve got laser cutters in there. I stopped the works, pulled the crew off. We need an official suspension letter and urgently a decision from the author.',
+      duration: '0:55',
+      header: {
+        number: 'Ref. No. 156/26.00',
+        date: 'April 11, 2026',
+        to: 'TechnoStroy-Alpha JSC',
+        attn: 'Mr. A. N. Ivanov, Deputy CEO — Director of Ulyanovsk Branch',
+        subject: 'SUSPENSION · roofing works in the zone of junction with the existing parapet'
+      },
+      letters: {
+        official: `Dear Mr. Ivanov,
+
+Pursuant to Construction Contract No. 160-24 dated July 31, 2024, and guided by clause 3.2.2.2 and Articles 716 and 719 § 1 of the Civil Code, we hereby NOTIFY you of the suspension of roofing works in axes 14–22 / E–K of the "E10-E1" facility, effective April 11, 2026.
+
+During roofing installation where the new warehouse abuts the existing production building, it has been found that the DD lacks a junction node. The details album of section 22.023.2-ENG-AS.1 (sheets 18–24) contains only nodes for connection to the new parapet. The connection node to the existing parapet is ABSENT.
+
+Self-design of this node is impossible:
+1. Parapet top elevation difference is ~780 mm, requiring a compensating structure.
+2. The existing parapet has no drip edge — risk of insulation soaking.
+3. Structural calculation per SP 20.13330.2016 is required — competence of the Project Author.
+
+Per the weather forecast, precipitation is expected over the next 7 days. Continuing works without a design solution creates a direct threat of flooding to the Client's active production facilities housing laser cutting equipment.
+
+Pursuant to Articles 716, 719 § 1 and clause 3.5, we kindly request:
+1. Promptly arrange issuance, by the Project Author (Engineering DC LLC), of the design solution for the junction node.
+2. Provide corresponding revision to the cost estimate documentation.
+3. Until received, roofing works in the said zone are suspended.
+
+Per Article 718, idle time caused by the Client's failure to perform counter-obligations entails postponement of dates and compensation.
+
+Enclosures:
+1. Photographic record of the junction zone (5 angles) — 3 p.
+2. Diagram of the parapet elevation difference with measurements — 1 p.
+3. Precipitation forecast for Ulyanovsk, April 11–18, 2026 — 1 p.
+
+Yours sincerely,
+S. S. Piyanzin, CEO, StroyProekt-Region LLC
+[Seal]`,
+        soft: `Dear Mr. Ivanov,
+
+In DD 22.023.2-ENG-AS.1 (sheets 18–24) there is no junction node between the new roofing and the existing parapet. Elevation difference ~780 mm, no drip edge. Self-design is impossible (structural calculation per SP 20.13330.2016 required).
+
+Effective April 11, 2026 we had to pause roofing works in axes 14–22 / E–K (Articles 716, 719 of the Civil Code; clause 3.2.2.2). We would be grateful for assistance in arranging the design solution from the Project Author at the earliest. Precipitation is expected — risk of flooding to active production.
+
+Happy to arrange an on-site meeting at your convenience.
+
+Yours sincerely,
+S. S. Piyanzin`,
+        hard: `Dear Mr. Ivanov,
+
+We hereby formally notify you: effective April 11, 2026, roofing works in axes 14–22 / E–K of the "E10-E1" facility are FULLY SUSPENDED pursuant to Articles 716, 719 of the Civil Code and clause 3.2.2.2 of Contract No. 160-24.
+
+Cause — absence in DD 22.023.2-ENG-AS.1 of the design solution for the junction node, given an elevation difference of ~780 mm and no drip edge. 7-day precipitation forecast is unfavorable.
+
+Direct risk: insulation soaking and leaks into the Client's active production facilities housing laser cutting equipment. Potential equipment damage exceeds node works cost by an order of magnitude.
+
+We DEMAND within 24 hours:
+1. Schedule an on-site visit by a Project Author (Engineering DC LLC) representative for development of the design solution.
+2. Set deadline for DD and BoQ — no more than 5 business days.
+3. Confirm Client's readiness to assume risks of precipitation damage during the standstill under Article 718.
+
+All losses caused by the standstill of the 12-person roofing crew, and any damage to the Client's property, shall be attributed to the party that failed to provide complete technical documentation (Article 743).
+
+Yours sincerely,
+S. S. Piyanzin, CEO, StroyProekt-Region LLC
+[Seal]`
+      }
+    }
+  ]
+};
+
+</script>
+  <script type="text/babel">
+const CONTENT = {
+  ru: {
+    nav: { about: 'О себе', projects: 'Проекты', demo: 'Демо', system: 'Подход', stack: 'Стек', pricing: 'Тарифы', gov: '44-ФЗ / 223-ФЗ', contact: 'Контакты' },
+    hero: {
+      eyebrow: 'Денис Лавров · Заместитель директора',
+      title: ['AI и автоматизация', 'для строительных систем'],
+      subtitle: 'Решаю реальные инженерные и операционные задачи. Строю системы, которые сокращают ручной труд, исключают ошибки и ускоряют сдачу объектов.',
+      ctaPrimary: 'Посмотреть проекты', ctaSecondary: 'Связаться',
+      metricLabels: ['лет в стройке', 'систем в работе', 'поддерживаемых AI-моделей'],
+      metricValues: ['12+', '6', '8+'],
+    },
+    about: {
+      kicker: '01 — Позиционирование',
+      title: 'Не дизайнер. Не фрилансер. Инженер, который строит системы.',
+      body: 'Заместитель директора строительной компании. Специализируюсь на строительном контроле, исполнительной документации, госконтрактах по 44-ФЗ и сметных расчётах в «Гранд Смета». Параллельно разрабатываю AI-инструменты, которые автоматизируют всё, что обычно делают вручную: от согласования работ до формирования АОСР.',
+      pillars: [
+        { label: 'Что делаю', text: 'Автоматизирую документооборот, коммуникацию на объектах и контроль качества с помощью AI-агентов и интеграций.' },
+        { label: 'С кем работаю', text: 'Строительные компании, госзаказчики, технические заказчики, разработчики инфраструктурных решений.' },
+        { label: 'Чем отличаюсь', text: 'Совмещаю глубокое понимание стройки с инженерным подходом к системам. Не теоретик — практик.' },
+      ],
+    },
+    projects: {
+      kicker: '02 — Проекты',
+      title: 'Системы, которые работают на реальных объектах',
+      items: [
+        { code: 'P-01', name: 'Apartment Auditor', tag: 'Android · RuStore · React Native',
+          problem: 'Приёмка квартиры у застройщика: дольщик ходит с блокнотом, фотографирует дефекты, теряет фото, забывает нормативы, тратит 3-4 часа и всё равно что-то упускает.',
+          solution: 'Мобильное приложение (React Native + Expo + Zustand + Nativewind) со структурированным чек-листом по 220 нормативным пунктам (СП, ГОСТ), фиксацией дефектов фото + координатой на плане, 7 PDF-шаблонов, 447 unit-тестов. Работает офлайн.',
+          result: 'Опубликовано в RuStore (com.lavr5000xxx.apartmentauditor). Приёмка укладывается в 40 минут по чек-листу. Бесплатно и без рекламы.',
+          status: 'Запущено' },
+        { code: 'P-02', name: 'PDF-Extractor', tag: 'Vision AI · Schema-Guided Reasoning · Python',
+          problem: 'Входной контроль рабочей документации: ПТО-шник получает пакет PDF-чертежей (КЖ, П-КР, АР, КМ) на сотни листов и вручную выписывает марки арматуры, спецификации, объёмы — по 2-3 дня на объект.',
+          solution: 'Pipeline на Python: PyMuPDF рендерит страницы, Vision AI (Gemini / Qwen 3 VL) с Schema-Guided Reasoning извлекает структурированные данные по профилям (КЖ — железобетон, П-КР — демонтаж, АР — архитектура). На выходе — единая ресурсная ведомость в Excel.',
+          result: 'Используется на реальных объектах (Ульяновск, Стройинвест). 2 дня ручной работы → 15 минут автоматического извлечения. Бесплатные Vision-модели покрывают типовую задачу.',
+          status: 'В работе' },
+        { code: 'P-03', name: 'IDGenerator', tag: 'Python · FastAPI · Streamlit · ИД',
+          problem: 'Сборка комплекта исполнительной документации (АОСР, общий журнал работ, реестр ИД, сертификаты) на каждый объект — десятки часов ПТО на парсинг смет, сопоставление работ и заполнение шаблонов.',
+          solution: 'Локальная система на Python/FastAPI + Streamlit UI. Вход — контракт и локальная смета/КС-2. Выход — собранный пакет ИД: акты, журнал, реестр, автоподбор сертификатов материалов из открытых реестров ФСА.',
+          result: 'Готовится к применению на реальных объектах. v6, активная разработка фазы F1.5 (Certificate Auto-Discovery). Прогресс ~50%.',
+          status: 'В разработке' },
+        { code: 'P-04', name: 'StroyOps-Bot', tag: 'AI · Telegram · Голос → Письмо',
+          problem: 'Прораб слышит на объекте расхождение с рабочей документацией. Он должен надиктовать инженеру суть, тот — сесть и написать письмо заказчику на корректировку РД. Теряется день.',
+          solution: 'Telegram-бот принимает голосовое сообщение от начальника участка или руководителя строительства, расшифровывает суть, классифицирует ситуацию (КОР / ДОП / СТОП / ИЗМ) и собирает готовое письмо заказчику с отсылкой на ст. 744 ГК РФ и приложением нормативов.',
+          result: 'От факта на объекте до отправленного письма — 15 минут вместо 1-2 дней. Применяется на объектах в Ульяновске.',
+          status: 'В работе' },
+        { code: 'P-05', name: 'AI-Box', tag: 'Edge AI · Mini-PC · Автономные агенты',
+          problem: 'Облачные AI-сервисы стоят дорого, зависят от интернета и утекают корпоративные данные. Для малого и среднего бизнеса нет «коробки», которую поставил в офис — и всё работает локально.',
+          solution: 'Коробочное устройство на мини-ПК N100 с преднастроенным стеком: локальная LLM (Ollama), маршрутизатор сложности запросов, Telegram-агент, Home Assistant, Syncthing, Jellyfin, FRP-туннель. 6 Docker-контейнеров, 16 ГБ RAM.',
+          result: 'Готовится к подаче на грант Старт-ИИ-1 (ФАСИ). Архитектура на 6 сервисов + веб-панель, документация собрана. Целевой B2B/B2C-продукт — AI-автономия без подписок.',
+          status: 'В разработке' },
+        { code: 'P-06', name: 'Смета-СК', tag: 'AI-скиллы · Гранд Смета · Строй-контроль',
+          problem: 'Специализированные сметы (на строительный контроль по ПП РФ № 468, на авторский надзор, на пуско-наладку) сметчик готовит вручную — каждый раз по памяти или по старому образцу, ошибается в нормативных коэффициентах.',
+          solution: 'Набор AI-скиллов для Claude / Gemini / других моделей: загружает ПП РФ № 468, методики Минстроя, сводный сметный расчёт. По запросу — генерирует смету нужного типа (СР-1, СР-2 и т. д.) с корректными коэффициентами и источниками.',
+          result: 'Сборка специализированной сметы — минуты вместо часов. Снижение ошибок по нормативным коэффициентам.',
+          status: 'В разработке' },
+        { code: 'P-07', name: 'Vector', tag: 'Семантический поиск · ГОСТ · СП',
+          problem: 'Найти нужный пункт в сотнях СП, ГОСТ, технических регламентов — задача на полдня. Поиск по ключевым словам почти не работает. В бюджетных организациях — систематические ошибки из-за устаревших регламентов, упускается рентабельность.',
+          solution: 'Векторная база нормативов с семантическим поиском. Вопрос на естественном языке → релевантные пункты документов с цитатами и ссылками.',
+          result: 'Целевая аудитория — крупные компании и бюджетные организации. Целевая метрика: секунды на поиск нормативного основания вместо часов. Рост рентабельности за счёт устранения процедурных потерь.',
+          status: 'В планах' },
+      ],
+    },
+    system: {
+      kicker: '03 — Подход',
+      title: 'Три принципа, на которых стоит всё',
+      items: [
+        { n: '01', name: 'Автоматизация', text: 'Любая повторяющаяся операция — кандидат на автоматизацию. Сначала упрощаем процесс, потом пишем код.' },
+        { n: '02', name: 'Стандартизация', text: 'Единые шаблоны, справочники, регламенты. Код и документы — из одних источников истины.' },
+        { n: '03', name: 'Интеграция', text: 'Системы не живут в изоляции. Telegram, 1С, сметы, почта, GitHub — связаны в единый контур.' },
+      ],
+    },
+    stack: {
+      kicker: '04 — Стек',
+      title: 'Инструменты',
+      groups: [
+        { name: 'AI-модели', items: ['Claude Code', 'Gemini', 'DeepSeek', 'GPT', 'OpenRouter', 'Локальные модели'] },
+        { name: 'Автоматизация', items: ['Python', 'API-интеграции', 'Telegram Bot API', 'Скрипты'] },
+        { name: 'DevOps', items: ['CLI-инструменты', 'Локальные агенты', 'GitHub workflows', 'Мониторинг'] },
+        { name: 'Строительство', items: ['Гранд Смета', 'Исполнительная документация', '44-ФЗ / 223-ФЗ', 'СП / ГОСТ'] },
+        { name: 'Данные', items: ['Автоматизация Excel', 'Парсинг документов', 'Извлечение из PDF', 'Сопоставление схем'] },
+      ],
+    },
+    gov: {
+      kicker: '05 — 44-ФЗ / 223-ФЗ', title: 'Госконтракты',
+      body: 'Опыт сопровождения контрактов по 44-ФЗ и 223-ФЗ: от подачи заявки и обоснования НМЦК до сдачи объекта и закрытия актов. Знаю требования к составу проектной и рабочей документации, типовые риски на каждом этапе и как их отрабатывать.',
+      points: [
+        'Подготовка заявок и обоснование начальной максимальной цены',
+        'Сметные расчёты в соответствии с методиками Минстроя',
+        'Входной контроль рабочей документации',
+        'Контроль разработки проектной и рабочей документации',
+        'Исполнительная документация по требованиям заказчика',
+        'Претензионная работа и сопровождение приёмки',
+      ],
+    },
+    demo: {
+      kicker: 'ДЕМО', title: 'Три системы, которые реально запущены',
+      subtitle: 'Ниже — интерактивные демо продакшн-систем: голос → письмо в Telegram, мобильная приёмка квартиры, сборка исполнительной документации. Всё — без фейковых скриншотов, логика настоящая.',
+      tabs: [
+        { id: 'stroyops', code: 'P-04', name: 'StroyOps-Bot', hint: 'Голос → исходящее письмо' },
+        { id: 'auditor',  code: 'P-01', name: 'Apartment Auditor', hint: 'Приёмка квартиры за 40 минут' },
+        { id: 'idgen',    code: 'P-03', name: 'IDGenerator', hint: 'Пакет ИД за минуты' },
+      ],
+      stroyops: {
+        title: 'StroyOps-Bot — голос → письмо',
+        subtitle: 'Прораб надиктовывает в Telegram выявленное расхождение с РД. Бот расшифровывает, классифицирует и собирает готовое исходящее письмо заказчику со ссылкой на 744 ГК РФ.',
+        tryLabel: 'Выберите голосовое для обработки:',
+        thinking: 'Расшифровка и анализ…',
+        botName: 'StroyOps-Bot',
+        botHandle: '@stroyops_bot',
+        onlineLabel: 'онлайн',
+        welcome: 'Пришлите голосовое — расшифрую и соберу письмо заказчику со ссылкой на нормативы.',
+        chats: [
+          { name: 'StroyOps-Bot', preview: 'Выберите сценарий →', time: '15:42', pinned: true, unread: 0, avatar: 'SB', color: '#FF6B35' },
+          { name: 'Прораб Е10-Е1', preview: 'Отправлено голосовое', time: '15:38', unread: 2, avatar: 'ПЕ', color: '#7C5CFF' },
+          { name: 'Заказчик · Солодкин', preview: 'Жду письмо по колодцу', time: '14:02', unread: 0, avatar: 'ЗС', color: '#00D4FF' },
+          { name: 'ПТО · Соколова', preview: 'КС-2 готова', time: '10:15', unread: 0, avatar: 'СК', color: '#7DD87D' },
+        ],
+        styleLabels: { official: 'Официальный', short: 'Короче', escalated: 'Эскалация' },
+        actions: { send: 'Отправить', edit: 'Править', word: 'В Word', copy: 'Копировать', copied: 'Скопировано' },
+        inputPlaceholder: 'Голосовое сообщение',
+        sections: { to: 'Кому', from: 'От', subj: 'Тема', req: 'Просим' },
+        statusReady: 'готово',
+      },
+      auditor: {
+        title: 'Apartment Auditor — приёмка квартиры',
+        subtitle: 'Структурированный чек-лист по нормативам, фиксация дефектов фото + координатой на плане, автосборка акта. Приёмка укладывается в 40 минут.',
+        tryLabel: 'Пройдите по шагам:',
+        steps: [
+          { id: 'checklist', code: '01', name: 'Чек-лист', hint: 'Нормативы по категориям' },
+          { id: 'defect',    code: '02', name: 'Дефект',    hint: 'Фото + метка на плане' },
+          { id: 'report',    code: '03', name: 'Акт',       hint: 'Готовая сдача' },
+        ],
+        checklist: {
+          header: 'Приёмка · ул. Минаева, 23, кв. 147',
+          meta: 'Застройщик: «ЖилСтрой-У» · 58.3 м²',
+          progress: '14 / 48',
+          items: [
+            { cat: 'Окна', name: 'Герметичность стыков', status: 'ok' },
+            { cat: 'Окна', name: 'Сколы стеклопакета', status: 'defect', count: 2 },
+            { cat: 'Стены', name: 'Отклонение по вертикали', status: 'ok' },
+            { cat: 'Стены', name: 'Трещины в штукатурке', status: 'defect', count: 3 },
+            { cat: 'Пол', name: 'Стяжка, бухтение', status: 'defect', count: 1 },
+            { cat: 'Пол', name: 'Уклон по СП 71.13330', status: 'wait' },
+            { cat: 'Электрика', name: 'Напряжение в розетках', status: 'ok' },
+            { cat: 'Электрика', name: 'Защитные автоматы', status: 'ok' },
+          ],
+        },
+        defect: {
+          header: 'Дефект #06',
+          cat: 'Стены · Трещины в штукатурке',
+          norm: 'СП 71.13330.2017, п. 7.2.13',
+          photoLabel: 'ФОТО',
+          planLabel: 'ПЛАН КВАРТИРЫ',
+          room: 'Комната 2',
+          severity: 'Значительный',
+          note: 'Трещина 1200 мм вдоль откоса, раскрытие до 1,5 мм. Подлежит ремонту за счёт застройщика.',
+          fields: [
+            { k: 'Категория', v: 'Стены' },
+            { k: 'Норматив', v: 'СП 71.13330.2017' },
+            { k: 'Серьёзность', v: 'Значительный' },
+            { k: 'Координата', v: 'X: 3.4 м · Y: 2.1 м' },
+          ],
+        },
+        report: {
+          header: 'Акт замечаний · готов',
+          meta: 'PDF · 4 страницы · 12 дефектов',
+          sum: [
+            { k: 'Дефектов всего', v: '12' },
+            { k: 'Критических', v: '3' },
+            { k: 'Значительных', v: '6' },
+            { k: 'Незначительных', v: '3' },
+          ],
+          list: [
+            { n: '01', t: 'Стеклопакет комн. 1 — скол 40 мм', sev: 'значительный' },
+            { n: '02', t: 'Штукатурка кухни — трещина 1200 мм', sev: 'значительный' },
+            { n: '03', t: 'Стяжка коридор — бухтение 0,4 м²', sev: 'критический' },
+            { n: '04', t: 'Затирка швов санузла — раковины', sev: 'незначительный' },
+          ],
+          actions: { export: 'Экспорт PDF', send: 'Отправить застройщику' },
+        },
+      },
+      idgen: {
+        title: 'IDGenerator — сборка ИД-пакета',
+        subtitle: 'Вход — контракт и локальная смета. Выход — акты АОСР, общий журнал работ, реестр ИД, автоподбор сертификатов из открытых реестров ФСА.',
+        tryLabel: 'Нажмите на блоки «Контракт» и «Смета» — это запустит демо-сборку',
+        dropzones: [
+          { id: 'contract', label: 'Контракт', accept: 'PDF / DOCX', sample: 'Контракт № 44-ФЗ-2025-18.pdf', size: '1.8 МБ' },
+          { id: 'estimate', label: 'Локальная смета', accept: 'XLSX / XML', sample: 'ЛС-01 Благоустройство.xml', size: '712 КБ' },
+          { id: 'ks2',      label: 'КС-2 (опц.)', accept: 'XLSX', sample: 'КС-2 апрель.xlsx', size: '164 КБ' },
+        ],
+        run: 'Запустить сборку',
+        running: 'Сборка пакета…',
+        done: 'Пакет собран',
+        stages: [
+          { id: 's1', name: 'Парсинг контракта', detail: 'Реквизиты, объект, стороны' },
+          { id: 's2', name: 'Разбор сметы',      detail: 'Разделы, позиции, ресурсы' },
+          { id: 's3', name: 'Поиск сертификатов', detail: 'ФСА · открытые реестры' },
+          { id: 's4', name: 'Сборка АОСР',       detail: 'По шаблонам Ростехнадзора' },
+          { id: 's5', name: 'ОЖР и реестр ИД',   detail: 'Сквозная нумерация' },
+        ],
+        outputs: [
+          { code: 'АОСР', name: 'Акты освидетельствования скрытых работ', count: '24 шт' },
+          { code: 'ОЖР',  name: 'Общий журнал работ', count: '1 том' },
+          { code: 'РЕЕСТР', name: 'Реестр исполнительной документации', count: '87 позиций' },
+          { code: 'СЕРТ', name: 'Сертификаты материалов', count: '43 / 52 найдено' },
+        ],
+      },
+    },
+    pricing: {
+      kicker: '06 — Тарифы',
+      title: 'Настройка и поддержка AI-ассистента',
+      subtitle: 'Помогаю инженерам и компаниям правильно поставить Claude Code, подготовить контекст и начать реально экономить часы.',
+      plans: [
+        { tier: 'Старт', price: '3', sub: 'Разовая настройка', hint: 'Для тех, кто только пробует',
+          features: ['Установка Claude Code и окружения', 'Базовая настройка под вашу задачу', 'Один проектный контекст', '30 минут обучения на связи'],
+          cta: 'Начать' },
+        { tier: 'Рабочий', price: '7', sub: 'Настройка + внедрение', featured: true, hint: 'Оптимально для инженера',
+          features: ['Всё из «Старт»', 'Настройка под 2–3 реальных процесса', 'Шаблоны промптов и регламентов', '2 часа обучения + неделя поддержки', 'Интеграция с текущим документооборотом'],
+          cta: 'Выбрать' },
+        { tier: 'Продвинутый', price: '15', sub: 'Внедрение в команду', hint: 'Для отдела или компании',
+          features: ['Всё из «Рабочий»', 'Настройка для команды 3–10 человек', 'Собственные агенты под ваши процессы', 'Подключение локальных моделей', 'Месяц сопровождения и доработок'],
+          cta: 'Обсудить' },
+      ],
+      note: 'Цены указаны в тысячах рублей. Итоговая стоимость обсуждается после бесплатной консультации.',
+    },
+    contact: {
+      kicker: '07 — Контакты', title: 'Готов обсудить задачу',
+      body: 'Если у вас есть объект, процесс или документация, которую нужно автоматизировать — напишите. Разберу на бесплатной консультации.',
+      email: 'lavr5000xxx@gmail.com', telegram: '@lavr5000', github: 'github.com/lavr5000',
+      cta: 'Написать в Telegram',
+    },
+    footer: 'Денис Лавров · Автоматизация строительства и AI · 2026',
+    diagram: { head: 'контур.стройка', in: 'Объект', inSub: 'голос · чат', core: 'AI-ядро', coreSub: 'Claude · Gemini', out1: 'ПТО', out2: 'Сметы', out3: 'Иски-Претензии' },
+  },
+  en: {
+    nav: { about: 'About', projects: 'Projects', demo: 'Demo', system: 'Approach', stack: 'Stack', pricing: 'Pricing', gov: '44-FZ / 223-FZ', contact: 'Contact' },
+    hero: {
+      eyebrow: 'Denis Lavrov · Deputy Director',
+      title: ['AI & automation', 'for construction systems'],
+      subtitle: 'Solving real engineering and operational problems. Building systems that cut manual work, eliminate errors, and ship projects faster.',
+      ctaPrimary: 'View projects', ctaSecondary: 'Get in touch',
+      metricLabels: ['years in construction', 'systems in use', 'AI models supported'],
+      metricValues: ['12+', '6', '8+'],
+    },
+    about: {
+      kicker: '01 — Positioning', title: 'Not a designer. Not a freelancer. An engineer who builds systems.',
+      body: 'Deputy director at a construction company. Specializing in construction supervision, executive documentation, 44-FZ government contracts, and cost estimation in Grand Smeta. In parallel, I build AI tools that automate everything normally done by hand.',
+      pillars: [
+        { label: 'What I do', text: 'Automate document workflows, on-site communication, and quality control using AI agents and integrations.' },
+        { label: 'Who I work with', text: 'Construction companies, government clients, technical clients, infrastructure developers.' },
+        { label: 'Why I\u2019m different', text: 'Deep construction expertise combined with engineering rigor. Not a theorist — a builder.' },
+      ],
+    },
+    projects: {
+      kicker: '02 — Projects', title: 'Systems that run on real construction sites',
+      items: [
+        { code: 'P-01', name: 'Apartment Auditor', tag: 'Android · RuStore · React Native',
+          problem: 'Apartment acceptance at the developer: the buyer walks with a notebook, photographs defects, loses photos, forgets standards, wastes 3-4 hours and still misses things.',
+          solution: 'Mobile app (React Native + Expo + Zustand + Nativewind) with a standards-based checklist (220 SP/GOST items), defect capture with photo + coordinate on the plan, 7 PDF templates, 447 unit tests. Works offline.',
+          result: 'Published in RuStore (com.lavr5000xxx.apartmentauditor). Acceptance fits into 40 structured minutes. Free, no ads.',
+          status: 'Live' },
+        { code: 'P-02', name: 'PDF-Extractor', tag: 'Vision AI · Schema-Guided Reasoning · Python',
+          problem: 'Incoming quality control of working documentation: a PTO engineer receives a pack of PDF drawings (reinforcement, demolition, architectural, steel) across hundreds of pages and manually lists rebar grades, specifications, volumes — 2-3 days per site.',
+          solution: 'Python pipeline: PyMuPDF renders pages, Vision AI (Gemini / Qwen 3 VL) with Schema-Guided Reasoning extracts structured data via profiles (KZh — reinforced concrete, P-KR — demolition, AR — architecture). Output: unified resource schedule in Excel.',
+          result: 'In use on real sites (Ulyanovsk, Stroyinvest). 2 manual days → 15 minutes of automated extraction. Free Vision models cover the typical task.',
+          status: 'Active' },
+        { code: 'P-03', name: 'IDGenerator', tag: 'Python · FastAPI · Streamlit · Executive docs',
+          problem: 'Assembling the executive-docs pack (AOSR, works journal, registry, certificates) per site — tens of hours of PTO work on parsing estimates and filling templates.',
+          solution: 'Local system (Python/FastAPI + Streamlit UI). Input: contract + local estimate / KS-2. Output: full ID pack — acts, journal, registry, auto-discovered material certificates from public FSA registries.',
+          result: 'Preparing for real-site use. v6, phase F1.5 (Certificate Auto-Discovery) in active development. ~50% progress.',
+          status: 'In development' },
+        { code: 'P-04', name: 'StroyOps-Bot', tag: 'AI · Telegram · Voice → Letter',
+          problem: 'A foreman finds a mismatch in the working drawings on site. He has to dictate the details to an engineer, who sits down and writes a letter to the client. A day is lost.',
+          solution: 'A Telegram bot receives a voice message from the site manager, transcribes it, classifies the situation (correction / additional works / stop-work / change) and drafts a ready letter to the client referencing article 744 of the Civil Code.',
+          result: 'From issue on site to sent letter — 15 minutes instead of 1-2 days. In use on sites in Ulyanovsk.',
+          status: 'Active' },
+        { code: 'P-05', name: 'AI-Box', tag: 'Edge AI · Mini-PC · Autonomous agents',
+          problem: 'Cloud AI services are expensive, depend on the internet and leak corporate data. SMBs have no plug-and-play box for a local AI stack.',
+          solution: 'An N100 mini-PC appliance with a preconfigured stack: local LLM (Ollama), request-complexity router, Telegram agent, Home Assistant, Syncthing, Jellyfin, FRP tunnel. 6 Docker containers, 16 GB RAM.',
+          result: 'Preparing a Start-AI-1 grant submission (FASI). 6-service architecture + web panel, documentation assembled. Target B2B/B2C product — AI autonomy without subscriptions.',
+          status: 'In development' },
+        { code: 'P-06', name: 'Smeta-SK', tag: 'AI skills · Grand Smeta · Supervision',
+          problem: 'Specialized estimates (construction supervision per PP RF № 468, author supervision, commissioning) are prepared manually — every time from memory or from an old template, with mistakes in normative coefficients.',
+          solution: 'A set of AI skills for Claude / Gemini / other models: loads PP RF № 468, Minstroy methodologies, master estimate. On request — generates the required estimate type (SR-1, SR-2, etc.) with correct coefficients and sources.',
+          result: 'Specialized estimate assembly — minutes instead of hours. Fewer normative errors.',
+          status: 'In development' },
+        { code: 'P-07', name: 'Vector', tag: 'Semantic search · GOST · SP',
+          problem: 'Finding a specific clause across hundreds of SP/GOST documents is a half-day job. Keyword search barely works. Budget-funded organizations systematically lose margin due to outdated regulations.',
+          solution: 'A vector store of standards with semantic search. Plain-language question → relevant clauses with citations and links.',
+          result: 'Target audience: large companies and budget organizations. Target metric: seconds to find a regulatory basis instead of hours. Margin growth via fewer procedural losses.',
+          status: 'Planned' },
+      ],
+    },
+    system: {
+      kicker: '03 — Approach', title: 'Three principles behind everything',
+      items: [
+        { n: '01', name: 'Automation', text: 'Any repeating operation is a candidate for automation. Simplify the process first, then write code.' },
+        { n: '02', name: 'Standardization', text: 'Shared templates, references, rules. Code and documents from single sources of truth.' },
+        { n: '03', name: 'Integration', text: 'Systems don\u2019t live in isolation. Telegram, 1C, estimates, mail, GitHub — one connected loop.' },
+      ],
+    },
+    stack: {
+      kicker: '04 — Stack', title: 'Tools',
+      groups: [
+        { name: 'AI models', items: ['Claude Code', 'Gemini', 'DeepSeek', 'GPT', 'OpenRouter', 'Local models'] },
+        { name: 'Automation', items: ['Python', 'API integrations', 'Telegram Bot API', 'Scripts'] },
+        { name: 'DevOps', items: ['CLI tools', 'Local agents', 'GitHub workflows', 'Monitoring'] },
+        { name: 'Construction', items: ['Grand Smeta', 'Executive docs', '44-FZ / 223-FZ', 'SP / GOST'] },
+        { name: 'Data', items: ['Excel automation', 'Document parsing', 'PDF extraction', 'Schema mapping'] },
+      ],
+    },
+    gov: {
+      kicker: '05 — 44-FZ / 223-FZ', title: 'Government contracts',
+      body: 'Experience with 44-FZ and 223-FZ contracts: from bid submission and NMCK justification to site handover and act closeout. I know requirements for project and working documentation, typical risks at each stage, and how to handle them.',
+      points: [
+        'Bid preparation and NMCK justification',
+        'Estimates aligned with Minstroy methodologies',
+        'Incoming quality control of working documentation',
+        'Oversight of project and working documentation development',
+        'Executive documentation per client requirements',
+        'Claims handling and acceptance support',
+      ],
+    },
+    demo: {
+      kicker: 'DEMO', title: 'Three systems that actually run in production',
+      subtitle: 'Interactive demos of production systems: voice → letter in Telegram, mobile apartment acceptance, and executive-docs assembly. No fake screenshots — the logic is real.',
+      tabs: [
+        { id: 'stroyops', code: 'P-04', name: 'StroyOps-Bot', hint: 'Voice → outgoing letter' },
+        { id: 'auditor',  code: 'P-01', name: 'Apartment Auditor', hint: 'Apartment acceptance in 40 min' },
+        { id: 'idgen',    code: 'P-03', name: 'IDGenerator', hint: 'Executive-docs pack in minutes' },
+      ],
+      stroyops: {
+        title: 'StroyOps-Bot — voice → letter',
+        subtitle: 'A foreman dictates a working-drawings mismatch into Telegram. The bot transcribes, classifies and drafts a ready letter to the client with a reference to art. 744 of the Civil Code.',
+        tryLabel: 'Pick a voice message to process:',
+        thinking: 'Transcribing and analyzing…',
+        botName: 'StroyOps-Bot',
+        botHandle: '@stroyops_bot',
+        onlineLabel: 'online',
+        welcome: 'Send a voice message — I will transcribe it and draft a letter to the client referencing the relevant standards.',
+        chats: [
+          { name: 'StroyOps-Bot', preview: 'Pick a scenario →', time: '15:42', pinned: true, unread: 0, avatar: 'SB', color: '#FF6B35' },
+          { name: 'Foreman E10-E1', preview: 'Voice message sent', time: '15:38', unread: 2, avatar: 'FE', color: '#7C5CFF' },
+          { name: 'Client · Solodkin', preview: 'Waiting for the manhole letter', time: '14:02', unread: 0, avatar: 'CS', color: '#00D4FF' },
+          { name: 'PTO · Sokolova', preview: 'KS-2 ready', time: '10:15', unread: 0, avatar: 'SK', color: '#7DD87D' },
+        ],
+        styleLabels: { official: 'Official', short: 'Shorter', escalated: 'Escalated' },
+        actions: { send: 'Send', edit: 'Edit', word: 'To Word', copy: 'Copy', copied: 'Copied' },
+        inputPlaceholder: 'Voice message',
+        sections: { to: 'To', from: 'From', subj: 'Subject', req: 'Requesting' },
+        statusReady: 'ready',
+      },
+      auditor: {
+        title: 'Apartment Auditor — acceptance flow',
+        subtitle: 'Standards-based checklist, defects captured with photo + coordinate on the plan, auto-generated punch list. Acceptance fits into 40 minutes.',
+        tryLabel: 'Walk through the steps:',
+        steps: [
+          { id: 'checklist', code: '01', name: 'Checklist', hint: 'Standards by category' },
+          { id: 'defect',    code: '02', name: 'Defect',    hint: 'Photo + plan marker' },
+          { id: 'report',    code: '03', name: 'Report',    hint: 'Ready to hand off' },
+        ],
+        checklist: {
+          header: 'Acceptance · 23 Minayeva St., apt. 147',
+          meta: 'Developer: ZhilStroy-U · 58.3 m²',
+          progress: '14 / 48',
+          items: [
+            { cat: 'Windows', name: 'Joint sealing', status: 'ok' },
+            { cat: 'Windows', name: 'Glazing chips', status: 'defect', count: 2 },
+            { cat: 'Walls', name: 'Vertical deviation', status: 'ok' },
+            { cat: 'Walls', name: 'Plaster cracks', status: 'defect', count: 3 },
+            { cat: 'Floor', name: 'Screed hollow spots', status: 'defect', count: 1 },
+            { cat: 'Floor', name: 'Slope per SP 71.13330', status: 'wait' },
+            { cat: 'Wiring', name: 'Outlet voltage', status: 'ok' },
+            { cat: 'Wiring', name: 'Breakers', status: 'ok' },
+          ],
+        },
+        defect: {
+          header: 'Defect #06',
+          cat: 'Walls · Plaster cracks',
+          norm: 'SP 71.13330.2017, §7.2.13',
+          photoLabel: 'PHOTO',
+          planLabel: 'APARTMENT PLAN',
+          room: 'Room 2',
+          severity: 'Significant',
+          note: 'A 1200 mm crack along the reveal, opening up to 1.5 mm. To be remediated at the developer\u2019s expense.',
+          fields: [
+            { k: 'Category', v: 'Walls' },
+            { k: 'Standard', v: 'SP 71.13330.2017' },
+            { k: 'Severity', v: 'Significant' },
+            { k: 'Coordinate', v: 'X: 3.4 m · Y: 2.1 m' },
+          ],
+        },
+        report: {
+          header: 'Punch list · ready',
+          meta: 'PDF · 4 pages · 12 defects',
+          sum: [
+            { k: 'Defects total', v: '12' },
+            { k: 'Critical', v: '3' },
+            { k: 'Significant', v: '6' },
+            { k: 'Minor', v: '3' },
+          ],
+          list: [
+            { n: '01', t: 'Room 1 glazing — 40 mm chip', sev: 'significant' },
+            { n: '02', t: 'Kitchen plaster — 1200 mm crack', sev: 'significant' },
+            { n: '03', t: 'Hallway screed — 0.4 m² hollow', sev: 'critical' },
+            { n: '04', t: 'Bathroom grouting — pits', sev: 'minor' },
+          ],
+          actions: { export: 'Export PDF', send: 'Send to developer' },
+        },
+      },
+      idgen: {
+        title: 'IDGenerator — executive-docs pack',
+        subtitle: 'Input: contract + local estimate. Output: AOSR acts, general works journal, doc registry, auto-discovered material certificates from public FSA registries.',
+        tryLabel: 'Click the «Contract» and «Estimate» blocks to run the demo build',
+        dropzones: [
+          { id: 'contract', label: 'Contract', accept: 'PDF / DOCX', sample: 'Contract 44-FZ-2025-18.pdf', size: '1.8 MB' },
+          { id: 'estimate', label: 'Local estimate', accept: 'XLSX / XML', sample: 'LS-01 Landscaping.xml', size: '712 KB' },
+          { id: 'ks2',      label: 'KS-2 (optional)', accept: 'XLSX', sample: 'KS-2 April.xlsx', size: '164 KB' },
+        ],
+        run: 'Run assembly',
+        running: 'Assembling pack…',
+        done: 'Pack ready',
+        stages: [
+          { id: 's1', name: 'Parsing contract', detail: 'Details, site, parties' },
+          { id: 's2', name: 'Parsing estimate', detail: 'Sections, items, resources' },
+          { id: 's3', name: 'Certificate search', detail: 'FSA · public registries' },
+          { id: 's4', name: 'Assembling AOSR',   detail: 'Per Rostekhnadzor templates' },
+          { id: 's5', name: 'OZhR & registry',   detail: 'Continuous numbering' },
+        ],
+        outputs: [
+          { code: 'AOSR', name: 'Hidden-works acts', count: '24 docs' },
+          { code: 'OZhR', name: 'General works journal', count: '1 volume' },
+          { code: 'REG',  name: 'Executive-docs registry', count: '87 entries' },
+          { code: 'CERT', name: 'Material certificates', count: '43 / 52 found' },
+        ],
+      },
+    },
+    pricing: {
+      kicker: '06 — Pricing', title: 'Claude Code assistant setup & support',
+      subtitle: 'I help engineers and companies set up Claude Code correctly, prepare context and actually save hours.',
+      plans: [
+        { tier: 'Start', price: '3', sub: 'One-time setup', hint: 'For trying it out',
+          features: ['Claude Code + environment install', 'Basic setup for your task', 'One project context', '30 min of coaching'], cta: 'Start' },
+        { tier: 'Working', price: '7', sub: 'Setup + rollout', featured: true, hint: 'Best for a single engineer',
+          features: ['Everything in Start', 'Setup for 2–3 real processes', 'Prompt and guideline templates', '2h coaching + 1 week of support', 'Integration with current workflow'], cta: 'Choose' },
+        { tier: 'Advanced', price: '15', sub: 'Team rollout', hint: 'For a department or company',
+          features: ['Everything in Working', 'Setup for a 3–10 person team', 'Custom agents for your processes', 'Local model hookups', 'One month of follow-up support'], cta: 'Discuss' },
+      ],
+      note: 'Prices in thousand roubles. Final quote discussed after a free consult.',
+    },
+    contact: {
+      kicker: '07 — Contact', title: 'Let\u2019s discuss your task',
+      body: 'If you have a site, process, or documentation to automate — drop me a line. Free initial consult.',
+      email: 'lavr5000xxx@gmail.com', telegram: '@lavr5000', github: 'github.com/lavr5000', cta: 'Message on Telegram',
+    },
+    footer: 'Denis Lavrov · Construction Systems & AI · 2026',
+    diagram: { head: 'construction.loop', in: 'Site', inSub: 'voice · chat', core: 'AI Core', coreSub: 'Claude · Gemini', out1: 'PTO', out2: 'Estimates', out3: 'Claims-Letters' },
+  },
+};
+window.CONTENT = CONTENT;
+  </script>
+
+  <script type="text/babel">
+const { useState, useRef, useEffect } = React;
+
+// Demo scenarios: voice message → generated letter (fictional names)
+// ======= DEMOS (StroyOps, Auditor, IDGenerator) ==========================
+// Fictional party names used intentionally for public demo.
+
+const SCENARIOS_DATA = (window.STROYOPS_SCENARIOS) || { ru: [], en: [] };
+
+function useTypewriter(text, enabled) {
+  const [out, setOut] = useState('');
+  useEffect(() => {
+    if (!enabled || !text) { setOut(text || ''); return; }
+    setOut('');
+    let i = 0;
+    let cancelled = false;
+    const tick = () => {
+      if (cancelled) return;
+      // write a chunk of 3–7 chars with tiny jitter
+      const chunk = 3 + Math.floor(Math.random() * 5);
+      i = Math.min(i + chunk, text.length);
+      setOut(text.slice(0, i));
+      if (i < text.length) setTimeout(tick, 14 + Math.random() * 18);
+    };
+    setTimeout(tick, 120);
+    return () => { cancelled = true; };
+  }, [text, enabled]);
+  return out;
+}
+
+function TgMessage({ m, t }) {
+  if (m.system && m.text) return <div className="tg-msg in"><div className="tg-bubble system">{m.text}</div></div>;
+  if (m.thinking) return <div className="tg-msg in"><div className="tg-typing"><span /><span /><span /></div></div>;
+  if (m.voice) {
+    return (
+      <div className="tg-msg out">
+        <div className="tg-bubble" style={{ padding: '8px 10px' }}>
+          <div className="tg-voice">
+            <button className="tg-voice-play" aria-label="play">▶</button>
+            <div className="tg-voice-wave playing">
+              {Array.from({ length: 22 }).map((_, i) => (<span key={i} style={{ height: (30 + (i * 7) % 70) + '%' }} />))}
+            </div>
+            <div className="tg-voice-meta">{m.duration}</div>
+          </div>
+          <div className="tg-bubble-meta">{m.time} ✓✓</div>
+        </div>
+      </div>
+    );
+  }
+  if (m.transcript) {
+    return (
+      <div className="tg-msg in">
+        <div className="tg-bubble">
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--accent-2)', marginBottom: 4, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+            {m.transcriptLabel}
+          </div>
+          <div style={{ fontSize: 13, whiteSpace: 'pre-wrap' }}>{m.transcript}</div>
+          <div className="tg-bubble-meta">{m.time}</div>
+        </div>
+      </div>
+    );
+  }
+  return null;
+}
+
+function LetterCard({ scenario, styleKey, setStyleKey, t, lang, onText }) {
+  const raw = scenario.letters[styleKey] || '';
+  const text = useTypewriter(raw, true);
+  const [copied, setCopied] = useState(false);
+  const copyText = () => {
+    try { navigator.clipboard.writeText(raw); } catch(e) {}
+    setCopied(true); setTimeout(() => setCopied(false), 1400);
+  };
+  const styleLabels = lang === 'ru'
+    ? { official: 'Официальный', soft: 'Согласовательный', hard: 'Жёсткий' }
+    : { official: 'Official', soft: 'Soft', hard: 'Hard' };
+  const styleCaption = lang === 'ru' ? 'Стиль' : 'Style';
+  const doneLabel = lang === 'ru' ? 'готово' : 'ready';
+  const actions = lang === 'ru'
+    ? { send: 'Отправить', edit: 'Править', word: 'В Word', copy: 'Копировать', copied: 'Скопировано' }
+    : { send: 'Send', edit: 'Edit', word: 'To Word', copy: 'Copy', copied: 'Copied' };
+  const H = scenario.header;
+  return (
+    <div className="letter">
+      <div className="letter-head">
+        <span className="letter-head-icon">✉</span>
+        <span>{H.number} · {H.date}</span>
+        <span className="letter-head-tag">{doneLabel}</span>
+      </div>
+      <div className="letter-style">
+        <span className="ls-label">{styleCaption}</span>
+        {['official','soft','hard'].map(k => (
+          <button key={k} className={styleKey === k ? 'on' : ''} onClick={() => setStyleKey(k)}>{styleLabels[k]}</button>
+        ))}
+      </div>
+      <div className="letter-body">
+        <div className="lrow"><div className="lh">{lang === 'ru' ? 'Кому' : 'To'}</div><div>{H.to}</div><div style={{color:'var(--text-2)'}}>{H.attn}</div></div>
+        <div className="lrow"><div className="lh">{lang === 'ru' ? 'Тема' : 'Subject'}</div><div>{H.subject}</div></div>
+        <div className="letter-text">{text}<span className="cursor-blink">▍</span></div>
+      </div>
+      <div className="letter-actions">
+        <button className="letter-btn primary">▶ {actions.send}</button>
+        <button className="letter-btn">✎ {actions.edit}</button>
+        <button className="letter-btn">W {actions.word}</button>
+        <button className={'letter-btn' + (copied ? ' copied' : '')} onClick={copyText}>{copied ? '✓ ' + actions.copied : '⧉ ' + actions.copy}</button>
+      </div>
+    </div>
+  );
+}
+
+function StroyOpsDemo({ t, lang }) {
+  const scenarios = (SCENARIOS_DATA[lang] && SCENARIOS_DATA[lang].length) ? SCENARIOS_DATA[lang] : SCENARIOS_DATA.ru;
+  const welcome = { role: 'bot', system: true, text: t.welcome };
+  const [messages, setMessages] = useState([welcome]);
+  const [busy, setBusy] = useState(false);
+  const [activeChat, setActiveChat] = useState(0);
+  const [activeScenario, setActiveScenario] = useState(null);
+  const [styleKey, setStyleKey] = useState('official');
+  const scrollRef = useRef(null);
+
+  useEffect(() => {
+    setMessages([{ role: 'bot', system: true, text: t.welcome }]);
+    setActiveScenario(null);
+  }, [lang, t.welcome]);
+
+  const scrollToBottom = (smooth) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollTo({ top: el.scrollHeight, behavior: smooth ? 'smooth' : 'auto' });
+  };
+  const scrollLetterIntoView = (smooth) => {
+    const body = scrollRef.current;
+    if (!body) return;
+    const letter = body.querySelector('.letter');
+    if (!letter) return;
+    const top = letter.offsetTop - 12;
+    body.scrollTo({ top, behavior: smooth ? 'smooth' : 'auto' });
+  };
+  useEffect(() => { scrollToBottom(true); }, [messages, busy]);
+  useEffect(() => {
+    if (activeScenario) {
+      // Wait one frame for .letter to mount, then scroll to its top so user sees the style switcher
+      requestAnimationFrame(() => scrollLetterIntoView(true));
+    }
+  }, [activeScenario]);
+
+  const runScenario = (sc) => {
+    if (busy) return;
+    setBusy(true);
+    setActiveScenario(null);
+    setMessages([welcome,
+      { role: 'user', voice: true, duration: sc.duration, time: '15:42', tag: sc.tag }
+    ]);
+    setTimeout(() => setMessages((m) => [...m, { role: 'bot', thinking: true }]), 500);
+    setTimeout(() => {
+      setMessages((m) => [
+        ...m.filter(x => !x.thinking),
+        { role: 'bot', transcript: sc.transcript, transcriptLabel: lang === 'ru' ? 'Расшифровка' : 'Transcript', time: '15:42' },
+        { role: 'bot', thinking: true }
+      ]);
+    }, 1600);
+    setTimeout(() => {
+      setMessages((m) => m.filter(x => !x.thinking));
+      setActiveScenario(sc);
+      setStyleKey('official');
+      setBusy(false);
+    }, 3200);
+  };
+
+  const reset = () => { setMessages([welcome]); setActiveScenario(null); };
+
+  return (
+    <div className="tg-shell">
+      <aside className="tg-side">
+        <div className="tg-side-head"><div className="tg-side-title">Chats</div></div>
+        <div className="tg-side-search">Search</div>
+        {t.chats.map((c, i) => (
+          <div key={i} className={'tg-chat' + (i === activeChat ? ' on' : '')} onClick={() => setActiveChat(i)}>
+            <div className="tg-ava" style={{ background: c.color }}>{c.avatar}</div>
+            <div className="tg-chat-body">
+              <div className="tg-chat-top"><span className="tg-chat-name">{c.name}</span><span className="tg-chat-time">{c.time}</span></div>
+              <div className="tg-chat-bot"><span className="tg-chat-preview">{c.preview}</span>{c.unread > 0 && <span className="tg-chat-badge">{c.unread}</span>}</div>
+            </div>
+          </div>
+        ))}
+      </aside>
+      <div className="tg-main">
+        <div className="tg-head">
+          <div className="tg-ava" style={{ background: t.chats[0].color }}>{t.chats[0].avatar}</div>
+          <div className="tg-head-meta">
+            <div className="tg-head-name">{t.botName} <span className="tg-check">✓</span></div>
+            <div className="tg-head-sub"><span className="dot-live" /> {t.onlineLabel} · {t.botHandle}</div>
+          </div>
+          <div className="tg-head-icons"><span>⌕</span><span>⋯</span></div>
+        </div>
+        <div className="tg-body" ref={scrollRef}>
+          <div className="tg-day">{lang === 'ru' ? 'Сегодня' : 'Today'}</div>
+          {messages.map((m, i) => <TgMessage key={i} m={m} t={t} />)}
+          {activeScenario && (
+            <div className="tg-msg in" style={{ maxWidth: '94%' }}>
+              <div style={{ width: '100%' }}>
+                <LetterCard scenario={activeScenario} styleKey={styleKey} setStyleKey={setStyleKey} t={t} lang={lang} onText={scrollToBottom} />
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="tg-input">
+          <span className="tg-input-icon">＋</span>
+          <div className="tg-input-field">{t.inputPlaceholder}</div>
+          <span className="tg-input-icon">☺</span>
+          <button className="tg-mic" aria-label="mic">●</button>
+        </div>
+        <div className="tg-presets">
+          <div className="preset-label">{t.tryLabel}</div>
+          {scenarios.map((s) => (
+            <button key={s.id} className="chip" onClick={() => runScenario(s)} disabled={busy}>
+              <span className="chip-icon">▶</span> {s.label} · {s.duration}
+            </button>
+          ))}
+          <button className="chip" onClick={reset} disabled={busy}>{lang === 'ru' ? '⟲ Сбросить' : '⟲ Reset'}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// --- AuditorDemo ---------------------------------------------------------
+function AuditorDemo({ t, lang }) {
+  const [step, setStep] = useState('checklist');
+  const stepIdx = t.steps.findIndex(s => s.id === step);
+  const progressPct = ((stepIdx + 1) / t.steps.length) * 100;
+  return (
+    <div className="auditor-wrap">
+      <div className="aud-side">
+        <div>
+          <h3 className="aud-title">{t.title}</h3>
+          <p className="aud-sub">{t.subtitle}</p>
+        </div>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-3)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>{t.tryLabel}</div>
+        <div className="aud-steps">
+          {t.steps.map(s => (
+            <button key={s.id} className={'aud-step' + (step === s.id ? ' on' : '')} onClick={() => setStep(s.id)}>
+              <span className="aud-step-code">{s.code}</span>
+              <div>
+                <div className="aud-step-name">{s.name}</div>
+                <div className="aud-step-hint">{s.hint}</div>
+              </div>
+            </button>
+          ))}
+        </div>
+        <div className="aud-meta-grid">
+          <div className="aud-meta-cell"><div className="mk">{lang === 'ru' ? 'Площадь' : 'Area'}</div><div className="mv">58.3 м²</div></div>
+          <div className="aud-meta-cell"><div className="mk">{lang === 'ru' ? 'Время' : 'Duration'}</div><div className="mv">{lang === 'ru' ? '40 мин' : '40 min'}</div></div>
+          <div className="aud-meta-cell"><div className="mk">{lang === 'ru' ? 'Пункты' : 'Items'}</div><div className="mv">48</div></div>
+          <div className="aud-meta-cell"><div className="mk">{lang === 'ru' ? 'Платформа' : 'Platform'}</div><div className="mv">RuStore</div></div>
+        </div>
+      </div>
+      <div className="phone">
+        <div className="phone-screen">
+          <div className="phone-status">
+            <span>9:41</span>
+            <span>●●● ▮ 87%</span>
+          </div>
+          <div className="phone-nav">
+            <span className="phone-back">‹</span>
+            <div className="phone-nav-title">{step === 'checklist' ? t.checklist.header : step === 'defect' ? t.defect.header : t.report.header}</div>
+            <div className="phone-nav-meta">{step === 'checklist' ? t.checklist.progress : ''}</div>
+          </div>
+          <div className="phone-prog"><div className="phone-prog-bar" style={{ width: progressPct + '%' }} /></div>
+          <div className="phone-body">
+            {step === 'checklist' && <ChecklistScreen c={t.checklist} onDefectClick={() => setStep('defect')} lang={lang} />}
+            {step === 'defect' && <DefectScreen d={t.defect} lang={lang} />}
+            {step === 'report' && <ReportScreen r={t.report} lang={lang} />}
+          </div>
+          <div className="phone-dock">
+            <div className="phone-dock-dot">◉</div>
+            <div className="phone-dock-dot">◈</div>
+            <div className="phone-dock-dot">◎</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ChecklistScreen({ c, onDefectClick, lang }) {
+  // group by category
+  const cats = {};
+  c.items.forEach(it => { (cats[it.cat] = cats[it.cat] || []).push(it); });
+  return (
+    <div>
+      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-3)', marginBottom: 8 }}>{c.meta}</div>
+      {Object.entries(cats).map(([cat, items]) => (
+        <div key={cat}>
+          <div className="cl-cat">{cat}</div>
+          {items.map((it, i) => (
+            <div key={i} className="cl-item" onClick={it.status === 'defect' ? onDefectClick : undefined} style={it.status === 'defect' ? { cursor: 'pointer' } : {}}>
+              <div className={'cl-check ' + it.status} />
+              <div className="cl-name">{it.name}</div>
+              {it.count && <div className="cl-count">{it.count}</div>}
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function DefectScreen({ d, lang }) {
+  return (
+    <div>
+      <div className="dp-hero">
+        <div className="dp-hero-label">{d.photoLabel}</div>
+        <div className="dp-hero-tag">{d.severity}</div>
+        <div className="dp-hero-crack" style={{ top: '45%' }} />
+        <div className="dp-hero-crack" style={{ top: '55%', width: '60%', opacity: 0.5 }} />
+      </div>
+      <div className="dp-title">
+        <div className="dp-cat">{d.cat}</div>
+        <div className="dp-norm">⚑ {d.norm}</div>
+      </div>
+      <div className="dp-plan">
+        <div className="dp-plan-label">{d.planLabel} · {d.room}</div>
+        <svg className="dp-plan-svg" viewBox="0 0 200 120" preserveAspectRatio="none">
+          <rect x="2" y="2" width="196" height="116" fill="none" stroke="#2a2a33" strokeWidth="1.5" />
+          <line x1="2" y1="50" x2="120" y2="50" stroke="#2a2a33" strokeWidth="1.2" />
+          <line x1="120" y1="2" x2="120" y2="50" stroke="#2a2a33" strokeWidth="1.2" />
+          <rect x="6" y="6" width="112" height="42" fill="rgba(124,92,255,0.04)" />
+          <rect x="6" y="54" width="112" height="62" fill="rgba(0,212,255,0.04)" />
+          <rect x="124" y="6" width="72" height="110" fill="rgba(125,216,125,0.04)" />
+          <circle cx="60" cy="78" r="6" fill="#F87171" opacity="0.25" />
+          <circle cx="60" cy="78" r="3" fill="#F87171" />
+          <text x="70" y="82" fontSize="7" fontFamily="monospace" fill="#F87171">#06</text>
+        </svg>
+      </div>
+      <div className="dp-note">{d.note}</div>
+      <div className="dp-fields">
+        {d.fields.map((f, i) => (
+          <div key={i} className="dp-field"><div className="dk">{f.k}</div><div className="dv">{f.v}</div></div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ReportScreen({ r, lang }) {
+  return (
+    <div>
+      <div className="rp-head">
+        <div className="rp-title">{r.header}</div>
+        <div className="rp-meta">{r.meta}</div>
+      </div>
+      <div className="rp-sum">
+        {r.sum.map((s, i) => (
+          <div key={i} className="rp-sum-cell">
+            <div className="rp-sum-k">{s.k}</div>
+            <div className={'rp-sum-v' + (i === 1 ? ' crit' : i === 2 ? ' sig' : '')}>{s.v}</div>
+          </div>
+        ))}
+      </div>
+      <div className="rp-list">
+        {r.list.map((x, i) => (
+          <div key={i} className="rp-row">
+            <span className="rp-row-n">{x.n}</span>
+            <span className="rp-row-t">{x.t}</span>
+            <span className={'rp-row-sev ' + x.sev}>● {x.sev}</span>
+          </div>
+        ))}
+      </div>
+      <div className="rp-act">
+        <button className="primary">▣ {r.actions.export}</button>
+        <button>→ {r.actions.send}</button>
+      </div>
+    </div>
+  );
+}
+
+// --- IDGeneratorDemo -----------------------------------------------------
+function IDGeneratorDemo({ t, lang }) {
+  const [filled, setFilled] = useState({ contract: false, estimate: false, ks2: false });
+  const [state, setState] = useState('idle'); // idle | running | done
+  const [progress, setProgress] = useState({});
+  const [stageIdx, setStageIdx] = useState(-1);
+
+  const toggle = (id) => {
+    if (state === 'running') return;
+    setFilled((f) => ({ ...f, [id]: !f[id] }));
+  };
+  const canRun = filled.contract && filled.estimate && state !== 'running';
+  const run = () => {
+    if (!canRun) return;
+    setState('running'); setStageIdx(0); setProgress({});
+    const total = t.stages.length;
+    let i = 0;
+    const runStage = (k) => {
+      const id = t.stages[k].id;
+      let pct = 0;
+      const iv = setInterval(() => {
+        pct += 6 + Math.random() * 10;
+        if (pct >= 100) {
+          pct = 100;
+          clearInterval(iv);
+          setProgress((p) => ({ ...p, [id]: pct }));
+          if (k + 1 < total) {
+            setStageIdx(k + 1);
+            setTimeout(() => runStage(k + 1), 260);
+          } else {
+            setTimeout(() => { setState('done'); setStageIdx(total); }, 420);
+          }
+        } else {
+          setProgress((p) => ({ ...p, [id]: pct }));
+        }
+      }, 60);
+    };
+    runStage(0);
+  };
+  const reset = () => { setFilled({ contract: false, estimate: false, ks2: false }); setState('idle'); setStageIdx(-1); setProgress({}); };
+
+  const stateLabel = state === 'running' ? t.running : state === 'done' ? t.done : (lang === 'ru' ? 'ожидание входа' : 'awaiting input');
+
+  return (
+    <div className="idg-wrap">
+      <div className="idg-head">
+        <div className="idg-head-left">
+          <h3 className="aud-title">{t.title}</h3>
+          <p className="aud-sub">{t.subtitle}</p>
+        </div>
+        <div className={'idg-state ' + state}><span className="dot" /> {stateLabel}</div>
+      </div>
+      <div className="idg-hint">
+        <span className="idg-hint-icon">▶</span>
+        <span className="idg-hint-text">{t.tryLabel}</span>
+      </div>
+      <div className={'dropzones' + ((filled[t.dropzones[0].id] || filled[t.dropzones[1].id] || filled[t.dropzones[2].id]) ? ' touched' : '')}>
+        {t.dropzones.map((dz, idx) => {
+          const anyTouched = filled[t.dropzones[0].id] || filled[t.dropzones[1].id] || filled[t.dropzones[2].id];
+          const isFirstEmpty = !anyTouched && idx === 0;
+          return (
+            <div key={dz.id} className={'dz' + (filled[dz.id] ? ' filled' : '') + (isFirstEmpty ? ' empty-cta' : '')} onClick={() => toggle(dz.id)}>
+              <div className="dz-label"><span>{dz.label}</span><span className="dz-accept">{dz.accept}</span></div>
+              <div className="dz-body">
+                <div className="dz-icon">{filled[dz.id] ? '✓' : '⇧'}</div>
+                {filled[dz.id] ? (
+                  <div>
+                    <div className="dz-file-name">{dz.sample}</div>
+                    <div className="dz-file-size">{dz.size}</div>
+                  </div>
+                ) : (
+                  <div className="dz-empty">
+                    <span className="dz-empty-cta">{lang === 'ru' ? '▶ Загрузить демо-файл' : '▶ Load demo file'}</span>
+                    <span className="dz-empty-sub">{lang === 'ru' ? 'или перетащите сюда' : 'or drop here'}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <div className="idg-run-row">
+        <button className={'btn ' + (canRun ? 'btn-primary' : 'btn-ghost')} disabled={!canRun} onClick={run} style={{ opacity: canRun ? 1 : 0.5 }}>▶ {t.run}</button>
+        {state !== 'idle' && <button className="btn btn-ghost" onClick={reset}>⟲ {lang === 'ru' ? 'Сбросить' : 'Reset'}</button>}
+      </div>
+      <div className="idg-pipeline">
+        {t.stages.map((s, i) => {
+          const pct = progress[s.id] || 0;
+          const cls = stageIdx === i && state === 'running' ? 'running' : (pct >= 100 ? 'done' : '');
+          return (
+            <div key={s.id} className={'pipe-stage ' + cls}>
+              <div className="pipe-top">
+                <div className="pipe-check" data-n={i + 1} />
+                <div className="pipe-name">{s.name}</div>
+              </div>
+              <div className="pipe-detail">{s.detail}</div>
+              <div className="pipe-bar"><div className="pipe-bar-fill" style={{ width: pct + '%' }} /></div>
+            </div>
+          );
+        })}
+      </div>
+      <div className="idg-outputs">
+        {t.outputs.map((o, i) => (
+          <div key={i} className={'out-card' + (state === 'done' ? ' ready' : '')}>
+            <div className="out-code">{o.code}</div>
+            <div className="out-name">{o.name}</div>
+            <div className="out-count">{o.count}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+Object.assign(window, { StroyOpsDemo, AuditorDemo, IDGeneratorDemo });
+  </script>
+
+  <script type="text/babel">
+const { useState: useStateS, useEffect: useEffectS, useRef: useRefS } = React;
+
+function Robot() {
+  const [mvReady, setMvReady] = useStateS(false);
+  const [mvError, setMvError] = useStateS(false);
+  const hostRef = useRefS(null);
+
+  useEffectS(() => {
+    const host = hostRef.current;
+    if (!host) return;
+    const glbUrl = window.ROBOT_GLB_URL || 'robot.glb';
+    let cancelled = false;
+    let el = null;
+    const mount = () => {
+      if (cancelled) return;
+      host.innerHTML = `
+        <model-viewer
+          src="${glbUrl}"
+          alt="AI robot"
+          auto-rotate
+          auto-rotate-delay="0"
+          rotation-per-second="18deg"
+          camera-controls
+          disable-zoom
+          interaction-prompt="none"
+          loading="eager"
+          reveal="auto"
+          shadow-intensity="1.1"
+          exposure="1.05"
+          environment-image="neutral"
+          camera-orbit="0deg 82deg 2.4m"
+          min-camera-orbit="auto 70deg auto"
+          max-camera-orbit="auto 95deg auto"
+          field-of-view="28deg"
+          class="mv-robot"
+          style="width:100%;height:100%;background:transparent;--poster-color:transparent;"
+        ></model-viewer>
+      `;
+      el = host.querySelector('model-viewer');
+      if (!el) return;
+      const forceShow = () => {
+        if (!el.shadowRoot) return;
+        if (el.shadowRoot.querySelector('style[data-force-show]')) return;
+        const s = document.createElement('style');
+        s.setAttribute('data-force-show', '1');
+        s.textContent = 'canvas{display:block !important;background:transparent !important;} :host{background:transparent !important;} #default-poster{display:none !important;background:transparent !important;opacity:0 !important;visibility:hidden !important;} .slot.poster{display:none !important;}';
+        el.shadowRoot.appendChild(s);
+      };
+      forceShow();
+      setTimeout(forceShow, 0);
+      setTimeout(forceShow, 500);
+      setTimeout(forceShow, 1500);
+      el.addEventListener('load', () => {
+        if (cancelled) return;
+        setMvReady(true);
+        el.classList.add('ready');
+        forceShow();
+        try { if (typeof el.dismissPoster === 'function') el.dismissPoster(); } catch(e) {}
+      });
+      el.addEventListener('error', () => { if (!cancelled) setMvError(true); });
+    };
+    // Wait for model-viewer custom element to be defined, then mount
+    if (window.customElements && customElements.get('model-viewer')) {
+      mount();
+    } else if (window.customElements && customElements.whenDefined) {
+      customElements.whenDefined('model-viewer').then(() => { if (!cancelled) mount(); });
+      // Fallback timeout: if the component never registers in 12s, show error
+      setTimeout(() => { if (!cancelled && !customElements.get('model-viewer')) setMvError(true); }, 12000);
+    } else {
+      mount();
+    }
+    return () => { cancelled = true; };
+  }, []);
+
+  return (
+    <div className="robot-stage">
+      <div className="robot-glow" />
+      <div ref={hostRef} className={'mv-host' + (mvReady ? ' ready' : '')} style={{ position: 'absolute', inset: 0, display: mvError ? 'none' : 'block' }} />
+      {mvError && (
+        <div className="mv-error-state">
+          <div className="mv-error-icon">!</div>
+          <div className="mv-error-text">3D-модель не загрузилась</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Nav({ t, lang, setLang }) {
+  const [scrolled, setScrolled] = useStateS(false);
+  useEffectS(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+  return (
+    <nav className={'nav' + (scrolled ? ' nav-scrolled' : '')}>
+      <div className="nav-inner">
+        <a href="#top" className="nav-logo">
+          <span className="logo-mark">ДЛ</span>
+          <span className="logo-text">Денис Лавров</span>
+        </a>
+        <div className="nav-links">
+          <a href="#about">{t.nav.about}</a>
+          <a href="#projects">{t.nav.projects}</a>
+          <a href="#demo">{t.nav.demo}</a>
+          <a href="#stack">{t.nav.stack}</a>
+          <a href="#pricing">{t.nav.pricing}</a>
+          <a href="#contact">{t.nav.contact}</a>
+        </div>
+        <div className="nav-actions">
+          <div className="lang-toggle">
+            <button className={lang === 'ru' ? 'on' : ''} onClick={() => setLang('ru')}>RU</button>
+            <button className={lang === 'en' ? 'on' : ''} onClick={() => setLang('en')}>EN</button>
+          </div>
+          <a href="#contact" className="btn btn-primary btn-sm">{t.hero.ctaSecondary} →</a>
+        </div>
+      </div>
+    </nav>
+  );
+}
+
+function Hero({ t, variant }) {
+  if (variant === 'B') {
+    return (
+      <header className="hero hero-b" id="top">
+        <div className="grid-bg" />
+        <div className="hero-inner center">
+          <div className="eyebrow"><span className="pulse" /> {t.hero.eyebrow}</div>
+          <h1 className="display display-xl">
+            {t.hero.title[0]}<br />
+            <span className="accent-gradient">{t.hero.title[1]}</span>
+          </h1>
+          <p className="hero-sub">{t.hero.subtitle}</p>
+          <div className="hero-ctas">
+            <a href="#projects" className="btn btn-primary">{t.hero.ctaPrimary} →</a>
+            <a href="#contact" className="btn btn-ghost">{t.hero.ctaSecondary}</a>
+          </div>
+          <Robot />
+          <SystemDiagram wide t={t} />
+          <Metrics t={t} />
+        </div>
+      </header>
+    );
+  }
+  return (
+    <header className="hero hero-a" id="top">
+      <div className="grid-bg" />
+      <div className="hero-inner">
+        <div className="hero-left">
+          <div className="eyebrow"><span className="pulse" /> {t.hero.eyebrow}</div>
+          <h1 className="display">
+            {t.hero.title[0]}<br />
+            <span className="accent-gradient">{t.hero.title[1]}</span>
+          </h1>
+          <p className="hero-sub">{t.hero.subtitle}</p>
+          <div className="hero-ctas">
+            <a href="#projects" className="btn btn-primary">{t.hero.ctaPrimary} →</a>
+            <a href="#contact" className="btn btn-ghost">{t.hero.ctaSecondary}</a>
+          </div>
+          <Metrics t={t} />
+        </div>
+        <div className="hero-right">
+          <Robot />
+        </div>
+      </div>
+    </header>
+  );
+}
+
+function Metrics({ t }) {
+  return (
+    <div className="metrics">
+      {t.hero.metricValues.map((v, i) => (
+        <div className="metric" key={i}>
+          <div className="metric-val">{v}</div>
+          <div className="metric-label">{t.hero.metricLabels[i]}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function SystemDiagram({ wide, t }) {
+  const d = t.diagram;
+  return (
+    <div className={'sys-diagram' + (wide ? ' wide' : '')}>
+      <div className="sys-head">
+        <span className="sys-dot" /> {d.head}
+        <span className="sys-badge">live</span>
+      </div>
+      <div className="sys-body">
+        <div className="node node-in">
+          <span className="node-code">ВХОД</span>
+          <span className="node-name">{d.in}</span>
+          <span className="node-sub">{d.inSub}</span>
+        </div>
+        <div className="flow"><span className="flow-line" /><span className="flow-dot" /></div>
+        <div className="node node-core">
+          <span className="node-code">AI</span>
+          <span className="node-name">{d.core}</span>
+          <span className="node-sub">{d.coreSub}</span>
+        </div>
+        <div className="flow"><span className="flow-line" /><span className="flow-dot d2" /></div>
+        <div className="node-col">
+          <div className="node node-out"><span className="node-code">01</span><span className="node-name">{d.out1}</span></div>
+          <div className="node node-out"><span className="node-code">02</span><span className="node-name">{d.out2}</span></div>
+          <div className="node node-out"><span className="node-code">03</span><span className="node-name">{d.out3}</span></div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function About({ t }) {
+  return (
+    <section className="section" id="about">
+      <Kicker text={t.about.kicker} />
+      <h2 className="h2">{t.about.title}</h2>
+      <p className="lede">{t.about.body}</p>
+      <div className="pillars">
+        {t.about.pillars.map((p, i) => (
+          <div className="pillar" key={i}>
+            <div className="pillar-label">{p.label}</div>
+            <div className="pillar-text">{p.text}</div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function statusClass(s) {
+  const k = (s || '').toString().toLowerCase();
+  if (k === 'запущено' || k === 'live' || k === 'production' || k === 'продакшн') return 's-production';
+  if (k === 'в работе' || k === 'active' || k === 'beta') return 's-beta';
+  if (k.includes('разработ') || k.includes('development')) return 's-dev';
+  if (k.includes('план') || k.includes('planned')) return 's-planned';
+  return 's-planned';
+}
+
+function Projects({ t, labels }) {
+  const [active, setActive] = useStateS(0);
+  const [userInteracted, setUserInteracted] = useStateS(false);
+  const item = t.projects.items[active];
+  const total = t.projects.items.length;
+  const pad = (n) => String(n).padStart(2, '0');
+  const go = (i) => { setActive((i + total) % total); setUserInteracted(true); };
+  const status = item.status || '';
+  const statusK = statusClass(status);
+  return (
+    <section className="section" id="projects">
+      <Kicker text={t.projects.kicker} />
+      <h2 className="h2">{t.projects.title}</h2>
+      <div className="projects-wrap">
+        <div>
+          <div className="projects-list">
+            {t.projects.items.map((p, i) => (
+              <button key={i} className={'project-row' + (i === active ? ' active' : '') + (!userInteracted ? ' hint-pulse' : '')} onClick={() => { setActive(i); setUserInteracted(true); }}>
+                <span className="project-code">{p.code}</span>
+                <span className="project-name">{p.name}</span>
+                <span className="project-tag">{p.tag}</span>
+                <span className={'project-status ' + statusClass(p.status)}>{p.status}</span>
+                <span className="project-arrow">→</span>
+              </button>
+            ))}
+          </div>
+          <div className={'projects-hint' + (userInteracted ? ' hidden' : '')}>{labels.selectHint}</div>
+        </div>
+        <div className="project-detail bento" key={active}>
+          <div className="bento-head">
+            <span className="project-code-lg">{item.code}</span>
+            <div style={{flex:1}}>
+              <h3 className="project-title">{item.name}</h3>
+              <div className="project-tag">{item.tag}</div>
+            </div>
+            <div className="bento-status">
+              <span className={'st-pill ' + statusK}><span className="st-dot" />{status}</span>
+              <div className="project-progress"><span className="pp-cur">{pad(active + 1)}</span> / {pad(total)}</div>
+            </div>
+          </div>
+          <div className="bento-grid">
+            <div className="bento-card bento-problem">
+              <div className="bento-label"><span className="bl-mark bm-red" />{labels.problem}</div>
+              <div className="bento-text">{item.problem}</div>
+            </div>
+            <div className="bento-card bento-solution">
+              <div className="bento-label"><span className="bl-mark bm-accent" />{labels.solution}</div>
+              <div className="bento-text">{item.solution}</div>
+            </div>
+            <div className="bento-card bento-result">
+              <div className="bento-label"><span className="bl-mark bm-green" />{labels.result}</div>
+              <div className="bento-text">{item.result}</div>
+            </div>
+          </div>
+          <div className="project-nav-row">
+            <button className="pn-btn" onClick={() => go(active - 1)}>‹ {labels.prev}</button>
+            <button className="pn-btn" onClick={() => go(active + 1)}>{labels.next} ›</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ProjectBlock({ label, text, color }) {
+  return (
+    <div className={'pb pb-' + color}>
+      <div className="pb-label"><span className="pb-mark" />{label}</div>
+      <div className="pb-text">{text}</div>
+    </div>
+  );
+}
+
+function SystemThinking({ t }) {
+  return (
+    <section className="section" id="system">
+      <Kicker text={t.system.kicker} />
+      <h2 className="h2">{t.system.title}</h2>
+      <div className="principles">
+        {t.system.items.map((p, i) => (
+          <div className="principle" key={i}>
+            <div className="principle-n">{p.n}</div>
+            <div className="principle-name">{p.name}</div>
+            <div className="principle-text">{p.text}</div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function Stack({ t }) {
+  return (
+    <section className="section" id="stack">
+      <Kicker text={t.stack.kicker} />
+      <h2 className="h2">{t.stack.title}</h2>
+      <div className="stack-grid">
+        {t.stack.groups.map((g, i) => (
+          <div className="stack-group" key={i}>
+            <div className="stack-group-name">{g.name}</div>
+            <ul className="stack-list">
+              {g.items.map((x, j) => <li key={j}><span className="stack-dot" /> {x}</li>)}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function Gov({ t }) {
+  return (
+    <section className="section" id="gov">
+      <Kicker text={t.gov.kicker} />
+      <div className="gov-wrap">
+        <div className="gov-left">
+          <h2 className="h2">{t.gov.title}</h2>
+          <p className="lede">{t.gov.body}</p>
+        </div>
+        <div className="gov-right">
+          <ul className="gov-list">
+            {t.gov.points.map((p, i) => (
+              <li key={i}><span className="gov-num">0{i + 1}</span><span>{p}</span></li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function DemoSection({ t, lang }) {
+  const [tab, setTab] = useStateS('stroyops');
+  const d = t.demo;
+  return (
+    <section className="section demo-section" id="demo">
+      <Kicker text={d.kicker} />
+      <h2 className="h2">{d.title}</h2>
+      <p className="lede">{d.subtitle}</p>
+      <div className="demo-tabs">
+        {d.tabs.map((x) => (
+          <button key={x.id} className={'demo-tab' + (tab === x.id ? ' on' : '')} onClick={() => setTab(x.id)}>
+            <span className="demo-tab-code">{x.code}</span>
+            <div className="demo-tab-text">
+              <span className="demo-tab-name">{x.name}</span>
+              <span className="demo-tab-hint">{x.hint}</span>
+            </div>
+          </button>
+        ))}
+      </div>
+      {tab === 'stroyops' && (
+        <React.Fragment>
+          <p className="demo-sub">{d.stroyops.subtitle}</p>
+          <StroyOpsDemo t={d.stroyops} lang={lang} />
+        </React.Fragment>
+      )}
+      {tab === 'auditor' && <AuditorDemo t={d.auditor} lang={lang} />}
+      {tab === 'idgen' && <IDGeneratorDemo t={d.idgen} lang={lang} />}
+      <div className="demo-cta-row">
+        <a href="#contact" className="btn btn-primary">{lang === 'ru' ? 'Обсудить внедрение' : 'Discuss adoption'} →</a>
+        <a href="#projects" className="btn btn-ghost">{lang === 'ru' ? 'Все проекты' : 'All projects'}</a>
+        <span className="note">{lang === 'ru' ? '// реальные продакшн-системы, имена контрагентов условные' : '// real production systems, party names are illustrative'}</span>
+      </div>
+    </section>
+  );
+}
+
+function Pricing({ t }) {
+  return (
+    <section className="section" id="pricing">
+      <Kicker text={t.pricing.kicker} />
+      <h2 className="h2">{t.pricing.title}</h2>
+      <p className="lede">{t.pricing.subtitle}</p>
+      <div className="pricing-grid">
+        {t.pricing.plans.map((p, i) => (
+          <div key={i} className={'price-card' + (p.featured ? ' featured' : '')}>
+            <div className="price-tier">{p.tier}</div>
+            <div className="price-val">{p.price}<span className="rub">тыс. ₽</span></div>
+            <div className="price-sub">{p.sub} · {p.hint}</div>
+            <ul className="price-features">
+              {p.features.map((f, j) => <li key={j}>{f}</li>)}
+            </ul>
+            <a className="price-cta" href="#contact">
+              <span>{p.cta}</span>
+              <span className="arr">→</span>
+            </a>
+          </div>
+        ))}
+      </div>
+      <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 24, fontFamily: 'var(--font-mono)' }}>{t.pricing.note}</div>
+    </section>
+  );
+}
+
+function Contact({ t }) {
+  return (
+    <section className="section contact-section" id="contact">
+      <Kicker text={t.contact.kicker} />
+      <div className="contact-wrap">
+        <h2 className="h2 contact-title">{t.contact.title}</h2>
+        <p className="lede">{t.contact.body}</p>
+        <div className="contact-rows">
+          <a className="contact-row" href={'mailto:' + t.contact.email}>
+            <span className="cr-label">Email</span>
+            <span className="cr-val">{t.contact.email}</span>
+            <span className="cr-arrow">→</span>
+          </a>
+          <a className="contact-row" href={'https://t.me/' + t.contact.telegram.replace('@', '')} target="_blank" rel="noreferrer">
+            <span className="cr-label">Telegram</span>
+            <span className="cr-val">{t.contact.telegram}</span>
+            <span className="cr-arrow">→</span>
+          </a>
+          <a className="contact-row" href={'https://' + t.contact.github} target="_blank" rel="noreferrer">
+            <span className="cr-label">GitHub</span>
+            <span className="cr-val">{t.contact.github}</span>
+            <span className="cr-arrow">→</span>
+          </a>
+        </div>
+        <a className="btn btn-primary btn-lg" href={'https://t.me/' + t.contact.telegram.replace('@', '')} target="_blank" rel="noreferrer">
+          {t.contact.cta} →
+        </a>
+      </div>
+    </section>
+  );
+}
+
+function Footer({ t }) {
+  return (
+    <footer className="footer">
+      <div className="footer-inner">
+        <div>{t.footer}</div>
+        <div className="footer-right"><span className="dot-live" /> открыт к задачам</div>
+      </div>
+    </footer>
+  );
+}
+
+function Kicker({ text }) { return <div className="kicker">{text}</div>; }
+
+Object.assign(window, { Nav, Hero, About, Projects, SystemThinking, Stack, Gov, DemoSection, Pricing, Contact, Footer });
+  </script>
+
+  <script type="text/babel">
+const { useState, useEffect } = React;
+
+const ACCENTS = [
+  { hex: '#FF6B35', soft: 'rgba(255,107,53,0.12)', glow: 'rgba(255,107,53,0.35)', pair: '#FF9770' },
+  { hex: '#7C5CFF', soft: 'rgba(124,92,255,0.12)', glow: 'rgba(124,92,255,0.35)', pair: '#A78BFA' },
+  { hex: '#00D4FF', soft: 'rgba(0,212,255,0.12)', glow: 'rgba(0,212,255,0.35)', pair: '#7DE8FF' },
+  { hex: '#7DD87D', soft: 'rgba(125,216,125,0.12)', glow: 'rgba(125,216,125,0.35)', pair: '#A3E8A3' },
+];
+
+const LABELS = {
+  ru: { problem: 'Проблема', solution: 'Решение', result: 'Результат', selectHint: '← выберите проект', prev: 'Предыдущий', next: 'Следующий' },
+  en: { problem: 'Problem', solution: 'Solution', result: 'Result', selectHint: '← select a project', prev: 'Previous', next: 'Next' },
+};
+
+function applyAccent(hex) {
+  const a = ACCENTS.find(x => x.hex.toLowerCase() === hex.toLowerCase()) || ACCENTS[0];
+  document.documentElement.style.setProperty('--accent', a.hex);
+  document.documentElement.style.setProperty('--accent-2', a.pair);
+  document.documentElement.style.setProperty('--accent-soft', a.soft);
+  document.documentElement.style.setProperty('--accent-glow', a.glow);
+}
+
+function App() {
+  const [lang, setLang] = useState(TWEAK_DEFAULTS.lang || 'ru');
+  const [variant, setVariant] = useState(TWEAK_DEFAULTS.heroVariant || 'B');
+  const [accent, setAccent] = useState(TWEAK_DEFAULTS.accent || '#FF6B35');
+  const [tweaksOpen, setTweaksOpen] = useState(false);
+
+  useEffect(() => { applyAccent(accent); }, [accent]);
+  useEffect(() => { document.documentElement.lang = lang; }, [lang]);
+  useEffect(() => {
+    const onMessage = (e) => {
+      if (!e.data || typeof e.data !== 'object') return;
+      if (e.data.type === '__activate_edit_mode') setTweaksOpen(true);
+      if (e.data.type === '__deactivate_edit_mode') setTweaksOpen(false);
+    };
+    window.addEventListener('message', onMessage);
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+    return () => window.removeEventListener('message', onMessage);
+  }, []);
+
+  const persist = (key, value) => {
+    try { window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { [key]: value } }, '*'); } catch (err) {}
+  };
+
+  const t = CONTENT[lang];
+  return (
+    <React.Fragment>
+      <Nav t={t} lang={lang} setLang={(l) => { setLang(l); persist('lang', l); }} />
+      <Hero t={t} variant={variant} />
+      <About t={t} />
+      <Projects t={t} labels={LABELS[lang]} />
+      <DemoSection t={t} lang={lang} />
+      <SystemThinking t={t} />
+      <Stack t={t} />
+      <Pricing t={t} />
+      <Gov t={t} />
+      <Contact t={t} />
+      <Footer t={t} />
+      {tweaksOpen && (
+        <div className="tweaks-panel">
+          <div className="tweaks-head"><span className="sys-dot" /> Tweaks</div>
+          <div className="tweak-row">
+            <div className="tweak-label">Язык</div>
+            <div className="tweak-seg">
+              {['ru', 'en'].map(l => (
+                <button key={l} className={lang === l ? 'on' : ''} onClick={() => { setLang(l); persist('lang', l); }}>{l.toUpperCase()}</button>
+              ))}
+            </div>
+          </div>
+          <div className="tweak-row">
+            <div className="tweak-label">Hero</div>
+            <div className="tweak-seg">
+              {['A', 'B'].map(v => (
+                <button key={v} className={variant === v ? 'on' : ''} onClick={() => { setVariant(v); persist('heroVariant', v); }}>
+                  {v === 'A' ? 'Сплит' : 'Центр'}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="tweak-row">
+            <div className="tweak-label">Акцент</div>
+            <div className="tweak-swatches">
+              {ACCENTS.map(a => (
+                <button key={a.hex} className={'tweak-swatch' + (accent.toLowerCase() === a.hex.toLowerCase() ? ' on' : '')} style={{ background: a.hex }} onClick={() => { setAccent(a.hex); persist('accent', a.hex); }} aria-label={a.hex} />
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </React.Fragment>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
