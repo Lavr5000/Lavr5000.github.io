@@ -34,7 +34,7 @@
   --container: 1180px;
 }
 * { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; }
+html, body { margin: 0; padding: 0; overflow-x: hidden; }
 body { background: var(--bg); color: var(--text); font-family: var(--font-sans); font-size: 16px; line-height: 1.55; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; letter-spacing: -0.005em; }
 a { color: inherit; text-decoration: none; }
 button { font-family: inherit; cursor: pointer; }
@@ -93,6 +93,21 @@ button { font-family: inherit; cursor: pointer; }
 .metric-val { font-size: 32px; font-weight: 500; letter-spacing: -0.02em; color: var(--text); font-feature-settings: 'tnum'; }
 .metric-label { font-size: 12px; color: var(--text-3); margin-top: 2px; text-wrap: balance; }
 @media (max-width: 900px) { .hero-inner { grid-template-columns: 1fr; } .hero { padding-top: 120px; } }
+@media (max-width: 768px) {
+  .hero { padding: 120px 16px 60px; }
+  .hero-inner.center .display, .hero-inner.center .hero-sub { max-width: 100%; }
+  .display { font-size: clamp(32px, 8vw, 48px); letter-spacing: -0.02em; }
+  .display-xl { font-size: clamp(36px, 9vw, 56px); }
+  .hero-sub { font-size: 16px; margin-bottom: 24px; }
+  .hero-ctas { width: 100%; }
+  .hero-ctas .btn { flex: 1 1 auto; justify-content: center; text-align: center; }
+}
+@media (max-width: 480px) {
+  .hero { padding: 100px 12px 48px; }
+  .display { font-size: clamp(28px, 9vw, 40px); }
+  .display-xl { font-size: clamp(32px, 10vw, 48px); }
+  .eyebrow { font-size: 11px; }
+}
 
 /* Robot */
 .robot-stage { width: 100%; max-width: 520px; margin: 56px auto 0; aspect-ratio: 1 / 0.85; position: relative; perspective: 900px; }
@@ -224,7 +239,7 @@ button { font-family: inherit; cursor: pointer; }
 .project-status.s-dev { color: var(--accent-2); border-color: rgba(255,151,112,0.3); background: rgba(255,107,53,0.08); }
 .project-status.s-planned { color: var(--text-2); border-color: var(--border-strong); background: var(--bg-elev); }
 .project-arrow { color: var(--text-3); font-size: 14px; transition: all 0.15s; }
-.project-detail { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px; position: sticky; top: 80px; animation: fadeIn 0.3s ease; }
+.project-detail { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px; position: sticky; top: 80px; animation: fadeIn 0.3s ease; scroll-margin-top: 88px; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 .project-detail-head { display: flex; gap: 16px; align-items: center; margin-bottom: 28px; }
 .project-code-lg { width: 48px; height: 48px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent-2); border-radius: 10px; font-family: var(--font-mono); font-size: 13px; font-weight: 600; }
@@ -292,6 +307,12 @@ button { font-family: inherit; cursor: pointer; }
 .tg-shell { display: grid; grid-template-columns: 280px 1fr; background: #0f1014; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 40px 90px -40px rgba(0,0,0,0.9), 0 0 60px -30px var(--accent-glow); height: 640px; min-height: 0; }
 .tg-shell > * { min-height: 0; min-width: 0; }
 @media (max-width: 900px) { .tg-shell { grid-template-columns: 1fr; height: 640px; } .tg-side { display: none; } }
+@media (max-width: 768px) {
+  .tg-shell { height: auto; min-height: 560px; max-height: 85vh; scroll-margin-top: 88px; }
+  .tg-body { min-height: 320px; max-height: 60vh; scroll-margin-top: 88px; }
+  .tg-presets { flex-wrap: wrap; }
+  .chip { font-size: 12px; padding: 8px 12px; }
+}
 .tg-side { background: #0b0c10; border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; min-height: 0; }
 .tg-side-head { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--border); }
 .tg-side-title { font-size: 13px; font-weight: 600; letter-spacing: -0.01em; }
@@ -385,6 +406,16 @@ button { font-family: inherit; cursor: pointer; }
 /* ── Phone (Auditor) ─────────────────────────────────────────────────────── */
 .auditor-wrap { display: grid; grid-template-columns: 300px 1fr; gap: 40px; align-items: start; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px; overflow: hidden; }
 @media (max-width: 900px) { .auditor-wrap { grid-template-columns: 1fr; gap: 24px; padding: 20px; } }
+@media (max-width: 768px) {
+  .auditor-wrap { padding: 16px; gap: 20px; }
+  .aud-meta-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .aud-meta-cell { padding: 8px; }
+  .mv { font-size: 13px; }
+  .phone { scroll-margin-top: 88px; }
+}
+@media (max-width: 480px) {
+  .aud-meta-grid { grid-template-columns: repeat(2, 1fr); }
+}
 .phone { position: relative; width: 300px; height: 620px; background: #1a1a22; border-radius: 44px; padding: 14px; margin: 0 auto; box-shadow: 0 30px 60px -20px rgba(0,0,0,0.7), 0 0 0 1px var(--border-strong), inset 0 0 0 2px #0b0b10; }
 .phone::before { content: ''; position: absolute; top: 22px; left: 50%; transform: translateX(-50%); width: 100px; height: 28px; background: #05050a; border-radius: 100px; z-index: 2; }
 .phone-screen { width: 100%; height: 100%; background: #0a0a0f; border-radius: 32px; overflow: hidden; position: relative; display: flex; flex-direction: column; }
@@ -1657,6 +1688,9 @@ function StroyOpsDemo({ t, lang }) {
 
   const runScenario = (sc) => {
     if (busy) return;
+    if (typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches && scrollRef.current) {
+      setTimeout(() => scrollRef.current && scrollRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+    }
     setBusy(true);
     setActiveScenario(null);
     setMessages([welcome,
@@ -1738,8 +1772,15 @@ function StroyOpsDemo({ t, lang }) {
 // --- AuditorDemo ---------------------------------------------------------
 function AuditorDemo({ t, lang }) {
   const [step, setStep] = useState('checklist');
+  const phoneRef = useRef(null);
   const stepIdx = t.steps.findIndex(s => s.id === step);
   const progressPct = ((stepIdx + 1) / t.steps.length) * 100;
+  const handleStepClick = (id) => {
+    setStep(id);
+    if (typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches && phoneRef.current) {
+      setTimeout(() => phoneRef.current && phoneRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+    }
+  };
   return (
     <div className="auditor-wrap">
       <div className="aud-side">
@@ -1750,7 +1791,7 @@ function AuditorDemo({ t, lang }) {
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-3)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>{t.tryLabel}</div>
         <div className="aud-steps">
           {t.steps.map(s => (
-            <button key={s.id} className={'aud-step' + (step === s.id ? ' on' : '')} onClick={() => setStep(s.id)}>
+            <button key={s.id} className={'aud-step' + (step === s.id ? ' on' : '')} onClick={() => handleStepClick(s.id)}>
               <span className="aud-step-code">{s.code}</span>
               <div>
                 <div className="aud-step-name">{s.name}</div>
@@ -1766,7 +1807,7 @@ function AuditorDemo({ t, lang }) {
           <div className="aud-meta-cell"><div className="mk">{lang === 'ru' ? 'Платформа' : 'Platform'}</div><div className="mv">RuStore</div></div>
         </div>
       </div>
-      <div className="phone">
+      <div className="phone" ref={phoneRef}>
         <div className="phone-screen">
           <div className="phone-status">
             <span>9:41</span>
@@ -2248,10 +2289,16 @@ function statusClass(s) {
 function Projects({ t, labels }) {
   const [active, setActive] = useStateS(0);
   const [userInteracted, setUserInteracted] = useStateS(false);
+  const detailRef = useRefS(null);
   const item = t.projects.items[active];
   const total = t.projects.items.length;
   const pad = (n) => String(n).padStart(2, '0');
-  const go = (i) => { setActive((i + total) % total); setUserInteracted(true); };
+  const scrollToDetail = () => {
+    if (typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches && detailRef.current) {
+      setTimeout(() => detailRef.current && detailRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+    }
+  };
+  const go = (i) => { setActive((i + total) % total); setUserInteracted(true); scrollToDetail(); };
   const status = item.status || '';
   const statusK = statusClass(status);
   return (
@@ -2262,7 +2309,7 @@ function Projects({ t, labels }) {
         <div>
           <div className="projects-list">
             {t.projects.items.map((p, i) => (
-              <button key={i} className={'project-row' + (i === active ? ' active' : '') + (!userInteracted ? ' hint-pulse' : '')} onClick={() => { setActive(i); setUserInteracted(true); }}>
+              <button key={i} className={'project-row' + (i === active ? ' active' : '') + (!userInteracted ? ' hint-pulse' : '')} onClick={() => { setActive(i); setUserInteracted(true); scrollToDetail(); }}>
                 <span className="project-code">{p.code}</span>
                 <span className="project-name">{p.name}</span>
                 <span className="project-tag">{p.tag}</span>
@@ -2273,7 +2320,7 @@ function Projects({ t, labels }) {
           </div>
           <div className={'projects-hint' + (userInteracted ? ' hidden' : '')}>{labels.selectHint}</div>
         </div>
-        <div className="project-detail bento" key={active}>
+        <div className="project-detail bento" key={active} ref={detailRef}>
           <div className="bento-head">
             <span className="project-code-lg">{item.code}</span>
             <div style={{flex:1}}>
