@@ -4,6 +4,19 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Денис Лавров — Автоматизация строительства и AI</title>
+  <meta name="description" content="AI Vibes: интеграция ИИ в строительные процессы — чертежи, сметы, приёмка, письма и исполнительная документация." />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="AI Vibes" />
+  <meta property="og:title" content="AI Vibes — ИИ в строительных процессах" />
+  <meta property="og:description" content="Практические AI-интеграции для стройки: чертежи, сметы, приёмка, голосовые с объекта, письма и исполнительная документация." />
+  <meta property="og:url" content="https://lavr5000.github.io/" />
+  <meta property="og:image" content="https://lavr5000.github.io/assets/ai-vibes-site-og-1200x630.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="AI Vibes — ИИ в строительных процессах" />
+  <meta name="twitter:description" content="Практические AI-интеграции для стройки: чертежи, сметы, приёмка, голосовые с объекта, письма и исполнительная документация." />
+  <meta name="twitter:image" content="https://lavr5000.github.io/assets/ai-vibes-site-og-1200x630.jpg" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -88,6 +101,15 @@ button { font-family: inherit; cursor: pointer; }
 .grid-bg { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,107,53,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,107,53,0.05) 1px, transparent 1px); background-size: 64px 64px; mask-image: radial-gradient(ellipse at 30% 20%, black 0%, transparent 70%); -webkit-mask-image: radial-gradient(ellipse at 30% 20%, black 0%, transparent 70%); pointer-events: none; }
 .hero-sub { font-size: 19px; color: var(--text-2); max-width: 560px; margin: 0 0 32px; text-wrap: pretty; }
 .hero-ctas { display: flex; gap: 12px; margin-bottom: 56px; flex-wrap: wrap; }
+.hero.hero-b { max-width: none; min-height: 100vh; display: flex; align-items: center; padding: 150px 32px 72px; isolation: isolate; }
+.hero.hero-b::before { content: ''; position: absolute; inset: 0; z-index: 0; background-image: linear-gradient(90deg, rgba(8,8,11,0.94) 0%, rgba(8,8,11,0.82) 30%, rgba(8,8,11,0.38) 62%, rgba(8,8,11,0.12) 100%), linear-gradient(180deg, rgba(8,8,11,0.54) 0%, rgba(8,8,11,0) 32%, rgba(8,8,11,0.78) 100%), url('assets/ai-vibes-site-hero-1920x1080.jpg'); background-size: cover; background-position: center; filter: saturate(0.96); }
+.hero.hero-b::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 140px; z-index: 0; background: linear-gradient(180deg, rgba(8,8,11,0), var(--bg)); pointer-events: none; }
+.hero-b .grid-bg { display: none; }
+.hero-b .hero-inner.center { width: 100%; max-width: var(--container); margin: 0 auto; text-align: left; justify-items: start; }
+.hero-b .hero-inner.center .display, .hero-b .hero-inner.center .hero-sub { max-width: 720px; }
+.hero-b .hero-ctas { margin-bottom: 0; }
+.hero-b .sys-diagram.wide { max-width: 720px; margin: 44px 0 0; background: rgba(10,10,14,0.72); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+.hero-b .hero-inner.center .metrics { max-width: 720px; margin-top: 40px; }
 .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; padding-top: 32px; border-top: 1px solid var(--border); max-width: 560px; }
 .hero-inner.center .metrics { max-width: 720px; width: 100%; }
 .metric-val { font-size: 32px; font-weight: 500; letter-spacing: -0.02em; color: var(--text); font-feature-settings: 'tnum'; }
@@ -101,6 +123,10 @@ button { font-family: inherit; cursor: pointer; }
   .hero-sub { font-size: 16px; margin-bottom: 24px; }
   .hero-ctas { width: 100%; }
   .hero-ctas .btn { flex: 1 1 auto; justify-content: center; text-align: center; }
+  .hero.hero-b { min-height: 100vh; padding: 120px 18px 58px; align-items: flex-end; }
+  .hero.hero-b::before { background-position: 62% center; }
+  .hero-b .hero-inner.center { text-align: left; justify-items: start; }
+  .hero-b .sys-diagram.wide { margin-top: 34px; }
 }
 @media (max-width: 480px) {
   .hero { padding: 100px 12px 48px; }
@@ -2183,7 +2209,6 @@ function Hero({ t, variant }) {
             <a href="#projects" className="btn btn-primary">{t.hero.ctaPrimary} →</a>
             <a href="#contact" className="btn btn-ghost">{t.hero.ctaSecondary}</a>
           </div>
-          <Robot />
           <SystemDiagram wide t={t} />
           <Metrics t={t} />
         </div>
