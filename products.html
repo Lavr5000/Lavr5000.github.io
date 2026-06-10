@@ -205,6 +205,19 @@
   .price-card:hover .card-cta { background:var(--accent); border-color:var(--accent); color:#0A0A0A; }
   .price-card:hover .card-cta svg { transform:translateX(4px); }
 
+  /* ---- Demo table ---- */
+  .demo { padding:56px 0 12px; border-top:1px solid var(--border); }
+  .demo-table-wrap { overflow-x:auto; border:1px solid var(--border); border-radius:var(--radius-lg); background:var(--bg-card); }
+  table.demo-table { width:100%; border-collapse:collapse; font-size:13.5px; min-width:640px; }
+  .demo-table th { font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--text-3); text-align:left; padding:12px 14px; border-bottom:1px solid var(--border-strong); white-space:nowrap; }
+  .demo-table td { padding:10px 14px; border-bottom:1px solid var(--border); color:var(--text-2); }
+  .demo-table tr:last-child td { border-bottom:none; }
+  .demo-table .num { font-family:var(--font-mono); white-space:nowrap; }
+  .st { font-family:var(--font-mono); font-size:11px; padding:2px 8px; border-radius:100px; white-space:nowrap; }
+  .st.ok { color:var(--green); background:rgba(125,216,125,.10); }
+  .st.pivot { color:var(--amber); background:rgba(245,185,79,.10); }
+  .demo-note { font-family:var(--font-mono); font-size:12px; color:var(--text-3); margin-top:14px; max-width:680px; line-height:1.6; }
+
   /* ---- How to order ---- */
   .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-bottom:26px; }
   .step { min-height:0; border:1px solid var(--border); border-radius:var(--radius-lg); background:var(--bg-card); padding:24px; }
@@ -247,294 +260,12 @@
 <body>
 <div id="root"></div>
 
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="assets/react.production.min.js"></script>
+<script src="assets/react-dom.production.min.js"></script>
 <!-- Product registry (single source of truth). Loaded BEFORE the app so window.AI_PRODUCTS exists. -->
 <script src="products.js"></script>
 
-<script type="text/babel" data-presets="react">
-const { useState } = React;
-
-const TG = "https://t.me/lavr5000";
-const PORTFOLIO = "https://lavr5000.github.io/";
-const EMAIL = "lavr5000xxx@gmail.com";
-
-/* ---------- Icons (line-style, currentColor stroke) ---------- */
-const ico = {
-  spark: <svg viewBox="0 0 24 24" fill="none"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/></svg>,
-  list: <svg viewBox="0 0 24 24" fill="none" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M8 6h11M8 12h11M8 18h11"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg>,
-  diff: <svg viewBox="0 0 24 24" fill="none" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M4 6h7M4 18h7M16 3v18"/><path d="M14 8l2.5-2.5L19 8M19 16l-2.5 2.5L14 16"/></svg>,
-  mail: <svg viewBox="0 0 24 24" fill="none" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 7l8.5 6 8.5-6"/></svg>,
-  mic: <svg viewBox="0 0 24 24" fill="none" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg>,
-  arrowRight: <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>,
-  arrowDown: <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg>,
-  tg: <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.8 4.3l-3 14.2c-.2 1-.8 1.3-1.7.8l-4.6-3.4-2.2 2.1c-.3.3-.5.5-.9.5l.3-4.6 8.4-7.6c.4-.3-.1-.5-.6-.2L7.4 12.4l-4.5-1.4c-1-.3-1-1 .2-1.5L20.5 2.9c.8-.3 1.5.2 1.3 1.4z"/></svg>,
-  back: <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>,
-};
-
-/* ---------- Page chrome i18n (product data lives in products.js) ---------- */
-const i18n = {
-  ru: {
-    nav: { portfolio:"Портфолио", products:"Продукты", contacts:"Контакты" },
-    hero: {
-      eyebrow:"AI-инструменты для стройки",
-      title:["AI-продукты для ", "ПТО, сметчиков", " и снабжения"],
-      sub:"Превращаю рабочую документацию и рутину стройки в готовые Excel-файлы, списки и письма. Загрузил — получил результат.",
-      cta:"Смотреть продукты",
-    },
-    products: {
-      kicker:"Каталог", title:"Продукты",
-      desc:"Готовые AI-сервисы для конкретных задач. Цены ориентировочные — финальная зависит от объёма.",
-      empty:"Скоро здесь появятся продукты.",
-    },
-    statuses: { available:"Доступен", soon:"Скоро", dev:"В разработке", planned:"В планах" },
-    io: { in:"Вход:", out:"Выход:" },
-    cardCta:"Заказать в Telegram",
-    from:"от",
-    how: {
-      kicker:"Процесс", title:"Как заказать",
-      steps:[
-        { t:"Напишите в Telegram", d:"Опишите задачу и пришлите файл — PDF, Excel, фото или аудио с объекта." },
-        { t:"Я обрабатываю", d:"Прогоняю через AI-пайплайн и проверяю результат. Обычно 1 рабочий день." },
-        { t:"Получаете Excel", d:"Готовый файл с данными, ссылками на источник и пометками о проверке." },
-      ],
-      note:"Source refs на каждый лист. Честные статусы проверки. Не финальная смета — подготовка данных.",
-    },
-    footer: {
-      tag:"Практические AI-интеграции для строительных процессов.",
-      contacts:"Контакты", nav:"Навигация",
-      portfolio:"Портфолио", products:"Продукты",
-      back:"Вернуться в портфолио",
-      rights:"Все права защищены.",
-    },
-  },
-  en: {
-    nav: { portfolio:"Portfolio", products:"Products", contacts:"Contacts" },
-    hero: {
-      eyebrow:"AI tools for construction",
-      title:["AI products for ", "QS, estimators", " & procurement"],
-      sub:"I turn construction paperwork and routine into ready-made Excel files, lists and letters. Upload a file — get the result.",
-      cta:"View products",
-    },
-    products: {
-      kicker:"Catalog", title:"Products",
-      desc:"Ready-made AI services for specific tasks. Prices are indicative — the final one depends on scope.",
-      empty:"Products coming soon.",
-    },
-    statuses: { available:"Available", soon:"Soon", dev:"In progress", planned:"Planned" },
-    io: { in:"In:", out:"Out:" },
-    cardCta:"Order on Telegram",
-    from:"from",
-    how: {
-      kicker:"Process", title:"How to order",
-      steps:[
-        { t:"Message on Telegram", d:"Describe the task and send a file — PDF, Excel, a photo or audio from site." },
-        { t:"I process it", d:"Run it through the AI pipeline and verify the output. Usually one business day." },
-        { t:"You get Excel", d:"A ready file with data, source references and verification notes." },
-      ],
-      note:"Source refs on every sheet. Honest verification statuses. Not a final estimate — data preparation.",
-    },
-    footer: {
-      tag:"Practical AI integrations for construction workflows.",
-      contacts:"Contacts", nav:"Navigation",
-      portfolio:"Portfolio", products:"Products",
-      back:"Back to portfolio",
-      rights:"All rights reserved.",
-    },
-  },
-};
-
-/* ---------- Registry normalize: a broken record is skipped, never crashes the grid ---------- */
-const STATUSES = ["available","soon","dev","planned"];
-const ICON_KEYS = ["list","diff","mail","mic","spark"];
-
-function pick(o, lang) { return (o && (o[lang] != null ? o[lang] : o.ru)) || ""; }
-
-function getProducts(lang) {
-  const raw = Array.isArray(window.AI_PRODUCTS) ? window.AI_PRODUCTS : [];
-  return raw
-    .filter(p => p && p.id && p.title && p.title.ru && p.price && p.price.ru && p.visible !== false)
-    .slice()
-    .sort((a,b) => (a.order != null ? a.order : 999) - (b.order != null ? b.order : 999))
-    .map(p => {
-      const tgText = p.cta && p.cta.tgText ? pick(p.cta.tgText, lang) : "";
-      return {
-        key: p.id,
-        icon: ICON_KEYS.includes(p.icon) ? p.icon : "list",
-        status: STATUSES.includes(p.status) ? p.status : "planned",
-        aud: pick(p.audience, lang),
-        title: pick(p.title, lang),
-        tag: pick(p.tagline, lang),
-        in: pick(p.input, lang),
-        out: pick(p.output, lang),
-        price: pick(p.price, lang),
-        href: TG + (tgText ? ("?text=" + encodeURIComponent(tgText)) : ""),
-      };
-    });
-}
-
-/* ---------- Components ---------- */
-function Nav({ lang, setLang, t }) {
-  return (
-    <nav className="nav">
-      <div className="container nav-inner">
-        <a className="logo" href={PORTFOLIO}>
-          <span className="logo-mark">{ico.spark}</span>
-          <span>AI&nbsp;Vibes</span>
-        </a>
-        <div className="nav-right">
-          <a className="nav-link" href={PORTFOLIO}>{t.nav.portfolio}</a>
-          <a className="nav-link active" href="#products">{t.nav.products}</a>
-          <a className="nav-link contacts" href="#footer">{t.nav.contacts}</a>
-          <div className="lang-toggle" role="group" aria-label="Language">
-            <button className={lang==="ru"?"on":""} onClick={()=>setLang("ru")}>RU</button>
-            <button className={lang==="en"?"on":""} onClick={()=>setLang("en")}>EN</button>
-          </div>
-        </div>
-      </div>
-    </nav>
-  );
-}
-
-function Hero({ t }) {
-  return (
-    <header className="hero">
-      <div className="container hero-inner">
-        <span className="eyebrow"><span className="dot"></span>{t.hero.eyebrow}</span>
-        <h1 className="hero-title">
-          {t.hero.title[0]}<span className="hl">{t.hero.title[1]}</span>{t.hero.title[2]}
-        </h1>
-        <p className="hero-sub">{t.hero.sub}</p>
-        <a className="btn btn-primary" href="#products">
-          {t.hero.cta}{ico.arrowDown}
-        </a>
-      </div>
-    </header>
-  );
-}
-
-function PriceCard({ p, t }) {
-  return (
-    <a className="price-card" href={p.href} target="_blank" rel="noopener noreferrer">
-      <div className="card-top">
-        <span className="card-icon">{ico[p.icon]}</span>
-        <span className={"pill "+p.status}>{t.statuses[p.status]}</span>
-      </div>
-      <div className="card-audience">{p.aud}</div>
-      <h3 className="card-title">{p.title}</h3>
-      <p className="card-tagline">{p.tag}</p>
-      <div className="io">
-        <div className="io-row"><span className="io-label">{t.io.in}</span><span className="io-val">{p.in}</span></div>
-        <div className="io-arrow"><span className="line"></span>{ico.arrowDown}<span className="line"></span></div>
-        <div className="io-row"><span className="io-label">{t.io.out}</span><span className="io-val">{p.out}</span></div>
-      </div>
-      <div className="card-foot">
-        <div className="price">
-          <span className="price-from mono">{t.from}</span>
-          <span className="price-num">{Number(p.price).toLocaleString("ru-RU")}</span>
-          <span className="price-cur">₽</span>
-        </div>
-        <span className="card-cta">{t.cardCta}{ico.arrowRight}</span>
-      </div>
-    </a>
-  );
-}
-
-function Products({ t, lang }) {
-  const list = getProducts(lang);
-  return (
-    <section className="products" id="products">
-      <div className="container">
-        <div className="sec-head">
-          <div className="sec-kicker">{t.products.kicker}</div>
-          <h2 className="sec-title">{t.products.title}</h2>
-          <p className="sec-desc">{t.products.desc}</p>
-        </div>
-        <div className="grid">
-          {list.length
-            ? list.map(p => <PriceCard key={p.key} p={p} t={t} />)
-            : <p className="sec-desc">{t.products.empty}</p>}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function How({ t }) {
-  return (
-    <section className="how">
-      <div className="container">
-        <div className="sec-head">
-          <div className="sec-kicker">{t.how.kicker}</div>
-          <h2 className="sec-title">{t.how.title}</h2>
-        </div>
-        <div className="steps">
-          {t.how.steps.map((s,i)=>(
-            <div className="step" key={i}>
-              <div className="step-num">0{i+1}</div>
-              <div className="step-title">{s.t}</div>
-              <div className="step-text">{s.d}</div>
-            </div>
-          ))}
-        </div>
-        <p className="note">{t.how.note}</p>
-      </div>
-    </section>
-  );
-}
-
-function Footer({ t }) {
-  return (
-    <footer className="footer" id="footer">
-      <div className="container">
-        <div className="footer-grid">
-          <div className="footer-brand">
-            <a className="logo" href={PORTFOLIO}>
-              <span className="logo-mark">{ico.spark}</span><span>AI&nbsp;Vibes</span>
-            </a>
-            <p className="footer-tag">{t.footer.tag}</p>
-          </div>
-          <div className="footer-cols">
-            <div className="footer-col">
-              <h4>{t.footer.contacts}</h4>
-              <a href={TG} target="_blank" rel="noopener noreferrer">{ico.tg}Telegram @lavr5000</a>
-              <a href={"mailto:"+EMAIL}>{ico.mail}{EMAIL}</a>
-            </div>
-            <div className="footer-col">
-              <h4>{t.footer.nav}</h4>
-              <a href={PORTFOLIO}>{t.footer.portfolio}</a>
-              <a href="#products">{t.footer.products}</a>
-            </div>
-          </div>
-        </div>
-        <div className="footer-bottom">
-          <a className="back-link" href={PORTFOLIO}>{ico.back}{t.footer.back}</a>
-          <span className="copy">© 2026 AI Vibes · {t.footer.rights}</span>
-        </div>
-      </div>
-    </footer>
-  );
-}
-
-function App() {
-  const [lang, setLang] = useState("ru");
-  const t = i18n[lang];
-  React.useEffect(()=>{ document.documentElement.lang = lang; }, [lang]);
-  return (
-    <React.Fragment>
-      <Nav lang={lang} setLang={setLang} t={t} />
-      <main>
-        <Hero t={t} />
-        <Products t={t} lang={lang} />
-        <How t={t} />
-      </main>
-      <Footer t={t} />
-    </React.Fragment>
-  );
-}
-
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
-</script>
+<!-- App logic precompiled from JSX (babel preset-react, build 2026-06-10). -->
+<script src="products.app.js"></script>
 </body>
 </html>

@@ -1,0 +1,28 @@
+# Validates the products.js registry on every push that touches it.
+# Deliberately separate from deploy-pages.yml (which must not be modified):
+# Pages still deploys, but a red check on this workflow is the signal that
+# the registry is broken or the snapshot count was not updated.
+name: validate-products
+
+on:
+  push:
+    paths:
+      - "products.js"
+      - "products.html"
+      - "products.app.js"
+      - "scripts/validate_products.mjs"
+      - ".github/products-count.txt"
+  pull_request:
+    paths:
+      - "products.js"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Validate products.js against snapshot and schema
+        run: node scripts/validate_products.mjs

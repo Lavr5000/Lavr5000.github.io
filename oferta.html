@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Публичная оферта — AI Vibes</title>
+<meta name="description" content="Публичная оферта на услуги по обработке строительной документации. Исполнитель: Денис Лавров, самозанятый." />
+<style>
+  :root {
+    --bg: #08080B;
+    --bg-elev: #0D0D11;
+    --bg-card: #101015;
+    --border: #1C1C24;
+    --border-strong: #25252F;
+    --text: #EDEDEF;
+    --text-2: #A1A1AA;
+    --text-3: #6B6B75;
+    --accent: #FF6B35;
+    --accent-2: #FF9770;
+    --accent-soft: rgba(255,107,53,0.12);
+    --radius: 10px;
+    --radius-lg: 16px;
+    --ease: cubic-bezier(0.22,0.61,0.36,1);
+    --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.65;
+    letter-spacing: -0.005em;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; transition: color 0.2s var(--ease); }
+  a:hover { color: var(--accent-2); text-decoration: underline; }
+
+  /* Nav */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(8,8,11,0.80);
+    backdrop-filter: blur(14px) saturate(150%);
+    -webkit-backdrop-filter: blur(14px) saturate(150%);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner {
+    max-width: 860px; margin: 0 auto; padding: 0 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .nav-brand {
+    display: flex; align-items: center; gap: 9px;
+    font-weight: 600; font-size: 15px; letter-spacing: -0.02em;
+    color: var(--text); text-decoration: none;
+  }
+  .nav-brand:hover { color: var(--accent); text-decoration: none; }
+  .logo-mark {
+    width: 24px; height: 24px; border-radius: 6px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    display: grid; place-items: center; flex: none;
+  }
+  .logo-mark svg { width: 14px; height: 14px; }
+  .nav-right { display: flex; align-items: center; gap: 6px; }
+  .nav-link {
+    font-size: 13.5px; color: var(--text-2); padding: 6px 11px;
+    border-radius: var(--radius); transition: color 0.2s var(--ease), background 0.2s var(--ease);
+    text-decoration: none;
+  }
+  .nav-link:hover { color: var(--text); background: var(--bg-card); text-decoration: none; }
+
+  /* Layout */
+  .container { max-width: 860px; margin: 0 auto; padding: 48px 24px 80px; }
+
+  /* Page header */
+  .page-header { margin-bottom: 40px; padding-bottom: 32px; border-bottom: 1px solid var(--border); }
+  .kicker {
+    font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--accent);
+    display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+  }
+  .kicker::before { content: ''; width: 22px; height: 1px; background: var(--accent); display: inline-block; }
+  .page-title { font-size: clamp(26px, 4vw, 38px); font-weight: 700; letter-spacing: -0.03em; margin-bottom: 12px; }
+  .page-meta { font-size: 13.5px; color: var(--text-3); font-family: var(--font-mono); display: flex; flex-wrap: wrap; gap: 18px; }
+  .page-meta span::before { content: '// '; color: var(--accent); }
+
+  /* Document body */
+  .doc-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px 32px;
+    margin-bottom: 16px;
+    scroll-margin-top: 80px;
+  }
+  .doc-section h2 {
+    font-size: 17px; font-weight: 600; letter-spacing: -0.015em;
+    color: var(--text); margin-bottom: 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .sec-num {
+    font-family: var(--font-mono); font-size: 12px; color: var(--accent);
+    background: var(--accent-soft); border: 1px solid rgba(255,107,53,0.25);
+    padding: 2px 8px; border-radius: 6px; flex: none;
+  }
+  .doc-section p { font-size: 15px; color: var(--text-2); margin-bottom: 10px; }
+  .doc-section p:last-child { margin-bottom: 0; }
+  .doc-section ul, .doc-section ol {
+    font-size: 15px; color: var(--text-2);
+    padding-left: 20px; margin-bottom: 10px;
+  }
+  .doc-section ul li, .doc-section ol li { margin-bottom: 6px; line-height: 1.6; }
+  .doc-section ul li:last-child, .doc-section ol li:last-child { margin-bottom: 0; }
+  .doc-section strong { color: var(--text); font-weight: 600; }
+
+  /* Warning/info blocks */
+  .callout {
+    border: 1px solid var(--border-strong); border-left: 3px solid var(--accent);
+    background: var(--accent-soft); border-radius: var(--radius);
+    padding: 14px 18px; margin: 14px 0; font-size: 14px; color: var(--text-2);
+  }
+  .callout strong { color: var(--accent); }
+
+  /* Party block */
+  .party-block {
+    background: var(--bg-elev); border: 1px solid var(--border-strong);
+    border-radius: var(--radius); padding: 16px 20px; margin: 12px 0;
+    font-family: var(--font-mono); font-size: 13px; color: var(--text-2);
+    line-height: 1.8;
+  }
+  .party-block .label { color: var(--text-3); }
+
+  /* Footer */
+  .footer {
+    border-top: 1px solid var(--border); background: var(--bg-elev);
+    padding: 36px 0 32px;
+  }
+  .footer-inner {
+    max-width: 860px; margin: 0 auto; padding: 0 24px;
+    display: flex; flex-wrap: wrap; gap: 16px;
+    justify-content: space-between; align-items: center;
+  }
+  .footer-copy { font-family: var(--font-mono); font-size: 12px; color: var(--text-3); }
+  .footer-links { display: flex; gap: 18px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-2); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--accent); text-decoration: none; }
+
+  /* TOC */
+  .toc {
+    background: var(--bg-elev); border: 1px solid var(--border-strong);
+    border-radius: var(--radius-lg); padding: 20px 24px; margin-bottom: 32px;
+  }
+  .toc h3 { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); margin-bottom: 12px; font-weight: 500; }
+  .toc ol { padding-left: 18px; }
+  .toc ol li { margin-bottom: 5px; }
+  .toc ol li a { font-size: 14px; color: var(--text-2); text-decoration: none; transition: color 0.2s; }
+  .toc ol li a:hover { color: var(--accent); text-decoration: none; }
+
+  @media (max-width: 640px) {
+    .doc-section { padding: 20px 18px; }
+    .container { padding: 32px 16px 64px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-brand" href="products.html">
+      <div class="logo-mark">
+        <svg viewBox="0 0 15 15" fill="none" stroke="#0A0A0A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M7.5 1L14 4.5v6L7.5 14 1 10.5v-6L7.5 1z"/>
+          <path d="M7.5 1v13M1 4.5l6.5 4 6.5-4"/>
+        </svg>
+      </div>
+      AI Vibes
+    </a>
+    <div class="nav-right">
+      <a class="nav-link" href="products.html">← Каталог</a>
+      <a class="nav-link" href="privacy.html">Политика конфиденциальности</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <div class="page-header">
+    <div class="kicker">Юридические документы</div>
+    <h1 class="page-title">Публичная оферта</h1>
+    <div class="page-meta">
+      <span>Версия 1.0</span>
+      <span>Дата вступления в силу: 2026-06-10</span>
+      <span>Исполнитель — физическое лицо, плательщик НПД</span>
+    </div>
+  </div>
+
+  <div class="toc">
+    <h3>Содержание</h3>
+    <ol>
+      <li><a href="#s1">Стороны</a></li>
+      <li><a href="#s2">Предмет оферты</a></li>
+      <li><a href="#s3">Акцепт оферты</a></li>
+      <li><a href="#s4">Права и обязанности сторон</a></li>
+      <li><a href="#s5">Права клиента на передаваемые файлы</a></li>
+      <li><a href="#s6">Хранение файлов и retention-политика</a></li>
+      <li><a href="#s7">Обработка данных и конфиденциальность</a></li>
+      <li><a href="#s8">Telegram как канал передачи</a></li>
+      <li><a href="#s9">Характер результатов и ограничение ответственности</a></li>
+      <li><a href="#s10">Статусы уверенности в результатах</a></li>
+      <li><a href="#s11">Порядок оплаты</a></li>
+      <li><a href="#s12">Сроки выполнения</a></li>
+      <li><a href="#s13">Расторжение</a></li>
+      <li><a href="#s14">Прочие условия</a></li>
+    </ol>
+  </div>
+
+  <div class="callout">
+    <strong>Внимание.</strong> Настоящий документ является публичной офертой в соответствии со ст. 437 ГК РФ.
+    Оформляя заказ или передавая файлы для обработки, вы выражаете полное и безоговорочное согласие
+    со всеми условиями настоящей оферты (акцепт в порядке ст. 438 ГК РФ).
+  </div>
+
+  <!-- 1. Стороны -->
+  <div class="doc-section" id="s1">
+    <h2><span class="sec-num">01</span> Стороны</h2>
+    <p><strong>Исполнитель:</strong></p>
+    <div class="party-block">
+      <div><span class="label">ФИО:&nbsp;</span>Лавров Денис [заполняется после регистрации НПД]</div>
+      <div><span class="label">ИНН:&nbsp;</span>[заполняется после регистрации НПД]</div>
+      <div><span class="label">Режим налогообложения:&nbsp;</span>Налог на профессиональный доход (НПД), самозанятый</div>
+      <div><span class="label">Telegram:&nbsp;</span>@lavr5000</div>
+      <div><span class="label">Email:&nbsp;</span>lavr5000xxx@gmail.com</div>
+    </div>
+    <p><strong>Заказчик (Клиент)</strong> — любое дееспособное физическое или юридическое лицо,
+    выразившее намерение воспользоваться услугами Исполнителя путём направления заявки
+    и/или передачи файлов.</p>
+  </div>
+
+  <!-- 2. Предмет -->
+  <div class="doc-section" id="s2">
+    <h2><span class="sec-num">02</span> Предмет оферты</h2>
+    <p>Исполнитель оказывает Клиенту информационно-аналитические услуги по обработке строительной документации
+    с применением программных инструментов и алгоритмов:</p>
+    <ul>
+      <li>извлечение структурированных данных из PDF-файлов рабочей документации (ведомости материалов,
+      объёмы, типоразмеры, спецификации);</li>
+      <li>формирование результирующих таблиц в формате Excel (.xlsx);</li>
+      <li>передача результата Клиенту в согласованном формате.</li>
+    </ul>
+    <p>Конкретный состав услуги, входящие форматы файлов и стоимость определяются
+    описанием продукта на витрине <a href="products.html">lavr5000.github.io/products.html</a>
+    и согласовываются в переписке.</p>
+  </div>
+
+  <!-- 3. Акцепт -->
+  <div class="doc-section" id="s3">
+    <h2><span class="sec-num">03</span> Акцепт оферты</h2>
+    <p>Акцептом настоящей оферты (ст. 438 ГК РФ) является совершение Клиентом любого
+    из следующих действий:</p>
+    <ol>
+      <li>направление заявки Исполнителю (в Telegram или по email);</li>
+      <li>передача файлов для обработки любым согласованным способом;</li>
+      <li>оплата счёта или чека Исполнителя.</li>
+    </ol>
+    <p>С момента акцепта настоящая оферта приобретает силу двустороннего договора
+    на условиях, изложенных ниже.</p>
+  </div>
+
+  <!-- 4. Права и обязанности -->
+  <div class="doc-section" id="s4">
+    <h2><span class="sec-num">04</span> Права и обязанности сторон</h2>
+    <p><strong>Исполнитель обязуется:</strong></p>
+    <ul>
+      <li>выполнить обработку переданных файлов добросовестно, с использованием детерминированных
+      алгоритмов или, при необходимости, иных средств обработки согласно разделу 7;</li>
+      <li>передать результат в согласованный срок (раздел 12);</li>
+      <li>соблюдать условия хранения и удаления файлов (раздел 6);</li>
+      <li>уведомить Клиента, если переданные файлы не могут быть обработаны по техническим
+      или правовым основаниям.</li>
+    </ul>
+    <p><strong>Исполнитель вправе:</strong></p>
+    <ul>
+      <li>отказать в обработке файлов, несущих признаки государственной тайны, грифов
+      конфиденциальности или явных персональных данных третьих лиц (раздел 5);</li>
+      <li>запросить у Клиента дополнительные сведения для корректной идентификации состава
+      документации.</li>
+    </ul>
+    <p><strong>Клиент обязуется:</strong></p>
+    <ul>
+      <li>предоставить файлы в согласованном формате и качестве;</li>
+      <li>подтвердить наличие права на передачу файлов (раздел 5);</li>
+      <li>произвести оплату в порядке раздела 11;</li>
+      <li>самостоятельно проверить результаты обработки перед их использованием (раздел 9).</li>
+    </ul>
+  </div>
+
+  <!-- 5. Права на файлы -->
+  <div class="doc-section" id="s5">
+    <h2><span class="sec-num">05</span> Права клиента на передаваемые файлы</h2>
+    <div class="callout">
+      <strong>Обязательное подтверждение.</strong> Передавая файлы Исполнителю, Клиент тем самым
+      подтверждает, что имеет законное право на их передачу и обработку в целях,
+      предусмотренных настоящей офертой.
+    </div>
+    <p>Клиент гарантирует, что передаваемые файлы:</p>
+    <ul>
+      <li>принадлежат ему на праве собственности, либо переданы ему правообладателем
+      с разрешением на привлечение третьих лиц для обработки;</li>
+      <li>не содержат сведений, составляющих государственную, служебную или коммерческую
+      тайну, или Клиент имеет законные основания раскрывать такие сведения Исполнителю;</li>
+      <li>не содержат явных персональных данных третьих лиц (ФИО, паспортные данные,
+      адреса и иные идентифицирующие сведения), не связанных с предметом оказываемых услуг.</li>
+    </ul>
+    <p><strong>Отказ в обработке.</strong> Если Исполнитель обнаружит, что файлы содержат
+    грифы «Секретно», «ДСП», «Конфиденциально» или иные признаки документов с ограниченным
+    доступом, либо содержат явные персональные данные третьих лиц, не связанные с предметом
+    услуги, Исполнитель вправе отказать в обработке и уведомить Клиента. В этом случае
+    уже полученная оплата возвращается в полном объёме.</p>
+    <p>Ответственность за несоответствие гарантий, данных Клиентом в настоящем разделе,
+    действительности лежит исключительно на Клиенте.</p>
+  </div>
+
+  <!-- 6. Хранение -->
+  <div class="doc-section" id="s6">
+    <h2><span class="sec-num">06</span> Хранение файлов и retention-политика</h2>
+    <p><strong>Срок хранения исходных файлов Клиента — 14 календарных дней</strong> с момента
+    передачи результата. По истечении этого срока исходные файлы удаляются автоматически.</p>
+    <p>Продление срока хранения сверх 14 дней возможно только при наличии <strong>явно выраженного
+    письменного согласия Клиента (opt-in)</strong>. При отсутствии такого согласия любое
+    хранение сверх 14 дней не производится.</p>
+    <p>Производные артефакты (результирующие таблицы, тест-кейсы, внутренние контрольные
+    данные) сохраняются только в виде агрегатов, прошедших процедуру деанонимизации:
+    шифры объектов, наименования организаций, адреса и ФИО из исходных файлов вычищаются
+    до архивирования любых внутренних данных.</p>
+    <p>Исполнитель не несёт ответственности за потерю файлов на инфраструктуре сторонних
+    платформ (Telegram и иных), используемых Клиентом для передачи.</p>
+  </div>
+
+  <!-- 7. Обработка данных -->
+  <div class="doc-section" id="s7">
+    <h2><span class="sec-num">07</span> Обработка данных и конфиденциальность</h2>
+    <p><strong>Режим обработки по умолчанию — локальный, детерминированный.</strong>
+    Обработка исходных файлов Клиента выполняется локально, без передачи сырых данных
+    в облачные AI-сервисы.</p>
+    <p><strong>Использование облачных AI-сервисов</strong> допускается только в одном из двух случаев:</p>
+    <ol>
+      <li>на <strong>обезличенных фрагментах</strong> документации, прошедших предварительную
+      вычистку (шифры, наименования объектов и организаций, ФИО, адреса удалены); либо</li>
+      <li>при наличии <strong>явного письменного согласия Клиента</strong> на передачу
+      конкретных фрагментов в облачный сервис с указанием поставщика. Возможные поставщики облачных AI-сервисов: Anthropic (Claude), OpenAI (GPT), Google (Gemini); конкретный поставщик называется Клиенту в момент запроса согласия.</li>
+    </ol>
+    <p>Сырые файлы Клиента <strong>никогда не передаются</strong> в облачные AI-сервисы без
+    соответствующего согласия.</p>
+    <p>Персональные данные, полученные от Клиента в ходе оказания услуг, обрабатываются
+    в соответствии с <a href="privacy.html">Политикой конфиденциальности</a>.</p>
+  </div>
+
+  <!-- 8. Telegram -->
+  <div class="doc-section" id="s8">
+    <h2><span class="sec-num">08</span> Telegram как канал передачи файлов</h2>
+    <p>Заявки и файлы принимаются в том числе через Telegram (@lavr5000).
+    Клиент понимает и принимает следующее:</p>
+    <ul>
+      <li>копии сообщений, включая переданные файлы, хранятся на серверах Telegram,
+      находящихся <strong>вне контроля Исполнителя</strong>;</li>
+      <li>конфиденциальность сообщений на стороне Telegram определяется
+      политикой самого мессенджера;</li>
+      <li>Исполнитель хранит только минимально необходимые локальные метаданные
+      (дата заказа, тип файла, статус выполнения).</li>
+    </ul>
+    <p>Если Клиент не готов к передаче файлов через Telegram с учётом указанного,
+    стороны могут согласовать альтернативный защищённый канал передачи
+    (email, зашифрованный архив).</p>
+  </div>
+
+  <!-- 9. Характер результатов -->
+  <div class="doc-section" id="s9">
+    <h2><span class="sec-num">09</span> Характер результатов и ограничение ответственности</h2>
+    <div class="callout">
+      <strong>Важно.</strong> Результаты обработки носят <strong>информационно-справочный характер</strong>
+      и не являются официальными документами, официальными сметами или окончательными инженерными
+      решениями.
+    </div>
+    <p>Числовые значения, извлечённые из документации, отражают данные, содержащиеся
+    в переданных файлах, и требуют <strong>обязательной проверки квалифицированным инженером</strong>
+    перед использованием в технических заданиях, сметах, договорах и иных официальных документах.</p>
+    <p>Исполнитель не несёт ответственности за:</p>
+    <ul>
+      <li>ошибки, содержавшиеся в исходных файлах Клиента;</li>
+      <li>последствия применения результатов без надлежащей инженерной проверки;</li>
+      <li>разночтения, возникающие при неполном комплекте переданной документации.</li>
+    </ul>
+    <p><strong>Ограничение ответственности.</strong> Совокупная ответственность Исполнителя
+    по любому требованию, связанному с оказанной услугой, не превышает суммы, фактически
+    уплаченной Клиентом за данный заказ. Исполнитель не несёт ответственности за упущенную
+    выгоду или косвенные убытки Клиента.</p>
+    <p style="font-size:13px; color:var(--text-3);">
+      Примечание: формулировка ограничения ответственности не проверена юристом.
+      Применимость полного ограничения в потребительских спорах (Закон РФ «О защите прав
+      потребителей») требует отдельного анализа. Риск принят Исполнителем (2026-06-10).
+    </p>
+  </div>
+
+  <!-- 10. Статусы -->
+  <div class="doc-section" id="s10">
+    <h2><span class="sec-num">10</span> Статусы уверенности в результатах</h2>
+    <p>Каждый результат обработки может содержать <strong>статус уверенности</strong>,
+    характеризующий качество и способ извлечения данных. Полная легенда статусов
+    предоставляется вместе с результатом. Основные статусы:</p>
+    <ul>
+      <li><strong>OK</strong> — данные извлечены детерминированно из векторного слоя, высокая надёжность;</li>
+      <li><strong>PIVOT</strong> — данные извлечены с применением дополнительного метода; рекомендуется проверка;</li>
+      <li><strong>VECTOR</strong> — данные получены из структурированного векторного слоя PDF;</li>
+      <li><strong>MANUAL_GEOMETRY</strong> — значение определено геометрически или вручную; требует проверки;</li>
+      <li><strong>needs_review</strong> — позиция отмечена для обязательной проверки инженером.</li>
+    </ul>
+    <p>Клиент обязуется учитывать статусы при использовании результатов.</p>
+  </div>
+
+  <!-- 11. Оплата -->
+  <div class="doc-section" id="s11">
+    <h2><span class="sec-num">11</span> Порядок оплаты</h2>
+    <p>Оплата осуществляется вручную по факту выполнения (после получения результата) или
+    по предоплате — по договорённости сторон, фиксируемой в переписке.</p>
+    <p>Исполнитель является плательщиком налога на профессиональный доход (НПД).
+    <strong>Чек самозанятого формируется и направляется Клиенту</strong> через приложение
+    «Мой налог» после каждого платежа.</p>
+    <p>Платёжные реквизиты (номер карты / СБП) сообщаются в переписке.
+    Автоматические платёжные сервисы не используются; Исполнитель не выставляет
+    счёт от юридического лица и не применяет систему НДС.</p>
+    <p>При отказе Исполнителя от выполнения заказа по основаниям, предусмотренным
+    разделом 5, уже полученная предоплата возвращается в полном объёме в течение
+    3 рабочих дней.</p>
+  </div>
+
+  <!-- 12. Сроки -->
+  <div class="doc-section" id="s12">
+    <h2><span class="sec-num">12</span> Сроки выполнения</h2>
+    <p>Обычный срок выполнения — <strong>обычно в тот же вечер</strong> (рабочие дни).
+    Гарантированный срок — <strong>не позднее 2 рабочих дней</strong> с момента
+    подтверждения заказа и получения полного комплекта файлов.</p>
+    <p>Одновременно может выполняться не более 2 активных заказов (WIP-лимит).
+    При превышении — Исполнитель уведомляет о фактической очереди.</p>
+    <p>Срок может быть продлён при неполном комплекте документации; Исполнитель
+    уведомляет Клиента незамедлительно.</p>
+  </div>
+
+  <!-- 13. Расторжение -->
+  <div class="doc-section" id="s13">
+    <h2><span class="sec-num">13</span> Расторжение и отказ от услуги</h2>
+    <p>Клиент вправе отказаться от заказа до момента передачи результата. В этом случае
+    предоплата (при её наличии) возвращается за вычетом фактически понесённых Исполнителем
+    расходов на обработку (пропорционально выполненному объёму).</p>
+    <p>После передачи результата возврат не производится, за исключением случаев,
+    когда результат не соответствует описанию услуги. Претензии принимаются
+    в течение 5 рабочих дней с момента передачи результата.</p>
+  </div>
+
+  <!-- 14. Прочее -->
+  <div class="doc-section" id="s14">
+    <h2><span class="sec-num">14</span> Прочие условия</h2>
+    <p><strong>Применимое право.</strong> Настоящая оферта регулируется законодательством
+    Российской Федерации. Споры разрешаются путём переговоров, а при недостижении
+    согласия — в суде по месту жительства Исполнителя.</p>
+    <p><strong>Изменения оферты.</strong> Исполнитель вправе изменять условия настоящей
+    оферты в одностороннем порядке с публикацией новой редакции на сайте.
+    Заказы, принятые до даты вступления изменений в силу, исполняются на прежних условиях.</p>
+    <p><strong>Связанные документы:</strong>
+    <a href="privacy.html">Политика конфиденциальности</a>.</p>
+    <p><strong>Контакт для вопросов:</strong>
+    <a href="mailto:lavr5000xxx@gmail.com">lavr5000xxx@gmail.com</a> /
+    Telegram <a href="https://t.me/lavr5000">@lavr5000</a>.</p>
+  </div>
+
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="footer-copy">© 2026 Денис Лавров, самозанятый (НПД). Все права защищены.</span>
+    <div class="footer-links">
+      <a href="products.html">Каталог продуктов</a>
+      <a href="oferta.html">Оферта</a>
+      <a href="privacy.html">Конфиденциальность</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
