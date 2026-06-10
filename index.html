@@ -1106,9 +1106,9 @@ S. S. Piyanzin, CEO, StroyProekt-Region LLC
   <script type="text/babel">
 const CONTENT = {
   ru: {
-    nav: { about: 'О себе', projects: 'Проекты', demo: 'Демо', system: 'Подход', stack: 'Стек', pricing: 'Тарифы', gov: '44-ФЗ / 223-ФЗ', contact: 'Контакты' },
+    nav: { about: 'О себе', projects: 'Проекты', demo: 'Демо', system: 'Подход', stack: 'Стек', pricing: 'Тарифы', products: 'Продукты', gov: '44-ФЗ / 223-ФЗ', contact: 'Контакты' },
     hero: {
-      eyebrow: 'Денис Лавров · Заместитель директора',
+      eyebrow: 'Денис Лавров',
       title: ['AI и автоматизация', 'для строительных систем'],
       subtitle: 'Решаю реальные инженерные и операционные задачи. Строю системы, которые сокращают ручной труд, исключают ошибки и ускоряют сдачу объектов.',
       ctaPrimary: 'Посмотреть проекты', ctaSecondary: 'Связаться',
@@ -1339,9 +1339,9 @@ const CONTENT = {
     diagram: { head: 'контур.стройка', in: 'Объект', inSub: 'голос · чат', core: 'AI-ядро', coreSub: 'Claude · Gemini', out1: 'ПТО', out2: 'Сметы', out3: 'Иски-Претензии' },
   },
   en: {
-    nav: { about: 'About', projects: 'Projects', demo: 'Demo', system: 'Approach', stack: 'Stack', pricing: 'Pricing', gov: '44-FZ / 223-FZ', contact: 'Contact' },
+    nav: { about: 'About', projects: 'Projects', demo: 'Demo', system: 'Approach', stack: 'Stack', pricing: 'Pricing', products: 'Products', gov: '44-FZ / 223-FZ', contact: 'Contact' },
     hero: {
-      eyebrow: 'Denis Lavrov · Deputy Director',
+      eyebrow: 'Denis Lavrov',
       title: ['AI & automation', 'for construction systems'],
       subtitle: 'Solving real engineering and operational problems. Building systems that cut manual work, eliminate errors, and ship projects faster.',
       ctaPrimary: 'View projects', ctaSecondary: 'Get in touch',
@@ -2179,6 +2179,7 @@ function Nav({ t, lang, setLang }) {
           <a href="#demo">{t.nav.demo}</a>
           <a href="#stack">{t.nav.stack}</a>
           <a href="#pricing">{t.nav.pricing}</a>
+          <a href="products.html">{t.nav.products}</a>
           <a href="#contact">{t.nav.contact}</a>
         </div>
         <div className="nav-actions">
