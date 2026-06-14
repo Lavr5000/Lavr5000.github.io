@@ -271,6 +271,7 @@ function getProducts(lang) {
   const raw = Array.isArray(window.AI_PRODUCTS) ? window.AI_PRODUCTS : [];
   return raw.filter(p => p && p.id && p.title && p.title.ru && p.price && p.price.ru && p.visible !== false).slice().sort((a, b) => (a.order != null ? a.order : 999) - (b.order != null ? b.order : 999)).map(p => {
     const tgText = p.cta && p.cta.tgText ? pick(p.cta.tgText, lang) : "";
+    const ctaUrl = p.cta && typeof p.cta.url === "string" ? p.cta.url : "";
     return {
       key: p.id,
       icon: ICON_KEYS.includes(p.icon) ? p.icon : "list",
@@ -281,7 +282,9 @@ function getProducts(lang) {
       in: pick(p.input, lang),
       out: pick(p.output, lang),
       price: pick(p.price, lang),
-      href: TG + (tgText ? "?text=" + encodeURIComponent(tgText) : "")
+      href: ctaUrl || TG + (tgText ? "?text=" + encodeURIComponent(tgText) : ""),
+      target: ctaUrl ? undefined : "_blank",
+      rel: ctaUrl ? undefined : "noopener noreferrer"
     };
   });
 }
@@ -441,8 +444,8 @@ function PriceCard({
   return /*#__PURE__*/React.createElement("a", {
     className: "price-card",
     href: p.href,
-    target: "_blank",
-    rel: "noopener noreferrer",
+    target: p.target,
+    rel: p.rel,
     onClick: () => ymGoal("cta_" + p.key)
   }, /*#__PURE__*/React.createElement("div", {
     className: "card-top"

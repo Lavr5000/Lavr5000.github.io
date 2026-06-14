@@ -36,7 +36,7 @@ window.AI_PRODUCTS = [
     audience:{ ru: "ПТО · сметчики · снабжение", en: "QS · estimators · procurement" },
     input:   { ru: "PDF рабочей документации", en: "PDF of working drawings" },
     output:  { ru: "Excel-ведомость материалов и объёмов", en: "Excel bill of materials & quantities" },
-    cta: { tgText: { ru: "Здравствуйте! Интересует «Ведомость материалов из РД». Прикладываю файл рабочей документации. С офертой ознакомлен(а): https://lavr5000.github.io/oferta.html",
+    cta: { url: "/vedomost.html", tgText: { ru: "Здравствуйте! Интересует «Ведомость материалов из РД». Прикладываю файл рабочей документации. С офертой ознакомлен(а): https://lavr5000.github.io/oferta.html",
                      en: "Hi! I'm interested in “Material takeoff from drawings”. Attaching the drawings. I have read the offer terms: https://lavr5000.github.io/oferta.html" } },
   },
   {

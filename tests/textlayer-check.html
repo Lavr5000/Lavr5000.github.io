@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PDF Text Layer Check</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 32px; max-width: 720px; }
+    main { display: grid; gap: 16px; }
+    output { display: block; padding: 12px; border: 1px solid #bbb; min-height: 1.5em; }
+    .ok { border-color: #16833a; color: #0f6b2d; }
+    .bad { border-color: #b42318; color: #9a1b12; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>PDF Text Layer Check</h1>
+    <input id="file" type="file" accept="application/pdf,.pdf">
+    <output id="result">Choose a PDF file.</output>
+  </main>
+  <script type="module">
+    import { checkTextLayer } from '../assets/textlayer-check.js';
+
+    const input = document.querySelector('#file');
+    const output = document.querySelector('#result');
+
+    input.addEventListener('change', async () => {
+      const file = input.files?.[0];
+      if (!file) return;
+      output.className = '';
+      output.value = 'Checking...';
+      const result = await checkTextLayer(file);
+      output.className = result.ok ? 'ok' : 'bad';
+      output.value = result.ok
+        ? `OK: text layer found (${result.charsFound} chars, ${result.pagesChecked} pages).`
+        : `No text layer detected (${result.charsFound} chars, ${result.pagesChecked} pages).`;
+    });
+  </script>
+</body>
+</html>

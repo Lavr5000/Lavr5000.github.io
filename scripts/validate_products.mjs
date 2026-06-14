@@ -46,8 +46,14 @@ products.forEach((p, i) => {
   if (!STATUSES.includes(p.status)) errors.push(`${tag}: status "${p.status}" outside enum ${STATUSES.join("|")}`);
   if (p.icon && !ICONS.includes(p.icon)) errors.push(`${tag}: icon "${p.icon}" outside enum (renders as list)`);
   if (p.serviceType && !SERVICE_TYPES.includes(p.serviceType)) errors.push(`${tag}: serviceType "${p.serviceType}" outside enum`);
-  if (!p.cta || !p.cta.tgText || !p.cta.tgText.ru) errors.push(`${tag}: cta.tgText.ru missing`);
-  else if (!p.cta.tgText.ru.includes("oferta.html")) errors.push(`${tag}: cta.tgText.ru lacks the offer-consent line`);
+  if (!p.cta || typeof p.cta !== "object") errors.push(`${tag}: cta missing`);
+  else {
+    if (p.cta.url != null && (typeof p.cta.url !== "string" || !p.cta.url.startsWith("/"))) {
+      errors.push(`${tag}: cta.url must be a string starting with "/"`);
+    }
+    if (!p.cta.tgText || !p.cta.tgText.ru) errors.push(`${tag}: cta.tgText.ru missing`);
+    else if (!p.cta.tgText.ru.includes("oferta.html")) errors.push(`${tag}: cta.tgText.ru lacks the offer-consent line`);
+  }
 });
 
 if (errors.length) {

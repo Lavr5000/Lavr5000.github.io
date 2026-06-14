@@ -1,0 +1,11 @@
+# pdfjs-dist
+
+- Version: 4.10.38
+- Build: legacy
+- Source: npm tarball `pdfjs-dist-4.10.38.tgz`
+
+## SHA-256
+
+- `pdfjs-dist-4.10.38.tgz`: `1011b38553532d7078c59f26b15a471f8dae00f101b60e2add9b8511737a1ce0`
+- `pdf.min.mjs`: `44ec6f011027ee77791386b66c14876a5fc29e20bf0433c07c6726fff7212b72`
+- `pdf.worker.min.mjs`: `bd88805178a26c729db8c0107a5b630cb900ec070f4d8c7529a3e45530afd41d`
