@@ -1,4 +1,4 @@
-export const API_ORIGIN = 'https://__PROD_API_DOMAIN__';
+export const API_ORIGIN = 'https://api.ai-vibes.ru';
 export const PAYMENT_ENABLED = false;
 export const PAYMENT_ALLOWED_HOSTS = ['securepay.tinkoff.ru'];
 export const CONSENT_VERSION = 'v1';
