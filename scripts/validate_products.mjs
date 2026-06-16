@@ -22,6 +22,7 @@ const products = sandbox.window.AI_PRODUCTS;
 const STATUSES = ["available", "soon", "dev", "planned"];
 const ICONS = ["list", "diff", "mail", "mic", "spark"];
 const SERVICE_TYPES = ["telegram", "request_form", "external_app", "info_page"];
+const CATEGORIES = ["estimators", "designers", "construction-control", "pto", "procurement"];
 const errors = [];
 
 if (!Array.isArray(products)) {
@@ -43,6 +44,19 @@ products.forEach((p, i) => {
   if (!p.title || !p.title.ru) errors.push(`${tag}: title.ru missing (normalize() would hide the card)`);
   if (!p.price || !p.price.ru) errors.push(`${tag}: price.ru missing (normalize() would hide the card)`);
   else if (!/^\d+$/.test(p.price.ru)) errors.push(`${tag}: price.ru must be a numeric string without currency`);
+  if (p.visible !== false) {
+    if (!Object.prototype.hasOwnProperty.call(p, "categories")) {
+      errors.push(`${tag}: categories key missing`);
+    } else if (!Array.isArray(p.categories)) {
+      errors.push(`${tag}: categories must be an array`);
+    } else {
+      p.categories.forEach((category, categoryIndex) => {
+        if (!CATEGORIES.includes(category)) {
+          errors.push(`${tag}: categories[${categoryIndex}] "${category}" outside enum ${CATEGORIES.join("|")}`);
+        }
+      });
+    }
+  }
   if (!STATUSES.includes(p.status)) errors.push(`${tag}: status "${p.status}" outside enum ${STATUSES.join("|")}`);
   if (p.icon && !ICONS.includes(p.icon)) errors.push(`${tag}: icon "${p.icon}" outside enum (renders as list)`);
   if (p.serviceType && !SERVICE_TYPES.includes(p.serviceType)) errors.push(`${tag}: serviceType "${p.serviceType}" outside enum`);

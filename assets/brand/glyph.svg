@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="AI Vibes verified source sheet glyph">
+  <path d="M13 6h38c3.866 0 7 3.134 7 7v26L39 58H13c-3.866 0-7-3.134-7-7V13c0-3.866 3.134-7 7-7Z" fill="var(--surface, #FFFFFF)" stroke="var(--line, #D8DFE3)" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M58 39v12c0 3.866-3.134 7-7 7H39l19-19Z" fill="var(--brand, #0E8F63)"/>
+  <path d="m46.2 50.2 3.05 3.1 6.55-7.1" fill="none" stroke="var(--surface, #FFFFFF)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="AI Vibes - Ведомости объёмов из РД со ссылкой на лист">
+  <rect width="1200" height="630" fill="#F7F5EF"/>
+  <rect x="34" y="34" width="1132" height="562" rx="28" fill="#FFFFFF" stroke="#D8DFE3" stroke-width="2"/>
+
+  <g transform="translate(84 82)">
+    <g>
+      <path d="M9 0h38c5 0 9 4 9 9v26L35 56H9c-5 0-9-4-9-9V9c0-5 4-9 9-9Z" fill="#FFFFFF" stroke="#D8DFE3" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M56 35v12c0 5-4 9-9 9H35l21-21Z" fill="#0E8F63"/>
+      <path d="m43.2 48.2 3 3.1 6.7-7.3" fill="none" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <text x="74" y="43" fill="#10251D" font-family="Inter, Arial, sans-serif" font-size="43" font-weight="700">AI Vibes</text>
+    <text x="0" y="126" fill="#10251D" font-family="Inter, Arial, sans-serif" font-size="48" font-weight="700">Ведомости объёмов из РД</text>
+    <text x="0" y="173" fill="#4C5D56" font-family="Inter, Arial, sans-serif" font-size="27" font-weight="500">со ссылкой на лист</text>
+
+    <g transform="translate(0 236)">
+      <rect x="0" y="0" width="330" height="176" rx="16" fill="#F7F5EF" stroke="#D8DFE3" stroke-width="2"/>
+      <text x="24" y="42" fill="#10251D" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700">РД лист АР-12</text>
+      <path d="M25 76h278M25 112h238M25 148h186" stroke="#9BA8A2" stroke-width="6" stroke-linecap="round"/>
+      <rect x="210" y="92" width="76" height="42" rx="8" fill="#E7F5EF" stroke="#0E8F63" stroke-width="2"/>
+      <text x="224" y="119" fill="#0E8F63" font-family="JetBrains Mono, Consolas, monospace" font-size="17" font-weight="700">лист 12</text>
+    </g>
+  </g>
+
+  <g transform="translate(520 86)">
+    <rect x="0" y="0" width="562" height="430" rx="20" fill="#FFFFFF" stroke="#C9D3CE" stroke-width="2"/>
+    <rect x="0" y="0" width="562" height="58" rx="20" fill="#F2F6F4"/>
+    <path d="M0 58h562" stroke="#C9D3CE" stroke-width="2"/>
+    <text x="28" y="38" fill="#10251D" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700">Excel ведомость</text>
+    <text x="360" y="38" fill="#0E8F63" font-family="JetBrains Mono, Consolas, monospace" font-size="17" font-weight="700">Источник найден</text>
+
+    <g font-family="JetBrains Mono, Consolas, monospace" font-size="16" fill="#4C5D56">
+      <text x="28" y="92">Поз.</text>
+      <text x="96" y="92">Наименование</text>
+      <text x="342" y="92">Кол-во</text>
+      <text x="446" y="92">Источник</text>
+    </g>
+    <path d="M24 110h514M24 208h514M24 306h514" stroke="#D8DFE3" stroke-width="2"/>
+
+    <g font-family="Inter, Arial, sans-serif" font-size="22" fill="#10251D">
+      <text x="28" y="158">1</text>
+      <text x="96" y="158">Бетон В25</text>
+      <text x="342" y="158">42,6 м³</text>
+      <text x="28" y="256">2</text>
+      <text x="96" y="256">Арматура А500С</text>
+      <text x="342" y="256">5,8 т</text>
+      <text x="28" y="354">3</text>
+      <text x="96" y="354">Опалубка</text>
+      <text x="342" y="354">318 м²</text>
+    </g>
+
+    <g font-family="JetBrains Mono, Consolas, monospace" font-size="15" font-weight="700">
+      <path d="M432 128h106v44c0 7-5 12-12 12h-94z" fill="#0E8F63"/>
+      <text x="450" y="157" fill="#FFFFFF">лист 12</text>
+      <path d="M432 226h106v44c0 7-5 12-12 12h-94z" fill="#0E8F63"/>
+      <text x="450" y="255" fill="#FFFFFF">лист 18</text>
+      <path d="M432 324h106v44c0 7-5 12-12 12h-94z" fill="#0E8F63"/>
+      <text x="450" y="353" fill="#FFFFFF">лист 21</text>
+    </g>
+  </g>
+
+  <path d="M430 321h48" stroke="#0E8F63" stroke-width="5" stroke-linecap="round"/>
+  <path d="m469 306 18 15-18 15" fill="none" stroke="#0E8F63" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

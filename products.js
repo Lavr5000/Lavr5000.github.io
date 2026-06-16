@@ -13,6 +13,8 @@
  *   visible   default true; set false to hide without deleting
  *   status*   available | soon | dev | planned   -> pill colour
  *   icon      list | diff | mail | mic | spark    (unknown -> 'list')
+ *   categories* audience filter keys:
+ *            estimators | designers | construction-control | pto | procurement
  *   price*    { ru, en }  numeric string, no currency symbol
  *   title*    { ru, en }
  *   tagline   { ru, en }
@@ -29,6 +31,7 @@ window.AI_PRODUCTS = [
   {
     id: "material-takeoff", slug: "material-takeoff", order: 10, visible: true,
     status: "available", icon: "list", serviceType: "request_form",
+    categories: ["estimators", "pto", "procurement"],
     price: { ru: "990", en: "990" },
     title:   { ru: "Ведомость материалов из РД", en: "Material takeoff from drawings" },
     tagline: { ru: "Извлекаю материалы и объёмы из рабочей документации в структурный Excel.",
@@ -36,12 +39,13 @@ window.AI_PRODUCTS = [
     audience:{ ru: "ПТО · сметчики · снабжение", en: "QS · estimators · procurement" },
     input:   { ru: "PDF рабочей документации", en: "PDF of working drawings" },
     output:  { ru: "Excel-ведомость материалов и объёмов", en: "Excel bill of materials & quantities" },
-    cta: { url: "/vedomost.html", tgText: { ru: "Здравствуйте! Интересует «Ведомость материалов из РД». Прикладываю файл рабочей документации. С офертой ознакомлен(а): https://lavr5000.github.io/oferta.html",
-                     en: "Hi! I'm interested in “Material takeoff from drawings”. Attaching the drawings. I have read the offer terms: https://lavr5000.github.io/oferta.html" } },
+    cta: { url: "/vedomost.html", tgText: { ru: "Здравствуйте! Интересует «Ведомость материалов из РД». Прикладываю файл рабочей документации. С офертой ознакомлен(а): https://ai-vibes.ru/oferta.html",
+                     en: "Hi! I'm interested in “Material takeoff from drawings”. Attaching the drawings. I have read the offer terms: https://ai-vibes.ru/oferta.html" } },
   },
   {
     id: "spec-reconciliation", slug: "spec-reconciliation", order: 20, visible: true,
     status: "soon", icon: "diff", serviceType: "request_form",
+    categories: ["procurement", "pto"],
     price: { ru: "1490", en: "1490" },
     title:   { ru: "Сверка спецификаций", en: "Spec reconciliation" },
     tagline: { ru: "Сравниваю спецификацию поставщика с проектной и нахожу расхождения.",
@@ -49,12 +53,13 @@ window.AI_PRODUCTS = [
     audience:{ ru: "снабжение · ПТО", en: "procurement · QS" },
     input:   { ru: "Excel-спецификация + PDF проекта", en: "Excel supplier spec + PDF project" },
     output:  { ru: "Excel-таблица расхождений с пометками", en: "Excel discrepancy table with notes" },
-    cta: { tgText: { ru: "Здравствуйте! Интересует «Сверка спецификаций». С офертой ознакомлен(а): https://lavr5000.github.io/oferta.html",
-                     en: "Hi! I'm interested in “Spec reconciliation”. I have read the offer terms: https://lavr5000.github.io/oferta.html" } },
+    cta: { tgText: { ru: "Здравствуйте! Интересует «Сверка спецификаций». С офертой ознакомлен(а): https://ai-vibes.ru/oferta.html",
+                     en: "Hi! I'm interested in “Spec reconciliation”. I have read the offer terms: https://ai-vibes.ru/oferta.html" } },
   },
   {
     id: "letters-claims", slug: "letters-claims", order: 30, visible: false,
     status: "dev", icon: "mail", serviceType: "request_form",
+    categories: ["pto"],
     price: { ru: "590", en: "590" },
     title:   { ru: "Письма и претензии по шаблону", en: "Letters & claims from a template" },
     tagline: { ru: "Из короткого описания собираю официальное письмо в фирменном стиле.",
@@ -62,12 +67,13 @@ window.AI_PRODUCTS = [
     audience:{ ru: "ПТО · РП", en: "QS · project managers" },
     input:   { ru: "Краткое описание ситуации", en: "Short description of the situation" },
     output:  { ru: "Готовое официальное письмо .docx", en: "Ready official letter .docx" },
-    cta: { tgText: { ru: "Здравствуйте! Интересует «Письма и претензии по шаблону». С офертой ознакомлен(а): https://lavr5000.github.io/oferta.html",
-                     en: "Hi! I'm interested in “Letters & claims from a template”. I have read the offer terms: https://lavr5000.github.io/oferta.html" } },
+    cta: { tgText: { ru: "Здравствуйте! Интересует «Письма и претензии по шаблону». С офертой ознакомлен(а): https://ai-vibes.ru/oferta.html",
+                     en: "Hi! I'm interested in “Letters & claims from a template”. I have read the offer terms: https://ai-vibes.ru/oferta.html" } },
   },
   {
     id: "voice-transcription", slug: "voice-transcription", order: 40, visible: true,
     status: "planned", icon: "mic", serviceType: "request_form",
+    categories: ["construction-control"],
     price: { ru: "790", en: "790" },
     title:   { ru: "Протокол планёрки из голосовых", en: "Meeting minutes from voice notes" },
     tagline: { ru: "Превращаю голосовые с планёрки в готовый протокол: решения, поручения, сроки.",
@@ -75,12 +81,13 @@ window.AI_PRODUCTS = [
     audience:{ ru: "прорабы · РП", en: "foremen · PMs" },
     input:   { ru: "Голосовые/аудио с планёрки", en: "Voice notes / meeting audio" },
     output:  { ru: "Протокол планёрки .docx + список поручений", en: "Minutes .docx + action list" },
-    cta: { tgText: { ru: "Здравствуйте! Интересует «Протокол планёрки из голосовых». С офертой ознакомлен(а): https://lavr5000.github.io/oferta.html",
-                     en: "Hi! I'm interested in “Meeting minutes from voice notes”. I have read the offer terms: https://lavr5000.github.io/oferta.html" } },
+    cta: { tgText: { ru: "Здравствуйте! Интересует «Протокол планёрки из голосовых». С офертой ознакомлен(а): https://ai-vibes.ru/oferta.html",
+                     en: "Hi! I'm interested in “Meeting minutes from voice notes”. I have read the offer terms: https://ai-vibes.ru/oferta.html" } },
   },
   {
     id: "works-cost-estimate", slug: "works-cost-estimate", order: 50, visible: true,
     status: "soon", icon: "spark", serviceType: "request_form",
+    categories: ["estimators", "pto"],
     price:{ ru: "1990", en: "1990" },
     title:{ ru: "Калькуляция работ из РД", en: "Works cost estimate from drawings" },
     tagline:{ ru: "Считаю стоимость работ по объёмам из рабочей документации — готовая калькуляция для КП.",
@@ -90,7 +97,7 @@ window.AI_PRODUCTS = [
             en: "Working drawings PDF or a quantities schedule" },
     output:{ ru: "Excel-калькуляция стоимости работ с живыми формулами",
              en: "Excel works cost estimate with live formulas" },
-    cta: { tgText: { ru: "Здравствуйте! Интересует «Калькуляция работ из РД». Прикладываю документацию. С офертой ознакомлен(а): https://lavr5000.github.io/oferta.html",
-                     en: "Hi! I'm interested in “Works cost estimate from drawings”. Attaching the drawings. I have read the offer terms: https://lavr5000.github.io/oferta.html" } },
+    cta: { tgText: { ru: "Здравствуйте! Интересует «Калькуляция работ из РД». Прикладываю документацию. С офертой ознакомлен(а): https://ai-vibes.ru/oferta.html",
+                     en: "Hi! I'm interested in “Works cost estimate from drawings”. Attaching the drawings. I have read the offer terms: https://ai-vibes.ru/oferta.html" } },
   },
 ];
