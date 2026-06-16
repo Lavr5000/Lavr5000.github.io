@@ -100,10 +100,13 @@
               <span class="upload-zone__icon" aria-hidden="true"></span>
               <span class="upload-zone__title">Загрузить чертёж</span>
               <span class="upload-zone__text">PDF с текстовым слоем. Сканированные PDF не принимаются.</span>
-                <span class="dropzone-hint">PDF · до 25 МБ · один файл</span>
-                <span class="upload-zone__file" id="file-selected-name" aria-live="polite"></span>
+              <span class="dropzone-hint">PDF · до 25 МБ · один файл</span>
+              <span class="upload-zone__check" aria-hidden="true"></span>
+              <span class="upload-zone__file" id="file-selected-name" aria-live="polite"></span>
+              <span class="upload-zone__replace-hint">Нажмите на область, чтобы заменить файл</span>
               <input id="file" name="file" type="file" accept="application/pdf,.pdf" aria-describedby="file-selected-name" required>
             </label>
+            <button type="button" class="upload-zone__remove" id="removeFile">Убрать файл</button>
           </div>
           <div class="field">
             <label for="email">Email для результата</label>

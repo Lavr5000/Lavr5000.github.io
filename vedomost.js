@@ -19,12 +19,14 @@ const NO_TEXT_MESSAGE = `Файл не принят: нет машиночита
 «Прошу выгрузить рабочую документацию (раздел КЖ/АР) в формате PDF с текстовым
 (машиночитаемым) слоем — печатью в PDF напрямую из AutoCAD/Revit/nanoCAD,
 без сканирования бумажных листов».`;
-const stages = ['queued', 'parsing', 'awaiting_payment', 'delivered'];
+const stages = PAYMENT_ENABLED
+  ? ['queued', 'parsing', 'awaiting_payment', 'delivered']
+  : ['queued', 'parsing', 'delivered'];
 const labels = {
   queued: 'Файл принят, заказ в очереди',
-  parsing: 'Файл разбирается',
-  awaiting_payment: PAYMENT_ENABLED ? 'Ожидается оплата' : 'Результат готов, менеджер выставит счёт',
-  delivered: 'Результат отправлен на email',
+  parsing: 'Извлекаем объёмы из чертежа',
+  awaiting_payment: PAYMENT_ENABLED ? 'Ожидается оплата' : 'Результат готов',
+  delivered: 'Готовая ведомость отправлена на email',
   failed: 'Ошибка обработки'
 };
 
@@ -32,6 +34,7 @@ const form = document.querySelector('#orderForm');
 const fileInput = document.querySelector('#file');
 const uploadZone = document.querySelector('.upload-zone');
 const fileNameBox = document.querySelector('.upload-zone__file');
+const removeFileBtn = document.querySelector('#removeFile');
 const emailInput = document.querySelector('#email');
 const websiteInput = document.querySelector('#website');
 const consentInput = document.querySelector('#consent');
@@ -45,14 +48,65 @@ function setMessage(text, kind = '') {
   message.className = `notice ${kind}`.trim();
 }
 
-function renderStatus(stage, apiMessage = '', paymentUrl = null) {
+// --- status stages + client-only per-stage processing timer (CSP- and a11y-safe) ---
+const TICKING_STAGES = ['queued', 'parsing'];
+let timerHandle = null;
+let stageStartedAt = 0;
+let activeStage = '';
+let activeMessage = '';
+let activePaymentUrl = null;
+let activeElapsedEl = null;
+const stageDurations = {}; // completed PROCESSING stage -> ms (ticking stages only)
+
+function formatElapsed(ms) {
+  const total = Math.max(0, Math.round(ms / 1000));
+  const m = Math.floor(total / 60);
+  const s = total % 60;
+  return m > 0 ? `${m} мин ${s} сек` : `${s} сек`;
+}
+
+function stopStatusTimer() {
+  if (timerHandle) { clearInterval(timerHandle); timerHandle = null; }
+}
+
+function tickElapsed() {
+  if (activeElapsedEl && TICKING_STAGES.includes(activeStage)) {
+    activeElapsedEl.textContent = formatElapsed(Date.now() - stageStartedAt);
+  }
+}
+
+function buildVisible(stage) {
+  if (stage === 'failed') return ['queued', 'parsing', 'failed'];
+  if (stages.includes(stage)) return stages;
+  return [...stages.slice(0, -1), stage]; // defensive: show an unexpected stage as the current one
+}
+
+// Structural render — runs ONLY on stage change (or a payment-url change at the same stage),
+// so #status[aria-live] is not rebuilt every tick and the paid payment link stays stable.
+function renderStatusStructure(stage, apiMessage = '', paymentUrl = null) {
   statusBox.innerHTML = '';
-  const visible = stage === 'failed' ? ['queued', 'parsing', 'failed'] : stages;
+  activeElapsedEl = null;
+  const visible = buildVisible(stage);
   const activeIndex = visible.indexOf(stage);
   visible.forEach((item, index) => {
     const row = document.createElement('div');
     row.className = `line ${index <= activeIndex ? 'on' : ''}`.trim();
-    row.innerHTML = `<span class="dot"></span><span>${labels[item] || item}</span>`;
+    const dot = document.createElement('span');
+    dot.className = 'dot';
+    const label = document.createElement('span');
+    label.className = 'line-label';
+    label.textContent = labels[item] || 'Статус обновляется';
+    row.append(dot, label);
+    const elapsed = document.createElement('span');
+    elapsed.className = 'elapsed';
+    elapsed.setAttribute('aria-hidden', 'true'); // keep the ticking time out of the live region
+    if (index < activeIndex && stageDurations[item] != null) {
+      elapsed.textContent = formatElapsed(stageDurations[item]);
+    } else if (index === activeIndex && TICKING_STAGES.includes(item)) {
+      elapsed.textContent = formatElapsed(Date.now() - stageStartedAt);
+      activeElapsedEl = elapsed;
+    }
+    row.append(elapsed);
     statusBox.append(row);
   });
   if (apiMessage) setMessage(apiMessage, stage === 'failed' ? 'bad' : 'ok');
@@ -67,6 +121,50 @@ function renderStatus(stage, apiMessage = '', paymentUrl = null) {
   } else if (stage === 'awaiting_payment' && PAYMENT_ENABLED && paymentUrl) {
     setMessage('Ссылка на оплату недоступна, свяжитесь с менеджером.', 'bad');
   }
+}
+
+function setStage(stage, apiMessage = '', paymentUrl = null) {
+  // monotonic guard: ignore a known stage that moves backwards (failed always wins)
+  if (stage !== 'failed' && stages.includes(stage) && stages.includes(activeStage)
+      && stages.indexOf(stage) < stages.indexOf(activeStage)) {
+    return;
+  }
+  if (stage === activeStage) { // repeat poll: no structural rebuild, but apply message/payment changes
+    if (paymentUrl !== activePaymentUrl) {
+      activePaymentUrl = paymentUrl;
+      activeMessage = apiMessage;
+      renderStatusStructure(stage, apiMessage, paymentUrl);
+    } else if (apiMessage && apiMessage !== activeMessage) {
+      activeMessage = apiMessage;
+      setMessage(apiMessage, stage === 'failed' ? 'bad' : 'ok');
+    }
+    tickElapsed();
+    return;
+  }
+  if (TICKING_STAGES.includes(activeStage)) {
+    stageDurations[activeStage] = Date.now() - stageStartedAt; // record duration for processing stages only
+  }
+  activeStage = stage;
+  activeMessage = apiMessage;
+  activePaymentUrl = paymentUrl;
+  stageStartedAt = Date.now();
+  renderStatusStructure(stage, apiMessage, paymentUrl);
+  if (TICKING_STAGES.includes(stage)) {
+    if (!timerHandle) timerHandle = setInterval(tickElapsed, 1000);
+  } else {
+    stopStatusTimer(); // pause on awaiting_payment / delivered / failed
+  }
+}
+
+function startProcessing(message) {
+  stopStatusTimer();
+  activeStage = '';
+  activeMessage = '';
+  activePaymentUrl = null;
+  activeElapsedEl = null;
+  for (const k of Object.keys(stageDurations)) delete stageDurations[k];
+  stageStartedAt = Date.now();
+  setStage('queued', message); // set the initial stage before any tick → no blank render
 }
 
 async function readMagic(file) {
@@ -97,9 +195,7 @@ async function api(path, options = {}) {
   return data;
 }
 
-const TERMINAL_STAGES = PAYMENT_ENABLED
-  ? ['delivered', 'failed']
-  : ['delivered', 'failed', 'awaiting_payment'];
+const TERMINAL_STAGES = ['delivered', 'failed'];
 const MAX_POLL_ATTEMPTS = 120;
 
 async function pollStatus(orderToken) {
@@ -107,7 +203,7 @@ async function pollStatus(orderToken) {
   let attempts = 0;
   while (!done) {
     const data = await api('/api/status', { headers: { Authorization: `Bearer ${orderToken}` } });
-    renderStatus(data.stage, data.message, data.payment_url);
+    setStage(data.stage, data.message, data.payment_url);
     attempts += 1;
     done = TERMINAL_STAGES.includes(data.stage);
     if (!PAYMENT_ENABLED && !done && attempts >= MAX_POLL_ATTEMPTS) {
@@ -116,19 +212,34 @@ async function pollStatus(orderToken) {
     }
     if (!done) await new Promise(resolve => setTimeout(resolve, 5000));
   }
+  stopStatusTimer();
 }
 
+function formatBytes(n) {
+  if (n < 1024) return `${n} Б`;
+  if (n < 1024 * 1024) return `${Math.round(n / 1024)} КБ`;
+  return `${(n / (1024 * 1024)).toFixed(1)} МБ`;
+}
 function renderFileSelection() {
   const file = fileInput.files?.[0];
   if (file) {
-    fileNameBox.textContent = `✓ ${file.name}`;
+    fileNameBox.textContent = `${file.name} · ${formatBytes(file.size)}`;
     uploadZone.classList.add('has-file');
+    removeFileBtn.classList.add('is-visible');
   } else {
     fileNameBox.textContent = '';
     uploadZone.classList.remove('has-file');
+    removeFileBtn.classList.remove('is-visible');
   }
 }
 fileInput.addEventListener('change', renderFileSelection);
+removeFileBtn.addEventListener('click', event => {
+  event.preventDefault();
+  try { fileInput.value = ''; fileInput.files = new DataTransfer().files; }
+  catch (_) { fileInput.value = ''; }
+  fileInput.dispatchEvent(new Event('change', { bubbles: true })); // single render path
+});
+form.addEventListener('reset', () => setTimeout(() => fileInput.dispatchEvent(new Event('change', { bubbles: true })), 0));
 ['dragenter', 'dragover'].forEach(type =>
   uploadZone.addEventListener(type, event => { event.preventDefault(); uploadZone.classList.add('dragover'); })
 );
@@ -183,9 +294,10 @@ form.addEventListener('submit', async event => {
       headers: { Authorization: `Bearer ${order.upload_token}` },
       body: fd
     });
-    renderStatus('queued', 'Файл принят. Проверяем статус заказа.');
+    startProcessing('Файл принят. Проверяем статус заказа.');
     await pollStatus(order.order_token);
   } catch (err) {
+    stopStatusTimer();
     setMessage(err.message || 'Не удалось отправить заказ.', err.verbatim ? 'bad' : 'bad');
   } finally {
     submitBtn.disabled = false;
