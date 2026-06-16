@@ -61,10 +61,10 @@
             <span class="mono">РД · АР-6</span>
             <span class="status ok">пример</span>
           </div>
-          <div class="source-tabs" role="tablist" aria-label="Источник результата">
-            <button type="button" class="source-tab active" role="tab" aria-selected="true">Источник</button>
-            <button type="button" class="source-tab" role="tab" aria-selected="false">Excel</button>
-            <button type="button" class="source-tab" role="tab" aria-selected="false">Проверка</button>
+          <div class="source-tabs" role="group" aria-label="Источник результата">
+            <button type="button" class="source-tab active" aria-pressed="true">Источник</button>
+            <button type="button" class="source-tab" aria-pressed="false">Excel</button>
+            <button type="button" class="source-tab" aria-pressed="false">Проверка</button>
           </div>
           <div class="mini-result">
             <div class="mini-sheet">
@@ -100,8 +100,9 @@
               <span class="upload-zone__icon" aria-hidden="true"></span>
               <span class="upload-zone__title">Загрузить чертёж</span>
               <span class="upload-zone__text">PDF с текстовым слоем. Сканированные PDF не принимаются.</span>
-              <span class="dropzone-hint">PDF · до 25 МБ · один файл</span>
-              <input id="file" name="file" type="file" accept="application/pdf,.pdf" required>
+                <span class="dropzone-hint">PDF · до 25 МБ · один файл</span>
+                <span class="upload-zone__file" id="file-selected-name" aria-live="polite"></span>
+              <input id="file" name="file" type="file" accept="application/pdf,.pdf" aria-describedby="file-selected-name" required>
             </label>
           </div>
           <div class="field">

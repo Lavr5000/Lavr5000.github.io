@@ -336,6 +336,27 @@
   cursor:pointer;
 }
 
+.upload-zone__file {
+  min-height:1.25em;
+  color:var(--brand-ink);
+  font-family:var(--font-mono);
+  font-size:var(--fs-mono);
+  font-weight:700;
+  word-break:break-all;
+}
+
+.upload-zone.has-file {
+  border-style:solid;
+  border-color:var(--brand);
+  background:var(--brand-wash);
+}
+
+.upload-zone.dragover {
+  background:var(--brand-wash);
+  border-color:var(--brand);
+  box-shadow:var(--shadow-focus);
+}
+
 input[type=email] {
   width:100%;
   min-height:46px;

@@ -30,6 +30,8 @@ const labels = {
 
 const form = document.querySelector('#orderForm');
 const fileInput = document.querySelector('#file');
+const uploadZone = document.querySelector('.upload-zone');
+const fileNameBox = document.querySelector('.upload-zone__file');
 const emailInput = document.querySelector('#email');
 const websiteInput = document.querySelector('#website');
 const consentInput = document.querySelector('#consent');
@@ -95,15 +97,58 @@ async function api(path, options = {}) {
   return data;
 }
 
+const TERMINAL_STAGES = PAYMENT_ENABLED
+  ? ['delivered', 'failed']
+  : ['delivered', 'failed', 'awaiting_payment'];
+const MAX_POLL_ATTEMPTS = 120;
+
 async function pollStatus(orderToken) {
   let done = false;
+  let attempts = 0;
   while (!done) {
     const data = await api('/api/status', { headers: { Authorization: `Bearer ${orderToken}` } });
     renderStatus(data.stage, data.message, data.payment_url);
-    done = ['delivered', 'failed'].includes(data.stage);
+    attempts += 1;
+    done = TERMINAL_STAGES.includes(data.stage);
+    if (!PAYMENT_ENABLED && !done && attempts >= MAX_POLL_ATTEMPTS) {
+      setMessage('Превышено время ожидания обработки. Свяжитесь с менеджером.', 'bad');
+      done = true;
+    }
     if (!done) await new Promise(resolve => setTimeout(resolve, 5000));
   }
 }
+
+function renderFileSelection() {
+  const file = fileInput.files?.[0];
+  if (file) {
+    fileNameBox.textContent = `✓ ${file.name}`;
+    uploadZone.classList.add('has-file');
+  } else {
+    fileNameBox.textContent = '';
+    uploadZone.classList.remove('has-file');
+  }
+}
+fileInput.addEventListener('change', renderFileSelection);
+['dragenter', 'dragover'].forEach(type =>
+  uploadZone.addEventListener(type, event => { event.preventDefault(); uploadZone.classList.add('dragover'); })
+);
+['dragleave', 'dragend'].forEach(type =>
+  uploadZone.addEventListener(type, () => uploadZone.classList.remove('dragover'))
+);
+uploadZone.addEventListener('drop', event => {
+  event.preventDefault();
+  uploadZone.classList.remove('dragover');
+  const dropped = event.dataTransfer?.files;
+  if (!dropped || !dropped.length) return;
+  try {
+    const dt = new DataTransfer();
+    for (const f of dropped) dt.items.add(f);
+    fileInput.files = dt.files;
+  } catch (_) {
+    try { fileInput.files = dropped; } catch (_) { /* browser refused programmatic set */ }
+  }
+  fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+});
 
 form.addEventListener('submit', async event => {
   event.preventDefault();
@@ -145,4 +190,20 @@ form.addEventListener('submit', async event => {
   } finally {
     submitBtn.disabled = false;
   }
+});
+const sourceTabs = [...document.querySelectorAll('.source-tab')];
+const previewLabel = document.querySelector('.result-preview__head .mono');
+const SOURCE_VIEW_LABELS = ['РД · АР-6', 'XLSX · ВЕДОМОСТЬ', 'QA · ИСТОЧНИКИ'];
+
+function activateSourceTab(activeIndex) {
+  sourceTabs.forEach((tab, i) => {
+    const isActive = i === activeIndex;
+    tab.classList.toggle('active', isActive);
+    tab.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+  });
+  if (previewLabel && SOURCE_VIEW_LABELS[activeIndex]) previewLabel.textContent = SOURCE_VIEW_LABELS[activeIndex];
+}
+
+sourceTabs.forEach((tab, index) => {
+  tab.addEventListener('click', () => activateSourceTab(index));
 });
