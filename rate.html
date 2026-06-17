@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://api.ai-vibes.ru">
+  <title>AI Vibes — оценка ведомости</title>
+  <meta name="description" content="Оцените результат ведомости материалов по заказу AI Vibes.">
+  <link rel="canonical" href="https://ai-vibes.ru/rate.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="AI Vibes">
+  <meta property="og:title" content="AI Vibes — оценка ведомости">
+  <meta property="og:description" content="Короткая форма обратной связи по готовой ведомости материалов.">
+  <meta property="og:url" content="https://ai-vibes.ru/rate.html">
+  <meta property="og:image" content="https://ai-vibes.ru/assets/og.svg">
+  <link rel="icon" href="favicon.ico">
+  <link rel="stylesheet" href="assets/fonts.css">
+  <link rel="stylesheet" href="assets/site.css">
+  <link rel="stylesheet" href="assets/rate.css">
+</head>
+<body class="rate-page">
+  <nav class="nav" aria-label="Основная навигация">
+    <div class="nav-inner">
+      <a class="logo" href="/" aria-label="AI Vibes">
+        <span class="brand-glyph" aria-hidden="true">
+          <svg viewBox="0 0 28 28" focusable="false">
+            <path d="M7.5 4.5h11.8l3.2 3.2v15.8h-15z" />
+            <path d="M19.3 4.5v5.2h5.2" />
+            <path d="M11 16l2.2 2.3L18 13" />
+          </svg>
+        </span>
+        <span>AI Vibes</span>
+      </a>
+      <div class="nav-right">
+        <div class="nav-links">
+          <a class="nav-link" href="/">Продукты</a>
+          <a class="nav-link" href="oferta.html">Оферта</a>
+          <a class="nav-link" href="privacy.html">Политика</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="rate-section" aria-labelledby="rate-title">
+      <div class="container rate-layout">
+        <div class="rate-copy">
+          <p class="eyebrow">ОЦЕНКА РЕЗУЛЬТАТА</p>
+          <h1 id="rate-title">Ведомость подошла?</h1>
+          <p class="lead">Один короткий ответ поможет точнее разбирать следующие PDF.</p>
+        </div>
+        <div id="rate-root" class="rate-widget" aria-live="polite"></div>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="rate.js"></script>
+</body>
+</html>
