@@ -78,7 +78,7 @@ New products should be added by appending to the existing registry structure rat
 Files: [oferta.html](oferta.html), [privacy.html](privacy.html)
 
 - [oferta.html](oferta.html) covers public offer terms: what service is provided, how the user accepts the terms, user and service responsibilities, and payment or free-mode terms when applicable.
-- [privacy.html](privacy.html) covers personal data processing under 152-ФЗ, including email handling, file/order processing context, retention periods, the optional 90-day storage opt-in, and the user's right to revoke consent.
+- [privacy.html](privacy.html) covers personal data processing under 152-ФЗ, including email handling, file/order processing context, retention periods, the optional 90-day storage opt-in, and the user's right to revoke consent. v1.1 (2026-06-17) adds a technical-telemetry / service-journal disclosure: pseudonymized metadata only (no file name or content, no AI prompts/responses), ip-hash retained 90 days, journal up to 3 years, under the contract-execution legal basis (п.5 ст.6) — no consent-text change.
 
 ## Build And Asset Notes
 
