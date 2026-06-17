@@ -4,7 +4,7 @@ import {
   PAYMENT_ENABLED,
   CONSENT_VERSION,
   isValidPaymentUrl
-} from './vedomost.config.js';
+} from './vedomost.config.js?v=vedomost-v2-2026-06';
 import { checkTextLayer } from './assets/textlayer-check.js';
 
 const MAX_SIZE = 25 * 1024 * 1024;
@@ -432,7 +432,7 @@ form.addEventListener('submit', async event => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         consent_version: CONSENT_VERSION,
-        optin_extended_retention: optinInput.checked,
+        optin_extended_retention: optinInput ? optinInput.checked : false,
         email: emailInput.value.trim(),
         website: websiteInput.value || ''
       })
