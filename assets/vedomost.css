@@ -578,6 +578,115 @@ input[type=email]::placeholder {
   text-decoration:none;
 }
 
+.inline-rating {
+  display:grid;
+  gap:12px;
+  margin-top:6px;
+  padding:14px;
+  background:var(--surface-sunk);
+  border:1px solid var(--line);
+  border-radius:var(--r-control);
+}
+
+.inline-rating__form {
+  display:grid;
+  gap:12px;
+}
+
+.inline-rating__title,
+.inline-rating__label {
+  margin:0;
+  color:var(--ink-muted);
+  font-size:var(--fs-sm);
+  font-weight:700;
+}
+
+.inline-rating__scores {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+.inline-rating__score {
+  min-height:42px;
+  padding:9px 11px;
+  color:var(--ink);
+  background:var(--surface);
+  border:1px solid var(--line-strong);
+  border-radius:var(--r-control);
+  font-weight:700;
+}
+
+.inline-rating__score[aria-pressed="true"] {
+  color:var(--brand-ink);
+  background:var(--brand-wash);
+  border-color:var(--brand);
+}
+
+.inline-rating__reasons {
+  display:grid;
+  gap:8px;
+}
+
+.inline-rating__reason {
+  display:flex;
+  align-items:flex-start;
+  gap:9px;
+  color:var(--ink-muted);
+  font-size:var(--fs-sm);
+}
+
+.inline-rating__reason input {
+  flex:none;
+  margin-top:3px;
+  accent-color:var(--brand-ink);
+}
+
+.inline-rating__comment {
+  display:grid;
+  gap:8px;
+}
+
+.inline-rating__comment textarea {
+  width:100%;
+  min-height:92px;
+  resize:vertical;
+  padding:10px 12px;
+  color:var(--ink);
+  background:var(--surface);
+  border:1px solid var(--line-strong);
+  border-radius:var(--r-control);
+}
+
+.inline-rating__comment textarea::placeholder {
+  color:var(--ink-faint);
+}
+
+.inline-rating__submit {
+  width:max-content;
+}
+
+.inline-rating__submit:disabled {
+  cursor:not-allowed;
+  transform:none;
+  background:var(--surface-sunk);
+  border-color:var(--line-strong);
+  color:var(--ink-faint);
+}
+
+.inline-rating__error {
+  min-height:1.3em;
+  margin:0;
+  color:var(--danger);
+  font-size:var(--fs-sm);
+}
+
+.inline-rating__thanks {
+  margin:0;
+  color:var(--brand-ink);
+  font-weight:700;
+}
+
 .side ul {
   margin:0;
   padding-left:19px;
@@ -629,6 +738,15 @@ input[type=email]::placeholder {
   }
 
   #submitBtn {
+    width:100%;
+  }
+
+  .inline-rating__scores {
+    grid-template-columns:1fr;
+  }
+
+  .inline-rating__submit,
+  .inline-rating__open {
     width:100%;
   }
 }
