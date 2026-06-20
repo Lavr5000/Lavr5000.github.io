@@ -104,7 +104,7 @@ window.AI_PRODUCTS = [
     id: "nakladnaya-m15", slug: "nakladnaya-m15", order: 60, visible: false,
     status: "soon", icon: "list", serviceType: "request_form",
     categories: ["pto", "procurement", "estimators"],
-    price: { ru: "990", en: "990" },
+    price: { ru: "79", en: "79" },
     title:   { ru: "Накладные М-15 → Excel", en: "M-15 delivery notes → Excel" },
     tagline: { ru: "Распознаю отсканированные накладные М-15 в структурный Excel для М-29.",
                en: "I turn scanned M-15 delivery notes into a structured Excel for M-29." },
