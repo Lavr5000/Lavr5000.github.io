@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://api.ai-vibes.ru">
+  <title>AI Vibes — накладная М-15 по скану</title>
+  <meta name="description" content="Загрузите PDF со сканом накладной М-15 и получите Excel после OCR-обработки.">
+  <link rel="canonical" href="https://ai-vibes.ru/nakladnaya.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="AI Vibes">
+  <meta property="og:title" content="AI Vibes — накладная М-15 по скану">
+  <meta property="og:description" content="Загрузите PDF со сканом формы М-15 и получите Excel-результат на email после обработки.">
+  <meta property="og:url" content="https://ai-vibes.ru/nakladnaya.html">
+  <meta property="og:image" content="https://ai-vibes.ru/assets/og.svg">
+  <link rel="icon" href="favicon.ico">
+  <link rel="stylesheet" href="assets/fonts.css">
+  <link rel="stylesheet" href="assets/site.css">
+  <link rel="stylesheet" href="assets/vedomost.css">
+</head>
+<body class="vedomost-page">
+  <nav class="nav" aria-label="Основная навигация">
+    <div class="nav-inner">
+      <a class="logo" href="/" aria-label="AI Vibes">
+        <span class="brand-glyph" aria-hidden="true">
+          <svg viewBox="0 0 28 28" focusable="false">
+            <path d="M7.5 4.5h11.8l3.2 3.2v15.8h-15z" />
+            <path d="M19.3 4.5v5.2h5.2" />
+            <path d="M11 16l2.2 2.3L18 13" />
+          </svg>
+        </span>
+        <span>AI Vibes</span>
+      </a>
+      <div class="nav-right">
+        <div class="nav-links">
+          <a class="nav-link" href="/">Продукты</a>
+          <a class="nav-link" href="oferta.html">Оферта</a>
+          <a class="nav-link" href="privacy.html">Политика</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="vedomost-hero" aria-labelledby="nakladnaya-title">
+      <div class="container vedomost-hero__grid">
+        <div class="vedomost-copy">
+          <p class="eyebrow">ФОРМА М-15 · OCR · EXCEL</p>
+          <h1 id="nakladnaya-title">Загрузите скан накладной М-15</h1>
+          <p class="lead">Примем один PDF со сканом, распознаем данные и отправим Excel-результат на email после оплаты и обработки.</p>
+          <div class="hero-chips" aria-label="Параметры сервиса">
+            <span class="chip">PDF · до 25 МБ</span>
+            <span class="chip">OCR сканов</span>
+            <span class="chip">Excel на email</span>
+            <span class="chip">79 ₽ за заказ</span>
+          </div>
+        </div>
+
+        <aside class="result-preview" aria-label="Мини-пример результата">
+          <div class="result-preview__head">
+            <span class="mono">М-15 · СКАН</span>
+            <span class="status ok">пример</span>
+          </div>
+          <div class="source-tabs" role="group" aria-label="Источник результата">
+            <button type="button" class="source-tab active" aria-pressed="true">Скан</button>
+            <button type="button" class="source-tab" aria-pressed="false">Excel</button>
+            <button type="button" class="source-tab" aria-pressed="false">Проверка</button>
+          </div>
+          <div class="mini-result">
+            <div class="mini-sheet">
+              <span class="mini-sheet__line wide"></span>
+              <span class="mini-sheet__line"></span>
+              <span class="mini-sheet__line short"></span>
+            </div>
+            <div class="mini-table" aria-hidden="true">
+              <div class="mini-row head"><span>№</span><span>материал</span><span>кол-во</span></div>
+              <div class="mini-row"><span>1</span><span>Бетон</span><span>12</span></div>
+              <div class="mini-row"><span>2</span><span>Арматура</span><span>4</span></div>
+            </div>
+          </div>
+          <div class="process-strip" aria-label="Статусы обработки">
+            <span class="process-step done">Загружено</span>
+            <span class="process-step current">Оплата</span>
+            <span class="process-step">Готово</span>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="vedomost-workspace">
+      <div class="container layout">
+        <section class="panel upload-card" aria-labelledby="form-title">
+          <div class="panel-head">
+            <p class="kicker">01 · ЗАКАЗ</p>
+            <h2 id="form-title">Передайте PDF со сканом</h2>
+          </div>
+          <form id="orderForm" class="form" novalidate>
+            <div class="field file-field">
+              <label class="upload-zone" for="file">
+                <span class="upload-zone__icon" aria-hidden="true"></span>
+                <span class="upload-zone__title">Загрузить накладную</span>
+                <span class="upload-zone__text">PDF со сканом формы М-15. Один файл на заказ.</span>
+                <span class="dropzone-hint">PDF · до 25 МБ · один файл</span>
+                <span class="upload-zone__check" aria-hidden="true"></span>
+                <span class="upload-zone__file" id="file-selected-name" aria-live="polite"></span>
+                <span class="upload-zone__replace-hint">Нажмите на область, чтобы заменить файл</span>
+                <input id="file" name="file" type="file" accept="application/pdf,.pdf" aria-describedby="file-selected-name" required>
+              </label>
+              <button type="button" class="upload-zone__remove" id="removeFile">Убрать файл</button>
+            </div>
+            <div class="field">
+              <label for="email">Email для результата</label>
+              <input id="email" name="email" type="email" autocomplete="email" required placeholder="name@example.com">
+              <div class="hint">На этот адрес придёт статус и готовый Excel.</div>
+            </div>
+            <div class="hp" aria-hidden="true">
+              <label for="website">Website</label>
+              <input id="website" name="website" tabindex="-1" autocomplete="off">
+            </div>
+            <label class="check"><input id="consent" type="checkbox" required> <span>Загружая файл, я соглашаюсь, что для распознавания мой документ — <strong>изображения страниц и извлечённые из них данные</strong> — будет автоматически передан внешнему AI-сервису распознавания (<strong>OpenRouter</strong>) исключительно для формирования результата (Excel). Исходный файл и распознанные данные <strong>удаляются после доставки</strong> результата на указанный email; при неуспешной обработке хранятся <strong>не более 7 дней</strong> для разбора качества и затем удаляются. Я ознакомлен(а) с <a href="https://ai-vibes.ru/oferta.html">офертой</a> и подтверждаю, что вправе передавать этот документ.</span></label>
+            <button id="submitBtn" class="btn btn-primary" type="submit">Отправить заказ</button>
+          </form>
+          <div id="message" class="notice" role="status">Выберите PDF, укажите email и подтвердите согласие.</div>
+          <div id="status" class="status" aria-live="polite"></div>
+        </section>
+
+        <aside class="side">
+          <p class="kicker">02 · OCR И ОПЛАТА</p>
+          <h2>Что происходит</h2>
+          <ul>
+            <li>Файл проверяется локально: размер и сигнатура <span class="mono">%PDF-</span>.</li>
+            <li>Для OCR изображения страниц и извлечённые данные передаются во внешний AI-сервис OpenRouter.</li>
+            <li>Если в статусе появится ссылка на оплату, здесь будет кнопка оплаты.</li>
+          </ul>
+          <div class="side-status" aria-label="Ожидаемый путь обработки">
+            <span class="process-step done">Загружено</span>
+            <span class="process-step current">Оплата</span>
+            <span class="process-step">Готово</span>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="nakladnaya.js?v=m15-v1-2026-06"></script>
+</body>
+</html>
