@@ -66,6 +66,7 @@ let activePaymentUrl = null;
 let activeElapsedEl = null;
 let activeCanRate = false;
 let activeOrderToken = '';
+let activeFreeRemaining = null;
 let ratingSubmitted = false;
 const stageDurations = {}; // completed PROCESSING stage -> ms (ticking stages only)
 
@@ -120,6 +121,12 @@ function renderStatusStructure(stage, apiMessage = '', paymentUrl = null) {
     row.append(elapsed);
     statusBox.append(row);
   });
+  if (PAYMENT_ENABLED && typeof activeFreeRemaining === 'number') {
+    const quota = document.createElement('p');
+    quota.className = 'free-quota';
+    quota.textContent = `Бесплатных генераций осталось: ${activeFreeRemaining}`;
+    statusBox.append(quota);
+  }
   if (apiMessage) setMessage(apiMessage, stage === 'failed' ? 'bad' : 'ok');
   if (stage === 'awaiting_payment' && PAYMENT_ENABLED && isValidPaymentUrl(paymentUrl, PAYMENT_ALLOWED_HOSTS)) {
     // Provider host is intentionally not in CSP connect-src: this is a user redirect, not fetch/iframe/SDK.
@@ -127,7 +134,7 @@ function renderStatusStructure(stage, apiMessage = '', paymentUrl = null) {
     pay.className = 'pay';
     pay.href = paymentUrl;
     pay.rel = 'noopener';
-    pay.textContent = 'Оплатить';
+    pay.textContent = 'Оплатить картой или через СБП';
     statusBox.append(pay);
   } else if (stage === 'awaiting_payment' && PAYMENT_ENABLED && paymentUrl) {
     setMessage('Ссылка на оплату недоступна, свяжитесь с менеджером.', 'bad');
@@ -179,6 +186,7 @@ function startProcessing(message) {
   activeElapsedEl = null;
   activeCanRate = false;
   activeOrderToken = '';
+  activeFreeRemaining = null;
   ratingSubmitted = false;
   for (const k of Object.keys(stageDurations)) delete stageDurations[k];
   stageStartedAt = Date.now();
@@ -358,10 +366,14 @@ async function pollStatus(orderToken) {
   let attempts = 0;
   while (!done) {
     const data = await api('/api/status', { headers: { Authorization: `Bearer ${orderToken}` } });
+    activeFreeRemaining = typeof data.free_quota_remaining === 'number' ? data.free_quota_remaining : null;
     setStage(data.stage, data.message, data.payment_url, data.can_rate === true, orderToken);
     attempts += 1;
-    done = TERMINAL_STAGES.includes(data.stage);
-    if (!PAYMENT_ENABLED && !done && attempts >= MAX_POLL_ATTEMPTS) {
+    // awaiting_payment is a user-action state (redirect to the bank): stop polling once
+    // we reach it — the pay link is rendered and the user leaves the page to pay.
+    done = TERMINAL_STAGES.includes(data.stage)
+      || (PAYMENT_ENABLED && data.stage === 'awaiting_payment');
+    if (!done && attempts >= MAX_POLL_ATTEMPTS) {
       setMessage('Превышено время ожидания обработки. Свяжитесь с менеджером.', 'bad');
       done = true;
     }
