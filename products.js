@@ -23,6 +23,8 @@
  *   output    { ru, en }
  *   serviceType  telegram | request_form | external_app | info_page  (v1: all open Telegram)
  *   cta       { tgText: { ru, en } }  optional prefilled Telegram message
+ *   tier*     free | paid | freemium
+ *   free_quota  number | null  (for freemium = quota size; null for paid/free)
  *
  * A record missing id / title.ru / price.ru is skipped at render time and never
  * breaks the grid (see normalize() in products.html).
@@ -41,6 +43,7 @@ window.AI_PRODUCTS = [
     output:  { ru: "Excel-ведомость материалов и объёмов", en: "Excel bill of materials & quantities" },
     cta: { url: "/vedomost.html", tgText: { ru: "Здравствуйте! Интересует «Ведомость материалов из РД». Прикладываю файл рабочей документации. С офертой ознакомлен(а): https://ai-vibes.ru/oferta.html",
                      en: "Hi! I'm interested in “Material takeoff from drawings”. Attaching the drawings. I have read the offer terms: https://ai-vibes.ru/oferta.html" } },
+    tier: "paid", free_quota: null,
   },
   {
     id: "spec-reconciliation", slug: "spec-reconciliation", order: 20, visible: true,
@@ -55,6 +58,7 @@ window.AI_PRODUCTS = [
     output:  { ru: "Excel-таблица расхождений с пометками", en: "Excel discrepancy table with notes" },
     cta: { tgText: { ru: "Здравствуйте! Интересует «Сверка спецификаций». С офертой ознакомлен(а): https://ai-vibes.ru/oferta.html",
                      en: "Hi! I'm interested in “Spec reconciliation”. I have read the offer terms: https://ai-vibes.ru/oferta.html" } },
+    tier: "paid", free_quota: null,
   },
   {
     id: "letters-claims", slug: "letters-claims", order: 30, visible: false,
@@ -69,6 +73,7 @@ window.AI_PRODUCTS = [
     output:  { ru: "Готовое официальное письмо .docx", en: "Ready official letter .docx" },
     cta: { tgText: { ru: "Здравствуйте! Интересует «Письма и претензии по шаблону». С офертой ознакомлен(а): https://ai-vibes.ru/oferta.html",
                      en: "Hi! I'm interested in “Letters & claims from a template”. I have read the offer terms: https://ai-vibes.ru/oferta.html" } },
+    tier: "paid", free_quota: null,
   },
   {
     id: "voice-transcription", slug: "voice-transcription", order: 40, visible: true,
@@ -83,6 +88,7 @@ window.AI_PRODUCTS = [
     output:  { ru: "Протокол планёрки .docx + список поручений", en: "Minutes .docx + action list" },
     cta: { tgText: { ru: "Здравствуйте! Интересует «Протокол планёрки из голосовых». С офертой ознакомлен(а): https://ai-vibes.ru/oferta.html",
                      en: "Hi! I'm interested in “Meeting minutes from voice notes”. I have read the offer terms: https://ai-vibes.ru/oferta.html" } },
+    tier: "paid", free_quota: null,
   },
   {
     id: "works-cost-estimate", slug: "works-cost-estimate", order: 50, visible: true,
@@ -99,6 +105,7 @@ window.AI_PRODUCTS = [
              en: "Excel works cost estimate with live formulas" },
     cta: { tgText: { ru: "Здравствуйте! Интересует «Калькуляция работ из РД». Прикладываю документацию. С офертой ознакомлен(а): https://ai-vibes.ru/oferta.html",
                      en: "Hi! I'm interested in “Works cost estimate from drawings”. Attaching the drawings. I have read the offer terms: https://ai-vibes.ru/oferta.html" } },
+    tier: "paid", free_quota: null,
   },
   {
     id: "nakladnaya-m15", slug: "nakladnaya-m15", order: 60, visible: false,
@@ -114,5 +121,7 @@ window.AI_PRODUCTS = [
                en: "Excel: code/unit/qty + summary sheet" },
     cta: { url: "/nakladnaya.html", tgText: { ru: "Здравствуйте! Интересует «Накладные М-15 → Excel». Прикладываю PDF-скан накладных формы М-15. С офертой ознакомлен(а): https://ai-vibes.ru/oferta.html",
                      en: "Hi! I'm interested in “M-15 delivery notes → Excel”. Attaching the PDF scan of M-15 delivery notes. I have read the offer terms: https://ai-vibes.ru/oferta.html" } },
+    // price.ru "79" must equal backend WEBINTAKE_M15_PAYMENT_AMOUNT/100 (7900 коп) — see test_payment_amount.py
+    tier: "freemium", free_quota: 1,
   },
 ];
