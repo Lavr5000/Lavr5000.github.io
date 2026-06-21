@@ -43,7 +43,7 @@ window.AI_PRODUCTS = [
     output:  { ru: "Excel-ведомость материалов и объёмов", en: "Excel bill of materials & quantities" },
     cta: { url: "/vedomost.html", tgText: { ru: "Здравствуйте! Интересует «Ведомость материалов из РД». Прикладываю файл рабочей документации. С офертой ознакомлен(а): https://ai-vibes.ru/oferta.html",
                      en: "Hi! I'm interested in “Material takeoff from drawings”. Attaching the drawings. I have read the offer terms: https://ai-vibes.ru/oferta.html" } },
-    tier: "paid", free_quota: null,
+    tier: "freemium", free_quota: 1,
   },
   {
     id: "spec-reconciliation", slug: "spec-reconciliation", order: 20, visible: true,
