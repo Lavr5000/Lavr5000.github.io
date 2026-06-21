@@ -108,8 +108,8 @@ window.AI_PRODUCTS = [
     tier: "paid", free_quota: null,
   },
   {
-    id: "nakladnaya-m15", slug: "nakladnaya-m15", order: 60, visible: false,
-    status: "soon", icon: "list", serviceType: "request_form",
+    id: "nakladnaya-m15", slug: "nakladnaya-m15", order: 60, visible: true,
+    status: "available", icon: "list", serviceType: "request_form",
     categories: ["pto", "procurement", "estimators"],
     price: { ru: "79", en: "79" },
     title:   { ru: "Накладные М-15 → Excel", en: "M-15 delivery notes → Excel" },
