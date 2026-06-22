@@ -8,6 +8,7 @@ Public-safe navigation map for the GitHub Pages site. Links use repository filen
 - [about.html](about.html) - public "about" page for visitors who want context about the project, author, or service positioning.
 - [products.html](products.html) - public catalog page for visitors choosing available products or service cards.
 - [vedomost.html](vedomost.html) - public order form for users who want to submit a PDF ведомость for processing.
+- [nakladnaya.html](nakladnaya.html) - public order form for printed M-15 delivery-note scans: one PDF upload, email, product-scoped consent, payment, OCR, and Excel delivery.
 - [rate.html](rate.html) - public feedback page for users who received a result and want to rate whether it worked for them.
 - [oferta.html](oferta.html) - public offer terms page for users reviewing service terms before or after submitting an order.
 - [privacy.html](privacy.html) - public privacy page for users reviewing personal data processing, consent, retention, and revocation terms.
@@ -73,11 +74,30 @@ Typical tile rendering includes:
 
 New products should be added by appending to the existing registry structure rather than rewriting previous entries, so old public links and catalog behavior stay stable.
 
+### Printed M-15 Delivery Notes Flow
+
+Files: [nakladnaya.html](nakladnaya.html), [nakladnaya.js](nakladnaya.js), [assets/order-flow.js](assets/order-flow.js)
+
+User-visible flow:
+
+1. The user opens [nakladnaya.html](nakladnaya.html).
+2. The user uploads one PDF scan of printed M-15 delivery notes.
+3. The user enters an email address and accepts the required product-scoped OCR consent (`m15-v1`).
+4. The client creates an order for product `nakladnaya-m15`, uploads the PDF, shows payment when required, polls status, and shows delivered/error states.
+5. The backend returns the Excel result by email after OCR processing.
+
+Public form fields and ids:
+
+- `file` - one PDF scan of printed M-15 delivery notes.
+- `email` - email address where the result is delivered.
+- `consent` - required OCR consent checkbox for external OpenRouter processing.
+- `website` - hidden honeypot field intended to remain empty for real users.
+
 ### Legal Pages
 
 Files: [oferta.html](oferta.html), [privacy.html](privacy.html)
 
-- [oferta.html](oferta.html) covers public offer terms: what service is provided, how the user accepts the terms, user and service responsibilities, and payment or free-mode terms when applicable. **v1.1 (2026-06-20):** seller changed from «Денис Лавров, НПД/самозанятый» to **ИП Лаврова Ю.Н. (УСН, ИНН 644404692540)**; payment section rewritten for online pay via Т-Касса (card/СБП) + 54-ФЗ cashier receipt (general wording), УСН/no-VAT; refund clause made ЗоЗПП-safe; internal risk-note removed. The M-15 service offer clause stays held (M-15 moratorium until 2026-06-24).
+- [oferta.html](oferta.html) covers public offer terms: what service is provided, how the user accepts the terms, user and service responsibilities, and payment or free-mode terms when applicable. **v1.1 (2026-06-20):** seller changed from «Денис Лавров, НПД/самозанятый» to **ИП Лаврова Ю.Н. (УСН, ИНН 644404692540)**; payment section rewritten for online pay via Т-Касса (card/СБП) + 54-ФЗ cashier receipt (general wording), УСН/no-VAT; refund clause made ЗоЗПП-safe; internal risk-note removed. **v1.2 (2026-06-22):** M-15 public clause is live for printed M-15 delivery-note scans, with OpenRouter OCR disclosure and best-effort wording for handwritten notes.
 - [privacy.html](privacy.html) covers personal data processing under 152-ФЗ, including email handling, file/order processing context, retention periods, the optional 90-day storage opt-in, and the user's right to revoke consent. v1.1 (2026-06-17) adds a technical-telemetry / service-journal disclosure: pseudonymized metadata only (no file name or content, no AI prompts/responses), ip-hash retained 90 days, journal up to 3 years, under the contract-execution legal basis (п.5 ст.6) — no consent-text change. **v1.2 (2026-06-20):** operator changed to **ИП Лаврова Ю.Н. (УСН)**; adds payment-data category + 4-year fiscal retention; subprocessors expanded with **АО «ТБанк» (Т-Касса/Т-Чеки)** for payment+receipt and **OpenRouter** (M-15 OCR, transborder disclosure ст.12). `CONSENT_VERSION` UNCHANGED (`vedomost-v2-2026-06`) — consent-checkbox text not modified, only the linked legal docs.
 
 ## Build And Asset Notes

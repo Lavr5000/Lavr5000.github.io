@@ -4,7 +4,6 @@ import { initOrderFlow } from './assets/order-flow.js';
 // - payButtonText: 'Оплатить картой или через СБП' (was 'Оплатить'); m15 also accepts card+SBP.
 // - free-quota indicator added (m15 is a freemium product; backend returns free_quota_remaining).
 // - polling stops at awaiting_payment only when a valid payment URL is present (Б6 poll-fix).
-// nakladnaya is under the release/m15-hold moratorium and is not deployed yet.
 
 initOrderFlow({
   product: 'nakladnaya-m15',
