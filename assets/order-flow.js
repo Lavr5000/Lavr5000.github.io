@@ -14,7 +14,7 @@ import {
   isValidPaymentUrl
 } from '../vedomost.config.js?v=vedomost-v2-2026-06';
 
-const MAX_SIZE = 25 * 1024 * 1024;
+const MAX_SIZE = 200 * 1024 * 1024;  // matches backend WEBINTAKE_MAX_FILE_SIZE_BYTES=209715200 (1G preflight large-PDF intake)
 
 // config contract (all fields required unless noted):
 //   product            string | null     — null => product field is NOT sent in /api/orders
@@ -229,7 +229,7 @@ export function initOrderFlow(config) {
 
   async function validateFile(file) {
     if (!file) throw new Error('Выберите один PDF-файл.');
-    if (file.size > MAX_SIZE) throw new Error('Файл не принят: размер больше 25 МБ.');
+    if (file.size > MAX_SIZE) throw new Error('Файл не принят: размер больше ' + Math.round(MAX_SIZE / (1024 * 1024)) + ' МБ.');
     if (await readMagic(file) !== '%PDF-') throw new Error('Файл не принят: это не PDF.');
     if (config.checkTextLayer) {
       // Dynamic import: only loaded for pages that need text-layer validation (e.g. vedomost).
