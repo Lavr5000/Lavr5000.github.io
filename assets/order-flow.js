@@ -412,7 +412,14 @@ export function initOrderFlow(config) {
       done = TERMINAL_STAGES.includes(data.stage)
         || (config.paymentEnabled && data.stage === 'awaiting_payment' && hasValidPayUrl);
       if (!done && attempts >= config.maxPollAttempts) {
-        setMessage('Превышено время ожидания обработки. Свяжитесь с менеджером.', 'bad');
+        // A large file can legitimately process past the client poll cap; the backend
+        // still delivers the result by email, so avoid a scary "contact us" dead-end.
+        // The awaiting-payment stall is a real stuck state and keeps the old notice.
+        if (data.stage === 'awaiting_payment') {
+          setMessage('Превышено время ожидания обработки. Свяжитесь с менеджером.', 'bad');
+        } else {
+          setMessage('Файл большой — обработка продолжается на сервере. Готовая ведомость придёт на указанную почту, это окно можно закрыть.', 'ok');
+        }
         done = true;
       }
       if (!done) await new Promise(resolve => setTimeout(resolve, 5000));
