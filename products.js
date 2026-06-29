@@ -34,7 +34,7 @@ window.AI_PRODUCTS = [
     id: "material-takeoff", slug: "material-takeoff", order: 10, visible: true,
     status: "available", icon: "list", serviceType: "request_form",
     categories: ["estimators", "pto", "procurement"],
-    price: { ru: "990", en: "990" },
+    price: { ru: "50", en: "50" },
     title:   { ru: "Ведомость материалов из РД", en: "Material takeoff from drawings" },
     tagline: { ru: "Извлекаю материалы и объёмы из рабочей документации в структурный Excel.",
                en: "I extract materials and quantities from working drawings into a structured Excel." },
@@ -111,7 +111,7 @@ window.AI_PRODUCTS = [
     id: "nakladnaya-m15", slug: "nakladnaya-m15", order: 60, visible: true,
     status: "available", icon: "list", serviceType: "request_form",
     categories: ["pto", "procurement", "estimators"],
-    price: { ru: "79", en: "79" },
+    price: { ru: "10", en: "10" },
     title:   { ru: "Печатные накладные М-15 → Excel", en: "Printed M-15 delivery notes → Excel" },
     tagline: { ru: "Распознаю отсканированные печатные накладные М-15 в структурный Excel для М-29.",
                en: "I turn scanned printed M-15 delivery notes into a structured Excel for M-29." },
@@ -121,7 +121,7 @@ window.AI_PRODUCTS = [
                en: "Excel: code/unit/qty + summary sheet" },
     cta: { url: "/nakladnaya.html", tgText: { ru: "Здравствуйте! Интересует «Печатные накладные М-15 → Excel». Прикладываю PDF-скан печатных накладных формы М-15. С офертой ознакомлен(а): https://ai-vibes.ru/oferta.html",
                      en: "Hi! I'm interested in “Printed M-15 delivery notes → Excel”. Attaching the PDF scan of printed M-15 delivery notes. I have read the offer terms: https://ai-vibes.ru/oferta.html" } },
-    // price.ru "79" must equal backend WEBINTAKE_M15_PAYMENT_AMOUNT/100 (7900 коп) — see test_payment_amount.py
+    // price.ru "10" must equal backend WEBINTAKE_M15_PAYMENT_AMOUNT/100 (1000 коп) — see test_payment_amount.py
     tier: "freemium", free_quota: 1,
   },
 ];
