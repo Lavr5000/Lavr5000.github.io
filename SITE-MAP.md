@@ -31,6 +31,8 @@ User-visible flow:
 7. The client calls the public order API.
 8. The page shows order progress using user-facing stages such as queued, parsing, and delivered.
 9. In free-mode, payment is disabled and the visible path stays focused on file upload, consent, submission, and delivery.
+10. If a large file is still processing when the client poll cap is reached, the page shows a calm "processing continues, result will arrive by email" notice (not a "contact manager" error). The scary notice is kept only for an `awaiting_payment` stall. (Shared `assets/order-flow.js`, applies to both ведомость and nakladnaya.)
+11. When the order is waiting behind others, the queued view shows how many documents are ahead ("Перед вами в очереди: N …") and an estimated wait time, plus a reminder that the result arrives by email so the tab can be closed. Position and the estimate are shown only while queued; the estimate is hidden when it cannot be computed. (Shared `assets/order-flow.js`.)
 
 Public form fields and ids:
 
