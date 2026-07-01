@@ -87,6 +87,9 @@ export function initOrderFlow(config) {
   let activeCanRate = false;
   let activeOrderToken = '';
   let activeFreeRemaining = null;
+  let activeQueuePosition = null; // W5: orders ahead in the queue (null = unknown/not queued)
+  let activeEtaSeconds = null;    // W5: projected wait in seconds (null = can't estimate)
+  let lastQueuedRenderKey = null; // W5: position|eta last rendered, to refresh only on change
   let ratingSubmitted = false;
   const stageDurations = {}; // completed ticking stage -> ms
 
@@ -95,6 +98,22 @@ export function initOrderFlow(config) {
     const m = Math.floor(total / 60);
     const s = total % 60;
     return m > 0 ? `${m} мин ${s} сек` : `${s} сек`;
+  }
+
+  // W5 — Russian plural for the queue-position noun ("документ / документа / документов").
+  function pluralRu(n, one, few, many) {
+    const m10 = n % 10, m100 = n % 100;
+    if (m10 === 1 && m100 !== 11) return one;
+    if (m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20)) return few;
+    return many;
+  }
+
+  // W5 — ETA is an estimate, never a promise: round UP to whole minutes (never "0 мин"),
+  // cap the long tail so we don't pin a precise large number. Returns null when unknowable.
+  function formatQueueEta(seconds) {
+    if (typeof seconds !== 'number' || !isFinite(seconds) || seconds <= 0) return null;
+    const mins = Math.max(1, Math.ceil(seconds / 60));
+    return mins > 20 ? 'более 20 минут' : `≈ ${mins} мин`;
   }
 
   function stopStatusTimer() {
@@ -147,6 +166,32 @@ export function initOrderFlow(config) {
       quota.textContent = `Бесплатных генераций осталось: ${activeFreeRemaining}`;
       statusBox.append(quota);
     }
+    // W5 — queue visibility. While the order is still working (queued/parsing) tell the
+    // user they don't have to keep the tab open; when queued, also show how many are ahead
+    // and the (estimated) wait. Position/ETA are hidden when unknown so nothing bogus shows.
+    if (TICKING_STAGES.includes(stage)) {
+      if (stage === 'queued') {
+        const eta = formatQueueEta(activeEtaSeconds);
+        if (typeof activeQueuePosition === 'number' && activeQueuePosition >= 1) {
+          const pos = document.createElement('p');
+          pos.className = 'queue-info';
+          const word = pluralRu(activeQueuePosition, 'документ', 'документа', 'документов');
+          pos.textContent = `Перед вами в очереди: ${activeQueuePosition} ${word}`;
+          if (eta) pos.textContent += ` · ориентировочно ${eta}`;
+          statusBox.append(pos);
+        } else if (eta) {
+          const etaEl = document.createElement('p');
+          etaEl.className = 'queue-info';
+          etaEl.textContent = `Ориентировочное время обработки: ${eta}`;
+          statusBox.append(etaEl);
+        }
+        lastQueuedRenderKey = `${activeQueuePosition}|${activeEtaSeconds}`;
+      }
+      const note = document.createElement('p');
+      note.className = 'queue-note';
+      note.textContent = 'Готовая ведомость придёт на email — это окно можно закрыть.';
+      statusBox.append(note);
+    }
     if (apiMessage) setMessage(apiMessage, stage === 'failed' ? 'bad' : 'ok');
     if (stage === 'awaiting_payment' && config.paymentEnabled) {
       // Protect against null/non-string before passing to validator (round-2 #1)
@@ -179,9 +224,14 @@ export function initOrderFlow(config) {
       return;
     }
     if (stage === activeStage) { // repeat poll: no structural rebuild, but apply message/payment changes
+      // W5: the queue drains over time, so re-render when position/ETA changed at the same stage.
+      const queuedChanged = stage === 'queued'
+        && `${activeQueuePosition}|${activeEtaSeconds}` !== lastQueuedRenderKey;
       if (paymentUrl !== activePaymentUrl) {
         activePaymentUrl = paymentUrl;
         activeMessage = apiMessage;
+        renderStatusStructure(stage, apiMessage, paymentUrl);
+      } else if (queuedChanged) {
         renderStatusStructure(stage, apiMessage, paymentUrl);
       } else if (apiMessage && apiMessage !== activeMessage) {
         activeMessage = apiMessage;
@@ -216,6 +266,9 @@ export function initOrderFlow(config) {
     activeCanRate = false;
     activeOrderToken = '';
     activeFreeRemaining = null;
+    activeQueuePosition = null;
+    activeEtaSeconds = null;
+    lastQueuedRenderKey = null;
     ratingSubmitted = false;
     for (const k of Object.keys(stageDurations)) delete stageDurations[k];
     stageStartedAt = Date.now();
@@ -403,6 +456,9 @@ export function initOrderFlow(config) {
       const data = await api('/api/status', { headers: { Authorization: `Bearer ${orderToken}` } });
       // Read free_quota_remaining BEFORE setStage so renderStatusStructure sees the updated value
       activeFreeRemaining = typeof data.free_quota_remaining === 'number' ? data.free_quota_remaining : null;
+      // W5: read queue fields BEFORE setStage so renderStatusStructure sees the fresh values
+      activeQueuePosition = typeof data.queue_position === 'number' ? data.queue_position : null;
+      activeEtaSeconds = typeof data.eta_seconds === 'number' ? data.eta_seconds : null;
       setStage(data.stage, data.message, data.payment_url, data.can_rate === true, orderToken);
       attempts += 1;
       // awaiting_payment is a user-action state (redirect to the bank): stop polling ONLY once

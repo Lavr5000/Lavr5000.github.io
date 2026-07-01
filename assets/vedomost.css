@@ -557,6 +557,18 @@ input[type=email]::placeholder {
   white-space:nowrap;
 }
 
+/* W5 — queue visibility lines (position/ETA + "arrives by email" reassurance) */
+#status .queue-info {
+  margin:0;
+  color:var(--ink);
+  font-weight:500;
+}
+
+#status .queue-note {
+  margin:0;
+  color:var(--ink-muted);
+}
+
 .pay {
   display:inline-flex;
   align-items:center;
