@@ -1,0 +1,81 @@
+# Weekly rebuild + publish of the IDmaster NTD snapshot (project R12).
+# Writes ONLY the idm/ directory; never touches site pages.
+# deploy-pages.yml is NOT modified: it is dispatched explicitly, because a
+# commit made with GITHUB_TOKEN does not trigger other workflows by push.
+name: idm-ntd-publish
+
+on:
+  schedule:
+    - cron: "17 1 * * 1"          # Mon 01:17 UTC = 04:17 MSK, off the hour edge
+  pull_request:                   # preflight: proves the runner reaches the registry
+    paths:
+      - "scripts/ntd/**"
+      - ".github/workflows/idm-ntd-publish.yml"
+  workflow_dispatch:
+    inputs:
+      dry_live:
+        description: "real collect + checks, write nothing"
+        type: boolean
+        default: false
+      probe_refusal:
+        description: "force a refusal to exercise the failure path"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read                  # file-wide default: minimum
+
+concurrency:
+  group: idm-ntd-publish
+  cancel-in-progress: false
+
+jobs:
+  # Pull-request code runs HERE ONLY, and only with read access.
+  preflight:
+    if: github.event_name == 'pull_request' || inputs.dry_live
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: python scripts/ntd/ntd_publish.py --exp preflight --dry-live
+
+  publish:
+    if: github.event_name != 'pull_request' && !inputs.dry_live
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write             # commit the snapshot and the check mark
+      actions: write              # dispatch deploy-pages.yml
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+
+      - name: rebuild and publish
+        run: |
+          args="--exp ${{ github.event_name }}"
+          [ "${{ inputs.probe_refusal }}" = "true" ] && args="$args --probe-refusal"
+          python scripts/ntd/ntd_publish.py $args \
+            --check-id "$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+
+      - name: commit
+        run: |
+          git config user.name  "idm-ntd-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add idm
+          if git diff --cached --quiet; then
+            echo "nothing to commit"
+          else
+            git commit -m "chore(ntd): weekly NTD channel check"
+            git push
+          fi
+
+      - name: trigger Pages deploy
+        run: gh workflow run deploy-pages.yml --ref master
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: verify delivery on the live site
+        run: python scripts/ntd/verify_live.py --timeout 900
