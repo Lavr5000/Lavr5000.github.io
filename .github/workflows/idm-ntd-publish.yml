@@ -72,6 +72,26 @@ jobs:
             git push
           fi
 
+      # Dispatching right after the push is a real race: `--ref master` is
+      # resolved to whatever SHA the API currently reports for the branch, and
+      # a two-second-old push may not be visible yet - the deploy then rebuilds
+      # the PREVIOUS commit and the site silently stays behind. Observed on
+      # 2026-08-04: pushed 255f07a, deploy ran against 0d97b96. So wait until
+      # the API agrees the branch points at our commit.
+      - name: wait for the branch head to propagate
+        run: |
+          want=$(git rev-parse HEAD)
+          for i in $(seq 1 30); do
+            head=$(gh api "repos/$GITHUB_REPOSITORY/commits/master" -q .sha)
+            [ "$head" = "$want" ] && { echo "master -> $head"; exit 0; }
+            echo "  ждём распространения ссылки: master=$head want=$want"
+            sleep 5
+          done
+          echo "::error::branch head did not propagate in 150 s"
+          exit 1
+        env:
+          GH_TOKEN: ${{ github.token }}
+
       - name: trigger Pages deploy
         run: gh workflow run deploy-pages.yml --ref master
         env:
