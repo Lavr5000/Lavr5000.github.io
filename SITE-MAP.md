@@ -102,6 +102,20 @@ Files: [oferta.html](oferta.html), [privacy.html](privacy.html)
 - [oferta.html](oferta.html) covers public offer terms: what service is provided, how the user accepts the terms, user and service responsibilities, and payment or free-mode terms when applicable. **v1.1 (2026-06-20):** seller changed from «Денис Лавров, НПД/самозанятый» to **ИП Лаврова Ю.Н. (УСН, ИНН 644404692540)**; payment section rewritten for online pay via Т-Касса (card/СБП) + 54-ФЗ cashier receipt (general wording), УСН/no-VAT; refund clause made ЗоЗПП-safe; internal risk-note removed. **v1.2 (2026-06-22):** M-15 public clause is live for printed M-15 delivery-note scans, with OpenRouter OCR disclosure and best-effort wording for handwritten notes.
 - [privacy.html](privacy.html) covers personal data processing under 152-ФЗ, including email handling, file/order processing context, retention periods, the optional 90-day storage opt-in, and the user's right to revoke consent. v1.1 (2026-06-17) adds a technical-telemetry / service-journal disclosure: pseudonymized metadata only (no file name or content, no AI prompts/responses), ip-hash retained 90 days, journal up to 3 years, under the contract-execution legal basis (п.5 ст.6) — no consent-text change. **v1.2 (2026-06-20):** operator changed to **ИП Лаврова Ю.Н. (УСН)**; adds payment-data category + 4-year fiscal retention; subprocessors expanded with **АО «ТБанк» (Т-Касса/Т-Чеки)** for payment+receipt and **OpenRouter** (M-15 OCR, transborder disclosure ст.12). `CONSENT_VERSION` UNCHANGED (`vedomost-v2-2026-06`) — consent-checkbox text not modified, only the linked legal docs.
 
+## Machine-Readable Endpoints
+
+### IDmaster NTD channel (`idm/`)
+
+Files: [idm/version.json](idm/version.json), `idm/ntd-snapshot.<sha256>.json`, [idm/last-check.json](idm/last-check.json), [scripts/ntd/](scripts/ntd/), [.github/workflows/idm-ntd-publish.yml](.github/workflows/idm-ntd-publish.yml)
+
+Not a page: three static JSON files read by the desktop IDmaster workbook when its user presses «Обновить нормативы». No human visitor is expected here and nothing links to it.
+
+- `idm/version.json` — the distribution manifest: workbook `version`, the URL of the current NTD snapshot and its sha256. Name is stable.
+- `idm/ntd-snapshot.<sha256>.json` — a snapshot of the Rosstandart SP registry (all statuses). The file name carries the sha256 of its own content, so a client holding an older manifest keeps resolving the snapshot that manifest promises, and a mid-publication download can never mismatch.
+- `idm/last-check.json` — the run-unique `check_id`, timestamp and counters of the last channel check; it is how the workflow proves the deploy actually reached the live site, and it keeps the weekly schedule from being auto-disabled for inactivity.
+
+`.github/workflows/idm-ntd-publish.yml` rebuilds and republishes weekly. It writes only `idm/`, dispatches the existing Pages deploy explicitly (a `GITHUB_TOKEN` commit does not trigger it by push), and fails the run if the change is not observable on `ai-vibes.ru`. Pull requests touching `scripts/ntd/**` run the same collector in a read-only dry mode.
+
 ## Build And Asset Notes
 
 - [sync_csp.mjs](sync_csp.mjs) keeps the public Content Security Policy metadata synchronized with the client asset layout.

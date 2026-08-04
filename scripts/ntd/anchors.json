@@ -1,0 +1,11 @@
+{
+ "_comment": "SP designations pre-filled by the IDmaster workbook. Equality with book_schema.STANDARDS_PREFILL is proven by the IDmaster gate ntd-vendor (anchors_match=6/6). A published snapshot missing any of these is refused (check P-6).",
+ "anchors": [
+  "СП 48.13330.2019",
+  "СП 45.13330.2017",
+  "СП 70.13330.2012",
+  "СП 63.13330.2018",
+  "СП 22.13330.2016",
+  "СП 71.13330.2017"
+ ]
+}

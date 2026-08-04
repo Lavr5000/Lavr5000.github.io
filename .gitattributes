@@ -1,0 +1,5 @@
+# scripts/ntd holds byte-identical vendored copies of the IDmaster parser.
+# Their sha256 is compared across repositories by the IDmaster gate
+# `ntd-vendor`; a CRLF checkout on Windows would change those bytes and break
+# that check for no real reason. Keep the working copy LF everywhere.
+scripts/ntd/** text eol=lf
