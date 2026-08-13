@@ -13,137 +13,141 @@
   <meta property="og:description" content="Загрузите PDF рабочей документации и получите Excel-ведомость объёмов с источниками по строкам.">
   <meta property="og:url" content="https://ai-vibes.ru/vedomost.html">
   <meta property="og:image" content="https://ai-vibes.ru/assets/og.svg">
-  <link rel="icon" href="favicon.ico">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="modulepreload" href="assets/pdfjs/pdf.min.mjs" integrity="sha384-z/XbAtvhBXJoK+yvYimnFuTCF6/2wTCDSIFD09/HtIfwFtvDKOMdAe5Z3wOChkmW" crossorigin="anonymous">
-  <link rel="stylesheet" href="assets/fonts.css">
-  <link rel="stylesheet" href="assets/site.css">
-  <link rel="stylesheet" href="assets/vedomost.css">
+  <link rel="stylesheet" href="/assets/fonts.css?v=20260813-forms">
+  <link rel="stylesheet" href="/assets/site2.css?v=20260813-forms">
+  <link rel="stylesheet" href="/assets/forms2.css?v=20260813-forms">
+  <script defer src="/assets/index2.app.js?v=20260813-forms"></script>
   <script defer src="/assets/nav-inject.js"></script>
   <script defer src="/assets/soft-prompt.js"></script>
 </head>
-<body class="vedomost-page">
-  <nav class="nav" aria-label="Основная навигация">
-    <div class="nav-inner">
-      <a class="logo" href="/" aria-label="AI Vibes">
-        <span class="brand-glyph" aria-hidden="true">
-          <svg viewBox="0 0 28 28" focusable="false">
-            <path d="M7.5 4.5h11.8l3.2 3.2v15.8h-15z" />
-            <path d="M19.3 4.5v5.2h5.2" />
-            <path d="M11 16l2.2 2.3L18 13" />
-          </svg>
-        </span>
-        <span>AI Vibes</span>
-      </a>
-      <div class="nav-right">
-        <div class="nav-links">
-          <a class="nav-link" href="/">Продукты</a>
-          <a class="nav-link" href="oferta.html">Оферта</a>
-          <a class="nav-link" href="privacy.html">Политика</a>
-        </div>
-      </div>
-    </div>
+<body>
+<a class="skip" href="#main">Перейти к содержанию</a>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="/" aria-label="AI Vibes — на главную">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M6 3.5h9l3 3V20.5H6z"/><path d="M15 3.5v3.5h3.5"/><path d="M9 14l2 2 4-4.5"/></svg>
+      </span>
+      <span class="brand-name">AI Vibes</span>
+    </a>
+
+    <nav class="nav-links" aria-label="Разделы сайта">
+      <a class="nav-link" href="/products.html">Инструменты</a>
+      <a class="nav-link" href="/services/">Услуги</a>
+      <a class="nav-link" href="/oferta.html">Оферта</a>
+      <a class="nav-link" href="/privacy.html">Политика</a>
+    </nav>
+
+    <a class="btn btn-primary nav-cta" href="#order">Заказать разбор</a>
+
+    <button class="burger" type="button" id="burger" aria-expanded="false" aria-controls="drawer" aria-label="Открыть меню">
+      <span></span>
+    </button>
+  </div>
+</header>
+
+<div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Меню">
+  <button class="drawer-close" type="button" id="drawer-close" aria-label="Закрыть меню">×</button>
+  <nav>
+    <a href="/">Главная</a>
+    <a href="/products.html">Инструменты</a>
+    <a href="/services/">Услуги</a>
+    <a href="/oferta.html">Оферта</a>
+    <a href="/privacy.html">Политика</a>
   </nav>
+  <a class="btn btn-primary btn-wide" href="#order">Заказать разбор</a>
+</div>
 
-  <main>
-    <section class="vedomost-hero" aria-labelledby="vedomost-title">
-      <div class="container vedomost-hero__grid">
-        <div class="vedomost-copy">
-          <p class="eyebrow">PDF РД · ВЕДОМОСТЬ ОБЪЁМОВ</p>
-          <h1 id="vedomost-title">Загрузите PDF рабочей документации</h1>
-          <p class="lead">Проверим файл в браузере, примем один PDF на заказ и отправим результат на email после обработки.</p>
-          <div class="hero-chips" aria-label="Параметры сервиса">
-            <span class="chip">PDF · до 200 МБ</span>
-            <span class="chip">текстовый слой</span>
-            <span class="chip">Excel на email</span>
-          </div>
-        </div>
+<main id="main">
 
-        <aside class="result-preview" aria-label="Мини-пример результата">
-          <div class="result-preview__head">
-            <span class="mono">РД · АР-6</span>
-            <span class="status ok">пример</span>
-          </div>
-          <div class="source-tabs" role="group" aria-label="Источник результата">
-            <button type="button" class="source-tab active" aria-pressed="true">Источник</button>
-            <button type="button" class="source-tab" aria-pressed="false">Excel</button>
-            <button type="button" class="source-tab" aria-pressed="false">Проверка</button>
-          </div>
-          <div class="mini-result">
-            <div class="mini-sheet">
-              <span class="mini-sheet__line wide"></span>
-              <span class="mini-sheet__line"></span>
-              <span class="mini-sheet__line short"></span>
-            </div>
-            <div class="mini-table" aria-hidden="true">
-              <div class="mini-row head"><span>№</span><span>работа</span><span>лист</span></div>
-              <div class="mini-row"><span>1</span><span>Стены</span><span>47</span></div>
-              <div class="mini-row"><span>2</span><span>Стяжка</span><span>52</span></div>
-            </div>
-          </div>
-          <div class="process-strip" aria-label="Статусы обработки">
-            <span class="process-step done">Загружено</span>
-            <span class="process-step current">Проверка</span>
-            <span class="process-step">Готово</span>
-          </div>
-        </aside>
+<section class="hero hero-page" id="hero" aria-labelledby="vedomost-title">
+  <div class="hero-atmos" aria-hidden="true"></div>
+  <div class="wrap">
+    <p class="hero-eyebrow"><s aria-hidden="true"></s>PDF РД · ведомость объёмов</p>
+    <h1 id="vedomost-title">Загрузите PDF рабочей документации</h1>
+    <p class="hero-lead" data-reveal>Проверим файл в браузере, примем один PDF на заказ и отправим
+      результат на email после обработки.</p>
+
+    <dl class="stamp" data-reveal>
+      <div><dt>Формат</dt><dd>PDF · до 200 МБ</dd></div>
+      <div><dt>Требование</dt><dd>текстовый слой</dd></div>
+      <div><dt>Результат</dt><dd>Excel на email</dd></div>
+      <div><dt>Проверка файла</dt><dd>в браузере, до отправки</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section class="band band-deep band-seam" id="order" aria-labelledby="form-title">
+  <div class="wrap work-grid">
+    <div class="work-form">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">01 · Заказ</p>
+        <h2 class="h2" id="form-title">Передайте PDF для разбора</h2>
       </div>
-    </section>
 
-    <section class="vedomost-workspace">
-      <div class="container layout">
-        <section class="panel upload-card" aria-labelledby="form-title">
-          <div class="panel-head">
-            <p class="kicker">01 · ЗАКАЗ</p>
-            <h2 id="form-title">Передайте PDF для разбора</h2>
-          </div>
-        <form id="orderForm" class="form" novalidate>
-          <div class="field file-field">
-            <label class="upload-zone" for="file">
-              <span class="upload-zone__icon" aria-hidden="true"></span>
-              <span class="upload-zone__title">Загрузить чертёж</span>
-              <span class="upload-zone__text">PDF с текстовым слоем. Сканированные PDF не принимаются.</span>
-              <span class="dropzone-hint">PDF · до 200 МБ · один файл</span>
-              <span class="upload-zone__check" aria-hidden="true"></span>
-              <span class="upload-zone__file" id="file-selected-name" aria-live="polite"></span>
-              <span class="upload-zone__replace-hint">Нажмите на область, чтобы заменить файл</span>
-              <input id="file" name="file" type="file" accept="application/pdf,.pdf" aria-describedby="file-selected-name" required>
-            </label>
-            <button type="button" class="upload-zone__remove" id="removeFile">Убрать файл</button>
-          </div>
-          <div class="field">
-            <label for="email">Email для результата</label>
-            <input id="email" name="email" type="email" autocomplete="email" required placeholder="name@example.com">
-            <div class="hint">На этот адрес придёт статус и готовая ведомость.</div>
-          </div>
-          <div class="hp" aria-hidden="true">
-            <label for="website">Website</label>
-            <input id="website" name="website" tabindex="-1" autocomplete="off">
-          </div>
+      <form id="orderForm" class="form" novalidate>
+        <div class="field file-field">
+          <label class="upload-zone" for="file">
+            <span class="upload-zone__icon" aria-hidden="true"></span>
+            <span class="upload-zone__title">Загрузить чертёж</span>
+            <span class="upload-zone__text">PDF с текстовым слоем. Сканированные PDF не принимаются.</span>
+            <span class="dropzone-hint">PDF · до 200 МБ · один файл</span>
+            <span class="upload-zone__check" aria-hidden="true"></span>
+            <span class="upload-zone__file" id="file-selected-name" aria-live="polite"></span>
+            <span class="upload-zone__replace-hint">Нажмите на область, чтобы заменить файл</span>
+            <input id="file" name="file" type="file" accept="application/pdf,.pdf" aria-describedby="file-selected-name" required>
+          </label>
+          <button type="button" class="upload-zone__remove" id="removeFile">Убрать файл</button>
+        </div>
+        <div class="field">
+          <label for="email">Email для результата</label>
+          <input id="email" name="email" type="email" autocomplete="email" required placeholder="name@example.com">
+          <div class="hint">На этот адрес придёт статус и готовая ведомость.</div>
+        </div>
+        <div class="hp" aria-hidden="true">
+          <label for="website">Website</label>
+          <input id="website" name="website" tabindex="-1" autocomplete="off">
+        </div>
           <label class="check"><input id="consent" type="checkbox" required> <span>Согласен с <a href="oferta.html">офертой</a> и <a href="privacy.html">политикой обработки персональных данных</a>.</span></label>
           <label class="check"><input id="optin" type="checkbox"> <span>Разрешаю хранение файла до 90 дней для разбора спорных случаев по моей оценке (необязательно, можно отозвать — см. <a href="privacy.html">политику</a>).</span></label>
-          <button id="submitBtn" class="btn btn-primary" type="submit">Отправить заказ</button>
-        </form>
-        <div id="message" class="notice" role="status">Выберите PDF, укажите email и подтвердите согласие.</div>
-        <div id="status" class="status" aria-live="polite"></div>
-      </section>
+        <button id="submitBtn" class="btn btn-primary" type="submit">Отправить заказ</button>
+      </form>
+      <div id="message" class="notice" role="status">Выберите PDF, укажите email и подтвердите согласие.</div>
+      <div id="status" class="status" aria-live="polite"></div>
+    </div>
 
-      <aside class="side">
-        <p class="kicker">02 · ПРОВЕРКА</p>
-        <h2>Что происходит</h2>
-        <ul>
-          <li>Файл проверяется локально: размер, сигнатура <span class="mono">%PDF-</span>, текстовый слой.</li>
-          <li>Токены заказа используются только в заголовке <span class="mono">Authorization: Bearer</span>.</li>
-          <li>Если оплата появится в статусе, здесь будет кнопка оплаты.</li>
-        </ul>
-        <div class="side-status" aria-label="Ожидаемый путь обработки">
-          <span class="process-step done">Загружено</span>
-          <span class="process-step current">Проверка</span>
-          <span class="process-step">Готово</span>
-        </div>
-      </aside>
-      </div>
-    </section>
-  </main>
-  <script type="module" src="vedomost.js?v=vedomost-v2-2026-06"></script>
+    <aside class="work-side" data-reveal>
+      <p class="kicker">02 · Проверка</p>
+      <h2 class="h3">Что происходит</h2>
+      <ul>
+        <li>Файл проверяется локально: размер, сигнатура <span class="mono">%PDF-</span>, текстовый слой.</li>
+        <li>Токены заказа используются только в заголовке <span class="mono">Authorization: Bearer</span>.</li>
+        <li>Если оплата появится в статусе, здесь будет кнопка оплаты.</li>
+      </ul>
+    </aside>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <span class="meta">AI Vibes · Денис Лавров · 2026</span>
+    <span>
+      <a href="/">Главная</a>
+      <a href="/services/">Услуги</a>
+      <a href="/products.html">Каталог</a>
+      <a href="/oferta.html">Оферта</a>
+      <a href="/privacy.html">Конфиденциальность</a>
+    </span>
+  </div>
+</footer>
+
+<script type="module" src="vedomost.js?v=vedomost-v2-2026-06"></script>
 </body>
 </html>
