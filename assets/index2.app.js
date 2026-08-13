@@ -103,7 +103,53 @@
   });
   if (modal) $$('[data-close]', modal).forEach(function (b) { b.addEventListener('click', closeModal); });
 
-  /* ---- 6. Клавиатура: Esc закрывает, Tab не убегает из модалки ---- */
+  /* ---- 6. Живой терминал в герое: кадры из assets/hero-demo.js ----
+     Плеер не стартует при prefers-reduced-motion и на узких экранах:
+     там сразу показывается финальное состояние, без таймеров. */
+  var term = document.getElementById('hero-term');
+  var demo = window.HERO_DEMO;
+  if (term && demo && demo.length) {
+    var addLine = function (frame, text) {
+      var el = document.createElement('div');
+      el.className = 'term-line term-' + frame.t;
+      if (frame.t === 'cmd') {
+        var prompt = document.createElement('span');
+        prompt.className = 'term-p';
+        prompt.textContent = '$';
+        el.appendChild(prompt);
+      }
+      var body = document.createElement('span');
+      body.textContent = text;
+      el.appendChild(body);
+      term.appendChild(el);
+      term.scrollTop = term.scrollHeight;
+      return body;
+    };
+
+    var narrow = window.matchMedia('(max-width: 719px)').matches;
+    if (reduce || narrow) {
+      demo.forEach(function (f) { addLine(f, f.s); });
+      term.scrollTop = term.scrollHeight;
+    } else {
+      var i = 0;
+      var step = function () {
+        if (i >= demo.length) return;
+        var f = demo[i++];
+        if (f.t !== 'cmd') { addLine(f, f.s); setTimeout(step, 110); return; }
+        var span = addLine(f, ''), j = 0;
+        var type = function () {
+          span.textContent = f.s.slice(0, ++j);
+          term.scrollTop = term.scrollHeight;
+          if (j < f.s.length) setTimeout(type, 26);
+          else setTimeout(step, 280);
+        };
+        type();
+      };
+      setTimeout(step, 550);
+    }
+  }
+
+  /* ---- 7. Клавиатура: Esc закрывает, Tab не убегает из модалки ---- */
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
       if (modal && modal.classList.contains('is-open')) closeModal();

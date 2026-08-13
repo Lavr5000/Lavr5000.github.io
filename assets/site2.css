@@ -227,6 +227,28 @@ section[id],.panel[id]{scroll-margin-top:98px}
 .hero-actions{display:flex;flex-wrap:wrap;align-items:center;gap:14px 22px;margin-top:34px}
 .hero-picker{display:none}
 
+/* — Ф1 · терминальная панель первого экрана — */
+.term{
+  margin-top:clamp(28px,3vw,40px);border:1px solid var(--line-2);border-radius:var(--r);
+  background:linear-gradient(168deg,rgba(20,11,15,.92),rgba(12,7,9,.92));
+  overflow:hidden;box-shadow:0 24px 60px -40px #000;
+}
+.term-bar{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:9px 16px;border-bottom:1px solid var(--line);background:rgba(38,16,23,.5);
+  font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+}
+.term-title{color:var(--cream-3)}
+.term-src{color:var(--brass)}
+.term-body{
+  height:clamp(148px,15vw,188px);overflow:hidden;padding:14px 16px;
+  font-family:var(--mono);font-size:12.5px;line-height:1.7;color:var(--cream-3);
+}
+.term-line{white-space:pre-wrap;word-break:break-word}
+.term-cmd{color:var(--cream);display:flex;gap:9px}
+.term-p{color:var(--brass);flex:none}
+.term-ok{color:var(--brass-2)}
+
 /* — коммерческие плашки первого экрана — */
 .plates{display:grid;gap:16px}
 .plate{
@@ -524,6 +546,8 @@ a.tool:hover i{transform:translateX(4px);color:var(--brass)}
   .hero-actions{flex-direction:column;align-items:stretch;gap:12px;margin-top:26px}
   .hero-actions .btn{width:100%}
   .hero-actions .link-arrow{justify-content:center}
+  /* мобильный первый экран собран отдельно: терминал туда не помещается */
+  .term{display:none}
 
   /* плашки уводим со «сцены»: вместо них — компактный выбор услуги */
   .plates{display:none}
