@@ -313,7 +313,11 @@ section[id],.panel[id]{scroll-margin-top:98px}
 .sec-head .link-arrow{margin-top:18px}
 
 /* — 01 · две услуги, развёрнутые панели — */
-.panels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(20px,2vw,30px);align-items:start}
+/* список услуг растёт: добавление карточки — один HTML-блок, CSS не трогается */
+.panels{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+  gap:clamp(20px,2vw,30px);align-items:start;
+}
 .panel{
   display:flex;flex-direction:column;
   border:1px solid var(--line-2);border-radius:var(--r);
