@@ -6,8 +6,8 @@ Public-safe navigation map for the GitHub Pages site. Links use repository filen
 
 - [index.html](index.html) - main landing page for public visitors: the two AI setup services (Claude Code on one workstation, Hermes Agent on laptop + phone) at 15 000 ₽ each, when they fit, how the setup goes, who runs it, and the construction tools as a secondary direction. Styles in [assets/site2.css](assets/site2.css), behaviour in [assets/index2.app.js](assets/index2.app.js), hero terminal frames in [assets/hero-demo.js](assets/hero-demo.js).
 - [services/index.html](services/index.html) - services page at the stable public URL `/services/`, the address publications link to. Same two cards, price, process and request block as the main page; self-canonical, no payment form.
-- [about.html](about.html) - public "about" page for visitors who want context about the project, author, or service positioning.
-- [products.html](products.html) - public catalog page for visitors choosing available products or service cards.
+- [about.html](about.html) - public "about" page for visitors who want context about the project, author, or service positioning. Static page on [assets/site2.css](assets/site2.css); the AI-setup price lives on `/services/` only, and the page is Russian-only.
+- [products.html](products.html) - public catalog page for the PDF products. Cards are rendered from [products.js](products.js) by [products.render.js](products.render.js); price and CTA are shown only for records with `status: available`. Self-canonical (`/products.html`).
 - [vedomost.html](vedomost.html) - public order form for users who want to submit a PDF ведомость for processing.
 - [nakladnaya.html](nakladnaya.html) - public order form for printed M-15 delivery-note scans: one PDF upload, email, product-scoped consent, payment, OCR, and Excel delivery.
 - [rate.html](rate.html) - public feedback page for users who received a result and want to rate whether it worked for them.
@@ -19,7 +19,7 @@ Public-safe navigation map for the GitHub Pages site. Links use repository filen
 
 ### Ведомость Order Flow
 
-Files: [vedomost.html](vedomost.html), [vedomost.js](vedomost.js), [vedomost.config.js](vedomost.config.js), [assets/vedomost.css](assets/vedomost.css)
+Files: [vedomost.html](vedomost.html), [vedomost.js](vedomost.js), [vedomost.config.js](vedomost.config.js), [assets/forms2.css](assets/forms2.css)
 
 User-visible flow:
 
@@ -49,7 +49,7 @@ Configuration:
 
 ### Rating And Feedback Flow
 
-Files: [rate.html](rate.html), [rate.js](rate.js), inline rating widget in [vedomost.js](vedomost.js)
+Files: [rate.html](rate.html), [rate.js](rate.js), [assets/forms2.css](assets/forms2.css), inline rating widget in [vedomost.js](vedomost.js)
 
 User-visible flow:
 
@@ -63,7 +63,7 @@ The rating flow is for product feedback only. It should not expose private proce
 
 ### Products Catalog
 
-Files: [products.html](products.html), [products.js](products.js), [products.app.js](products.app.js)
+Files: [products.html](products.html), [products.js](products.js), [products.render.js](products.render.js)
 
 The products page is a public append-only catalog. Product data is maintained as a registry, and each registered product renders as a tile on [products.html](products.html).
 
@@ -101,7 +101,9 @@ Public form fields and ids:
 Files: [oferta.html](oferta.html), [privacy.html](privacy.html)
 
 - [oferta.html](oferta.html) covers public offer terms: what service is provided, how the user accepts the terms, user and service responsibilities, and payment or free-mode terms when applicable. **v1.1 (2026-06-20):** seller changed from «Денис Лавров, НПД/самозанятый» to **ИП Лаврова Ю.Н. (УСН, ИНН 644404692540)**; payment section rewritten for online pay via Т-Касса (card/СБП) + 54-ФЗ cashier receipt (general wording), УСН/no-VAT; refund clause made ЗоЗПП-safe; internal risk-note removed. **v1.2 (2026-06-22):** M-15 public clause is live for printed M-15 delivery-note scans, with OpenRouter OCR disclosure and best-effort wording for handwritten notes.
-- [privacy.html](privacy.html) covers personal data processing under 152-ФЗ, including email handling, file/order processing context, retention periods, the optional 90-day storage opt-in, and the user's right to revoke consent. v1.1 (2026-06-17) adds a technical-telemetry / service-journal disclosure: pseudonymized metadata only (no file name or content, no AI prompts/responses), ip-hash retained 90 days, journal up to 3 years, under the contract-execution legal basis (п.5 ст.6) — no consent-text change. **v1.2 (2026-06-20):** operator changed to **ИП Лаврова Ю.Н. (УСН)**; adds payment-data category + 4-year fiscal retention; subprocessors expanded with **АО «ТБанк» (Т-Касса/Т-Чеки)** for payment+receipt and **OpenRouter** (M-15 OCR, transborder disclosure ст.12). `CONSENT_VERSION` UNCHANGED (`vedomost-v2-2026-06`) — consent-checkbox text not modified, only the linked legal docs.
+- [privacy.html](privacy.html) covers personal data processing under 152-ФЗ, including email handling, file/order processing context, retention periods, the optional 90-day storage opt-in, and the user's right to revoke consent. v1.1 (2026-06-17) adds a technical-telemetry / service-journal disclosure: pseudonymized metadata only (no file name or content, no AI prompts/responses), ip-hash retained 90 days, journal up to 3 years, under the contract-execution legal basis (п.5 ст.6) — no consent-text change. **v1.2 (2026-06-20):** operator changed to **ИП Лаврова Ю.Н. (УСН)**; adds payment-data category + 4-year fiscal retention; subprocessors expanded with **АО «ТБанк» (Т-Касса/Т-Чеки)** for payment+receipt and **OpenRouter** (M-15 OCR, transborder disclosure ст.12). `CONSENT_VERSION` UNCHANGED (`vedomost-v2-2026-06`) — consent-checkbox text not modified, only the linked legal docs. **v1.4 (2026-08-13):** deadlines aligned with 152-ФЗ — a subject request is answered within 10 working days (extendable by 5, art. 14 p.3 / art. 20 p.1-2); art. 21 response times added (7 / 3 / 10 working days, plus the lawful 30 days on consent withdrawal); an incident is reported to Roskomnadzor within 24 h and 72 h (art. 21 p.3.1). `CONSENT_VERSION` again unchanged.
+
+Both pages were rebuilt on the `site2` system on 2026-08-13 ([assets/legal2.css](assets/legal2.css)); the document text was carried over unchanged, and the section anchors (`#s1…#s14`, `#p1…#p11`) still resolve.
 
 ## Machine-Readable Endpoints
 
@@ -130,5 +132,6 @@ Files: [services/index.html](services/index.html), [assets/site2.css](assets/sit
 - [scripts/build_hero_demo.py](scripts/build_hero_demo.py) generates [assets/hero-demo.js](assets/hero-demo.js) from [docs/hero-demo.sanitized.txt](docs/hero-demo.sanitized.txt). The sanitized file is the committed source: it passes an allowlist of publicly safe lines and carries the sha256 of the raw log, which is kept outside the repository. `--check` verifies the fixture regenerates byte for byte.
 - [sync_csp.mjs](sync_csp.mjs) keeps the public Content Security Policy metadata synchronized with the client asset layout; its scope is `vedomost.html` only. `index.html` and `services/index.html` carry their own `default-src 'self'` meta.
 - [scripts/build_og_card.py](scripts/build_og_card.py) generates [assets/og-setup-1200x630.jpg](assets/og-setup-1200x630.jpg) — the link-preview image (`og:image`) of [index.html](index.html) and [services/index.html](services/index.html). The card markup lives inside the script and is rendered from the site's own tokens and self-hosted fonts through a local static server, so the preview and the page it opens look like one thing; `--check` verifies the committed asset is a 1200×630 JPEG. The older `assets/ai-vibes-site-og-1200x630.jpg` stays in place: it carries the previous positioning and is still the preview of links published before 13.08.2026.
-- [assets/](assets/) contains shared public styles and front-end assets, including ведомость-specific styling in [assets/vedomost.css](assets/vedomost.css).
-- [tests/](tests/) contains repository tests for public client behavior and regression checks.
+- [assets/](assets/) contains shared public styles and front-end assets: the design system in [assets/site2.css](assets/site2.css), form components in [assets/forms2.css](assets/forms2.css) and the legal-document shell in [assets/legal2.css](assets/legal2.css). The React bundles, `model-viewer`, the Draco decoder, `robot.glb` and the pre-site2 stylesheets (`site.css`, `legal.css`, `vedomost.css`, `rate.css`, `about.css`) were removed on 2026-08-13 once the last page stopped referencing them.
+- [tests/](tests/) contains repository tests for public client behavior and regression checks. The folder stays in the repository but is stripped from the published site by [.github/workflows/deploy-pages.yml](.github/workflows/deploy-pages.yml).
+- [scripts/audit_external_refs.mjs](scripts/audit_external_refs.mjs) proves that no page or asset reaches an origin other than the site itself and the order API; its file list is the list of pages and assets that are actually live.
