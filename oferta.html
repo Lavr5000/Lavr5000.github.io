@@ -2,6 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Публичная оферта — AI Vibes</title>
 <meta name="description" content="Публичная оферта на услуги по обработке строительной документации. Исполнитель: ИП Лаврова Ю.Н. (УСН)." />
@@ -12,47 +13,70 @@
 <meta property="og:description" content="Условия оказания AI Vibes услуг по обработке строительной документации и передаче результатов." />
 <meta property="og:url" content="https://ai-vibes.ru/oferta.html" />
 <meta property="og:image" content="https://ai-vibes.ru/assets/og.svg" />
-<link rel="stylesheet" href="assets/fonts.css" />
-<link rel="stylesheet" href="assets/site.css" />
-<link rel="stylesheet" href="assets/legal.css" />
-  <script defer src="/assets/nav-inject.js"></script>
+<link rel="icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="stylesheet" href="/assets/fonts.css?v=20260813-legal" />
+<link rel="stylesheet" href="/assets/site2.css?v=20260813-legal" />
+<link rel="stylesheet" href="/assets/legal2.css?v=20260813-legal" />
+<script defer src="/assets/index2.app.js?v=20260813-legal"></script>
 </head>
-<body class="legal-page">
+<body>
+<a class="skip" href="#main">Перейти к содержанию</a>
+<div class="grain" aria-hidden="true"></div>
 
-<nav class="nav" aria-label="Основная навигация">
-  <div class="nav-inner">
-    <a class="logo" href="/" aria-label="AI Vibes">
-      <span class="brand-glyph" aria-hidden="true">
-        <svg viewBox="0 0 28 28" focusable="false">
-          <path d="M7.5 4.5h11.8l3.2 3.2v15.8h-15z" />
-          <path d="M19.3 4.5v5.2h5.2" />
-          <path d="M11 16l2.2 2.3L18 13" />
-        </svg>
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="/" aria-label="AI Vibes — на главную">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M6 3.5h9l3 3V20.5H6z"/><path d="M15 3.5v3.5h3.5"/><path d="M9 14l2 2 4-4.5"/></svg>
       </span>
-      <span>AI Vibes</span>
+      <span class="brand-name">AI Vibes</span>
     </a>
-    <div class="nav-right">
-      <div class="nav-links">
-        <a class="nav-link" href="/">Каталог</a>
-        <a class="nav-link" href="privacy.html">Политика конфиденциальности</a>
-      </div>
-    </div>
+
+    <nav class="nav-links" aria-label="Разделы сайта">
+      <a class="nav-link" href="/products.html">Инструменты</a>
+      <a class="nav-link" href="/services/">Услуги</a>
+      <a class="nav-link" href="/privacy.html">Политика</a>
+    </nav>
+
+    <a class="btn btn-primary nav-cta" href="#doc">К документу</a>
+
+    <button class="burger" type="button" id="burger" aria-expanded="false" aria-controls="drawer" aria-label="Открыть меню">
+      <span></span>
+    </button>
   </div>
-</nav>
+</header>
 
-<div class="container">
+<div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Меню">
+  <button class="drawer-close" type="button" id="drawer-close" aria-label="Закрыть меню">×</button>
+  <nav>
+    <a href="/">Главная</a>
+    <a href="/products.html">Инструменты</a>
+    <a href="/services/">Услуги</a>
+    <a href="/privacy.html">Политика</a>
+  </nav>
+  <a class="btn btn-primary btn-wide" href="#doc">К документу</a>
+</div>
 
-  <div class="page-header">
-    <div class="kicker">Юридические документы</div>
-    <h1 class="page-title">Публичная оферта</h1>
-    <div class="page-meta">
-      <span>Версия 1.2</span>
-      <span>Дата вступления в силу: 2026-07-27</span>
-      <span>Исполнитель — ИП Лаврова Ю.Н. (УСН)</span>
-    </div>
+<main id="main">
+
+<section class="hero hero-page" id="hero" aria-labelledby="page-title">
+  <div class="hero-atmos" aria-hidden="true"></div>
+  <div class="wrap">
+    <p class="hero-eyebrow"><s aria-hidden="true"></s>Юридические документы</p>
+    <h1 id="page-title">Публичная оферта</h1>
+
+    <dl class="stamp" data-reveal>
+      <div><dt>Версия</dt><dd>1.2</dd></div>
+      <div><dt>Вступает в силу</dt><dd>2026-07-27</dd></div>
+      <div><dt>Исполнитель</dt><dd>ИП Лаврова Ю.Н. (УСН)</dd></div>
+    </dl>
   </div>
+</section>
 
-  <div class="toc">
+<section class="band band-deep band-seam" id="doc">
+  <div class="wrap legal-doc" id="legal-doc">
+<div class="toc">
     <h3>Содержание</h3>
     <ol>
       <li><a href="#s1">Стороны</a></li>
@@ -401,17 +425,20 @@
     <a href="mailto:lavr5000xxx@gmail.com">lavr5000xxx@gmail.com</a> /
     Telegram <a href="https://t.me/lavr5000">@lavr5000</a>.</p>
   </div>
+  </div>
+</section>
 
-</div>
+</main>
 
-<footer class="footer">
-  <div class="footer-inner">
-    <span class="footer-copy">© 2026 ИП Лаврова Ю.Н. (ИНН 644404692540). Все права защищены.</span>
-    <div class="footer-links">
-      <a href="/">Каталог продуктов</a>
-      <a href="oferta.html">Оферта</a>
-      <a href="privacy.html">Конфиденциальность</a>
-    </div>
+<footer class="foot">
+  <div class="wrap foot-in">
+    <span class="meta">© 2026 ИП Лаврова Ю.Н. (ИНН 644404692540). Все права защищены.</span>
+    <span>
+      <a href="/">Главная</a>
+      <a href="/products.html">Каталог продуктов</a>
+      <a href="/oferta.html">Оферта</a>
+      <a href="/privacy.html">Конфиденциальность</a>
+    </span>
   </div>
 </footer>
 
