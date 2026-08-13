@@ -1,33 +1,128 @@
 <!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AI Vibes — каталог AI-сервисов для стройки</title>
-  <meta name="description" content="Каталог AI-сервисов для ПТО, сметчиков и снабжения: ведомости материалов, сверка спецификаций и Excel-результаты из рабочей документации." />
-  <link rel="canonical" href="https://ai-vibes.ru/" />
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="AI Vibes" />
-  <meta property="og:title" content="AI Vibes — каталог AI-сервисов для стройки" />
-  <meta property="og:description" content="AI-сервисы для строительной документации: PDF РД превращается в проверенные Excel-таблицы с источниками." />
-  <meta property="og:url" content="https://ai-vibes.ru/" />
-  <meta property="og:image" content="https://ai-vibes.ru/assets/og.svg" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="AI Vibes — каталог AI-сервисов для стройки" />
-  <meta name="twitter:description" content="Выберите AI-сервис для ПТО, сметчиков или снабжения." />
-  <meta name="twitter:image" content="https://ai-vibes.ru/assets/og.svg" />
-  <link rel="icon" href="favicon.ico" />
-  <link rel="stylesheet" href="assets/fonts.css" />
-  <link rel="stylesheet" href="assets/site.css" />
-  <script defer src="/assets/nav-inject.js"></script>
+<meta charset="utf-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Инструменты AI Vibes — Excel из строительных документов</title>
+<meta name="description" content="Небольшие сервисы для строительных документов: ведомость материалов из PDF рабочей документации и печатные накладные М-15 в Excel. Один файл на входе, таблица на выходе." />
+<link rel="canonical" href="https://ai-vibes.ru/products.html" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="AI Vibes" />
+<meta property="og:title" content="Инструменты AI Vibes — Excel из строительных документов" />
+<meta property="og:description" content="Ведомость материалов из PDF рабочей документации и печатные накладные М-15 в Excel. Один файл на входе, таблица на выходе." />
+<meta property="og:url" content="https://ai-vibes.ru/products.html" />
+<meta property="og:image" content="https://ai-vibes.ru/assets/og.svg" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Инструменты AI Vibes — Excel из строительных документов" />
+<meta name="twitter:description" content="Один файл на входе, Excel на выходе: ведомость материалов из РД и накладные М-15." />
+<meta name="twitter:image" content="https://ai-vibes.ru/assets/og.svg" />
+<link rel="icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="stylesheet" href="/assets/fonts.css?v=20260813-catalog" />
+<link rel="stylesheet" href="/assets/site2.css?v=20260813-catalog" />
+<script defer src="/assets/index2.app.js?v=20260813-catalog"></script>
+<script defer src="/products.js?v=20260813-catalog"></script>
+<script defer src="/products.render.js?v=20260813-catalog"></script>
 </head>
-<body class="home-page">
-  <main id="root" class="landing-catalog"></main>
+<body>
+<a class="skip" href="#main">Перейти к содержанию</a>
+<div class="grain" aria-hidden="true"></div>
 
-  <script src="assets/react.production.min.js"></script>
-  <script src="assets/react-dom.production.min.js"></script>
-  <script src="products.js"></script>
-  <script src="assets/catalog.js"></script>
-  <script src="products.app.js"></script>
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="/" aria-label="AI Vibes — на главную">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M6 3.5h9l3 3V20.5H6z"/><path d="M15 3.5v3.5h3.5"/><path d="M9 14l2 2 4-4.5"/></svg>
+      </span>
+      <span class="brand-name">AI Vibes</span>
+    </a>
+
+    <nav class="nav-links" aria-label="Разделы сайта">
+      <a class="nav-link" href="#catalog-section">Каталог</a>
+      <a class="nav-link" href="/services/">Услуги</a>
+      <a class="nav-link" href="/about.html">Об авторе</a>
+    </nav>
+
+    <a class="btn btn-primary nav-cta" href="#catalog-section">Смотреть каталог</a>
+
+    <button class="burger" type="button" id="burger" aria-expanded="false" aria-controls="drawer" aria-label="Открыть меню">
+      <span></span>
+    </button>
+  </div>
+</header>
+
+<div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Меню">
+  <button class="drawer-close" type="button" id="drawer-close" aria-label="Закрыть меню">×</button>
+  <nav>
+    <a href="/">Главная</a>
+    <a href="#catalog-section">Каталог</a>
+    <a href="/services/">Услуги</a>
+    <a href="/about.html">Об авторе</a>
+  </nav>
+  <a class="btn btn-primary btn-wide" href="#catalog-section">Смотреть каталог</a>
+</div>
+
+<main id="main">
+
+<section class="hero hero-page" id="hero" aria-labelledby="page-title">
+  <div class="hero-atmos" aria-hidden="true"></div>
+  <div class="wrap">
+    <p class="hero-eyebrow"><s aria-hidden="true"></s>Инструменты · документы стройки</p>
+    <h1 id="page-title">Один файл на входе, Excel на выходе</h1>
+    <p class="hero-lead" data-reveal>Небольшие сервисы для строительных документов. Работают сами
+      по себе, в настройку рабочего места не входят и не требуют её.</p>
+
+    <dl class="stamp" data-reveal>
+      <div><dt>Вход</dt><dd>PDF документа</dd></div>
+      <div><dt>Выход</dt><dd>Excel на email</dd></div>
+      <div><dt>Заказ</dt><dd>на странице сервиса</dd></div>
+      <div><dt>Оплата</dt><dd>после проверки файла</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section class="band band-deep band-seam" id="catalog-section" aria-labelledby="catalog-title">
+  <div class="wrap">
+    <div class="sec-head" data-reveal>
+      <p class="kicker">01 · Каталог</p>
+      <h2 class="h2" id="catalog-title">Что уже работает и что готовится</h2>
+      <p class="lead">Доступные сервисы открываются по ссылке и принимают файл прямо на своей
+        странице. У остальных позиций работа ещё идёт: заказать их нельзя, цена не назначена.</p>
+    </div>
+
+    <div class="tools" id="catalog" data-reveal></div>
+  </div>
+</section>
+
+<section class="final" id="contact" aria-labelledby="contact-title">
+  <div class="wrap final-in">
+    <p class="kicker kicker-center" data-reveal>02 · Вопрос по каталогу</p>
+    <h2 id="contact-title">Не нашли свой документ?</h2>
+    <p class="lead" data-reveal>Напишите, что за файл и что нужно получить на выходе. Отвечу, есть
+      ли готовый сервис, и если нет — скажу прямо.</p>
+    <div class="final-actions" data-reveal>
+      <a class="btn btn-primary" href="https://t.me/lavr5000" target="_blank" rel="noopener">Написать в Telegram</a>
+      <a class="btn btn-ghost" href="mailto:lavr5000xxx@gmail.com">lavr5000xxx@gmail.com</a>
+      <a class="btn btn-ghost" href="/services/">Настройка AI на рабочем месте</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <span class="meta">AI Vibes · Денис Лавров · 2026</span>
+    <span>
+      <a href="/">Главная</a>
+      <a href="/services/">Услуги</a>
+      <a href="/about.html">Об авторе</a>
+      <a href="/oferta.html">Оферта</a>
+      <a href="/privacy.html">Конфиденциальность</a>
+    </span>
+  </div>
+</footer>
+
 </body>
 </html>
