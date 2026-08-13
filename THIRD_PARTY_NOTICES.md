@@ -12,6 +12,8 @@ License types taken from the LICENSE files inside the official npm tarballs
 | Draco decoder | 1.5.6 | Apache-2.0 (Google) | gstatic versioned decoders (same URL the model-viewer bundle references) | `assets/draco/draco_wasm_wrapper.js`, `assets/draco/draco_decoder.wasm` |
 | Inter | (Google Fonts build, 2026-06-10) | SIL OFL 1.1 | Google Fonts woff2 | `assets/fonts/Inter-*.woff2`, `assets/fonts.css` |
 | JetBrains Mono | (Google Fonts build, 2026-06-10) | SIL OFL 1.1 | Google Fonts woff2 | `assets/fonts/JetBrainsMono-*.woff2`, `assets/fonts.css` |
+| Prata | (Google Fonts build, 2026-08-13) | SIL OFL 1.1 | Google Fonts woff2 | `assets/fonts/Prata-*.woff2`, `assets/fonts.css` |
+| Golos Text | (Google Fonts build, 2026-08-13) | SIL OFL 1.1 | Google Fonts woff2 | `assets/fonts/GolosText-*.woff2`, `assets/fonts.css` |
 
 Notes:
 

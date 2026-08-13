@@ -1,0 +1,22 @@
+# hero demo — sanitized source of the terminal in the first screen.
+# Real output of a real check run, filtered through the allowlist in
+# scripts/build_hero_demo.py; usernames, absolute paths, ids and hostnames are masked.
+# raw-source-sha256: e2547ac8de8ca29418373e358f14dcbc723df9a7d05cd6dadc1c99f918cf7e08
+# The raw log is kept outside this repository (provenance artefact).
+$ claude --version
+2.1.229 (Claude Code)
+$ node --version
+v24.16.0
+$ claude doctor
+Claude Code doctor
+Running: native (2.1.229)
+Platform: win32-x64
+Path: ~\.local\bin\claude.exe
+Config install method: native
+Search: OK (bundled)
+Auto-updates: enabled
+No installation issues found.
+$ python -c "check workstation config"
+settings.json: present
+CLAUDE.md: present
+status: ready
