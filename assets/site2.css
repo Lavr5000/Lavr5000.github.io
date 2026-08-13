@@ -288,7 +288,7 @@ section[id],.panel[id]{scroll-margin-top:98px}
 .sec-head .link-arrow{margin-top:18px}
 
 /* — 01 · две услуги, развёрнутые панели — */
-.panels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(20px,2vw,30px)}
+.panels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(20px,2vw,30px);align-items:start}
 .panel{
   display:flex;flex-direction:column;
   border:1px solid var(--line-2);border-radius:var(--r);
@@ -311,6 +311,34 @@ section[id],.panel[id]{scroll-margin-top:98px}
   background:rgba(217,169,97,.05);color:var(--cream-2);font-size:15px;line-height:1.6;
 }
 .panel-extra{margin-top:16px;color:var(--cream-3);font-size:14px;line-height:1.55}
+
+/* Ф2 · «что внутри»: карточка закрыта до наведения или фокуса.
+   Содержимое всегда в DOM — раскрывается высотой строки грида, без JS. */
+.panel-hint{
+  margin-top:20px;display:flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--cream-3);transition:opacity .3s var(--ease);
+}
+.panel-hint::before{content:"";width:18px;height:1px;background:var(--brass-line)}
+.panel-inside{
+  display:grid;grid-template-rows:0fr;opacity:0;
+  transition:grid-template-rows .55s var(--ease),opacity .4s var(--ease);
+}
+.panel-inside-in{overflow:hidden;min-height:0}
+.panel-reveal:hover .panel-inside,
+.panel-reveal:focus-within .panel-inside{grid-template-rows:1fr;opacity:1}
+.panel-reveal:hover .panel-hint,
+.panel-reveal:focus-within .panel-hint{opacity:0}
+.artifact{
+  margin:0;padding:14px 16px;white-space:pre-wrap;overflow-x:auto;
+  font-family:var(--mono);font-size:12.5px;line-height:1.72;color:var(--cream-2);
+  background:rgba(10,5,7,.55);border:1px solid var(--line);border-left:2px solid var(--brass-line);
+}
+/* сенсорный ввод: наведения нет — карточки открыты сразу */
+@media (hover:none){
+  .panel-inside{grid-template-rows:1fr;opacity:1}
+  .panel-hint{display:none}
+}
 .panel-buy{
   margin-top:auto;padding-top:28px;display:flex;flex-wrap:wrap;align-items:center;
   justify-content:space-between;gap:16px;
@@ -518,6 +546,8 @@ a.tool:hover i{transform:translateX(4px);color:var(--brass)}
   .band{padding:60px 0}
   .kicker::after{display:none}
   .sec-head{margin-bottom:32px}
+  .panel-inside{grid-template-rows:1fr;opacity:1}
+  .panel-hint{display:none}
   .panel-buy{flex-direction:column;align-items:stretch}
   .panel-buy .btn{width:100%}
   .steps{grid-template-columns:1fr}
@@ -543,5 +573,7 @@ a.tool:hover i{transform:translateX(4px);color:var(--brass)}
   [data-reveal]{opacity:1!important;transform:none!important}
   .hero h1 .ln > span{transform:none!important}
   .step::before{transform:none}
+  .panel-inside{grid-template-rows:1fr;opacity:1}
+  .panel-hint{display:none}
   .grain{display:none}
 }
