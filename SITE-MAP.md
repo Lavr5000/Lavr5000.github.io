@@ -4,7 +4,8 @@ Public-safe navigation map for the GitHub Pages site. Links use repository filen
 
 ## Pages
 
-- [index.html](index.html) - main landing page for public visitors; introduces the site entry points and routes users to products, services, and legal information.
+- [index.html](index.html) - main landing page for public visitors: the two AI setup services (Claude Code on one workstation, Hermes Agent on laptop + phone) at 15 000 ₽ each, when they fit, how the setup goes, who runs it, and the construction tools as a secondary direction. Styles in [assets/site2.css](assets/site2.css), behaviour in [assets/index2.app.js](assets/index2.app.js), hero terminal frames in [assets/hero-demo.js](assets/hero-demo.js).
+- [services/index.html](services/index.html) - services page at the stable public URL `/services/`, the address publications link to. Same two cards, price, process and request block as the main page; self-canonical, no payment form.
 - [about.html](about.html) - public "about" page for visitors who want context about the project, author, or service positioning.
 - [products.html](products.html) - public catalog page for visitors choosing available products or service cards.
 - [vedomost.html](vedomost.html) - public order form for users who want to submit a PDF ведомость for processing.
@@ -116,8 +117,17 @@ Not a page: three static JSON files read by the desktop IDmaster workbook when i
 
 `.github/workflows/idm-ntd-publish.yml` rebuilds and republishes weekly. It writes only `idm/`, dispatches the existing Pages deploy explicitly (a `GITHUB_TOKEN` commit does not trigger it by push), and fails the run if the change is not observable on `ai-vibes.ru`. Pull requests touching `scripts/ntd/**` run the same collector in a read-only dry mode.
 
+### Services Page
+
+Files: [services/index.html](services/index.html), [assets/site2.css](assets/site2.css), [assets/index2.app.js](assets/index2.app.js)
+
+- Two service cards. A card is closed down to its name, audience and price; hover or keyboard focus opens the composition of work and one publicly safe artefact of the result.
+- Ordering is by message only: the CTA opens a dialog with a Telegram link and a prefilled mailto. No payment form, no API call, no consent checkbox — the page collects nothing.
+- The same cards, prices and order labels also live on the main page and are kept byte-identical.
+
 ## Build And Asset Notes
 
-- [sync_csp.mjs](sync_csp.mjs) keeps the public Content Security Policy metadata synchronized with the client asset layout.
+- [scripts/build_hero_demo.py](scripts/build_hero_demo.py) generates [assets/hero-demo.js](assets/hero-demo.js) from [docs/hero-demo.sanitized.txt](docs/hero-demo.sanitized.txt). The sanitized file is the committed source: it passes an allowlist of publicly safe lines and carries the sha256 of the raw log, which is kept outside the repository. `--check` verifies the fixture regenerates byte for byte.
+- [sync_csp.mjs](sync_csp.mjs) keeps the public Content Security Policy metadata synchronized with the client asset layout; its scope is `vedomost.html` only. `index.html` and `services/index.html` carry their own `default-src 'self'` meta.
 - [assets/](assets/) contains shared public styles and front-end assets, including ведомость-specific styling in [assets/vedomost.css](assets/vedomost.css).
 - [tests/](tests/) contains repository tests for public client behavior and regression checks.

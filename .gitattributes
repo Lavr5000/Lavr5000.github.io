@@ -3,3 +3,8 @@
 # `ntd-vendor`; a CRLF checkout on Windows would change those bytes and break
 # that check for no real reason. Keep the working copy LF everywhere.
 scripts/ntd/** text eol=lf
+
+# assets/pdfjs is vendored under subresource-integrity hashes (VENDOR-HASHES.md,
+# checked by scripts/verify_vendored_hashes.mjs). A CRLF checkout changes those
+# bytes, the browser then blocks the resource for a failed digest. Keep them LF.
+assets/pdfjs/** text eol=lf

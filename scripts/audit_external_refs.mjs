@@ -5,6 +5,10 @@ import { fileURLToPath } from "node:url";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const files = [
   "index.html",
+  "services/index.html",
+  "assets/site2.css",
+  "assets/index2.app.js",
+  "assets/hero-demo.js",
   "about.html",
   "products.html",
   "oferta.html",

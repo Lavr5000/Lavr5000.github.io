@@ -1,5 +1,5 @@
 /* products.js — single source of truth for the AI products catalog (products.html).
- * Mirrors the scenarios.js pattern (window.STROYOPS_SCENARIOS).
+ * Same shape as the other static registries here: one global window object.
  *
  * APPEND-ONLY: a new product = one new object at the END of the array.
  * Existing entries are never reordered or rewritten by hand.
