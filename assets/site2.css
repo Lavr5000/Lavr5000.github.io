@@ -176,6 +176,13 @@ section[id],.panel[id]{scroll-margin-top:98px}
    HERO — «рабочий лист»
    ============================================================ */
 .hero{position:relative;overflow:hidden;padding:clamp(40px,5vw,76px) 0 clamp(36px,4vw,54px);isolation:isolate}
+/* Ф3 · бесшовный стык: низ героя гаснет в чистый --void, следующая секция
+   продолжает его тем же цветом, без линии-шва */
+.hero::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;z-index:-1;pointer-events:none;
+  height:clamp(70px,9vw,140px);
+  background:linear-gradient(to bottom,rgba(18,10,13,0),var(--void) 82%);
+}
 .hero-atmos{position:absolute;inset:0;z-index:-1;pointer-events:none}
 /* контровой свет — тёплый, из-за правого верхнего угла */
 .hero-atmos::before{
@@ -272,6 +279,9 @@ section[id],.panel[id]{scroll-margin-top:98px}
 .band{padding:clamp(72px,8vw,132px) 0;position:relative}
 .band-deep{background:var(--deep)}
 .band-line{border-top:1px solid var(--line)}
+/* Ф3 · секция сразу под героем: без верхней линии, цвет вытекает из --void */
+.band-seam{border-top:0}
+.band-deep.band-seam{background:linear-gradient(to bottom,var(--void) 0,var(--deep) clamp(90px,11vw,180px))}
 .sec-head{max-width:74ch;margin-bottom:clamp(38px,4vw,64px)}
 .sec-head .kicker{margin-bottom:22px}
 .sec-head .h2{margin-bottom:20px}
@@ -532,6 +542,6 @@ a.tool:hover i{transform:translateX(4px);color:var(--brass)}
   *,*::before,*::after{animation:none!important;transition:none!important}
   [data-reveal]{opacity:1!important;transform:none!important}
   .hero h1 .ln > span{transform:none!important}
-  .step::before{width:100%}
+  .step::before{transform:none}
   .grain{display:none}
 }
