@@ -4,8 +4,8 @@ Public-safe navigation map for the GitHub Pages site. Links use repository filen
 
 ## Pages
 
-- [index.html](index.html) - main landing page for public visitors: the two AI setup services (Claude Code on one workstation, Hermes Agent on laptop + phone) at 15 000 ₽ each, when they fit, how the setup goes, who runs it, and the construction tools as a secondary direction. Styles in [assets/site2.css](assets/site2.css), behaviour in [assets/index2.app.js](assets/index2.app.js), hero terminal frames in [assets/hero-demo.js](assets/hero-demo.js).
-- [services/index.html](services/index.html) - services page at the stable public URL `/services/`, the address publications link to. Same two cards, price, process and request block as the main page; self-canonical, no payment form.
+- [index.html](index.html) - main landing page for public visitors: the two AI setup services (Claude Code on one workstation, Hermes Agent on laptop + phone), when they fit, how the setup goes, who runs it, and the construction tools as a secondary direction. The services section is a teaser — names, one sentence, "от 15 000 ₽" and a link to `/services/`; the full cards and the order dialog live on `/services/` only, and the hero cards link to `/services/#service-1` and `#service-2`. The `#services` anchor is kept because published posts point at `/#services`. Styles in [assets/site2.css](assets/site2.css), behaviour in [assets/index2.app.js](assets/index2.app.js), hero terminal frames in [assets/hero-demo.js](assets/hero-demo.js).
+- [services/index.html](services/index.html) - services page at the stable public URL `/services/`, the address publications link to. The only place carrying the full service cards, the price and the order dialog; self-canonical, no payment form.
 - [about.html](about.html) - public "about" page for visitors who want context about the project, author, or service positioning. Static page on [assets/site2.css](assets/site2.css); the AI-setup price lives on `/services/` only, and the page is Russian-only.
 - [products.html](products.html) - public catalog page for the PDF products. Cards are rendered from [products.js](products.js) by [products.render.js](products.render.js); price and CTA are shown only for records with `status: available`. Self-canonical (`/products.html`).
 - [vedomost.html](vedomost.html) - public order form for users who want to submit a PDF ведомость for processing.
@@ -121,11 +121,13 @@ Not a page: three static JSON files read by the desktop IDmaster workbook when i
 
 ### Services Page
 
-Files: [services/index.html](services/index.html), [assets/site2.css](assets/site2.css), [assets/index2.app.js](assets/index2.app.js)
+Files: [services/index.html](services/index.html), [services.js](services.js), [scripts/validate_services.mjs](scripts/validate_services.mjs), [assets/site2.css](assets/site2.css), [assets/index2.app.js](assets/index2.app.js)
 
 - Two service cards. A card is closed down to its name, audience and price; hover or keyboard focus opens the composition of work and one publicly safe artefact of the result.
 - Ordering is by message only: the CTA opens a dialog with a Telegram link and a prefilled mailto. No payment form, no API call, no consent checkbox — the page collects nothing.
-- The same cards, prices and order labels also live on the main page and are kept byte-identical.
+- This page is the single place with the full cards. The main page carries a teaser and a link, so a wording or price change is made once.
+- [services.js](services.js) is the registry behind the cards: an immutable kebab-case `id` per service plus the one `title` used on the site, in the offer terms, in the payment link and on the receipt. Every order button carries `data-service-id` next to the `data-order` display text the dialog reads. The file is not loaded by any page — it is the source of truth for the validator, the offer terms and the manual request register.
+- `node scripts/validate_services.mjs` gates both halves: the registry schema (unique kebab-case ids, non-empty fields, no duplicate titles, name length within the 64-character receipt cap) and every order button resolving to a known id whose `title` matches `data-order` byte for byte. It is a local gate, not a CI workflow — `validate-products.yml` covers [products.js](products.js) only.
 
 ## Build And Asset Notes
 
