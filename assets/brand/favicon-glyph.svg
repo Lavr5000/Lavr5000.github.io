@@ -1,6 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="AI Vibes favicon glyph">
-  <rect width="64" height="64" rx="12" fill="#0E8F63"/>
-  <path d="M15 9h34c3.314 0 6 2.686 6 6v23L38 55H15c-3.314 0-6-2.686-6-6V15c0-3.314 2.686-6 6-6Z" fill="#FFFFFF"/>
-  <path d="M55 38v11c0 3.314-2.686 6-6 6H38l17-17Z" fill="#FFFFFF" opacity=".82"/>
-  <path d="m44.7 48.6 3.05 3.05 6-6.7" fill="none" stroke="#0E8F63" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect width="64" height="64" fill="#120A0D"/>
+  <rect x="1.9" y="1.9" width="60.2" height="60.2" fill="none" stroke="#D9A961" stroke-opacity=".42" stroke-width="3.8"/>
+  <g transform="translate(5.05 5.6) scale(2.2)" fill="none" stroke="#D9A961" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6 3.5h9l3 3V20.5H6z"/>
+    <path d="M15 3.5v3.5h3.5"/>
+    <path d="M9 14l2 2 4-4.5"/>
+  </g>
 </svg>

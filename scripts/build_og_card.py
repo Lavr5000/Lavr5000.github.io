@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
-"""Render the link-preview card into assets/og-setup-1200x630.jpg.
+"""Render the link-preview cards into assets/og-*-1200x630.jpg.
 
-The card is drawn from the site's own tokens and self-hosted fonts, so the link
+Two cards, one drawing: `setup` for the landing and services pages, `docs` for the
+document-processing pages (ведомость, накладные, каталог, юридические, оценка).
+Both are drawn from the site's own tokens and self-hosted fonts, so the link
 preview and the page it opens look like one thing. Nothing is generated at runtime
 and nothing leaves the machine: a local static server + Chromium screenshot.
 
-    python scripts/build_og_card.py            # rebuild the asset
-    python scripts/build_og_card.py --check    # verify the committed asset is current
+    python scripts/build_og_card.py            # rebuild both assets
+    python scripts/build_og_card.py --check    # verify the committed assets are current
 """
 from __future__ import annotations
 
@@ -23,7 +25,7 @@ from PIL import Image
 
 REPO = Path(__file__).resolve().parent.parent
 
-CARD_HTML = """<!doctype html>
+CARD_SHELL = """<!doctype html>
 <meta charset="utf-8" />
 <link rel="stylesheet" href="/assets/fonts.css" />
 <style>
@@ -105,7 +107,14 @@ CARD_HTML = """<!doctype html>
     <span class="host">ai-vibes.ru</span>
   </div>
 
-  <div>
+  {body}
+</div>
+"""
+
+# Тело карточки: заголовок + две плашки. Цены живут только на карточке услуг —
+# в превью документов их нет намеренно, иначе картинка устаревает вместе с прайсом.
+BODIES = {
+    "setup": """<div>
     <div class="eyebrow"><s></s>Внедрение AI в ваш рабочий день</div>
     <h1>Ставлю AI на ваш компьютер и довожу до <span class="em">рабочего состояния</span></h1>
   </div>
@@ -119,16 +128,31 @@ CARD_HTML = """<!doctype html>
       <div class="plate-top"><span class="plate-no">Услуга 02</span><span class="plate-price">15 000 ₽</span></div>
       <div class="plate-title">Hermes Agent: ноутбук + телефон</div>
     </div>
+  </div>""",
+    "docs": """<div>
+    <div class="eyebrow"><s></s>Обработка строительных документов</div>
+    <h1>Бумажный документ — в <span class="em">таблицу Excel</span></h1>
   </div>
-</div>
-"""
+
+  <div class="plates">
+    <div class="plate">
+      <div class="plate-top"><span class="plate-no">Документ 01</span><span class="plate-price">PDF → XLSX</span></div>
+      <div class="plate-title">Ведомость объёмов из РД</div>
+    </div>
+    <div class="plate">
+      <div class="plate-top"><span class="plate-no">Документ 02</span><span class="plate-price">СКАН → XLSX</span></div>
+      <div class="plate-title">Накладные М-15 и паспорта бетона</div>
+    </div>
+  </div>""",
+}
 
 TMP_NAME = ".og-card.build.html"   # живёт только на время рендера
-OUT = REPO / "assets" / "og-setup-1200x630.jpg"
+OUTS = {"setup": REPO / "assets" / "og-setup-1200x630.jpg",
+        "docs": REPO / "assets" / "og-docs-1200x630.jpg"}
 W, H, SCALE, QUALITY = 1200, 630, 2, 88
 
 
-def render() -> bytes:
+def render(kind: str) -> bytes:
     from playwright.sync_api import sync_playwright
 
     handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=str(REPO))
@@ -144,7 +168,7 @@ def render() -> bytes:
             # set_content здесь не годится — страница сайта отдаёт CSP default-src 'self',
             # и подставленный инлайновый <style> просто не применяется.
             tmp = REPO / TMP_NAME
-            tmp.write_text(CARD_HTML, encoding="utf-8")
+            tmp.write_text(CARD_SHELL.replace("{body}", BODIES[kind]), encoding="utf-8")
             try:
                 page.goto(f"http://127.0.0.1:{port}/{TMP_NAME}", wait_until="networkidle")
                 page.evaluate("document.fonts.ready")
@@ -166,23 +190,27 @@ def main() -> int:
                     help="не писать файл; сравнить размеры и вернуть 1 при расхождении")
     args = ap.parse_args()
 
-    data = render()
-    if args.check:
-        # Байтовое равенство JPEG между машинами не гарантировано (версия Chromium,
-        # хинтинг шрифтов), поэтому проверяем то, что важно потребителю превью:
-        # файл на месте, это 1200x630 JPEG и он не пустой.
-        if not OUT.exists():
-            print(f"FAIL: {OUT.name} отсутствует", file=sys.stderr)
-            return 1
-        img = Image.open(OUT)
-        ok = img.format == "JPEG" and img.size == (W, H) and OUT.stat().st_size > 20_000
-        print(f"og card: {OUT.name} {img.format} {img.size} {OUT.stat().st_size} Б "
-              f"(свежий рендер {len(data)} Б) -> {'OK' if ok else 'FAIL'}")
-        return 0 if ok else 1
+    rc = 0
+    for kind, out in OUTS.items():
+        data = render(kind)
+        if args.check:
+            # Байтовое равенство JPEG между машинами не гарантировано (версия Chromium,
+            # хинтинг шрифтов), поэтому проверяем то, что важно потребителю превью:
+            # файл на месте, это 1200x630 JPEG и он не пустой.
+            if not out.exists():
+                print(f"FAIL: {out.name} отсутствует", file=sys.stderr)
+                rc = 1
+                continue
+            img = Image.open(out)
+            ok = img.format == "JPEG" and img.size == (W, H) and out.stat().st_size > 20_000
+            print(f"og card: {out.name} {img.format} {img.size} {out.stat().st_size} Б "
+                  f"(свежий рендер {len(data)} Б) -> {'OK' if ok else 'FAIL'}")
+            rc = rc or (0 if ok else 1)
+            continue
 
-    OUT.write_bytes(data)
-    print(f"og card: {OUT.relative_to(REPO)} {len(data)} Б, {W}x{H}")
-    return 0
+        out.write_bytes(data)
+        print(f"og card: {out.relative_to(REPO)} {len(data)} Б, {W}x{H}")
+    return rc
 
 
 if __name__ == "__main__":
