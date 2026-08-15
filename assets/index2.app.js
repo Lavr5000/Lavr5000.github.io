@@ -80,11 +80,18 @@
 
   /* ---- 5. Модалка заявки: реальные каналы, без платёжной формы и без сети ---- */
   var modal = $('#order-modal'), lastFocus = null;
-  var openModal = function (service) {
+  /* Цена приходит с кнопки (data-price-label) — услуги стоят по-разному, и хардкод здесь
+     означал бы «15 000 ₽» в письме про услугу за 3 500 ₽. Соответствие ярлыка кнопки реестру
+     services.js проверяет scripts/validate_services.mjs. */
+  var openModal = function (service, priceLabel) {
     if (!modal) return;
     lastFocus = document.activeElement;
     $('#order-service').textContent = service;
-    var msg = 'Здравствуйте! Интересует услуга «' + service + '» за 15 000 ₽.';
+    var priceNode = $('#order-price');
+    if (priceNode) priceNode.textContent = priceLabel || '';
+    var msg = 'Здравствуйте! Интересует услуга «' + service + '»' +
+      (priceLabel ? ' за ' + priceLabel : '') + '.\n' +
+      'Условия по этой услуге: https://ai-vibes.ru/oferta.html';
     $('#order-tg').href = 'https://t.me/lavr5000';
     $('#order-mail').href = 'mailto:lavr5000xxx@gmail.com?subject=' +
       encodeURIComponent('Заявка: ' + service) + '&body=' + encodeURIComponent(msg);
@@ -99,7 +106,9 @@
     if (lastFocus) lastFocus.focus();
   };
   $$('[data-order]').forEach(function (b) {
-    b.addEventListener('click', function () { openModal(b.getAttribute('data-order')); });
+    b.addEventListener('click', function () {
+      openModal(b.getAttribute('data-order'), b.getAttribute('data-price-label'));
+    });
   });
   if (modal) $$('[data-close]', modal).forEach(function (b) { b.addEventListener('click', closeModal); });
 
