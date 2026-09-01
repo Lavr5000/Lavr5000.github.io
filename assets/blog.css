@@ -1,0 +1,15 @@
+/* Blog article: the legal prose sheet does the typography, this only adds the picture. */
+.blog-doc h2{margin-top:34px}
+.blog-figure{margin:0 0 26px}
+.blog-figure img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:10px}
+.blog-figure figcaption{margin-top:10px;color:var(--cream-2);font-size:14.5px;line-height:1.5}
+
+/* /blog/ index: a list of articles, newest first. */
+.legal-doc .blog-list{list-style:none;margin:0;padding:0}
+.blog-row{padding:22px 0;border-top:1px solid var(--line)}
+.blog-row:first-child{border-top:0;padding-top:0}
+.blog-row-title{color:var(--cream);font-size:19px;line-height:1.35}
+.blog-row a{text-decoration:none}
+.blog-row a:hover .blog-row-title{color:var(--brass)}
+.blog-row time{display:block;margin:6px 0 8px;color:var(--cream-2);font-size:13.5px;letter-spacing:.04em}
+.legal-doc .blog-row p{margin:0;color:var(--cream-2);font-size:15.5px;line-height:1.6}
