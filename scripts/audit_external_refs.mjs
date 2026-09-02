@@ -7,6 +7,7 @@ const files = [
   "index.html",
   "services/index.html",
   "about.html",
+  "apps/transkribator/index.html",
   "products.html",
   "oferta.html",
   "privacy.html",
