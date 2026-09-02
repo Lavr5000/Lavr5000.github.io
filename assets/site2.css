@@ -436,6 +436,8 @@ a.tool:hover .tool-name{transform:translateX(8px)}
 .tool .price{font-size:13.5px;color:var(--cream-2)}
 .tool-state{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--cream-3);border:1px solid var(--line);padding:5px 9px;justify-self:start;border-radius:100px}
 .tool-state.on{color:var(--brass);border-color:var(--brass-line)}
+/* карточка без цены (бесплатные приложения): убираем колонку цены */
+.tool-free{grid-template-columns:minmax(0,1fr) 116px 30px}
 .tool i{font-style:normal;color:var(--cream-3);justify-self:end;transition:transform .25s var(--ease),color .25s var(--ease)}
 a.tool:hover i{transform:translateX(4px);color:var(--brass)}
 
