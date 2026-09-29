@@ -24,6 +24,7 @@ const files = [
   "assets/order-flow.js",
   "assets/soft-prompt.js",
   "assets/textlayer-check.js",
+  "assets/metrika.js",
   "products.js",
   "products.render.js",
   "vedomost.js",
@@ -47,7 +48,9 @@ function readApiOrigin() {
 }
 
 const apiOrigin = readApiOrigin();
-const allowed = new Set([apiOrigin]);
+// Yandex Metrika (counter loader assets/metrika.js, disclosed in privacy.html) is the one
+// deliberate third-party origin since 2026-09-29.
+const allowed = new Set([apiOrigin, "https://mc.yandex.ru"]);
 const findings = [];
 
 function report(file, kind, value, index) {

@@ -65,7 +65,10 @@ with sync_playwright() as p:
             ctx = browser.new_context(viewport={"width": w, "height": h})
             page = ctx.new_page()
             errors = []
-            page.on("console", lambda m: errors.append(m.text) if m.type == "error" else None)
+            # Metrika's tag.js tries an ad cookie-matching pixel (yandex.ru/an/mapuid); the page CSP
+            # blocks it on purpose since 2026-09-29 — the only console error tolerated here.
+            page.on("console", lambda m: errors.append(m.text)
+                    if m.type == "error" and "yandex.ru/an/mapuid" not in m.text else None)
             page.on("pageerror", lambda e: errors.append(str(e)))
             page.goto(BASE + path, wait_until="networkidle")
 
