@@ -8,8 +8,9 @@ assets/metrika.js and proves, per page:
   * no Content-Security-Policy violation and no page exception in the console;
   * a request to mc.yandex.ru leaves the page (tag.js load and the hit);
   * the page's own scripts still ran (index2.app.js sets up the header; hero-demo on /);
-and, on the pages with download buttons, that a click sends the matching goal
-(download_transkribator / download_apartment_auditor) — navigation is prevented.
+and, on the pages with download, order or contact buttons, that a click sends the matching goal
+(download_transkribator / download_apartment_auditor / order_click / contact_max) — navigation is
+prevented; the order button must open #order-modal in place, which is then closed with Escape.
 privacy.html is checked for section #p12 with its revision date and for carrying no counter.
 Last line: METRIKA_PREVIEW status=<ok|fail> pages=<n> failed=<n>
 """
@@ -26,9 +27,12 @@ from svc_tab import Tab  # noqa: E402
 PAGES = ["/", "/about.html", "/services/", "/apps/transkribator/", "/products.html", "/blog/",
          "/blog/apartment-auditor/", "/blog/dva-prilozheniya/", "/blog/ryazan-obmer-razvertki/",
          "/blog/smeta-osnovanie-list/", "/blog/transkribator-golosom/"]
-GOALS = {  # page -> (link selector, goal id)
-    "/apps/transkribator/": ('a[href*="github.com/Lavr5000/Transkribator/releases"]', "download_transkribator"),
-    "/": ('a[href*="rustore.ru/catalog/app/com.lavr5000xxx.apartmentauditor"]', "download_apartment_auditor"),
+GOALS = {  # page -> [(selector, goal id, kind)]; kind "order" = order button that opens the modal
+    "/apps/transkribator/": [('a[href*="github.com/Lavr5000/Transkribator/releases"]', "download_transkribator", "link")],
+    "/": [('a[href*="rustore.ru/catalog/app/com.lavr5000xxx.apartmentauditor"]', "download_apartment_auditor", "link"),
+          ('#contact a[href^="https://max.ru/"]', "contact_max", "link")],
+    "/services/": [("[data-order]", "order_click", "order"),
+                   ('#contact a[href^="https://max.ru/"]', "contact_max", "link")],
 }
 
 
@@ -90,15 +94,25 @@ def main() -> int:
             own = t.eval("!!document.querySelector('script[src^=\"/assets/metrika.js\"]') && typeof window.ym")
             header = t.eval("!!document.querySelector('header, .site-header, nav')")
             hero = t.eval("document.querySelectorAll('[data-hero-demo], .hero-demo, .term').length") if page == "/" else None
-            goal_ok = None
-            if page in GOALS:
-                sel, goal = GOALS[page]
+            goal_res = []
+            for sel, goal, kind in GOALS.get(page, []):
                 t.events.clear()
-                n = t.eval(f"""(()=>{{const a=document.querySelector('{sel}'); if(!a) return 0;
-                    a.addEventListener('click', e=>e.preventDefault(), {{once:true}}); a.click(); return 1;}})()""")
-                drain(t, 3)
+                if kind == "order":
+                    before = t.eval("location.href")
+                    n = t.eval(f"""(()=>{{const b=document.querySelector('{sel}'); if(!b) return 0; b.click();
+                        return document.querySelector('#order-modal.is-open') ? 1 : 0;}})()""")
+                    drain(t, 3)
+                    n = bool(n) and t.eval("location.href") == before
+                    t.eval("document.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape', bubbles: true}))")
+                    n = n and not t.eval("!!document.querySelector('#order-modal.is-open')")
+                else:
+                    n = t.eval(f"""(()=>{{const a=document.querySelector('{sel}'); if(!a) return 0;
+                        a.addEventListener('click', e=>e.preventDefault(), {{once:true}}); a.click(); return 1;}})()""")
+                    drain(t, 3)
                 greqs, _ = collect(t)
-                goal_ok = bool(n) and any("mc.yandex" in u and goal in u for u in greqs)
+                goal_res.append((goal, bool(n) and any("mc.yandex" in u and goal in u for u in greqs)))
+            goal_ok = all(r for _, r in goal_res) if goal_res else None
+            if goal_res:
                 t.events.clear()
                 t.goto(base + page, wait=3)
                 drain(t, 2)
@@ -110,7 +124,7 @@ def main() -> int:
             print(f"PAGE {page} ok={int(ok)} ym={own} mc_requests={len(mc)} errors={len(bad)} "
                   f"intended_blocks={len(intended)} header={int(bool(header))}"
                   + (f" hero_nodes={hero}" if hero is not None else "")
-                  + (f" goal={GOALS[page][1]}:{int(goal_ok)}" if goal_ok is not None else ""))
+                  + "".join(f" goal={g}:{int(r)}" for g, r in goal_res))
             for b in bad:
                 print("  ERR", b)
             if a.shots:

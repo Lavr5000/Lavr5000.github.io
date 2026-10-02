@@ -4,6 +4,11 @@
  * Goals (JS events, configured in Metrika):
  *   download_transkribator     - click on a Transkribator GitHub releases link
  *   download_apartment_auditor - click on the Apartment Auditor RuStore link
+ *   order_click                - click on an order button [data-order]; params service, place
+ *   contact_max                - click on the MAX profile link; param place
+ *   contact_telegram           - click on the personal t.me/lavr5000 link (not the channel); param place
+ *   contact_email              - click on a mailto: link; param place
+ * place = id of the nearest section or dialog (contact, order-modal, ...).
  * The /services/ goal is a page-visit goal and needs no code.
  * Disclosed in privacy.html, section "Яндекс Метрика".
  */
@@ -34,12 +39,36 @@
     [/rustore\.ru\/catalog\/app\/com\.lavr5000xxx\.apartmentauditor/i, "download_apartment_auditor"]
   ];
 
+  var CONTACTS = [
+    [/^https:\/\/max\.ru\//i, "contact_max"],
+    [/^https:\/\/t\.me\/lavr5000(?:[\/?#]|$)/i, "contact_telegram"],   // personal, not the channel
+    [/^mailto:/i, "contact_email"]
+  ];
+
+  function place(el) {
+    var s = el.closest("section[id], [role='dialog'][id]");
+    return s ? s.id : "";
+  }
+
   d.addEventListener("click", function (e) {
-    var a = e.target && e.target.closest ? e.target.closest("a[href]") : null;
+    var t = e.target;
+    if (!t || !t.closest) return;
+    var b = t.closest("[data-order]");
+    if (b) {
+      w.ym(ID, "reachGoal", "order_click", { service: b.getAttribute("data-service-id") || "", place: place(b) });
+      return;
+    }
+    var a = t.closest("a[href]");
     if (!a) return;
     for (var j = 0; j < GOALS.length; j++) {
       if (GOALS[j][0].test(a.href)) {
         w.ym(ID, "reachGoal", GOALS[j][1]);
+        return;
+      }
+    }
+    for (var k = 0; k < CONTACTS.length; k++) {
+      if (CONTACTS[k][0].test(a.href)) {
+        w.ym(ID, "reachGoal", CONTACTS[k][1], { place: place(a) });
         return;
       }
     }
