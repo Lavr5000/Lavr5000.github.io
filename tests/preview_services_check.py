@@ -6,7 +6,8 @@ a real Chromium. What it proves, per the ai-vibes-deploy TESTING-AND-UAT preview
   * both pages load with zero console errors at 1440x1000, 768x1024 and 390x844;
   * no horizontal scroll at any of the three;
   * EVERY order trigger is enumerated by selector [data-order] (never by an assumed count) and
-    clicked in turn: the modal must show that service's own title and its own price label, and the
+    clicked in turn: the modal must show that service's own title and its own price label, its first
+    channel link must be the MAX profile (MAX before Telegram, since 2026-10-03), and the
     generated mailto: must carry both after percent-decoding — the failure this catches is a card
     that quietly keeps another service's price;
   * the panel disclosure works by its actual mechanism (:focus-within in assets/site2.css), i.e.
@@ -37,6 +38,7 @@ if "--shots" in sys.argv:
     SHOTS.mkdir(parents=True, exist_ok=True)
 
 PAGES = ["/", "/services/"]
+MAX_URL = "https://max.ru/u/f9LHodD0cOJVteiYLPGUodY6uw7J5k_M_QzRJTDzXbK31nlTIokaEh5ebeM"  # first channel in the dialog
 VIEWPORTS = [(1440, 1000), (768, 1024), (390, 844)]
 NBSP = {" ": " ", " ": " ", " ": " "}
 
@@ -106,6 +108,8 @@ with sync_playwright() as p:
                 check(shown_price == norm(label), f"{path} @{w}x{h}: modal price '{shown_price}' != '{label}'")
                 check(norm(title) in norm(mail), f"{path} @{w}x{h}: mailto misses the service name")
                 check(norm(label) in norm(mail), f"{path} @{w}x{h}: mailto misses the price label")
+                first = page.locator("#order-modal .modal-actions a").first.get_attribute("href") or ""
+                check(first == MAX_URL, f"{path} @{w}x{h}: first link in the order dialog is not MAX ({first[:40]})")
                 page.locator("#order-modal .modal-close").click()
                 page.wait_for_selector("#order-modal.is-open", state="detached", timeout=3000) if False else page.wait_for_timeout(150)
 
