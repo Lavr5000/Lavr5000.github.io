@@ -120,6 +120,20 @@ Not a page: three static JSON files read by the desktop IDmaster workbook when i
 
 `.github/workflows/idm-ntd-publish.yml` rebuilds and republishes weekly. It writes only `idm/`, dispatches the existing Pages deploy explicitly (a `GITHUB_TOKEN` commit does not trigger it by push), and fails the run if the change is not observable on `ai-vibes.ru`. Pull requests touching `scripts/ntd/**` run the same collector in a read-only dry mode.
 
+### Search and AI crawler files
+
+Files: [robots.txt](robots.txt), [sitemap.xml](sitemap.xml), [llms.txt](llms.txt), the JSON-LD block of [index.html](index.html) and [services/index.html](services/index.html), [scripts/build_seo_files.py](scripts/build_seo_files.py), [tests/seo_files_check.py](tests/seo_files_check.py), [.github/workflows/seo-files.yml](.github/workflows/seo-files.yml)
+
+Since 2026-10-03 the site tells search engines and AI assistants what it is. All five outputs are **generated** from the pages themselves — never edited by hand.
+
+- `robots.txt` — one group for every crawler: `/docs/`, `/idm/` and `/scripts/` are closed, everything else is open (AI crawlers included), plus the `Sitemap:` line.
+- `sitemap.xml` — the list of public pages. A page gets in when it carries a self-referencing `<link rel="canonical">` on `https://ai-vibes.ru/…` and no `noindex`; pages without a canonical (search-engine verification files, `apartment-auditor/privacy-policy.html`) drop out by themselves. No `lastmod`, so the file changes only when a page appears or disappears.
+- `llms.txt` — a plain-text summary in the llmstxt.org format: the site name and description, the services with their prices (read off the `[data-order]` buttons and the `#pokaz` block of `/services/`), the contacts of the `#contact` block, and every sitemap page with its title and meta description.
+- JSON-LD — one `<script type="application/ld+json">` before `</head>` between the markers `<!-- seo:jsonld:begin (scripts/build_seo_files.py) -->` and `<!-- seo:jsonld:end -->`: `WebSite`, `Organization` and `Person` on the main page; `Organization`, `Person` and a `Service` with its `Offer` (the `#pokaz` price) on `/services/`. A rerun replaces the block; the line endings of the file are kept. The block is data, not code, so the pages' CSP is untouched.
+- **New page or changed price:** run `python scripts/build_seo_files.py --write` and commit the result (`--check` verifies, no flag is a dry run; last line `SEO_FILES status=ok pages=N files=`). If that is forgotten, `seo-files.yml` does it: on a push to `master` that touches a page it regenerates, runs the test, commits as `seo-files-bot` when something changed and dispatches the Pages deploy.
+- **After pushing pages the `seo-files.yml` bot may add its own commit to `master` — run `git fetch` and rebase before the next push.**
+- `python tests/seo_files_check.py [--root DIR]` is the offline gate: the generator's `--check`, the sitemap against the canonical rule in both directions, `robots.txt` read by RFC 9309 for six crawlers, every price and phrase of `llms.txt` found word for word in the pages, exactly one parsable JSON-LD block per page with the `Offer` price equal to `#pokaz .price`. It carries four negative probes; last line `SEO_FILES_CHECK status=ok pages=16 neg=4/4`.
+
 ### Services Page
 
 Files: [services/index.html](services/index.html), [services.js](services.js), [scripts/validate_services.mjs](scripts/validate_services.mjs), [assets/site2.css](assets/site2.css), [assets/index2.app.js](assets/index2.app.js)
