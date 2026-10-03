@@ -405,7 +405,7 @@ section[id],.panel[id]{scroll-margin-top:98px}
 .step p{color:var(--cream-2);font-size:15px;line-height:1.58}
 .bounds{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(18px,2vw,28px);margin-top:clamp(38px,4vw,56px)}
 .bound{border:1px solid var(--line);border-radius:var(--r);padding:24px;background:rgba(38,16,23,.4)}
-.bound dt{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--brass);margin-bottom:12px}
+.bound dt{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--brass);margin-bottom:12px}
 .bound dd{margin:0;color:var(--cream-2);font-size:15px;line-height:1.6}
 
 /* — 04 · автор — */
