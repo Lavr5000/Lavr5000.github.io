@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /docs/
+Disallow: /idm/
+Disallow: /scripts/
+
+Sitemap: https://ai-vibes.ru/sitemap.xml
