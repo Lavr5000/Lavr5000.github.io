@@ -115,7 +115,7 @@ with sync_playwright() as p:
 
             # Panel disclosure without a pointer: focus a control inside the panel (:focus-within).
             if path == "/services/" and w == 1440:
-                for pid in ("service-1", "service-2", "service-3", "service-4"):
+                for pid in ("service-1", "service-2", "service-3", "service-4", "service-5"):
                     btn = page.locator(f"#{pid} .panel-buy button")
                     btn.focus()
                     page.wait_for_timeout(700)  # .panel-inside opacity is a CSS transition
