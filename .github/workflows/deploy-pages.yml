@@ -22,13 +22,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      # tests/ holds the dev-only text-layer harness page and its PDF fixtures.
-      # They are used locally (scripts/test_textlayer.mjs, docs checklist) and must
-      # not be part of the public site. This drops them from the deploy artifact
-      # only — the repository keeps them. Note: assets/textlayer-check.js is a
-      # DIFFERENT file, imported by assets/order-flow.js at runtime; it stays.
+      # Repository-only paths (tests/ with the dev-only text-layer harness and its PDF
+      # fixtures, docs/, scripts/, the repo README and map) are used locally and by other
+      # workflows and must not be part of the public site. The list lives in
+      # .github/pages-drop.txt; this drops those paths from the deploy artifact only —
+      # the repository keeps them. `tr` strips a stray CR so a Windows line ending can
+      # never turn a path into a no-op. Note: assets/textlayer-check.js is a DIFFERENT
+      # file, imported by assets/order-flow.js at runtime; it stays.
       - name: Drop dev-only pages from the published artifact
-        run: rm -rf tests
+        run: tr -d '\r' < .github/pages-drop.txt | grep -v '^#' | xargs -r rm -rf --
       - uses: actions/upload-pages-artifact@v3
         with:
           path: .

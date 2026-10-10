@@ -21,3 +21,6 @@ __pycache__/
 next-env.d.ts
 *.tsbuildinfo
 .og-card.build.html
+
+# local TLS material for the mock API (never publish)
+*.pem

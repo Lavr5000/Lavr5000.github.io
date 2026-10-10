@@ -1,0 +1,11 @@
+# Paths removed from the published GitHub Pages artifact (one per line, relative to the
+# repository root). They stay in the repository; they are just not part of the public site.
+# Read by .github/workflows/deploy-pages.yml. Must keep LF line endings (.gitattributes).
+tests
+docs
+scripts
+README.md
+SITE-MAP.md
+sync_csp.mjs
+.gitignore
+.gitattributes

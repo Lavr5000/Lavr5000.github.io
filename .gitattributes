@@ -8,3 +8,7 @@ scripts/ntd/** text eol=lf
 # checked by scripts/verify_vendored_hashes.mjs). A CRLF checkout changes those
 # bytes, the browser then blocks the resource for a failed digest. Keep them LF.
 assets/pdfjs/** text eol=lf
+
+# The Pages workflow feeds this list to `rm`; a CRLF checkout would append a carriage
+# return to every path and silently disable the removal.
+.github/pages-drop.txt text eol=lf
