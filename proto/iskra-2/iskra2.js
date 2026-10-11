@@ -15,7 +15,17 @@
 
   function clamp(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
   function ease(v) { v = clamp(v); return v * v * (3 - 2 * v); }
+  /* per-scenario route in picture coordinates (0..1), mapped through the same "cover" fit as the pictures */
+  var ROUTES = { gorodmost: [[0.97, 0.15], [0.8, 0.22], [0.62, 0.38], [0.5, 0.48], [0.4, 0.58], [0.27, 0.72], [0.12, 0.86], [0.3, 0.93], [0.52, 0.83], [0.7, 0.66], [0.86, 0.5]] };
   function path(u) {
+    var r = ROUTES[slug];
+    if (r && before.naturalWidth) {
+      var f = clamp(u) * (r.length - 1), i = Math.min(r.length - 2, Math.floor(f)), k = f - i;
+      var a = r[Math.max(0, i - 1)], b = r[i], c = r[i + 1], d = r[Math.min(r.length - 1, i + 2)];
+      var cr = function (n) { return 0.5 * ((2 * b[n]) + (-a[n] + c[n]) * k + (2 * a[n] - 5 * b[n] + 4 * c[n] - d[n]) * k * k + (-a[n] + 3 * b[n] - 3 * c[n] + d[n]) * k * k * k); };
+      var sc = Math.max(W / before.naturalWidth, H / before.naturalHeight), iw = before.naturalWidth * sc, ih = before.naturalHeight * sc;
+      return [(W - iw) / 2 + cr(0) * iw, (H - ih) / 2 + cr(1) * ih];
+    }
     var wide = W > H;
     var x = wide ? 0.86 - 0.5 * u + 0.2 * Math.sin(u * Math.PI * 2.6) : 0.5 + 0.34 * Math.sin(u * Math.PI * 2.8 + 1.2);
     return [W * x, H * (0.1 + 0.86 * u)];
@@ -29,7 +39,7 @@
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     cover(ctx, before, cv.width, cv.height);
     /* mask: soft blobs along the travelled path, plus a full fade at the very end */
-    var mw = mask.width, mh = mask.height, R = Math.max(mw, mh) * 0.3, n = Math.ceil(P * 46);
+    var mw = mask.width, mh = mask.height, R = Math.max(mw, mh) * (ROUTES[slug] ? 0.2 : 0.3), n = Math.ceil(P * 46);
     mx.clearRect(0, 0, mw, mh);
     for (i = 0; i <= n; i++) {
       var u = Math.min(P, i / 46), p = path(u), age = ease((P - u) / 0.1 + 0.25);
@@ -38,7 +48,7 @@
       g.addColorStop(0, 'rgba(255,255,255,' + (0.5 + 0.5 * age) + ')'); g.addColorStop(0.55, 'rgba(255,255,255,' + 0.35 * age + ')'); g.addColorStop(1, 'rgba(255,255,255,0)');
       mx.fillStyle = g; mx.fillRect(x - r, y - r, r * 2, r * 2);
     }
-    var all = ease((P - 0.8) / 0.2);
+    var all = ease((P - 0.86) / 0.14);
     if (all > 0) { mx.fillStyle = 'rgba(255,255,255,' + all + ')'; mx.fillRect(0, 0, mw, mh); }
     tx.globalCompositeOperation = 'source-over';
     tx.clearRect(0, 0, top.width, top.height);
