@@ -10,10 +10,11 @@ License types taken from the LICENSE files inside the official npm tarballs
 | JetBrains Mono | (Google Fonts build, 2026-06-10) | SIL OFL 1.1 | Google Fonts woff2 | `assets/fonts/JetBrainsMono-*.woff2`, `assets/fonts.css` |
 | Prata | (Google Fonts build, 2026-08-13) | SIL OFL 1.1 | Google Fonts woff2 | `assets/fonts/Prata-*.woff2`, `assets/fonts.css` |
 | Golos Text | (Google Fonts build, 2026-08-13) | SIL OFL 1.1 | Google Fonts woff2 | `assets/fonts/GolosText-*.woff2`, `assets/fonts.css` |
-| GSAP and ScrollTrigger | 3.13.0 | GreenSock Standard License, https://gsap.com/standard-license | npm `gsap@3.13.0` through jsDelivr, copied unchanged | `assets/vendor/gsap.min.js`, `assets/vendor/ScrollTrigger.min.js` (sha384 in `assets/vendor/VENDOR-HASHES.md`) |
 
 Notes:
 
+- GSAP and ScrollTrigger were removed on 2026-10-11 together with the scroll scene that used them; the new
+  scene (`assets/scene3.js`) has no third-party code. No vendored copy is left in the repository.
 - React, ReactDOM, `<model-viewer>` and the Draco decoder were removed on
   2026-08-13 together with the last pages that used them (`products.html`,
   `about.html`); no vendored copy is left in the repository.

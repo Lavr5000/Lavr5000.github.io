@@ -6,8 +6,7 @@ import { fileURLToPath } from "node:url";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 // Every vendored library has its own manifest in the same table format.
 const manifestPaths = [
-  join(root, "assets/pdfjs/VENDOR-HASHES.md"),
-  join(root, "assets/vendor/VENDOR-HASHES.md")
+  join(root, "assets/pdfjs/VENDOR-HASHES.md")
 ];
 
 const rows = [];
