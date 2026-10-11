@@ -1376,7 +1376,7 @@ def main(argv=None) -> int:
                     for k, v in ((f"{key}_nt", R.long_nt), (f"{key}_cpu4", R.long)):
                         if k in REF_MAX and v is not None and v > REF_MAX[k]:
                             regress.append(f"{k}={v}>{REF_MAX[k]}")
-                if want & set("abefghil"):
+                if want & set("abefghilo"):
                     run_full(name, br, srv.base, A, log, shares_at)
                 if want & set("dg"):
                     run_static(name, br, srv.base, A, log)
