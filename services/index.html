@@ -2,481 +2,309 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8" />
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://mc.yandex.ru https://mc.yandex.com https://yastatic.net; img-src 'self' blob: https://mc.yandex.ru https://mc.yandex.com; connect-src 'self' https://mc.yandex.ru https://mc.yandex.com wss://mc.yandex.ru wss://mc.yandex.com; frame-src blob: https://mc.yandex.ru https://mc.yandex.com; child-src blob: https://mc.yandex.ru https://mc.yandex.com" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://mc.yandex.ru https://mc.yandex.com https://yastatic.net; img-src 'self' blob: https://mc.yandex.ru https://mc.yandex.com; connect-src 'self' https://api.ai-vibes.ru https://mc.yandex.ru https://mc.yandex.com wss://mc.yandex.ru wss://mc.yandex.com; frame-src blob: https://mc.yandex.ru https://mc.yandex.com; child-src blob: https://mc.yandex.ru https://mc.yandex.com" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Услуги AI Vibes — настройка AI и работа с рабочей документацией</title>
-<meta name="description" content="Настройка Claude Code по тарифу «Старт» за 7 500 ₽, две настройки AI на вашем рабочем месте по 15 000 ₽ и две услуги по документам: извлечение данных из чертежей КЖ от 10 000 ₽ и комплект исполнительной документации 3 500 ₽. Что входит, как проходит, как заказать." />
+<title>Тарифы AI Vibes — настройка рабочего помощника</title>
+<meta name="description" content="Тарифы настройки рабочего помощника на компьютере и телефоне: «Старт» — 7 500 ₽ за рабочее место, VIP — 45 000 ₽, поддержка — 5 000 ₽ в месяц. Что входит, что не входит и что вы платите сами." />
 <link rel="canonical" href="https://ai-vibes.ru/services/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="AI Vibes" />
-<meta property="og:title" content="Услуги AI Vibes — настройка AI и работа с рабочей документацией" />
-<meta property="og:description" content="Настройка Claude Code и Hermes Agent, извлечение данных из чертежей и комплекты исполнительной документации. Что входит в каждую услугу и как оставить заявку." />
+<meta property="og:title" content="Тарифы AI Vibes — настройка рабочего помощника" />
+<meta property="og:description" content="«Старт» — 7 500 ₽, VIP — 45 000 ₽, поддержка — 5 000 ₽ в месяц. Что входит в каждый тариф и как проходит настройка." />
 <meta property="og:url" content="https://ai-vibes.ru/services/" />
 <meta property="og:image" content="https://ai-vibes.ru/assets/og-setup-1200x630.jpg" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="Услуги AI Vibes — настройка AI и работа с рабочей документацией" />
-<meta name="twitter:description" content="Настройка AI на рабочем месте — 15 000 ₽. Работа с документами: чертежи КЖ от 10 000 ₽, комплект ИД 3 500 ₽." />
+<meta name="twitter:title" content="Тарифы AI Vibes — настройка рабочего помощника" />
+<meta name="twitter:description" content="«Старт» — 7 500 ₽, VIP — 45 000 ₽, поддержка — 5 000 ₽ в месяц." />
 <meta name="twitter:image" content="https://ai-vibes.ru/assets/og-setup-1200x630.jpg" />
 <link rel="icon" href="/favicon.ico" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 <link rel="stylesheet" href="/assets/fonts.css?v=20260813-vitrina" />
-<link rel="stylesheet" href="/assets/site2.css?v=20261003-pokaz" />
-<script defer src="/assets/index2.app.js?v=20260813-vitrina"></script>
-<script defer src="/assets/metrika.js?v=20261003-goals"></script>
+<link rel="stylesheet" href="/assets/site3.css" />
+<script defer src="/assets/site3.js"></script>
+<script defer src="/assets/metrika.js?v=20261011-v2"></script>
+<!-- chrome:head:begin (scripts/build_chrome.py) -->
+<meta name="build" content="47fa03afd6fa" />
+<link rel="stylesheet" href="/assets/chrome.css?v=47fa03afd6fa" />
+<script defer src="/assets/chrome.js?v=47fa03afd6fa"></script>
+<script defer src="/services.config.js?v=47fa03afd6fa"></script>
+<script defer src="/assets/pay.js?v=47fa03afd6fa"></script>
+<!-- chrome:head:end -->
 <!-- seo:jsonld:begin (scripts/build_seo_files.py) -->
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://ai-vibes.ru/#org","name":"AI Vibes","url":"https://ai-vibes.ru/","email":"lavr5000xxx@gmail.com","member":{"@id":"https://ai-vibes.ru/#person"}},{"@type":"Person","@id":"https://ai-vibes.ru/#person","name":"Денис Лавров","url":"https://ai-vibes.ru/about.html","sameAs":["https://max.ru/u/f9LHodD0cOJVteiYLPGUodY6uw7J5k_M_QzRJTDzXbK31nlTIokaEh5ebeM","https://t.me/lavr5000"]},{"@type":"Service","@id":"https://ai-vibes.ru/services/#pokaz","name":"Покажу агента на вашей задаче за 30 минут","url":"https://ai-vibes.ru/services/#pokaz","provider":{"@id":"https://ai-vibes.ru/#org"},"offers":{"@type":"Offer","price":"2000","priceCurrency":"RUB","url":"https://ai-vibes.ru/services/#pokaz"},"description":"Вы приносите одну свою рабочую задачу и видите, как агент делает её при вас, на вашем примере."}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://ai-vibes.ru/#org","name":"AI Vibes","url":"https://ai-vibes.ru/","email":"lavr5000xxx@gmail.com","member":{"@id":"https://ai-vibes.ru/#person"}},{"@type":"Person","@id":"https://ai-vibes.ru/#person","name":"Денис Лавров","url":"https://ai-vibes.ru/about.html","sameAs":["https://max.ru/u/f9LHodD0cOJVteiYLPGUodY6uw7J5k_M_QzRJTDzXbK31nlTIokaEh5ebeM","https://t.me/lavr5000"]},{"@type":"Service","@id":"https://ai-vibes.ru/services/#service-5","name":"Настройка помощника «Старт» на одном рабочем месте","url":"https://ai-vibes.ru/services/#service-5","provider":{"@id":"https://ai-vibes.ru/#org"},"offers":{"@type":"Offer","price":"7500","priceCurrency":"RUB","url":"https://ai-vibes.ru/services/#service-5"}},{"@type":"Service","@id":"https://ai-vibes.ru/services/#vip","name":"Настройка рабочего помощника VIP на компьютере и телефоне","url":"https://ai-vibes.ru/services/#vip","provider":{"@id":"https://ai-vibes.ru/#org"},"offers":{"@type":"Offer","price":"45000","priceCurrency":"RUB","url":"https://ai-vibes.ru/services/#vip"}}]}</script>
 <!-- seo:jsonld:end -->
 </head>
 <body>
 <a class="skip" href="#main">Перейти к содержанию</a>
-<div class="grain" aria-hidden="true"></div>
 
-<!-- ============================ НАВИГАЦИЯ ============================ -->
-<header class="nav" id="nav">
-  <div class="wrap nav-in">
-    <a class="brand" href="/" aria-label="AI Vibes — на главную">
-      <span class="brand-mark" aria-hidden="true">
-        <svg viewBox="0 0 24 24"><path d="M6 3.5h9l3 3V20.5H6z"/><path d="M15 3.5v3.5h3.5"/><path d="M9 14l2 2 4-4.5"/></svg>
-      </span>
-      <span class="brand-name">AI Vibes</span>
+<!-- chrome:header:begin (scripts/build_chrome.py) -->
+<header class="chrome" data-chrome>
+  <div class="chrome-in">
+    <a class="chrome-brand" href="/" aria-label="AI Vibes — на главную">
+      <span class="chrome-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3.5h9l3 3V20.5H6z"/><path d="M15 3.5v3.5h3.5"/><path d="M9 14l2 2 4-4.5"/></svg></span>
+      <span class="chrome-name">AI Vibes</span>
     </a>
-
-    <nav class="nav-links" aria-label="Разделы сайта">
-      <a class="nav-link" href="#services">Настройка AI</a>
-      <a class="nav-link" href="#documents">Документы</a>
-      <a class="nav-link" href="#process">Как проходит работа</a>
-      <a class="nav-link" href="/about.html">Об авторе</a>
-      <a class="nav-link" href="/blog/">Статьи</a>
+    <nav class="chrome-nav" aria-label="Разделы сайта">
+      <a href="/">Помощник</a>
+      <a href="/services/" aria-current="page">Тарифы</a>
+      <a href="/products.html">Для строителей</a>
+      <a href="/blog/">Статьи</a>
+      <a href="/about.html">Об авторе</a>
     </nav>
-
-    <a class="btn btn-primary nav-cta" href="#contact">Обсудить задачу</a>
-
-    <button class="burger" type="button" id="burger" aria-expanded="false" aria-controls="drawer" aria-label="Открыть меню">
-      <span></span>
-    </button>
+    <a class="chrome-cta" href="/#tarify">Выбрать тариф</a>
+    <button class="chrome-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="chrome-panel" aria-label="Открыть меню"><span></span><span></span><span></span></button>
   </div>
-</header>
-
-<div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Меню">
-  <button class="drawer-close" type="button" id="drawer-close" aria-label="Закрыть меню">×</button>
-  <nav>
-    <a href="#services">Настройка AI</a>
-    <a href="#documents">Документы</a>
-    <a href="#process">Как проходит работа</a>
-    <a href="/">Главная</a>
-    <a href="/about.html">Об авторе</a>
-    <a href="/products.html">Инструменты</a>
+  <div class="chrome-panel" id="chrome-panel" data-menu-panel hidden>
+    <a href="/">Помощник</a>
+    <a href="/services/" aria-current="page">Тарифы</a>
+    <a href="/products.html">Для строителей</a>
     <a href="/blog/">Статьи</a>
-  </nav>
-  <a class="btn btn-primary btn-wide" href="#contact">Обсудить задачу</a>
-</div>
-
+    <a href="/about.html">Об авторе</a>
+    <a class="chrome-cta" href="/#tarify">Выбрать тариф</a>
+  </div>
+  <span class="chrome-progress" data-progress aria-hidden="true"></span>
+</header>
+<!-- chrome:header:end -->
 <main id="main">
 
-<!-- ============================ ШАПКА СТРАНИЦЫ ============================ -->
-<section class="hero hero-page" id="hero" aria-labelledby="page-title">
-  <div class="hero-atmos" aria-hidden="true"></div>
+<section class="hero" id="hero">
   <div class="wrap">
-    <p class="hero-eyebrow"><s aria-hidden="true"></s>Услуги · настройка AI и работа с документацией</p>
-    <h1 id="page-title">Настройка AI и работа с рабочей документацией</h1>
-    <p class="hero-lead" data-reveal>Два направления. Первое: настройка AI на вашем устройстве,
-      Claude Code на рабочем месте и Hermes Agent на ноутбуке с телефоном. Второе: работа с вашими
-      документами, чертежи и исполнительная документация, которые я обрабатываю сам и проверяю
-      руками. Ниже: что входит в каждую услугу и как оставить заявку.</p>
-
-    <dl class="stamp" data-reveal>
-      <div><dt>Направления</dt><dd>Настройка AI · Работа с документами</dd></div>
-      <div><dt>Формат</dt><dd>Удалённо · Тольятти очно</dd></div>
-      <div><dt>Исполнитель</dt><dd>ИП Лаврова Ю.Н. · AI Vibes</dd></div>
-      <div><dt>Заявка</dt><dd>MAX, Telegram или почта</dd></div>
-    </dl>
-  </div>
-</section>
-
-<!-- ============================ ПОКАЗ ============================ -->
-<section class="band band-seam" id="pokaz" aria-labelledby="pokaz-title">
-  <div class="wrap">
-    <div class="sec-head" data-reveal>
-      <p class="kicker">Начать с показа</p>
-      <h2 class="h2" id="pokaz-title">Покажу агента на вашей задаче за 30 минут</h2>
-      <p class="lead">Вы приносите одну свою рабочую задачу и видите, как агент делает её при вас,
-        на вашем примере. После показа понятно, нужен ли вам такой помощник и какая настройка
-        его даст.</p>
-      <p class="lead"><strong>Где пригодится.</strong> Сверить документы между собой и найти
-        расхождения. Собрать ведомость или смету из чертежей со ссылкой на лист. Подготовить
-        письмо-замечание. Перевести голос в текст.</p>
-    </div>
-
-    <dl class="bounds">
-      <div class="bound" data-reveal><dt>Что принести</dt><dd>Одну задачу и пример файла к ней. Файл можно обезличить. Чтобы договориться, напишите слово «показ» и одной строкой — задачу.</dd></div>
-      <div class="bound" data-reveal><dt>Как проходит</dt><dd>30 минут. Онлайн с показом экрана или очно в Тольятти.</dd></div>
-      <div class="bound" data-reveal><dt>Стоимость</dt><dd><span class="price">2 000 ₽</span> — показ агента на вашей задаче, 30&nbsp;минут.</dd></div>
-    </dl>
-
-    <div class="final-actions" data-reveal>
-      <a class="btn btn-primary" href="https://max.ru/u/f9LHodD0cOJVteiYLPGUodY6uw7J5k_M_QzRJTDzXbK31nlTIokaEh5ebeM" target="_blank" rel="noopener">Написать в MAX</a>
-      <a class="btn btn-ghost" href="https://t.me/lavr5000" target="_blank" rel="noopener">Написать в Telegram</a>
+    <div class="hero-text">
+      <p class="kicker">Тарифы</p>
+      <h1>Настройка рабочего помощника: что входит и сколько стоит</h1>
+      <p class="lead">Два тарифа разовой настройки и поддержка по месяцам. Цена на странице — окончательная:
+        в неё входит всё, что перечислено в карточке.</p>
     </div>
   </div>
 </section>
 
-<!-- ============================ 01 · УСЛУГИ ============================ -->
-<section class="band band-deep band-seam" id="services" aria-labelledby="services-title">
+<section class="band paper" id="services">
+  <span class="anchor" id="service-1"></span>
+  <span class="anchor" id="service-2"></span>
+  <span class="anchor" id="pokaz"></span>
   <div class="wrap">
-    <div class="sec-head" data-reveal>
-      <p class="kicker">01 · Настройка AI на вашем устройстве</p>
-      <h2 class="h2" id="services-title">Настройка AI на вашем устройстве</h2>
-      <p class="lead">Каждая услуга решает свою задачу и не заменяет соседнюю: одна настройка
-        делает рабочий инструмент за столом, другая — ассистента, который остаётся с вами,
-        когда вы отошли от компьютера. Берут по отдельности. Новый тариф «Старт» за
-        <span class="price">7 500 ₽</span> — короткий вход: Claude Code с памятью на одном компьютере.</p>
-    </div>
-
-    <div class="panels">
-      <!-- панель 1 -->
-      <article class="panel panel-1 panel-reveal" id="service-1" data-reveal>
-        <span class="panel-no">Услуга 01</span>
-        <h3 class="h3">Настройка Claude Code<br>на одном рабочем месте</h3>
-        <p class="panel-role">Для работы, где много файлов, документов и повторяющихся
-          действий: собрать, сверить, переписать, оформить.</p>
-        <p class="panel-hint">Наведите или перейдите фокусом: покажу, что внутри</p>
-
-        <div class="panel-inside">
-          <div class="panel-inside-in">
-            <p class="panel-sub">Что я делаю</p>
-            <ul class="checks">
-              <li>Устанавливаю и настраиваю Claude Code на вашем ноутбуке или ПК.</li>
-              <li>Разбираем ваши реальные задачи и переводим их в рабочие сценарии.</li>
-              <li>Организую проекты, правила и рабочий процесс под эти задачи.</li>
-              <li>Запускаем на вашей задаче и проверяем результат вместе.</li>
-            </ul>
-
-            <p class="panel-sub">Чем заканчивается проверка</p>
-            <pre class="artifact">$ claude doctor
-Claude Code doctor
-Config install method: native
-No installation issues found.
-settings.json: present
-status: ready</pre>
-
-            <p class="panel-out">На выходе: рабочее место, где инструмент уже знает ваши файлы,
-              ваши правила и порядок действий, и вы понимаете, как повторить это без меня.</p>
-            <p class="panel-extra">Дополнительно, по договорённости: настройка Codex,
-              поддержание подписок на инструменты.</p>
-          </div>
+    <div class="tariffs" id="tarify">
+      <article class="tariff" data-tariff="setup-start" id="service-5">
+        <div class="tariff-top">
+          <h2 class="tariff-name">«Старт»</h2>
+          <p class="tariff-for">Попробовать помощника в работе без больших трат.</p>
         </div>
-
-        <div class="panel-buy">
-          <p class="panel-tag price">15 000 ₽<small>за одно рабочее место</small></p>
-          <button class="btn btn-primary" type="button" data-service-id="setup-claude-code" data-order="Настройка Claude Code на одном рабочем месте" data-price-label="15 000 ₽">Заказать за 15 000 ₽</button>
+        <div>
+          <p class="tariff-price">7 500 ₽</p>
+          <p class="tariff-unit">за одно рабочее место</p>
         </div>
+        <ul class="tariff-list">
+          <li>Настройка помощника на вашем компьютере</li>
+          <li>Работает и с телефона</li>
+          <li>Память: помнит ваши правила, проекты и договорённости между сеансами</li>
+          <li>Базовые правила и запреты: на удаление файлов и на чтение файлов с паролями</li>
+          <li>Одну вашу задачу делаем вместе, на вашем файле</li>
+          <li>Первый месяц доступа к модели — в цене</li>
+        </ul>
+        <p class="tariff-own"><strong>Что платите сами:</strong> доступ к модели со второго месяца, по тарифу её
+          поставщика. Аккаунт у поставщика регистрируете вы, он остаётся вашим.</p>
+        <p class="tariff-own"><strong>Что важно знать:</strong> младший тариф модели рассчитан на спокойную работу; при
+          плотной работе дневной лимит может закончиться до вечера. Запросы обрабатывает зарубежный поставщик модели
+          на своих серверах; файлы остаются на вашем компьютере.</p>
+        <a class="btn-pay" data-pay data-service-id="setup-start" data-order="Настройка помощника «Старт» на одном рабочем месте" data-price-label="7 500 ₽" data-amount="750000" href="/#contact">Оплатить 7 500 ₽</a>
       </article>
-
-      <!-- панель 2 -->
-      <article class="panel panel-reveal" id="service-2" data-reveal>
-        <span class="panel-no">Услуга 02</span>
-        <h3 class="h3">Настройка Hermes Agent<br>на ноутбуке и телефоне</h3>
-        <p class="panel-role">Для работы вне кабинета: когда задача возникает в дороге,
-          на объекте или в переписке, а компьютер остался дома.</p>
-        <p class="panel-hint">Наведите или перейдите фокусом: покажу, что внутри</p>
-
-        <div class="panel-inside">
-          <div class="panel-inside-in">
-            <p class="panel-sub">Что я делаю</p>
-            <ul class="checks">
-              <li>Ставлю и настраиваю Hermes Agent на ноутбуке.</li>
-              <li>Связываю ноутбук с телефоном и Telegram.</li>
-              <li>Открываю доступ к рабочим сценариям и файлам в границах, которые вы задаёте.</li>
-              <li>Запускаем и проверяем на ваших задачах.</li>
-            </ul>
-
-            <p class="panel-sub">Чеклист, который закрываем в конце</p>
-            <pre class="artifact">ноутбук · агент установлен       готово
-телефон · Telegram связан        готово
-границы доступа                  заданы
-прогон на вашей задаче           пройден</pre>
-
-            <p class="panel-out">На выходе: один ассистент в двух местах, за столом и в кармане,
-              с понятными границами того, что ему доступно.</p>
-            <p class="panel-extra">Дополнительно, по договорённости: настройка Codex,
-              поддержание подписок на инструменты.</p>
-          </div>
+      <article class="tariff tariff--vip" data-tariff="setup-vip" id="vip">
+        <div class="tariff-top">
+          <h2 class="tariff-name">VIP</h2>
+          <p class="tariff-for">Рабочий помощник на каждый день — на лучших мировых моделях.</p>
         </div>
-
-        <div class="panel-buy">
-          <p class="panel-tag price">15 000 ₽<small>ноутбук + телефон</small></p>
-          <button class="btn btn-ghost" type="button" data-service-id="setup-hermes-agent" data-order="Настройка Hermes Agent на ноутбуке и телефоне" data-price-label="15 000 ₽">Заказать за 15 000 ₽</button>
+        <div>
+          <p class="tariff-price">45 000 ₽</p>
+          <p class="tariff-unit">компьютер и телефон одного человека</p>
         </div>
-      </article>
-
-      <!-- панель 5 · тариф «Старт» -->
-      <article class="panel panel-reveal" id="service-5" data-reveal>
-        <span class="panel-no">Услуга 05</span>
-        <h3 class="h3">Настройка Claude Code «Старт»<br>на одном рабочем месте</h3>
-        <p class="panel-role">Новый тариф. Для тех, кто хочет попробовать помощника на своём компьютере
-          без дорогой подписки: быстрый вход, первый месяц доступа к модели входит в цену.</p>
-        <p class="panel-hint">Наведите или перейдите фокусом: покажу, что внутри</p>
-
-        <div class="panel-inside">
-          <div class="panel-inside-in">
-            <p class="panel-sub">Что я делаю</p>
-            <ul class="checks">
-              <li>Удалённо устанавливаю Claude Code на ваш ноутбук или ПК с Windows.</li>
-              <li>Подключаю его к китайской модели: первый месяц доступа входит в цену, из России она работает напрямую.</li>
-              <li>Настраиваю память на базе Obsidian: помощник помнит ваши правила, проекты и договорённости между сеансами.</li>
-              <li>Ставлю базовые правила и настраиваю запреты: на удаление файлов и на чтение файлов с паролями.</li>
-              <li>Запускаем на одной вашей задаче и проверяем результат вместе.</li>
-            </ul>
-
-            <p class="panel-sub">Чем отличается от услуги 01</p>
-            <pre class="artifact">задач на разборе          одна
-почта, календарь, чаты    нет
-поиск по архиву файлов    нет
-телефон                   нет
-модель                    китайская
-первый месяц доступа      в цене</pre>
-
-            <p class="panel-out">На выходе: помощник на вашем компьютере, который уже знает ваши
-              правила и сделал при вас одну вашу задачу. Перейти на полную настройку можно позже.</p>
-            <p class="panel-extra">Что важно знать заранее. Младший тариф модели рассчитан на спокойную
-              работу; при плотной работе лимит может закончиться до конца дня — тогда переходят
-              на старший тариф или ждут обновления лимита. Аккаунт у поставщика модели вы регистрируете
-              сами, он остаётся вашим. Со второго месяца доступ продлеваете вы, по тарифу поставщика —
-              от 18 долларов в месяц; поставщик принимает оплату в долларах, для неё нужен свой способ
-              платить за зарубежные сервисы. Запросы обрабатывает зарубежный поставщик модели на своих
-              серверах; файлы остаются на вашем компьютере, в модель уходит то, что нужно для задачи.</p>
-          </div>
-        </div>
-
-        <div class="panel-buy">
-          <p class="panel-tag price">7 500 ₽<small>за одно рабочее место</small></p>
-          <button class="btn btn-primary" type="button" data-service-id="setup-claude-code-start" data-order="Настройка Claude Code «Старт» на одном рабочем месте" data-price-label="7 500 ₽">Заказать за 7 500 ₽</button>
-        </div>
+        <ul class="tariff-list">
+          <li>Лучшие мировые модели</li>
+          <li>Оформление работающей подписки и первый месяц — в цене</li>
+          <li>Повышенные лимиты: хватает на плотный рабочий день</li>
+          <li>Удобный интерфейс на компьютере и в телефоне</li>
+          <li>Связка «телефон + компьютер»: задачу ставите с телефона, работа идёт на компьютере</li>
+          <li>Настройка под ваши задачи: проекты, правила, память</li>
+          <li>Запуск на ваших файлах и проверка результата вместе</li>
+        </ul>
+        <p class="tariff-own"><strong>Что платите сами:</strong> подписку на модели со второго месяца.</p>
+        <a class="btn-pay" data-pay data-service-id="setup-vip" data-order="Настройка рабочего помощника VIP на компьютере и телефоне" data-price-label="45 000 ₽" data-amount="4500000" href="/#contact">Оплатить 45 000 ₽</a>
       </article>
     </div>
   </div>
 </section>
 
-<!-- ============================ 02 · РАБОТА С ДОКУМЕНТАМИ ============================ -->
-<section class="band band-seam" id="documents" aria-labelledby="documents-title">
+<section class="band paper-2" id="compare">
   <div class="wrap">
-    <div class="sec-head" data-reveal>
-      <p class="kicker">02 · Работа с вашими документами</p>
-      <h2 class="h2" id="documents-title">Работа с вашими документами</h2>
-      <p class="lead">Здесь инструмент не переезжает к вам: вы присылаете файлы, я прогоняю их
-        через свою систему и проверяю результат руками, лист за листом. Поэтому у каждой услуги
-        названа граница: что система читает уверенно, а что не берётся вообще.</p>
+    <div class="head">
+      <p class="kicker">Сравнение</p>
+      <h2 class="h2">Чем отличаются тарифы</h2>
     </div>
-
-    <div class="panels">
-      <!-- панель 3 -->
-      <article class="panel panel-reveal" id="service-3" data-reveal>
-        <span class="panel-no">Услуга 03</span>
-        <h3 class="h3">Извлечение данных<br>из рабочих чертежей</h3>
-        <p class="panel-role">Когда объёмы и спецификации нужно снять с чертежей и свести
-          в таблицу, а ручной пересчёт по листам занимает неделю.</p>
-        <p class="panel-hint">Наведите или перейдите фокусом: покажу, что внутри</p>
-
-        <div class="panel-inside">
-          <div class="panel-inside-in">
-            <p class="panel-sub">Что я делаю</p>
-            <ul class="checks">
-              <li>Принимаю альбом рабочих чертежей в PDF, вектор или скан.</li>
-              <li>Прогоняю листы через свою систему извлечения данных.</li>
-              <li>Проверяю извлечённое руками по каждому листу и правлю расхождения.</li>
-              <li>Собираю результат в Excel со ссылкой на лист-первоисточник у каждой строки.</li>
-            </ul>
-
-            <p class="panel-sub">Граница услуги</p>
-            <pre class="artifact">беру      КЖ / монолитные конструкции
-не беру   АР, АС, ОВ, ВК и прочие разделы
-          система на них не обучена
-единица   один альбом марки КЖ одного корпуса
-          до 50 листов формата А1</pre>
-
-            <p class="panel-out">На выходе: таблица Excel с объёмами и типоразмерами, где у каждой
-              строки видно, с какого листа она взята. Такую таблицу можно проверить, а не принять
-              на веру.</p>
-            <p class="panel-extra">Больше 50 листов в альбоме или второй альбом того же корпуса
-              считается отдельной единицей, стоимость согласовываем до начала работ.</p>
-          </div>
-        </div>
-
-        <div class="panel-buy">
-          <p class="panel-tag price">от 10 000 ₽<small>за альбом КЖ, цена по объёму</small></p>
-          <button class="btn btn-primary" type="button" data-service-id="extract-drawings-data" data-order="Извлечение данных из рабочих чертежей" data-price-label="от 10 000 ₽">Заказать от 10 000 ₽</button>
-        </div>
-      </article>
-
-      <!-- панель 4 -->
-      <article class="panel panel-reveal" id="service-4" data-reveal>
-        <span class="panel-no">Услуга 04</span>
-        <h3 class="h3">Формирование комплекта<br>исполнительной документации</h3>
-        <p class="panel-role">Когда паспорта, протоколы и схемы уже собраны, акты и реестр
-          нужно оформить и свести, а сдавать это завтра.</p>
-        <p class="panel-hint">Наведите или перейдите фокусом: покажу, что внутри</p>
-
-        <div class="panel-inside">
-          <div class="panel-inside-in">
-            <p class="panel-sub">Что я делаю</p>
-            <ul class="checks">
-              <li>Принимаю исходные данные: PDF или фото паспортов качества, лабораторных
-                протоколов, исполнительных схем.</li>
-              <li>Извлекаю из них реквизиты и свожу в реестр исполнительной документации.</li>
-              <li>Формирую акты освидетельствования скрытых работ по вашим формам.</li>
-              <li>Сверяю каждый акт с первоисточником сам, до передачи вам.</li>
-            </ul>
-
-            <p class="panel-sub">Что входит в комплект</p>
-            <pre class="artifact">вход     паспорта, протоколы, исполнительные схемы
-         PDF или фото
-выход    реестр ИД + акты освидетельствования
-         скрытых работ (.docx)
-объём    до 20 актов и один реестр на объект
-не делаю исполнительные схемы не изготавливаю,
-         принимаю их как исходные данные</pre>
-
-            <p class="panel-out">На выходе: реестр и акты в .docx, которые вы дополняете подписями
-              и сдаёте. Один раунд правок по вашим замечаниям входит в стоимость.</p>
-            <p class="panel-extra">Сверх 20 актов работаем по отдельному согласованию до начала
-              работ. Нечитаемые исходники возвращаю до старта, а не после.</p>
-          </div>
-        </div>
-
-        <div class="panel-buy">
-          <p class="panel-tag price">3 500 ₽<small>за комплект по объекту</small></p>
-          <button class="btn btn-ghost" type="button" data-service-id="as-built-package" data-order="Формирование комплекта исполнительной документации" data-price-label="3 500 ₽">Заказать за 3 500 ₽</button>
-        </div>
-      </article>
+    <div class="cmp-wrap">
+      <table class="cmp">
+        <thead><tr><th scope="col"></th><th scope="col">«Старт»</th><th scope="col">VIP</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Цена настройки</th><td>7 500 ₽</td><td>45 000 ₽</td></tr>
+          <tr><th scope="row">Компьютер и телефон</th><td class="yes">да</td><td class="yes">да</td></tr>
+          <tr><th scope="row">Модель</th><td>младший тариф</td><td>лучшие мировые модели</td></tr>
+          <tr><th scope="row">Лимиты</th><td>на спокойную работу</td><td>повышенные</td></tr>
+          <tr><th scope="row">Первый месяц доступа</th><td class="yes">в цене</td><td class="yes">в цене, с оформлением подписки</td></tr>
+          <tr><th scope="row">Задач на совместном разборе</th><td>одна</td><td>ваши рабочие задачи</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </section>
 
-<!-- ============================ 02 · ПРОЦЕСС ============================ -->
-<section class="band" id="process" aria-labelledby="process-title">
-  <div class="wrap">
-    <div class="sec-head" data-reveal>
-      <p class="kicker">03 · Процесс</p>
-      <h2 class="h2" id="process-title">Как проходит работа</h2>
-      <p class="lead">У направлений разный порядок, поэтому ниже две дорожки. Общее одно: последний
-        шаг — не «сдача работы», а проверка. Работаем удалённо; в Тольятти при необходимости
-        приезжаю очно.</p>
-      <p class="lead"><strong>Настройка AI, четыре шага.</strong> Вы проходите свой сценарий сами,
-        я смотрю и поправляю.</p>
+<section class="band paper" id="support">
+  <div class="wrap split">
+    <div class="prose">
+      <p class="kicker">После настройки</p>
+      <h2 class="h2">Поддержка — 5 000 ₽ в месяц</h2>
+      <p>Дополнение к любому тарифу. Остаюсь на связи после настройки: донастраиваю помощника под новые задачи,
+        разбираю то, что не получилось, обновляю правила, когда меняется ваша работа.</p>
+      <p>Подключается по желанию, после настройки. Отказаться можно в любой месяц.</p>
+      <p><a class="btn-line" data-request data-service-id="support-monthly" data-order="Поддержка помощника, один месяц" data-price-label="5 000 ₽" href="/#contact">Обсудить поддержку</a></p>
     </div>
-
-    <div class="steps">
-      <article class="step" data-reveal>
-        <span class="step-no">01</span>
-        <h3 class="h3">Разбор задач</h3>
-        <p>До установки разбираем, что вы делаете руками: какие файлы, какие шаги, что повторяется. От вас нужны живые примеры, а не описание «в общем».</p>
-      </article>
-      <article class="step" data-reveal>
-        <span class="step-no">02</span>
-        <h3 class="h3">Установка и настройка</h3>
-        <p>Ставлю инструмент на ваше устройство, настраиваю проекты, правила и рабочий процесс под разобранные задачи.</p>
-      </article>
-      <article class="step" data-reveal>
-        <span class="step-no">03</span>
-        <h3 class="h3">Запуск на вашей задаче</h3>
-        <p>Первый прогон делаем на вашем реальном файле, а не на демонстрационном примере из интернета.</p>
-      </article>
-      <article class="step" data-reveal>
-        <span class="step-no">04</span>
-        <h3 class="h3">Проверка результата</h3>
-        <p>Вы повторяете сценарий сами, я смотрю и поправляю. Настройка считается сделанной, когда вы прошли путь без меня.</p>
-      </article>
+    <div class="note-card">
+      <h3>Что не входит ни в один тариф</h3>
+      <ul class="plain-list">
+        <li>Подписка на модели со второго месяца — вы платите её сами.</li>
+        <li>Настройка десятков рабочих мест в отделе — это отдельный объём, обсуждаем заранее.</li>
+        <li>Обещание конкретной экономии часов и денег: считаем по факту на ваших задачах.</li>
+      </ul>
     </div>
-
-    <div class="sec-head" data-reveal>
-      <p class="lead"><strong>Работа с документами, четыре шага.</strong> Инструмент остаётся
-        у меня, проверка результата тоже на мне.</p>
-    </div>
-
-    <div class="steps">
-      <article class="step" data-reveal>
-        <span class="step-no">01</span>
-        <h3 class="h3">Смотрю исходники</h3>
-        <p>Присылаете файлы, я оцениваю читаемость и объём и называю цену и срок до начала работ. Нечитаемое возвращаю сразу, а не после оплаты.</p>
-      </article>
-      <article class="step" data-reveal>
-        <span class="step-no">02</span>
-        <h3 class="h3">Прогон через систему</h3>
-        <p>Ваши файлы проходят через мою систему извлечения данных или формирования актов. Это моя часть, вам ничего ставить и осваивать не нужно.</p>
-      </article>
-      <article class="step" data-reveal>
-        <span class="step-no">03</span>
-        <h3 class="h3">Проверка руками</h3>
-        <p>Каждую строку и каждый акт я сверяю с первоисточником сам. Система ошибается, поэтому результат уходит вам только после моей сверки.</p>
-      </article>
-      <article class="step" data-reveal>
-        <span class="step-no">04</span>
-        <h3 class="h3">Результат и правки</h3>
-        <p>Отдаю Excel или .docx. Один раунд правок по вашим замечаниям входит в стоимость; новая редакция чертежей или новые исходники считаются новым заказом.</p>
-      </article>
-    </div>
-
-    <dl class="bounds">
-      <div class="bound" data-reveal><dt>На мне</dt><dd>По настройке: установка, настройка, объяснение и проверка сценариев, о которых договорились на первом шаге. По документам: прогон, проверка результата руками и один раунд правок.</dd></div>
-      <div class="bound" data-reveal><dt>На вас</dt><dd>По настройке: доступ к устройству, примеры задач и время на совместный запуск. По документам: читаемые исходники и право передать их мне.</dd></div>
-      <div class="bound" data-reveal><dt>Чего не обещаю</dt><dd>Конкретной экономии часов и денег: она зависит от ваших задач. По чертежам не берусь за разделы, кроме КЖ и монолитных конструкций, — система на них не обучена. Сроки и порядок оплаты обсуждаем при заявке.</dd></div>
-    </dl>
   </div>
 </section>
 
-<!-- ============================ 03 · ЗАЯВКА ============================ -->
-<section class="final" id="contact" aria-labelledby="contact-title">
-  <div class="wrap final-in">
-    <p class="kicker kicker-center" data-reveal>04 · Заявка</p>
-    <h2 id="contact-title" data-reveal>Начнём с вашей задачи</h2>
-    <p class="lead" data-reveal>Напишите, что вы чаще всего делаете руками или какие файлы нужно
-      разобрать. Отвечу, какая услуга это закрывает и закрывает ли вообще. Платёжной формы здесь
-      нет: заявку обсуждаем сообщением.</p>
-    <div class="final-actions" data-reveal>
-      <button class="btn btn-primary" type="button" data-service-id="setup-claude-code" data-order="Настройка Claude Code на одном рабочем месте" data-price-label="15 000 ₽">Оставить заявку</button>
-      <a class="btn btn-ghost" href="https://max.ru/u/f9LHodD0cOJVteiYLPGUodY6uw7J5k_M_QzRJTDzXbK31nlTIokaEh5ebeM" target="_blank" rel="noopener">Написать в MAX</a>
-      <a class="btn btn-ghost" href="https://t.me/lavr5000" target="_blank" rel="noopener">Написать в Telegram</a>
-      <a class="btn btn-ghost" href="mailto:lavr5000xxx@gmail.com">lavr5000xxx@gmail.com</a>
+<section class="band" id="process">
+  <div class="wrap">
+    <div class="head">
+      <p class="kicker">Как проходит настройка</p>
+      <h2 class="h2">Четыре шага, последний — ваш</h2>
+      <p class="lead">Работаем удалённо; в Тольятти при необходимости приезжаю.</p>
     </div>
+    <ol class="steps">
+      <li class="step"><h3>Разбираем задачи</h3><p>Что вы делаете руками: какие файлы, какие шаги, что повторяется. Нужны живые примеры.</p></li>
+      <li class="step"><h3>Ставлю и настраиваю</h3><p>На ваш компьютер и телефон: проекты, правила, память — под разобранные задачи.</p></li>
+      <li class="step"><h3>Запускаем на вашем файле</h3><p>Первый прогон — на вашем настоящем документе, а не на примере из интернета.</p></li>
+      <li class="step"><h3>Вы повторяете сами</h3><p>Проходите свой сценарий без меня, я смотрю и поправляю. После этого настройка сдана.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="band" id="documents">
+  <span class="anchor" id="service-3"></span>
+  <span class="anchor" id="service-4"></span>
+  <div class="wrap">
+    <div class="strip">
+      <div>
+        <h3>Работа с документами стройки</h3>
+        <p>Данные из чертежей КЖ, комплекты исполнительной документации, ведомости и накладные — в разделе
+          «Для строителей».</p>
+      </div>
+      <a class="btn-line" href="/products.html#documents">Открыть раздел</a>
+    </div>
+  </div>
+</section>
+
+<section class="band contact" id="contact">
+  <div class="wrap">
+    <div class="head">
+      <p class="kicker">MAX, Telegram или почта</p>
+      <h2 class="h2">Не уверены, какой тариф взять?</h2>
+      <p class="lead">Напишите, какую работу хотите снять с себя, — подскажу, какой тариф подойдёт и подойдёт ли вообще.</p>
+    </div>
+    <div class="contact-actions">
+      <a class="btn-pay" href="https://max.ru/u/f9LHodD0cOJVteiYLPGUodY6uw7J5k_M_QzRJTDzXbK31nlTIokaEh5ebeM" target="_blank" rel="noopener">Написать в MAX</a>
+      <a class="btn-line" href="https://t.me/lavr5000" target="_blank" rel="noopener">Написать в Telegram</a>
+    </div>
+    <p class="contact-mail">или на почту: <a href="mailto:lavr5000xxx@gmail.com">lavr5000xxx@gmail.com</a></p>
   </div>
 </section>
 
 </main>
 
-<footer class="foot">
-  <div class="wrap foot-in">
-    <span class="meta">AI Vibes · ИП Лаврова Ю.Н. · 2026</span>
-    <span>
-      <a href="/">Главная</a>
-      <a href="/products.html">Каталог</a>
-      <a href="/oferta.html">Оферта</a>
-      <a href="/privacy.html">Конфиденциальность</a>
-    </span>
+<!-- chrome:footer:begin (scripts/build_chrome.py) -->
+<footer class="chrome-foot" data-chrome-foot>
+  <div class="chrome-foot-in">
+    <div class="chrome-foot-about">
+      <p class="chrome-foot-name">AI Vibes</p>
+      <p>Настройка рабочего помощника на компьютере и телефоне. Сервисы для строительных документов.</p>
+    </div>
+    <div>
+      <h2>Разделы</h2>
+      <ul>
+        <li><a href="/">Помощник</a></li>
+        <li><a href="/services/">Тарифы</a></li>
+        <li><a href="/products.html">Для строителей</a></li>
+        <li><a href="/blog/">Статьи</a></li>
+        <li><a href="/about.html">Об авторе</a></li>
+      </ul>
+    </div>
+    <div>
+      <h2>Каналы</h2>
+      <ul>
+        <li><a href="https://max.ru/channel_ai_vibes" target="_blank" rel="noopener">Канал в MAX</a></li>
+        <li><a href="https://t.me/ai_vibes_coding_ru" target="_blank" rel="noopener">Канал в Telegram</a></li>
+      </ul>
+    </div>
+    <div>
+      <h2>Документы</h2>
+      <ul>
+        <li><a href="/oferta.html">Оферта</a></li>
+        <li><a href="/privacy.html">Конфиденциальность</a></li>
+      </ul>
+    </div>
   </div>
+  <p class="chrome-foot-legal">AI Vibes · ИП Лаврова Ю.Н. · ИНН 644404692540 · 2026</p>
 </footer>
-
-<!-- ============================ МОДАЛКА ЗАЯВКИ ============================ -->
-<div class="modal" id="order-modal" role="dialog" aria-modal="true" aria-labelledby="order-title" aria-describedby="order-desc">
-  <div class="modal-bg" data-close></div>
-  <div class="modal-box">
-    <button class="modal-close" type="button" data-close aria-label="Закрыть">×</button>
-    <p class="kicker">Заявка</p>
-    <h2 id="order-title">Настройку обсуждаем сообщением</h2>
-    <p id="order-desc">Платёжной формы на этой странице нет: напишите в MAX, Telegram или на почту,
-      я отвечу и мы договоримся о времени. Сроки и порядок оплаты обсуждаем при заявке.</p>
-    <div class="modal-pick">
-      <strong id="order-service"></strong>
-      <span class="price" id="order-price"></span>
+<!-- chrome:footer:end -->
+<!-- chrome:dialogs:begin (scripts/build_chrome.py) -->
+<dialog class="dlg" id="order-dialog" aria-labelledby="order-title">
+  <div class="dlg-in">
+    <button class="dlg-close" type="button" data-dlg-close aria-label="Закрыть">×</button>
+    <p class="dlg-kicker">Заявка</p>
+    <h2 id="order-title">Напишите — договоримся о времени</h2>
+    <div class="dlg-item"><strong id="order-service"></strong><span id="order-price"></span></div>
+    <p>Напишите в MAX, Telegram или на почту: отвечу, уточню задачу и пришлю счёт или ссылку на оплату.</p>
+    <div class="dlg-channels">
+      <a class="btn-pay" id="order-max" href="https://max.ru/u/f9LHodD0cOJVteiYLPGUodY6uw7J5k_M_QzRJTDzXbK31nlTIokaEh5ebeM" target="_blank" rel="noopener">Написать в MAX</a>
+      <a class="btn-line" id="order-tg" href="https://t.me/lavr5000" target="_blank" rel="noopener">Написать в Telegram</a>
+      <a class="btn-line" id="order-mail" href="mailto:lavr5000xxx@gmail.com">Написать на почту</a>
     </div>
-    <div class="modal-actions">
-      <a class="btn btn-primary" id="order-max" href="https://max.ru/u/f9LHodD0cOJVteiYLPGUodY6uw7J5k_M_QzRJTDzXbK31nlTIokaEh5ebeM" target="_blank" rel="noopener">Написать в MAX</a>
-      <a class="btn btn-ghost" id="order-tg" href="https://t.me/lavr5000" target="_blank" rel="noopener">Написать в Telegram</a>
-      <a class="btn btn-ghost" id="order-mail" href="mailto:lavr5000xxx@gmail.com">Написать на почту</a>
-    </div>
-    <p class="modal-note">Работаем удалённо; в Тольятти при необходимости приезжаю очно.
-      Кнопка ничего не списывает и никуда не отправляет данные: после заявки пришлю счёт или платёжную ссылку.</p>
+    <p class="dlg-note">Кнопки ничего не списывают и не отправляют данные с этой страницы.</p>
   </div>
-</div>
-
+</dialog>
+<dialog class="dlg ym-hide-content" id="pay-dialog" aria-labelledby="pay-title">
+  <div class="dlg-in">
+    <button class="dlg-close" type="button" data-dlg-close aria-label="Закрыть">×</button>
+    <p class="dlg-kicker">Оплата</p>
+    <h2 id="pay-title">Оплата настройки</h2>
+    <div class="dlg-item"><strong id="pay-service"></strong><span id="pay-price"></span></div>
+    <form class="ym-disable-keys" id="pay-form" novalidate>
+      <div class="dlg-fields">
+        <label for="pay-email">Почта для кассового чека
+          <input class="ym-disable-keys" id="pay-email" name="email" type="email" inputmode="email" autocomplete="email" required />
+        </label>
+        <label for="pay-contact">Телефон или ник в мессенджере
+          <input class="ym-disable-keys" id="pay-contact" name="contact" type="text" autocomplete="tel" maxlength="80" required />
+          <span class="dlg-hint">По нему свяжусь, чтобы договориться о времени настройки.</span>
+        </label>
+        <input class="dlg-trap" id="pay-site" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <label class="dlg-consent" for="pay-consent">
+          <input id="pay-consent" name="consent" type="checkbox" required />
+          <span id="pay-consent-text">Принимаю условия <a href="/oferta.html" target="_blank" rel="noopener">оферты</a> и согласен на обработку персональных данных по <a href="/privacy.html" target="_blank" rel="noopener">политике конфиденциальности</a>.</span>
+        </label>
+        <button class="btn-pay" id="pay-submit" type="submit">Перейти к оплате</button>
+        <p class="dlg-status" id="pay-status" data-state="idle" role="status" aria-live="polite"></p>
+        <p class="dlg-note">Оплата проходит на странице Т-Банка, картой или через СБП. Чек придёт на почту.
+          Не получается оплатить — <a href="https://max.ru/u/f9LHodD0cOJVteiYLPGUodY6uw7J5k_M_QzRJTDzXbK31nlTIokaEh5ebeM" target="_blank" rel="noopener">напишите в MAX</a>,
+          <a href="https://t.me/lavr5000" target="_blank" rel="noopener">в Telegram</a> или на
+          <a href="mailto:lavr5000xxx@gmail.com">lavr5000xxx@gmail.com</a>.</p>
+      </div>
+    </form>
+  </div>
+</dialog>
+<!-- chrome:dialogs:end -->
 </body>
 </html>

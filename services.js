@@ -17,6 +17,12 @@
  *                        NBSP и &nbsp; внутри цены, иначе сравнение с data-price-label врёт
  *   unit         { ru }  what one paid unit of the service covers
  *
+ * Optional field:
+ *   archived     true  the record is kept only so that its `id` stays immutable (old payment links,
+ *                receipts and the request register still refer to it); it is NOT shown on the site,
+ *                NOT written to llms.txt / JSON-LD and has no order or pay buttons. A button that
+ *                references an archived id is an error in `node scripts/validate_services.mjs`.
+ *
  * `title.ru` is byte-identical to the `data-order` attribute of every order button of this
  * service and to the receipt line name fixed by the PO (В-4, 13.08.2026); `priceLabel.ru` is
  * byte-identical to that button's `data-price-label`. Both are enforced by
@@ -25,6 +31,7 @@
 window.AI_SERVICES = [
   {
     id: "setup-claude-code",
+    archived: true,
     title: { ru: "Настройка Claude Code на одном рабочем месте" },
     price: { ru: "15000" },
     pricingModel: "fixed",
@@ -33,6 +40,7 @@ window.AI_SERVICES = [
   },
   {
     id: "setup-hermes-agent",
+    archived: true,
     title: { ru: "Настройка Hermes Agent на ноутбуке и телефоне" },
     price: { ru: "15000" },
     pricingModel: "fixed",
@@ -57,10 +65,35 @@ window.AI_SERVICES = [
   },
   {
     id: "setup-claude-code-start",
+    archived: true,
     title: { ru: "Настройка Claude Code «Старт» на одном рабочем месте" },
     price: { ru: "7500" },
     pricingModel: "fixed",
     priceLabel: { ru: "7 500 ₽" },
     unit:  { ru: "одно рабочее место — одно устройство Клиента; доступ к модели на первый месяц включён" },
+  },
+  {
+    id: "setup-start",
+    title: { ru: "Настройка помощника «Старт» на одном рабочем месте" },
+    price: { ru: "7500" },
+    pricingModel: "fixed",
+    priceLabel: { ru: "7 500 ₽" },
+    unit:  { ru: "одно рабочее место — компьютер и телефон одного Клиента" },
+  },
+  {
+    id: "setup-vip",
+    title: { ru: "Настройка рабочего помощника VIP на компьютере и телефоне" },
+    price: { ru: "45000" },
+    pricingModel: "fixed",
+    priceLabel: { ru: "45 000 ₽" },
+    unit:  { ru: "компьютер и телефон одного Клиента" },
+  },
+  {
+    id: "support-monthly",
+    title: { ru: "Поддержка помощника, один месяц" },
+    price: { ru: "5000" },
+    pricingModel: "fixed",
+    priceLabel: { ru: "5 000 ₽" },
+    unit:  { ru: "один календарный месяц поддержки одного Клиента" },
   },
 ];
