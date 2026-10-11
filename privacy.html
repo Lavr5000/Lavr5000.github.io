@@ -16,47 +16,47 @@
 <link rel="icon" href="/favicon.ico" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 <link rel="stylesheet" href="/assets/fonts.css?v=20260813-legal" />
-<link rel="stylesheet" href="/assets/site2.css?v=20260813-legal" />
-<link rel="stylesheet" href="/assets/legal2.css?v=20260813-legal" />
+<link rel="stylesheet" href="/assets/site2.css?v=20261011-v2" />
+<link rel="stylesheet" href="/assets/legal2.css?v=20261011-v2" />
 <script defer src="/assets/index2.app.js?v=20260813-legal"></script>
+<!-- chrome:head:begin (scripts/build_chrome.py) -->
+<meta name="build" content="47fa03afd6fa" />
+<link rel="stylesheet" href="/assets/chrome.css?v=47fa03afd6fa" />
+<script defer src="/assets/chrome.js?v=47fa03afd6fa"></script>
+<!-- chrome:head:end -->
 </head>
 <body>
 <a class="skip" href="#main">Перейти к содержанию</a>
 <div class="grain" aria-hidden="true"></div>
 
-<header class="nav" id="nav">
-  <div class="wrap nav-in">
-    <a class="brand" href="/" aria-label="AI Vibes — на главную">
-      <span class="brand-mark" aria-hidden="true">
-        <svg viewBox="0 0 24 24"><path d="M6 3.5h9l3 3V20.5H6z"/><path d="M15 3.5v3.5h3.5"/><path d="M9 14l2 2 4-4.5"/></svg>
-      </span>
-      <span class="brand-name">AI Vibes</span>
+<!-- chrome:header:begin (scripts/build_chrome.py) -->
+<header class="chrome" data-chrome>
+  <div class="chrome-in">
+    <a class="chrome-brand" href="/" aria-label="AI Vibes — на главную">
+      <span class="chrome-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3.5h9l3 3V20.5H6z"/><path d="M15 3.5v3.5h3.5"/><path d="M9 14l2 2 4-4.5"/></svg></span>
+      <span class="chrome-name">AI Vibes</span>
     </a>
-
-    <nav class="nav-links" aria-label="Разделы сайта">
-      <a class="nav-link" href="/products.html">Инструменты</a>
-      <a class="nav-link" href="/services/">Услуги</a>
-      <a class="nav-link" href="/oferta.html">Оферта</a>
+    <nav class="chrome-nav" aria-label="Разделы сайта">
+      <a href="/">Помощник</a>
+      <a href="/services/">Тарифы</a>
+      <a href="/products.html">Для строителей</a>
+      <a href="/blog/">Статьи</a>
+      <a href="/about.html">Об авторе</a>
     </nav>
-
-    <a class="btn btn-primary nav-cta" href="#doc">К документу</a>
-
-    <button class="burger" type="button" id="burger" aria-expanded="false" aria-controls="drawer" aria-label="Открыть меню">
-      <span></span>
-    </button>
+    <a class="chrome-cta" href="/#tarify">Выбрать тариф</a>
+    <button class="chrome-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="chrome-panel" aria-label="Открыть меню"><span></span><span></span><span></span></button>
   </div>
+  <div class="chrome-panel" id="chrome-panel" data-menu-panel hidden>
+    <a href="/">Помощник</a>
+    <a href="/services/">Тарифы</a>
+    <a href="/products.html">Для строителей</a>
+    <a href="/blog/">Статьи</a>
+    <a href="/about.html">Об авторе</a>
+    <a class="chrome-cta" href="/#tarify">Выбрать тариф</a>
+  </div>
+  <span class="chrome-progress" data-progress aria-hidden="true"></span>
 </header>
-
-<div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Меню">
-  <button class="drawer-close" type="button" id="drawer-close" aria-label="Закрыть меню">×</button>
-  <nav>
-    <a href="/">Главная</a>
-    <a href="/products.html">Инструменты</a>
-    <a href="/services/">Услуги</a>
-    <a href="/oferta.html">Оферта</a>
-  </nav>
-  <a class="btn btn-primary btn-wide" href="#doc">К документу</a>
-</div>
+<!-- chrome:header:end -->
 
 <main id="main">
 
@@ -716,17 +716,43 @@
 
 </main>
 
-<footer class="foot">
-  <div class="wrap foot-in">
-    <span class="meta">© 2026 ИП Лаврова Ю.Н. (ИНН 644404692540). Все права защищены.</span>
-    <span>
-      <a href="/">Главная</a>
-      <a href="/products.html">Каталог продуктов</a>
-      <a href="/oferta.html">Оферта</a>
-      <a href="/privacy.html">Конфиденциальность</a>
-    </span>
+<!-- chrome:footer:begin (scripts/build_chrome.py) -->
+<footer class="chrome-foot" data-chrome-foot>
+  <div class="chrome-foot-in">
+    <div class="chrome-foot-about">
+      <p class="chrome-foot-name">AI Vibes</p>
+      <p>Настройка рабочего помощника на компьютере и телефоне. Сервисы для строительных документов.</p>
+    </div>
+    <div>
+      <h2>Разделы</h2>
+      <ul>
+        <li><a href="/">Помощник</a></li>
+        <li><a href="/services/">Тарифы</a></li>
+        <li><a href="/products.html">Для строителей</a></li>
+        <li><a href="/blog/">Статьи</a></li>
+        <li><a href="/about.html">Об авторе</a></li>
+      </ul>
+    </div>
+    <div>
+      <h2>Каналы</h2>
+      <ul>
+        <li><a href="https://max.ru/channel_ai_vibes" target="_blank" rel="noopener">Канал в MAX</a></li>
+        <li><a href="https://t.me/ai_vibes_coding_ru" target="_blank" rel="noopener">Канал в Telegram</a></li>
+      </ul>
+    </div>
+    <div>
+      <h2>Документы</h2>
+      <ul>
+        <li><a href="/oferta.html">Оферта</a></li>
+        <li><a href="/privacy.html">Конфиденциальность</a></li>
+      </ul>
+    </div>
   </div>
+  <p class="chrome-foot-legal">AI Vibes · ИП Лаврова Ю.Н. · ИНН 644404692540 · 2026</p>
 </footer>
+<!-- chrome:footer:end -->
+
+
 
 </body>
 </html>
