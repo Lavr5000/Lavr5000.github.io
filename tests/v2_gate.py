@@ -68,8 +68,8 @@ STAGES = {
     "full": dict(pages=ALL_PAGES, keys=E1_KEYS + HOME_KEYS + E3_EXTRA + ["ym_form_protected"], scope_home_only=False),
 }
 # thresholds of the scene-era keys (PLAN-3 5.1); the two image limits are tightened to "fact + 10 %" after the build
-IMG_KB_HOME_M_MAX = 900     # KB of image/* response bodies, home page, 390x844, load + scroll to the footer
-IMG_KB_HOME_D_MAX = 1600    # the same at 1440x900
+IMG_KB_HOME_M_MAX = 210     # KB of image/* response bodies, home page, 390x844, load + scroll to the footer
+IMG_KB_HOME_D_MAX = 480    # the same at 1440x900
 LCP_MS_HOME_M_MAX = 2500    # Largest Contentful Paint, 390x844, CDP-throttled network
 LCP_NET = dict(offline=False, latency=150, downloadThroughput=int(1.6e6 / 8), uploadThroughput=int(0.75e6 / 8))   # 1.6 / 0.75 Mbit/s, 150 ms
 SCENE_PATH = "/assets/scene/"
