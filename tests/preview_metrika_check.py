@@ -7,19 +7,28 @@ Drives the shared browser service (svc_tab, own tab only) over every page that c
 assets/metrika.js and proves, per page:
   * no Content-Security-Policy violation and no page exception in the console;
   * a request to mc.yandex.ru leaves the page (tag.js load and the hit);
-  * the page's own scripts still ran (index2.app.js sets up the header; hero-demo on /);
+  * the page's own scripts still ran (the shared header is present);
 and, on the pages with download, order or contact buttons, that a click sends the matching goal
-(download_transkribator / download_apartment_auditor / order_click / contact_max) — navigation is
-prevented; the order button must open #order-modal in place, which is then closed with Escape.
-privacy.html is checked for section #p12 with its revision date and for carrying no counter.
+(download_transkribator / download_apartment_auditor / order_click / contact_max). An order trigger
+`[data-order]` (a[data-pay] or a[data-request]) must open `dialog#order-dialog` in place (navigation is
+prevented), and the goal call must carry the trigger's own service id and a `place` equal to the id of the
+nearest section (the dialog is closed afterwards). Contact clicks inside the order dialog report the
+dialog id as `place`.
+On every page with a payment link `a[data-pay]` the payment window is closed to Metrika:
+`dialog#pay-dialog.ym-hide-content`, `form#pay-form.ym-disable-keys` and the input fields
+`input.ym-disable-keys` (email, contact) must be there.
+privacy.html is checked for section #p12 with its revision date and for carrying no counter;
+spasibo/ (noindex) must carry neither the counter script nor a request to mc.yandex.
 Last line: METRIKA_PREVIEW status=<ok|fail> pages=<n> failed=<n>
 """
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 import time
 from pathlib import Path
+from urllib.parse import unquote
 
 sys.path.insert(0, str(Path.home() / ".claude" / "0 ProEKTi" / "browser-service"))
 from svc_tab import Tab  # noqa: E402
@@ -27,13 +36,18 @@ from svc_tab import Tab  # noqa: E402
 PAGES = ["/", "/about.html", "/services/", "/apps/transkribator/", "/products.html", "/blog/",
          "/blog/apartment-auditor/", "/blog/dva-prilozheniya/", "/blog/ryazan-obmer-razvertki/",
          "/blog/smeta-osnovanie-list/", "/blog/transkribator-golosom/"]
-GOALS = {  # page -> [(selector, goal id, kind)]; kind "order" = order button that opens the modal
+GOALS = {  # page -> [(selector, goal id, kind)]; kind "order" = order trigger that opens the order dialog
     "/apps/transkribator/": [('a[href*="github.com/Lavr5000/Transkribator/releases"]', "download_transkribator", "link")],
-    "/": [('a[href*="rustore.ru/catalog/app/com.lavr5000xxx.apartmentauditor"]', "download_apartment_auditor", "link"),
+    "/": [("[data-order]", "order_click", "order"),
           ('#contact a[href^="https://max.ru/"]', "contact_max", "link")],
     "/services/": [("[data-order]", "order_click", "order"),
                    ('#contact a[href^="https://max.ru/"]', "contact_max", "link")],
+    # the RuStore link of Apartment Auditor moved from the home page to the builders page with layout v2
+    "/products.html": [('a[href*="rustore.ru/catalog/app/com.lavr5000xxx.apartmentauditor"]', "download_apartment_auditor", "link"),
+                       ("[data-order]", "order_click", "order"),
+                       ('#contact a[href^="https://max.ru/"]', "contact_max", "link")],
 }
+PAY_PAGES = ["/", "/services/", "/products.html"]  # pages that carry the payment window
 
 
 # Console errors that are expected and do not fail the gate, each counted and printed separately:
@@ -94,17 +108,39 @@ def main() -> int:
             own = t.eval("!!document.querySelector('script[src^=\"/assets/metrika.js\"]') && typeof window.ym")
             header = t.eval("!!document.querySelector('header, .site-header, nav')")
             hero = t.eval("document.querySelectorAll('[data-hero-demo], .hero-demo, .term').length") if page == "/" else None
+            if page in PAY_PAGES:
+                pay_ym = t.eval("""(()=>{const d=document.querySelector('dialog#pay-dialog'), f=document.querySelector('form#pay-form');
+                    const ins=[...document.querySelectorAll('#pay-email, #pay-contact')];
+                    return !!d && d.classList.contains('ym-hide-content') && !!f && f.classList.contains('ym-disable-keys')
+                      && ins.length === 2 && ins.every(i => i.classList.contains('ym-disable-keys')) ? 1 : 0;})()""")
+            else:
+                pay_ym = None
             goal_res = []
             for sel, goal, kind in GOALS.get(page, []):
                 t.events.clear()
                 if kind == "order":
                     before = t.eval("location.href")
+                    want = t.eval(f"""(()=>{{const b=document.querySelector('{sel}'); if(!b) return null;
+                        const s = b.closest('section[id], [role="dialog"][id]');
+                        return JSON.stringify({{service: b.getAttribute('data-service-id'), place: s ? s.id : ''}});}})()""")
                     n = t.eval(f"""(()=>{{const b=document.querySelector('{sel}'); if(!b) return 0; b.click();
-                        return document.querySelector('#order-modal.is-open') ? 1 : 0;}})()""")
+                        const d=document.querySelector('#order-dialog');
+                        return d && d.open ? 1 : 0;}})()""")
                     drain(t, 3)
                     n = bool(n) and t.eval("location.href") == before
-                    t.eval("document.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape', bubbles: true}))")
-                    n = n and not t.eval("!!document.querySelector('#order-modal.is-open')")
+                    # The goal hit carries its params as site-info={"service":..,"place":..}: they must be this
+                    # trigger's own service id and the id of its nearest section.
+                    sent = [unquote(u) for u in collect(t)[0] if "goal://" in unquote(u) and "/order_click" in unquote(u)]
+                    got = None
+                    if sent and "site-info=" in sent[0]:
+                        try:
+                            got = json.loads(sent[0].split("site-info=", 1)[1].split("&", 1)[0])
+                        except ValueError:
+                            got = None
+                    exp = json.loads(want) if want else None
+                    n = n and got is not None and exp is not None and bool(got.get("place"))                         and got.get("service") == exp["service"] and got.get("place") == exp["place"]
+                    t.eval("document.querySelector('#order-dialog').close()")
+                    n = n and not t.eval("!!document.querySelector('#order-dialog[open]')")
                 else:
                     n = t.eval(f"""(()=>{{const a=document.querySelector('{sel}'); if(!a) return 0;
                         a.addEventListener('click', e=>e.preventDefault(), {{once:true}}); a.click(); return 1;}})()""")
@@ -119,11 +155,13 @@ def main() -> int:
             reqs, bad = collect(t)
             bad, intended, _ = split(bad, True)
             mc = [u for u in reqs if "mc.yandex." in u]
-            ok = own == "function" and len(mc) >= 1 and not bad and header and goal_ok is not False
+            ok = own == "function" and len(mc) >= 1 and not bad and header and goal_ok is not False \
+                and pay_ym in (None, 1)
             failed += 0 if ok else 1
             print(f"PAGE {page} ok={int(ok)} ym={own} mc_requests={len(mc)} errors={len(bad)} "
                   f"intended_blocks={len(intended)} header={int(bool(header))}"
                   + (f" hero_nodes={hero}" if hero is not None else "")
+                  + (f" pay_window_hidden_from_ym={pay_ym}" if pay_ym is not None else "")
                   + "".join(f" goal={g}:{int(r)}" for g, r in goal_res))
             for b in bad:
                 print("  ERR", b)
@@ -153,7 +191,19 @@ def main() -> int:
               f"baseline_errors={len(baseline)}")
         if a.shots:
             Path(t.shot("metrika_privacy_p12.png")).replace(Path(a.shots) / "privacy_p12_1440.png")
-    total = len(PAGES) + 1
+        # spasibo/: noindex thank-you page, no counter at all
+        t.events.clear()
+        t.goto(base + "/spasibo/?n=AV-00000000", wait=3)
+        drain(t, 2)
+        has_script = t.eval("!!document.querySelector('script[src*=\"metrika\"]')")
+        noindex = t.eval("!!document.querySelector('meta[name=robots][content*=noindex]')")
+        reqs, bad = collect(t)
+        bad, _, _ = split(bad, False)
+        ok = not has_script and noindex and not any("mc.yandex." in u for u in reqs) and not bad
+        failed += 0 if ok else 1
+        print(f"PAGE /spasibo/ ok={int(ok)} counter_script={int(bool(has_script))} noindex={int(bool(noindex))} "
+              f"mc_requests={sum('mc.yandex.' in u for u in reqs)} errors={len(bad)}")
+    total = len(PAGES) + 2
     print(f"METRIKA_PREVIEW status={'ok' if failed == 0 else 'fail'} pages={total} failed={failed}")
     return 0 if failed == 0 else 1
 

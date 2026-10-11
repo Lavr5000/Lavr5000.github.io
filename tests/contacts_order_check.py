@@ -1,16 +1,19 @@
 #!/usr/bin/env python
-"""Contact order gate (2026-10-03): MAX first, Telegram second, in every contact block.
+"""Contact order gate (2026-10-03, reworked for the v2 layout 2026-10-11): MAX, then Telegram, then e-mail.
 
     python tests/contacts_order_check.py [--root DIR] [--allow-placeholders]
 
 Static check over index.html, about.html, products.html and services/index.html in the repository
 (or in DIR, e.g. page bodies saved from production with the same relative paths). Per block:
-  * index, about, products, services: the first .final-actions inside #contact;
-  * services: .modal-actions inside #order-modal (the order dialog);
-the block passes when it has a link whose href is exactly the MAX profile URL and that link comes
-before the first link starting with the personal Telegram URL. On services/ the header stamp
-"Заявка" must name MAX before Telegram. A page carrying data-po-decision (an unfilled placeholder
-for a decision of the site owner) fails unless --allow-placeholders is given.
+  * index, about, products, services: the whole `#contact` element (from its opening tag to the
+    matching closing tag);
+  * index, products, services: the order dialog `dialog#order-dialog` (all three carry the dialogs block
+    of scripts/build_chrome.py);
+the block passes when it has a link whose href is exactly the MAX profile URL, a link starting with the
+personal Telegram URL after it, and a mailto: link after that. (The v1 gate checked MAX before Telegram
+only and read the "Заявка" stamp of services/; the stamp no longer exists, the dialog check covers it.)
+A page carrying data-po-decision (an unfilled placeholder for a decision of the site owner) fails unless
+--allow-placeholders is given.
 Last line: CONTACTS_ORDER status=<ok|fail> blocks=<n> failed=<n>
 """
 from __future__ import annotations
@@ -22,42 +25,36 @@ from pathlib import Path
 
 MAX_URL = "https://max.ru/u/f9LHodD0cOJVteiYLPGUodY6uw7J5k_M_QzRJTDzXbK31nlTIokaEh5ebeM"
 TG_URL = "https://t.me/lavr5000"
-BLOCKS = [  # (page, container id, block class)
-    ("index.html", "contact", "final-actions"),
-    ("about.html", "contact", "final-actions"),
-    ("products.html", "contact", "final-actions"),
-    ("services/index.html", "contact", "final-actions"),
-    ("services/index.html", "order-modal", "modal-actions"),
+BLOCKS = [  # (page, container id, container tag)
+    ("index.html", "contact", "section"),
+    ("about.html", "contact", "section"),
+    ("products.html", "contact", "section"),
+    ("services/index.html", "contact", "section"),
+    ("index.html", "order-dialog", "dialog"),
+    ("products.html", "order-dialog", "dialog"),
+    ("services/index.html", "order-dialog", "dialog"),
 ]
 
 
-def block_hrefs(html: str, container_id: str, cls: str):
-    m = re.search(r'id="%s"' % re.escape(container_id), html)
+def block_hrefs(html: str, container_id: str, tag: str):
+    """hrefs of all links inside <tag id="container_id"> ... its matching </tag> (nesting of the same tag counted)."""
+    m = re.search(r'<%s\b[^>]*\bid="%s"[^>]*>' % (tag, re.escape(container_id)), html)
     if not m:
         return None
-    rest = html[m.end():]
-    m2 = re.search(r'<div[^>]*class="[^"]*\b%s\b[^"]*"[^>]*>' % re.escape(cls), rest)
-    if not m2:
-        return None
-    body = rest[m2.end():]
-    end = body.find("</div>")
-    body = body if end < 0 else body[:end]
-    return re.findall(r'<a\b[^>]*\bhref="([^"]*)"', body)
+    depth, pos = 1, m.end()
+    for t in re.finditer(r"<(/?)%s\b[^>]*>" % tag, html[pos:]):
+        depth += -1 if t.group(1) else 1
+        if depth == 0:
+            return re.findall(r'<a\b[^>]*\bhref="([^"]*)"', html[pos:pos + t.start()])
+    return None
 
 
 def block_ok(hrefs) -> bool:
     if not hrefs or MAX_URL not in hrefs:
         return False
     tg = [i for i, h in enumerate(hrefs) if h.startswith(TG_URL)]
-    return bool(tg) and hrefs.index(MAX_URL) < tg[0]
-
-
-def stamp_ok(html: str) -> bool:
-    m = re.search(r"<dt>Заявка</dt>\s*<dd>(.*?)</dd>", html, re.S)
-    if not m:
-        return False
-    dd = m.group(1)
-    return "MAX" in dd and "Telegram" in dd and dd.index("MAX") < dd.index("Telegram")
+    mail = [i for i, h in enumerate(hrefs) if h.startswith("mailto:")]
+    return bool(tg) and bool(mail) and hrefs.index(MAX_URL) < tg[0] < mail[0]
 
 
 def main() -> int:
@@ -72,15 +69,12 @@ def main() -> int:
     for page in sorted({b[0] for b in BLOCKS}):
         p = root / page
         pages[page] = p.read_text(encoding="utf-8") if p.exists() else ""
-    for page, cid, cls in BLOCKS:
-        hrefs = block_hrefs(pages[page], cid, cls)
+    for page, cid, tag in BLOCKS:
+        hrefs = block_hrefs(pages[page], cid, tag)
         ok = block_ok(hrefs)
         failed += 0 if ok else 1
-        print(f"BLOCK {page}#{cid} .{cls} ok={int(ok)} links={len(hrefs or [])}")
+        print(f"BLOCK {page}#{cid} <{tag}> ok={int(ok)} links={len(hrefs or [])}")
     extra = 0
-    s_ok = stamp_ok(pages["services/index.html"])
-    print(f"STAMP services/index.html ok={int(s_ok)}")
-    extra += 0 if s_ok else 1
     for page, html in pages.items():
         if not html:
             print(f"PAGE {page} missing")

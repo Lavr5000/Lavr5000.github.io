@@ -8,7 +8,7 @@
  *   contact_max                - click on the MAX profile link; param place
  *   contact_telegram           - click on the personal t.me/lavr5000 link (not the channel); param place
  *   contact_email              - click on a mailto: link; param place
- * place = id of the nearest section or dialog (contact, order-modal, ...).
+ * place = id of the nearest section or dialog (hero, tarify, contact, order-dialog, ...).
  * The /services/ goal is a page-visit goal and needs no code.
  * Disclosed in privacy.html, section "Яндекс Метрика".
  */
@@ -46,7 +46,7 @@
   ];
 
   function place(el) {
-    var s = el.closest("section[id], [role='dialog'][id]");
+    var s = el.closest("section[id], dialog[id], [role='dialog'][id]");
     return s ? s.id : "";
   }
 

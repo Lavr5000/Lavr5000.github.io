@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -6,7 +6,9 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const files = [
   "index.html",
   "services/index.html",
+  "spasibo/index.html",
   "about.html",
+  "blog/index.html",
   "apps/transkribator/index.html",
   "products.html",
   "oferta.html",
@@ -15,6 +17,8 @@ const files = [
   "nakladnaya.html",
   "rate.html",
   "assets/site2.css",
+  "assets/site3.css",
+  "assets/chrome.css",
   "assets/fonts.css",
   "assets/forms2.css",
   "assets/legal2.css",
@@ -25,12 +29,29 @@ const files = [
   "assets/soft-prompt.js",
   "assets/textlayer-check.js",
   "assets/metrika.js",
+  "assets/chrome.js",
+  "assets/site3.js",
+  "assets/scene.js",
+  "assets/pay.js",
+  "assets/spasibo.js",
+  "assets/vendor/gsap.min.js",
+  "assets/vendor/ScrollTrigger.min.js",
+  "services.config.js",
+  "services.js",
   "products.js",
   "products.render.js",
   "vedomost.js",
   "nakladnaya.js",
   "rate.js"
 ];
+
+// Every article of the blog is a page of the site too (blog/<slug>/index.html).
+if (existsSync(join(root, "blog"))) {
+  for (const entry of readdirSync(join(root, "blog"), { withFileTypes: true })) {
+    const page = `blog/${entry.name}/index.html`;
+    if (entry.isDirectory() && existsSync(join(root, page))) files.push(page);
+  }
+}
 
 const assetLinkRels = new Set([
   "stylesheet",
@@ -48,9 +69,10 @@ function readApiOrigin() {
 }
 
 const apiOrigin = readApiOrigin();
-// Yandex Metrika (counter loader assets/metrika.js, disclosed in privacy.html) is the one
-// deliberate third-party origin since 2026-09-29.
-const allowed = new Set([apiOrigin, "https://mc.yandex.ru"]);
+// Allowed origins: the site itself (relative URLs), the order API (the payment flow of assets/pay.js and
+// the vedomost/nakladnaya forms) and Yandex Metrika (counter loader assets/metrika.js, disclosed in
+// privacy.html) — the one deliberate third-party origin since 2026-09-29. Nothing else.
+const allowed = new Set([apiOrigin, "https://api.ai-vibes.ru", "https://mc.yandex.ru", "https://ai-vibes.ru"]);
 const findings = [];
 
 function report(file, kind, value, index) {
