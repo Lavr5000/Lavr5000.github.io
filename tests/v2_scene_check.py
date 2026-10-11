@@ -104,7 +104,9 @@ const S = window.__sceneState || null;
 const tall = matchMedia('(max-aspect-ratio: 5/6)').matches;
 const rc = e => { const r = e.getBoundingClientRect(); return {l: r.left, t: r.top, r: r.right, b: r.bottom, w: r.width, h: r.height}; };
 const opac = e => { let o = 1; for (let n = e; n && n.nodeType === 1; n = n.parentElement) o *= parseFloat(getComputedStyle(n).opacity); return o; };
-const shown = e => !!e && e.getClientRects().length > 0 && getComputedStyle(e).visibility === 'visible';
+/* hidden = visibility:hidden, or (the first screen, which stays focusable for the keyboard) fully transparent and deaf to the pointer */
+const shown = e => { if (!e || !e.getClientRects().length) return false; const cs = getComputedStyle(e);
+  return cs.visibility === 'visible' && !(parseFloat(cs.opacity) <= 0.01 && cs.pointerEvents === 'none'); };
 const file = u => (u || '').split('?')[0].split('/').pop();
 const covers = (e, box) => { if (!e || !box) return false; const a = rc(e), b = rc(box); return a.l <= b.l + 2 && a.t <= b.t + 2 && a.r >= b.r - 2 && a.b >= b.b - 2; };
 const headB = () => { const h = document.querySelector('header[data-chrome]'); if (!h) return 0; const p = getComputedStyle(h).position; return p === 'fixed' || p === 'sticky' ? h.getBoundingClientRect().bottom : 0; };
