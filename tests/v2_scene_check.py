@@ -1,56 +1,87 @@
 #!/usr/bin/env python
-"""Scroll-scene gate, one-canvas version (PLAN-3.md 5.2 with the notes of section 13).
+"""Scroll-scene gate: the city behind the whole page (PLAN-3.md 5.2 as changed by PLAN-4.md 4.1).
 
     python tests/v2_scene_check.py [base_url] [--dod] [--only a,b,...]
 
-Contract (PLAN-3 4.1): `section[data-scene] > [data-scene-stage] > ([data-scene-bg] > picture > img[data-scene-base],
-canvas[data-scene-canvas], noscript > picture > img[data-scene-static]) + section#hero + 3 x [data-scene-cap]`;
-`html.scene-live` = motion is on, `html.scene-failed` = the engine gave up; `window.__sceneState` =
-{p, target, spark:[x,y]|null (CSS px inside the canvas), frames, paints, rebuilds, ready, failed, live, scale, lite}.
-Travel: P = 0.03 + 0.97 * (scrollY - y0) / span, y0 = scene top - sticky offset of the stage, span = scene height -
-stage height (taken from the page geometry). After every scroll the gate waits for p === target and a stopped loop.
+Contract: `section[data-scene] > [data-scene-stage] > ([data-scene-bg] > picture > img[data-scene-base],
+canvas[data-scene-canvas], noscript > picture > img[data-scene-static]) + section#hero + 3 x [data-scene-cap]`.
+The backdrop `[data-scene-bg]` is fixed in the window under the header for the whole page; the first screen, the
+captions and the sections scroll over it. `html.scene-live` = motion is on, `html.scene-failed` = the engine gave up,
+`html.scene-plain` = the watchdog has unpinned the backdrop on a device that does not keep up; `window.__sceneState` =
+{p, target, spark:[x,y]|null (CSS px inside the canvas), frames, paints, rebuilds, ready, failed, live, plain, slow,
+scale, lite}. Travel: P = 0.03 + 0.97 * scrollY / (document height - window height). After every scroll the gate
+waits for p === target and a stopped loop.
 Windows: full set (both engines) 360x640, 390x844, 844x390, 820x1180, 1440x900; geometry set (Chromium; a, b, e, k)
 344x882, 960x950, 1000x1190, 1000x1210, 1024x768, 1920x1080, 2560x1440, 390x844@2; low window 667x375 (both engines).
-Checks (latin letter = letter of the plan: a=а b=б c=в d=г e=д f=е g=ж h=з i=и k=к l=л m=м):
+Checks (latin letter = letter of the plan: a=а b=б c=в d=г e=д f=е g=ж h=з i=и k=к l=л m=м n=н):
   a. state: the canvas against two references the gate draws itself (files before/after of the current orientation,
-     "cover" into the stage box); 64x64 grid, points inside 170 px around the spark and points where the references
-     differ by < 24 (sum of channels) are skipped; share of points closer to "after": start <= 0.12, +>= 0.05 on
-     each of 0-25, 25-50, 50-75 %, end >= 0.98 (lite mode: mean blend share); start equals "before" (mean <= 12),
-     end equals "after" (<= 12) and differs from "before" (>= 15); the base picture is the `before` file;
-     sha256 of the eight scene files equals fixtures/v2_scene_files.json;
-  b. spark: at 0/25/50/75 % the point of the state is inside the stage (8 px inset) and the canvas there is lighter
-     than both references by >= 30 with luminance >= 200, or luminance >= 245; at the end there is no spark and
-     every grid point equals "after";
-  c. smoothness: gaps > 50 ms between requestAnimationFrame callbacks, a 3 s pass from the top of the travel to the
-     end of the container, twice, the worse counts; valid only with >= 60 frames, the end reached, P from <= 0.1 to
-     >= 0.98; 1440x900, 390x844, 390x844@2; limit 0 without throttling (both engines), <= 5 with CPU x4 (Chromium;
-     `--dod`: 0); scene repaints during a x4 pass >= 30 (paints_cpu4). Before each window the same pass over an
-     empty long page must give 0 long frames, otherwise the verdict is `invalid` (busy machine), never `ok`;
-  d. reduced motion and no scripts (both engines, five windows): no scene-live, canvas not displayed, the picture
-     (base / static) is the loaded `after` file, covers the stage and is the top backdrop layer, the stage is not
-     pinned, the first screen and three captions are visible and do not overlap, scrolling changes nothing;
-     low window 667x375 with scripts and no motion: all four blocks reachable, not clipped, not overlapping;
-  e. pin: at 25/50/75 % the stage top stands at its sticky offset under the header (+-2 px), the canvas is visible
-     (display, visibility, opacity 1), covers the stage and is the top backdrop layer (elementsFromPoint);
+     "cover" into the backdrop box); 64x64 grid, points inside 170 px around the spark and points where the
+     references differ by < 24 (sum of channels) are skipped; share of points closer to "after": start <= 0.12,
+     +>= 0.05 on each of 0-25, 25-50, 50-75 % of the page, end >= 0.98 (lite mode: mean blend share); start equals
+     "before" (mean <= 12), end equals "after" (<= 12) and differs from "before" (>= 15); the base picture is the
+     `before` file; sha256 of the eight scene files equals fixtures/v2_scene_files.json; `tree=` is the sha256 of
+     the served index.html, scene3.js, site3.css, metrika.js (with `--dod` on a local address it must equal the
+     working tree);
+  b. spark: at 0/25/50/75 % the point of the state is inside the backdrop window (8 px inset) and the canvas there is
+     lighter than both references by >= 30 with luminance >= 200, or luminance >= 245; at the end there is no spark
+     and every grid point equals "after";
+  c. smoothness, **Chromium with the video card only** (PO decision 2026-10-11, DECISIONS.md): gaps > 50 ms between
+     requestAnimationFrame callbacks, a 3 s pass over the whole page, twice, the worse counts; valid only with >= 60
+     frames, the end reached, P from <= 0.1 to >= 0.98; two kinds of pass: scrollTo from the page script and the wheel
+     gesture of the browser (Input.synthesizeScrollGesture); 1440x900, 1920x1080, 390x844, 390x844@2; limit 0 without
+     throttling, <= 5 with CPU x4 (`--dod`: 0); without throttling also frames >= 150, scene repaints >= 120, 95th
+     percentile of the gap <= 34 ms; repaints during a x4 pass >= 30 (paints_cpu4); the watchdog must stay asleep
+     (plain=false, slow <= 2), also when the page is scrolled before it has loaded on a slow network. Validity,
+     otherwise the verdict is `invalid`, never `ok`: the WebGL renderer is not a software one and the GPU process
+     reports gpu_compositing, 2d_canvas and rasterization enabled; the same pass over an empty long page gives 0 long
+     frames before and after; a fixed script workload runs >= 2.5 times slower under CPU x4. For reference only (no
+     effect on the verdict) the scripted passes are printed for software Chromium and WebKit with the watchdog
+     switched off in flight: ref_sw, ref_webkit = worst long frames without throttling / with CPU x4; ref_slow_* =
+     long gaps the watchdog has counted there; ref_regress=yes when they exceed twice the base;
+  d. reduced motion, no scripts (both engines, five windows) and `data-scene-mode="still"` (Chromium): no scene-live, canvas not displayed, the picture
+     (base / static) is the loaded `after` file, covers the backdrop window and is the top backdrop layer, the
+     backdrop is fixed under the header, the first screen and three captions are visible, in order and do not
+     overlap; scrolling (three positions) changes nothing of that;
+  e. pin: at 25/50/75 % of the page the backdrop is `position: fixed` with its top under the header (+-2 px), the
+     canvas is visible (display, visibility, opacity 1), covers the window from the header to the bottom and is the
+     top backdrop layer (elementsFromPoint); the city is really seen: city_open_d / city_open_m = mean over nine
+     scroll positions of the share of the window with nothing of opacity >= 0.05 over the scene, >= 0.35 at
+     1440x900, >= 0.15 at 390x844 (and >= 0.15 at its top position);
   f. anchors: /#tarify and `a.chrome-cta` put the block under the header (+-40 px); the page scrolls to the footer;
-  g. text on the stage: colour of the backdrop chain laid over the brightest spot (99th percentile of luminance) of
-     the visible part of both pictures against the text colour >= 4.5 (3.0 large)             -> contrast_fail;
-  h. blocks: in the middle of its travel window (first screen P <= 0.06; captions 0.2-0.36, 0.48-0.64, >= 0.76) a
-     block is opaque (>= 0.99), wholly inside the stage and under the header, the other blocks are hidden;
-     667x375: either motion with whole blocks or no motion and the low-window check of (d);
+  g. text over the scene: the first screen, the captions and every text of the page whose backdrop chain is not
+     opaque before the scene (dark glass sections): colour of the chain laid over pure white (the worst case,
+     independent of the pictures and the spark) against the text colour >= 4.5 (3.0 large)     -> contrast_fail;
+  h. blocks in the flow (five windows, 667x375 and 720x450@2 = 200 % zoom): the first screen and the three captions are opaque (>= 0.99),
+     inside the document and the window width, in the order of the markup, do not overlap, and each can be brought
+     under the header;
   i. rest: frames do not grow for 1 s (idle_frames); back from the end to 50 % the share returns (+-0.05) and the
-     spark is there; a load of /#tarify gives share >= 0.98 and no spark;
+     spark is there; a cold load of /#tarify shows the state of that place: the share equals the share after
+     scrolling there from the top (+-0.05), the spark is there; an answer of the FAQ opened at 60 %: P follows the
+     new height; a scroll past the end: P = 1; a page shorter than the window: P is finite, nothing fails;
   k. canvas scale at rest >= 1.0 up to 1920x1080, >= 0.8 at 2560x1440, >= 1.5 at density 2 (scale_min); on phone
-     windows +-80 px of window height at the same width does not rebuild the buffers;
+     windows +-80 px of window height at the same width in the middle of the page does not rebuild the buffers, does
+     not wake the watchdog and moves P by <= 0.02; canvas area <= 2.45 Mpx; the phone turned in the middle of the
+     page: the landscape pair, P of the new geometry, the pin holds;
   l. errors: page errors, console errors, failed requests = 0 (Metrika is blocked) on every ordinary load; "after"
      delayed by 3 s: until it arrives the top layer is the base `before` picture and there is no spark, then the
-     state follows P; "after" answers 404: scene-failed, static page, the visible base picture is the loaded
-     `before` file and covers the stage; a throw inside the frame (scene3.js patched in flight): scene-failed, the
+     state follows P; "after" answers 404: scene-failed, static backdrop, the visible base picture is the loaded
+     `before` file and covers the window; a throw inside the frame (scene3.js patched in flight): scene-failed, the
      visible base picture is the loaded `after` file;
-  m. lite mode (Chromium 390x844, `data-scene-mode="lite"` patched into the page in flight): a, b, c, h.
-Last line: SCENE status=ok|fail|invalid engines=N after_start=.. after_end=.. p_range=.. long_frames=..
+  m. lite mode (Chromium 390x844, `data-scene-mode="lite"` patched into the page in flight): a, b, c, h;
+  n. watchdog (1440x900 and 390x844@2; a 70 ms busy loop patched into scene3.js in flight, the patch must apply
+     exactly once or the verdict is `invalid`): in every frame -> plain after one pass, in every 20th frame -> plain
+     within three passes (both engines); in every 70th frame, three passes, Chromium with the video card -> stays
+     live, slow <= 2. Once plain: `html.scene-plain`, no scene-live, the canvas is not displayed, the backdrop is no
+     longer fixed, the visible base picture is the loaded `after` file, no script errors, the four blocks stand
+     where they stood (+-1 px), text contrast holds over the opaque body, the footer is reachable, plainAt /
+     slowTotal >= 8 / maxGap >= 50 are filled, the event `scene:plain` has fired once and the queue of the Metrika
+     counter holds exactly one reachGoal `scene_plain`; the key in sessionStorage carries the build and the mode;
+     after a reload of the tab the page is plain at once, draws nothing and sends no second goal. Everywhere else
+     stepwise scrolling leaves the watchdog counter at 0;
+  o. no backdrop blur: computed backdrop-filter is `none` for every node inside `main`.
+Last line: SCENE status=ok|fail|invalid engines=N gpu=.. after_start=.. after_end=.. p_range=.. long_frames=..
            long_frames_nothrottle=.. paints_cpu4=.. pin_dev=.. contrast_fail=.. idle_frames=.. errors=.. scale_min=..
-           [only=..] [calib=..] [webkit=reason] [miss=..]
+           ref_sw=.. ref_webkit=.. [only=..] [calib=..] [webkit=reason] [miss=..]
 Exit 0 = ok, 1 = fail, 2 = invalid. Frame numbers depend on the machine; the last word on smoothness is the phone.
 """
 from __future__ import annotations
@@ -65,7 +96,7 @@ import urllib.request
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from v2_gate import Served, block_metrika, settle   # noqa: E402
+from v2_gate import ROOT, Served, block_metrika, http_get, settle   # noqa: E402
 
 FIXTURE = Path(__file__).resolve().parent / "fixtures" / "v2_scene_files.json"
 SCENE_DIR = "/assets/scene/"
@@ -76,19 +107,36 @@ FULL = [("360x640", 360, 640, True, 1), ("390x844", 390, 844, True, 1), ("844x39
 GEOM = [("344x882", 344, 882, True, 1), ("960x950", 960, 950, False, 1), ("1000x1190", 1000, 1190, False, 1),
         ("1000x1210", 1000, 1210, False, 1), ("1024x768", 1024, 768, False, 1), ("1920x1080", 1920, 1080, False, 1),
         ("2560x1440", 2560, 1440, False, 1), ("390x844@2", 390, 844, True, 2)]
-LOW = ("667x375", 667, 375, True, 1)
-SMOOTH = [("1440x900", 1440, 900, False, 1), ("390x844", 390, 844, True, 1), ("390x844@2", 390, 844, True, 2)]
+LOWS = [("667x375", 667, 375, True, 1), ("720x450@2", 720, 450, False, 2)]   # the second = 1440x900 at 200 % zoom
+SMOOTH = [("1440x900", 1440, 900, False, 1), ("1920x1080", 1920, 1080, False, 1), ("390x844", 390, 844, True, 1), ("390x844@2", 390, 844, True, 2)]
 FAULT = [("390x844", 390, 844, True, 1), ("1440x900", 1440, 900, False, 1)]
 LITE = ("390x844", 390, 844, True, 1)
-LETTERS = "abcdefghiklm"
+LETTERS = "abcdefghiklmno"
 # thresholds (PLAN-3 5.2; not to be loosened)
 LONG_MS, LONG_LIMIT, LONG_LIMIT_NOTHROTTLE, PASS_MS, MIN_FRAMES, MIN_PAINTS = 50, 5, 0, 3000, 60, 30
 START_MAX, STEP_MIN, END_MIN, RETURN_TOL = 0.12, 0.05, 0.98, 0.05
 RGB_MAX, REF_DELTA_MIN, END_POINT_MAX, MIN_POINTS = 12.0, 15.0, 40.0, 400
 SPARK_LUM, SPARK_GAIN, SPARK_WHITE, SPARK_INSET = 200, 30, 245, 8
-PIN_TOL, ANCHOR_TOL, VISIBLE_MIN, HIDDEN_MAX = 2.0, 40, 0.99, 0.01
+PIN_TOL, ANCHOR_TOL, VISIBLE_MIN = 2.0, 40, 0.99
 P0, P_SPAN, P_TOL = 0.03, 0.97, 0.004                       # engine: P = 0.03 + 0.97 * share of the travel
-BLOCK_WIN = [(P0, 0.06), (0.2, 0.36), (0.48, 0.64), (0.76, 1.0)]   # fully visible ranges, constant WIN of scene3.js
+# (c) is measured in Chromium with the video card (PO decision 2026-10-11); a software renderer makes the verdict `invalid`
+GPU_ARGS = ["--use-angle=d3d11", "--enable-gpu", "--ignore-gpu-blocklist"]
+SOFT_GPU = re.compile(r"swiftshader|llvmpipe|software|basic render|^none", re.I)
+SLOW_OK = 2                                                 # watchdog counter allowed after the passes with the video card
+# with the video card, without throttling (PLAN-4 4.1, from the base of section 2: 180 frames, 179 repaints, 17 ms)
+GPU_FRAMES, GPU_PAINTS, GPU_P95 = 150, 120, 34.0
+GPU_FEATURES = ("gpu_compositing", "2d_canvas", "rasterization")
+# reference runs, a flag only: twice the base (PLAN-4 section 2; WebKit: 31 at 1920x1080, the window added by the review,
+# first measured 2026-10-11 on the draft)
+REF_MAX = {"sw_nt": 2, "sw_cpu4": 6, "webkit_nt": 62}
+CITY_MIN = {"d": 0.35, "m": 0.15}                           # (e) mean share of the window where the city is open
+CITY_TOP_M, CANVAS_MAX_PX, HEIGHT_P_TOL = 0.15, 2450000, 0.02
+TREE_FILES = [("/", "index.html"), ("/assets/scene3.js", "assets/scene3.js"), ("/assets/site3.css", "assets/site3.css"),
+              ("/assets/metrika.js", "assets/metrika.js")]
+WATCH_OFF_AT = re.compile(r"\bSLOW = 8\b")                  # reference runs: the watchdog never trips, it only counts
+BUSY_AT = re.compile(r"S\.frames\+\+;")                      # (n) a 70 ms busy loop goes into the frame here
+BUSY_CODE = " if (S.frames %% %d === 0) { var __b = performance.now(); while (performance.now() - __b < 70) {} }"
+WATCHES = [("1440x900", 1440, 900, False, 1), ("390x844@2", 390, 844, True, 2)]
 METRIKA = re.compile(r"mc\.yandex|yandex\.ru/an|yastatic")
 
 # ---------------------------------------------------------------- in-page helpers (prepended to every snippet)
@@ -108,16 +156,17 @@ const opac = e => { let o = 1; for (let n = e; n && n.nodeType === 1; n = n.pare
 const shown = e => { if (!e || !e.getClientRects().length) return false; const cs = getComputedStyle(e);
   return cs.visibility === 'visible' && !(parseFloat(cs.opacity) <= 0.01 && cs.pointerEvents === 'none'); };
 const file = u => (u || '').split('?')[0].split('/').pop();
-const covers = (e, box) => { if (!e || !box) return false; const a = rc(e), b = rc(box); return a.l <= b.l + 2 && a.t <= b.t + 2 && a.r >= b.r - 2 && a.b >= b.b - 2; };
 const headB = () => { const h = document.querySelector('header[data-chrome]'); if (!h) return 0; const p = getComputedStyle(h).position; return p === 'fixed' || p === 'sticky' ? h.getBoundingClientRect().bottom : 0; };
+/* the window of the backdrop: from the header down to the bottom of the viewport */
+const view = () => ({l: 0, t: headB(), r: innerWidth, b: innerHeight});
+const covers = e => { if (!e) return false; const a = rc(e), b = view(); return a.l <= b.l + 2 && a.t <= b.t + 2 && a.r >= b.r - 2 && a.b >= b.b - 2; };
 const luma = (d, i) => 0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2];
 const state = () => S ? {p: S.p, target: S.target, spark: S.spark ? [S.spark[0], S.spark[1]] : null, frames: S.frames, paints: S.paints,
-  rebuilds: S.rebuilds, ready: !!S.ready, failed: !!S.failed, live: !!S.live, scale: S.scale, lite: !!S.lite} : null;
-/* the top backdrop layer in the middle of the visible part of the stage; the backdrop ignores the pointer, so for
+  rebuilds: S.rebuilds, ready: !!S.ready, failed: !!S.failed, live: !!S.live, plain: !!S.plain, slow: S.slow | 0, slowTotal: S.slowTotal | 0, maxGap: +S.maxGap || 0, plainAt: S.plainAt, scale: S.scale, lite: !!S.lite} : null;
+/* the top backdrop layer in the middle of the backdrop window; the backdrop ignores the pointer, so for
    the moment of the hit test it is made hittable through CSSOM (no style element: the page has a CSP) */
 const topLayer = () => {
-  const st = rc(stage), x = (Math.max(st.l, 0) + Math.min(st.r, innerWidth)) / 2, y = (Math.max(st.t, 0) + Math.min(st.b, innerHeight)) / 2;
-  if (!(x >= 0 && x < innerWidth && y >= 0 && y < innerHeight) || st.b <= 0 || st.t >= innerHeight) return 'offscreen';
+  const st = view(), x = (st.l + st.r) / 2, y = (st.t + st.b) / 2;
   const els = [bg, ...bg.querySelectorAll('*')], old = els.map(e => [e.style.getPropertyValue('pointer-events'), e.style.getPropertyPriority('pointer-events')]);
   els.forEach(e => e.style.setProperty('pointer-events', 'auto', 'important'));
   const hit = document.elementsFromPoint(x, y).find(n => bg.contains(n) && n !== bg);
@@ -156,18 +205,17 @@ def js(body: str, is_async: bool = False) -> str:
 INFO_JS = js(r"""
   const scenes = document.querySelectorAll('section[data-scene]').length;
   if (!scene || !stage || !bg) return {ok: false, scenes};
-  const de = document.documentElement, sr = rc(scene), st = rc(stage), css = getComputedStyle(stage);
-  const pic = e => e ? {file: file(e.currentSrc || e.src), ok: e.complete && e.naturalWidth > 0, shown: shown(e), covers: covers(e, stage)} : null;
+  const de = document.documentElement, sr = rc(scene), br = rc(bg), css = getComputedStyle(bg);
+  const pic = e => e ? {file: file(e.currentSrc || e.src), ok: e.complete && e.naturalWidth > 0, shown: shown(e), covers: covers(e)} : null;
   const ccs = cv ? getComputedStyle(cv) : null, cr = cv ? rc(cv) : null;
   return {ok: true, scenes, W: innerWidth, H: innerHeight, y: scrollY, maxY: de.scrollHeight - innerHeight, docH: de.scrollHeight,
-    live: root.classList.contains('scene-live'), failed: root.classList.contains('scene-failed'), tall, S: state(),
-    sceneTop: sr.t + scrollY, sceneH: sr.h, sceneL: sr.l, sceneR: sr.r, stageTop: st.t, stageDocTop: st.t + scrollY, stageH: stage.offsetHeight,
-    stageB: st.b, stageL: st.l, stageR: st.r, pos: css.position, sticky: parseFloat(css.top) || 0, head: headB(),
+    live: root.classList.contains('scene-live'), failed: root.classList.contains('scene-failed'), plain: root.classList.contains('scene-plain'), tall, S: state(),
+    sceneTop: sr.t + scrollY, sceneH: sr.h, bgTop: br.t, bgB: br.b, pos: css.position, head: headB(),
     base: pic(base), static: pic(stat), canvases: bg.querySelectorAll('canvas').length,
-    canvas: cv ? {display: ccs.display, visibility: ccs.visibility, opacity: opac(cv), covers: covers(cv, stage), w: cv.width, h: cv.height,
+    canvas: cv ? {display: ccs.display, visibility: ccs.visibility, opacity: opac(cv), covers: covers(cv), px: cv.width * cv.height, w: cv.width, h: cv.height,
                   scale: cr.w > 0 && cr.h > 0 ? Math.min(cv.width / cr.w, cv.height / cr.h) : 0} : null,
     caps: caps.length, hero: !!hero, top: topLayer(),
-    blocks: blocks.map(e => { const r = rc(e); return {vis: shown(e) && r.w > 1 && r.h > 1, o: opac(e), l: r.l, t: r.t, r: r.r, b: r.b, dt: r.t + scrollY, db: r.b + scrollY}; })};
+    blocks: blocks.map(e => { const r = rc(e); return {vis: shown(e) && r.w > 1 && r.h > 1, o: opac(e), l: r.l, t: r.t, r: r.r, b: r.b, h: r.h, dt: r.t + scrollY, db: r.b + scrollY}; })};
 """)
 # the canvas against the references; never reads the live canvas back directly (it is drawn into a small copy)
 GRID_JS = js(r"""
@@ -185,7 +233,7 @@ GRID_JS = js(r"""
     n++; if (dA < dB) near++; mix += Math.min(1, Math.max(0, num / den));
   }
   let spark = null;
-  if (sp) { const st = rc(stage), c = rc(cv), vx = c.l + sp[0], vy = c.t + sp[1], I = arg.inset;
+  if (sp) { const st = view(), c = rc(cv), vx = c.l + sp[0], vy = c.t + sp[1], I = arg.inset;
     spark = {x: sp[0], y: sp[1], inside: vx >= st.l + I && vx <= st.r - I && vy >= st.t + I && vy <= st.b - I && vx >= I && vx <= innerWidth - I,
              lum: patch(cv, R, sp[0], sp[1]), ref: Math.max(patch(R.b, R, sp[0], sp[1]), patch(R.a, R, sp[0], sp[1]))}; }
   return {n, share: n ? (S.lite ? mix : near) / n : -1, madB: nB ? sB / nB / 3 : 999, madA: sA / (N * N) / 3, maxA: maxA / 3,
@@ -202,24 +250,19 @@ WAIT_JS = r"""async ({exp, lim, tol}) => {
   }
   return {ok: false, p: s ? s.p : null, target: s ? s.target : null, ready: s ? !!s.ready : null};
 }"""
+# the pass goes on for 400 ms after the end is reached: the travel catches up with the scroll, those frames count too
 PASS_JS = r"""({y0, y1, ms}) => new Promise(res => {
   const S = window.__sceneState || {}, ts = [], pa = S.paints | 0, t0 = performance.now(); let lo = 9, hi = -9;
   window.scrollTo(0, y0);
   const f = t => { ts.push(t); if (typeof S.p === 'number') { if (S.p < lo) lo = S.p; if (S.p > hi) hi = S.p; }
     const k = Math.min(1, (t - t0) / ms); window.scrollTo(0, y0 + (y1 - y0) * k);
-    if (k < 1) requestAnimationFrame(f); else res({ts, lo, hi, paints: (S.paints | 0) - pa, y: scrollY}); };
+    if (t - t0 < ms + 400) requestAnimationFrame(f); else res({ts, lo, hi, paints: (S.paints | 0) - pa, y: scrollY, plain: !!S.plain, slow: S.slow | 0}); };
   requestAnimationFrame(f);
 })"""
 BLANK_HTML = "<!doctype html><meta charset=utf-8><title>calibration</title><body style='margin:0;background:#fff'><div style='height:%dpx'></div>"
 # (g) contrast of the text of the given blocks over the brightest spot of both pictures
 CONTRAST_JS = js(r"""
-  let R; try { R = await refs(); } catch (e) { return {err: String(e.message || e)}; }
-  if (!R.bright) R.bright = [R.b, R.a].map(c => {                      /* colour of the 99th percentile of luminance */
-    const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data, hist = new Uint32Array(256);
-    for (let i = 0; i < d.length; i += 4) hist[Math.round(luma(d, i))]++;
-    let k = 0, acc = 0; const need = d.length / 4 * 0.99; for (; k < 255; k++) { acc += hist[k]; if (acc >= need) break; }
-    let r = 0, g = 0, b = 0, n = 0; for (let i = 0; i < d.length; i += 4) if (Math.round(luma(d, i)) === k) { r += d[i]; g += d[i + 1]; b += d[i + 2]; n++; }
-    return [r / n, g / n, b / n, 1]; });
+  const WHITE = [255, 255, 255, 1];             /* the worst backdrop under a translucent layer */
   const t = document.createElement('canvas'); t.width = t.height = 1; const g1 = t.getContext('2d', {willReadFrequently: true}), cache = new Map();
   const rgba = c => { if (cache.has(c)) return cache.get(c); g1.clearRect(0, 0, 1, 1); g1.fillStyle = '#000'; g1.fillStyle = c; g1.fillRect(0, 0, 1, 1);
     const d = g1.getImageData(0, 0, 1, 1).data, a = d[3] / 255, v = a ? [d[0], d[1], d[2], a] : [0, 0, 0, 0]; cache.set(c, v); return v; };
@@ -228,28 +271,58 @@ CONTRAST_JS = js(r"""
   const own = e => [...e.childNodes].some(n => n.nodeType === 3 && /[\p{L}\p{N}]/u.test(n.nodeValue));
   const lab = e => e.tagName.toLowerCase() + (typeof e.className === 'string' && e.className.trim() ? '.' + e.className.trim().split(/\s+/)[0] : '') + '"' + e.textContent.trim().slice(0, 16) + '"';
   let checked = 0, fail = 0, worst = 99; const samples = [];
-  for (const bi of arg.blocks) { const blk = blocks[bi]; if (!blk) continue;
-    for (const e of [blk, ...blk.querySelectorAll('*')]) {
-      if (e.closest('svg') || !own(e) || !shown(e)) continue;
+  let inBlocks = 0, onGlass = 0; const main = document.querySelector('main') || document.body;
+  { for (const e of main.querySelectorAll('*')) {
+      if (e.closest('svg') || e.closest('[data-scene-bg]') || !own(e) || !shown(e)) continue;
+      const mine = blocks.some(b => b.contains(e));
       const cs = getComputedStyle(e), r = rc(e); if (r.w < 2 || r.h < 2) continue;
       /* backdrop chain from the text up to the stage: every layer is a list of alternatives (a gradient = its stops) */
       const layers = [];
-      for (let n = e; n && n !== stage; n = n.parentElement) { const s = getComputedStyle(n), o = opac(n), alts = [];
+      let open = true; for (let n = e; n && n !== document.body; n = n.parentElement) { const s = getComputedStyle(n), o = opac(n), alts = [];
         const stops = s.backgroundImage && s.backgroundImage !== 'none' ? (s.backgroundImage.match(/rgba?\([^)]*\)|#[0-9a-f]{3,8}\b/gi) || []) : [];
         const bc = rgba(s.backgroundColor);
         if (stops.length) { for (const c of stops) { const v = rgba(c), a = v[3] + bc[3] * (1 - v[3]), m = k => a ? (v[k] * v[3] + bc[k] * bc[3] * (1 - v[3])) / a : 0; alts.push([m(0), m(1), m(2), a * o]); } }
         else if (bc[3] > 0) alts.push([bc[0], bc[1], bc[2], bc[3] * o]);
-        if (alts.length) { layers.push(alts); if (alts.every(a => a[3] >= 0.999)) break; } }
+        if (alts.length) { layers.push(alts); if (alts.every(a => a[3] >= 0.999)) { open = false; break; } } }
+      if (!mine && !open) continue;                 /* ordinary text on an opaque sheet: the general gate judges it */
+      if (mine) inBlocks++; else onGlass++;
       const tc = rgba(cs.color), text = [tc[0], tc[1], tc[2], tc[3] * opac(e)];
       let ratio = 99; const walk = (i, bgc) => { if (i < 0) { const fg = over(text, bgc), l1 = lum(fg), l2 = lum(bgc); ratio = Math.min(ratio, (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05)); return; }
         for (const a of layers[i]) walk(i - 1, over(a, bgc)); };
-      for (const px of R.bright) walk(layers.length - 1, px);
+      walk(layers.length - 1, WHITE);
       const fs = parseFloat(cs.fontSize), fw = parseInt(cs.fontWeight) || 400, large = fs >= 24 || (fs >= 18.66 && fw >= 700);
       checked++; if (ratio < worst) worst = ratio;
       if (ratio < (large ? 3 : 4.5)) { fail++; if (samples.length < 4) samples.push(lab(e) + '=' + ratio.toFixed(2)); }
     } }
-  return {checked, fail, worst, samples, bright: R.bright.map(c => c.slice(0, 3).map(Math.round))};
+  const bb = rgba(getComputedStyle(document.body).backgroundColor);
+  return {checked, inBlocks, onGlass, fail, worst, samples, bodyOpaque: bb[3] >= 0.999};
 """, True)
+# (e) share of the backdrop window where nothing with opacity >= 0.05 lies over the scene (24x24 points)
+OPEN_JS = js(r"""
+  const v = view(), M = 24; let open = 0, n = 0;
+  const t = document.createElement('canvas'); t.width = t.height = 1; const g1 = t.getContext('2d', {willReadFrequently: true});
+  const alpha = c => { g1.clearRect(0, 0, 1, 1); g1.fillStyle = '#000'; g1.fillStyle = c; g1.fillRect(0, 0, 1, 1); return g1.getImageData(0, 0, 1, 1).data[3] / 255; };
+  for (let j = 0; j < M; j++) for (let i = 0; i < M; i++) {
+    const x = (i + 0.5) / M * (v.r - v.l), y = v.t + (j + 0.5) / M * (v.b - v.t); let a = 0;
+    for (const e of document.elementsFromPoint(x, y)) { if (bg.contains(e) || e === document.body || e === root) break;
+      const cs = getComputedStyle(e); a = Math.max(a, alpha(cs.backgroundColor) * opac(e)); if (cs.backgroundImage !== 'none') a = Math.max(a, 0.9); }
+    n++; if (a < 0.05) open++;
+  }
+  return open / n;
+""")
+# (o) no backdrop blur inside main
+BLUR_JS = r"""() => { const m = document.querySelector('main'); if (!m) return ['no_main'];
+  return [m, ...m.querySelectorAll('*')].filter(e => { const cs = getComputedStyle(e); const v = cs.backdropFilter || cs.webkitBackdropFilter || 'none'; return v !== 'none'; })
+    .slice(0, 4).map(e => e.tagName.toLowerCase() + (e.id ? '#' + e.id : '')); }"""
+# expected travel of the current scroll position, by the formula of the engine
+EXPECT_JS = r"""() => { const de = document.documentElement; return 0.03 + 0.97 * Math.min(1, Math.max(0, scrollY / Math.max(1, de.scrollHeight - de.clientHeight))); }"""
+# (c) a recorder for the scroll gesture of the browser
+REC_JS = r"""() => { const S = window.__sceneState || {}; window.__rec = {ts: [], ys: [], lo: 9, hi: -9, pa: S.paints | 0, on: true};
+  const f = t => { const R = window.__rec; R.ts.push(t); R.ys.push(scrollY); if (typeof S.p === 'number') { if (S.p < R.lo) R.lo = S.p; if (S.p > R.hi) R.hi = S.p; }
+    if (R.on) requestAnimationFrame(f); }; requestAnimationFrame(f); }"""
+REC_END_JS = r"""(maxY) => { const R = window.__rec, S = window.__sceneState || {}; R.on = false;
+  const ts = R.ts.filter((t, i) => R.ys[i] > 0 && R.ys[i] < maxY - 1);
+  return {ts, lo: R.lo, hi: R.hi, paints: (S.paints | 0) - R.pa, y: scrollY, plain: !!S.plain, slow: S.slow | 0}; }"""
 ANCHOR_JS = r"""() => {
   const t = document.querySelector('#tarify'); if (!t) return {found: false};
   const h = document.querySelector('header[data-chrome]'); let off = 0;
@@ -270,6 +343,7 @@ class Agg:
     def __init__(self, want, dod):
         self.want, self.long_limit = want, 0 if dod else LONG_LIMIT
         self.miss, self.miss_c, self.calib_bad, self.err_samples = [], [], [], []
+        self.plain_seen, self.city, self.slow_total = False, {}, None
         self.start = self.end = self.p_lo = self.p_hi = self.long = self.long_nt = self.paints = None
         self.pin = self.contrast = self.idle = self.errors = self.scale = None
 
@@ -351,19 +425,14 @@ def frame_gaps(ts):
 
 
 class Travel:
-    """Scroll positions of the scene travel, from the geometry of the page."""
+    """Scroll positions of the scene travel: the whole page, from the top to the last scroll position."""
 
     def __init__(self, info):
-        self.y0 = max(0.0, info["sceneTop"] - info["sticky"])
-        self.span = info["sceneH"] - info["stageH"]
-        self.end = min(info["maxY"], info["sceneTop"] + info["sceneH"])          # end of the container
-        self.ok = self.span >= 50 and self.y0 + self.span <= info["maxY"] + 1
+        self.y0, self.span, self.end = 0.0, float(info["maxY"]), float(info["maxY"])
+        self.ok = self.span >= 50
 
     def y(self, part):
-        return self.y0 + self.span * part
-
-    def y_of_p(self, p):
-        return self.y((p - P0) / P_SPAN)
+        return self.span * part
 
 
 def go(pg, y, exp=None, limit=8000):
@@ -385,11 +454,13 @@ def scene_basics(info, tag, A, lite=False):
         A.fail(tag, f"markup(scenes={info['scenes']},canvases={info['canvases']},caps={info['caps']},hero={info['hero']})")
     if lite != S["lite"]:
         A.fail(tag, f"lite_mode={S['lite']}")
-    if "e" in A.want and info["pos"] != "sticky":
+    if "e" in A.want and info["pos"] != "fixed":
         A.fail(tag, f"pin@rest(position={info['pos']})")
+    if S["plain"] or info["plain"]:
+        A.fail(tag, f"watchdog_tripped_at_rest(slow={S['slow']})")
     T = Travel(info)
     if not T.ok:
-        A.fail(tag, f"travel(span={T.span:.0f},y0={T.y0:.0f},maxY={info['maxY']:.0f})")
+        A.fail(tag, f"travel(span={T.span:.0f})")
         return None
     return T
 
@@ -424,6 +495,8 @@ def check_travel(pg, tag, A, T, want, log, spec):
         A.lo("scale", sc)
         if sc < need - 0.005 or abs(sc - info["S"]["scale"]) > 0.02:
             A.fail(tag, f"scale={sc:.2f}<{need}(state={info['S']['scale']:.2f})")
+        if info["canvas"]["px"] > CANVAS_MAX_PX:
+            A.fail(tag, f"canvas_px={info['canvas']['px']}>{CANVAS_MAX_PX}")
         line += f" scale={sc:.2f}"
     if "i" in want:
         f0 = pg.evaluate("window.__sceneState.frames")
@@ -457,11 +530,11 @@ def check_travel(pg, tag, A, T, want, log, spec):
         if "e" in want and part in (0.25, 0.5, 0.75):
             i2 = pg.evaluate(INFO_JS)
             c = i2["canvas"]
-            dev = max(abs(i2["stageTop"] - i2["sticky"]), abs(i2["stageTop"] - i2["head"]) if i2["head"] else 0)
+            dev = abs(i2["bgTop"] - i2["head"])
             A.hi("pin", dev)
             seen = c["display"] != "none" and c["visibility"] == "visible" and c["opacity"] >= 0.999 and c["covers"]
-            if dev > PIN_TOL or i2["pos"] != "sticky":
-                A.fail(tag, f"pin@{part}(dev={dev:.1f},position={i2['pos']},top={i2['stageTop']:.0f},sticky={i2['sticky']:.0f},head={i2['head']:.0f})")
+            if dev > PIN_TOL or i2["pos"] != "fixed":
+                A.fail(tag, f"pin@{part}(dev={dev:.1f},position={i2['pos']},top={i2['bgTop']:.0f},head={i2['head']:.0f})")
             if not seen or i2["top"] != "canvas":
                 A.fail(tag, f"canvas_not_seen@{part}(display={c['display']},visibility={c['visibility']},opacity={c['opacity']:.2f},covers={c['covers']},top_layer={i2['top']})")
     if "a" in want:
@@ -485,69 +558,116 @@ def check_travel(pg, tag, A, T, want, log, spec):
         g = pg.evaluate(GRID_JS, {"inset": SPARK_INSET}) if w["ok"] else {"err": "settle"}
         if g.get("err") or abs(g["share"] - shares[2]) > RETURN_TOL or not spark_ok(g["spark"]):
             A.fail(tag, f"return_to_50({g.get('err') or '%.2f_vs_%.2f,spark:%s' % (g['share'], shares[2], spark_txt(g['spark']))})")
+    st = pg.evaluate("({plain: !!window.__sceneState.plain, slow: window.__sceneState.slow | 0})")
+    if st["plain"] or st["slow"]:                      # stepwise scrolling must never wake the watchdog
+        A.fail(tag, f"watchdog_awake(plain={st['plain']},slow={st['slow']})")
     log(line + f" after={['%.2f' % s for s in shares]} pin={A.pin if A.pin is not None else 'na'}")
     return shares
 
 
-def check_rebuilds(pg, tag, A, spec):
-    """(k) phone: +-80 px of window height at the same width must not rebuild the buffers."""
+def check_rebuilds(pg, tag, A, spec, T):
+    """(k) phone: +-80 px of window height at the same width in the middle of the page: no rebuild, a quiet watchdog, P in place."""
     _, w, h, _, _ = spec
-    r0 = pg.evaluate("window.__sceneState.rebuilds")
+    go(pg, T.y(0.5))
+    s0 = pg.evaluate("({r: __sceneState.rebuilds, slow: __sceneState.slow | 0, t: __sceneState.target})")
     for dh in (-80, 80, 0):
         pg.set_viewport_size({"width": w, "height": h + dh})
         pg.wait_for_timeout(450)                                         # the engine debounces resize by 150 ms
+        s1 = pg.evaluate("({r: __sceneState.rebuilds, slow: __sceneState.slow | 0, t: __sceneState.target})")
+        if s1["r"] != s0["r"] or s1["slow"] != s0["slow"] or abs(s1["t"] - s0["t"]) > HEIGHT_P_TOL:
+            A.fail(tag, f"height{dh:+d}(rebuilds={s0['r']}->{s1['r']},slow={s0['slow']}->{s1['slow']},p={s0['t']:.3f}->{s1['t']:.3f})")
     pg.evaluate(WAIT_JS, {"exp": None, "lim": 4000, "tol": P_TOL})
-    r1 = pg.evaluate("window.__sceneState.rebuilds")
-    if r1 != r0:
-        A.fail(tag, f"rebuilds_on_height_change={r0}->{r1}")
-    return r1 - r0
+    return pg.evaluate("__sceneState.rebuilds") - s0["r"]
 
 
-def block_misses(info, i, where):
-    """(h) block i at the middle of its window: opaque, inside the stage, under the header, the others hidden."""
+def check_rotation(pg, tag, A, spec, T):
+    """(k) the phone is turned in the middle of the page: the landscape pair, the travel of the new geometry, the pin."""
+    _, w, h, _, _ = spec
+    go(pg, T.y(0.5))
+    pg.set_viewport_size({"width": h, "height": w})
+    pg.wait_for_timeout(900)
+    wt = pg.evaluate(WAIT_JS, {"exp": None, "lim": 10000, "tol": P_TOL})
+    info, exp = pg.evaluate(INFO_JS), pg.evaluate(EXPECT_JS)
+    g = pg.evaluate(GRID_JS, {"inset": SPARK_INSET}) if wt["ok"] else {"err": f"settle(p={wt['p']},target={wt['target']})"}
+    b, S = info["base"] or {}, info["S"] or {}
+    if g.get("err") or info["tall"] or "_pc." not in (b.get("file") or "") or not S.get("ready") or S.get("plain") or S.get("failed") \
+            or abs(wt["target"] - exp) > P_TOL or info["pos"] != "fixed" or abs(info["bgTop"] - info["head"]) > PIN_TOL or info["top"] != "canvas" \
+            or not info["canvas"]["covers"] or g["n"] < MIN_POINTS or not 0.03 < g["share"] < 0.97 or (exp < 0.99 and not spark_ok(g["spark"])):
+        A.fail(tag, f"rotation({g.get('err') or 'share=%.2f,points=%s' % (g['share'], g['n'])},file={b.get('file')},ready={S.get('ready')},p={wt['target']}_vs_{exp:.3f},"
+                    f"pos={info['pos']},top_layer={info['top']})")
+    pg.set_viewport_size({"width": w, "height": h})
+    pg.wait_for_timeout(900)
+    return g.get("share", -1)
+
+
+def check_height(pg, tag, A, T):
+    """(i) the page changes its height and its ends: an opened answer, a scroll past the end, a page shorter than the window."""
+    go(pg, T.y(0.6))
+    s0 = pg.evaluate("__sceneState.slow | 0")
+    if not pg.evaluate("() => { const d = document.querySelector('#faq details'); if (!d) return false; d.open = true; return true; }"):
+        A.fail(tag, "faq_details_missing")
+    pg.wait_for_timeout(300)
+    w, exp = pg.evaluate(WAIT_JS, {"exp": None, "lim": 6000, "tol": P_TOL}), pg.evaluate(EXPECT_JS)
+    if not w["ok"] or abs(w["target"] - exp) > P_TOL or pg.evaluate("__sceneState.slow | 0") != s0:
+        A.fail(tag, f"answer_opened(p={w['target']}_vs_{exp:.4f},settled={w['ok']})")
+    w = go(pg, 1e9, 1.0)
+    if not w["ok"]:
+        A.fail(tag, f"past_the_end(p={w['p']},target={w['target']})")
+    pg.evaluate("() => { for (const e of document.querySelectorAll('main > .band, footer, .scene-caps')) e.style.display = 'none'; window.scrollTo(0, 0); }")
+    pg.wait_for_timeout(400)
+    w = pg.evaluate(WAIT_JS, {"exp": P0, "lim": 6000, "tol": P_TOL})
+    short = pg.evaluate("() => { const de = document.documentElement, S = __sceneState; return {room: de.scrollHeight - de.clientHeight, p: S.p, fin: Number.isFinite(S.p) && Number.isFinite(S.target), failed: !!S.failed}; }")
+    if not w["ok"] or not short["fin"] or short["failed"] or short["room"] > 250:
+        A.fail(tag, f"short_page(room={short['room']},p={short['p']},settled={w['ok']},failed={short['failed']})")
+
+
+def flow_misses(info):
+    """(h) the first screen and the three captions in the flow: visible, whole, apart, in the order of the markup."""
     out, b = [], info["blocks"]
-    if i >= len(b):
-        return [f"{where}:missing"]
-    me = b[i]
-    inside = me["l"] >= info["stageL"] - 1 and me["r"] <= info["stageR"] + 1 and me["t"] >= info["stageTop"] - 1 and me["b"] <= info["stageB"] + 1
-    if not (me["vis"] and me["o"] >= VISIBLE_MIN):
-        out.append(f"{where}:not_visible(o={me['o']:.2f},vis={me['vis']})")
-    elif not inside or me["t"] < info["head"] - 1.5 or me["r"] > info["W"] + 1 or me["l"] < -1:
-        out.append(f"{where}:clipped(t={me['t']:.0f},b={me['b']:.0f},stage={info['stageTop']:.0f}..{info['stageB']:.0f},head={info['head']:.0f})")
-    for j, o in enumerate(b):
-        if j != i and o["vis"] and o["o"] > HIDDEN_MAX:
-            out.append(f"{where}:block{j}_also_visible(o={o['o']:.2f},overlap={overlap(me, o)})")
+    if len(b) != 4:
+        return [f"blocks={len(b)}"]
+    for i, x in enumerate(b):
+        if not (x["vis"] and x["o"] >= VISIBLE_MIN):
+            out.append(f"block{i}_hidden(o={x['o']:.2f},vis={x['vis']})")
+        elif x["h"] < 20 or x["l"] < -1 or x["r"] > info["W"] + 1 or x["dt"] < info["head"] - 1.5 or x["db"] > info["docH"] + 1:
+            out.append(f"block{i}_clipped(l={x['l']:.0f},r={x['r']:.0f},top={x['dt']:.0f},bottom={x['db']:.0f},doc={info['docH']:.0f})")
+        for j in range(i):
+            if overlap(x, b[j]):
+                out.append(f"block{j}_overlaps_block{i}")
+            if b[j]["dt"] >= x["dt"]:
+                out.append(f"block{j}_not_above_block{i}")
     return out
 
 
 def check_blocks(pg, tag, A, T, want, log):
     """(h) and (g) on an opened live page."""
-    checked = failed = 0
-    worst = 99.0
-    for i, (a, b) in enumerate(BLOCK_WIN):
-        mid = (a + b) / 2
-        w = go(pg, T.y_of_p(mid), mid)
-        if not w["ok"]:
-            A.fail(tag, f"settle@block{i}(p={w['p']},target={w['target']})")
-            continue
-        if "h" in want:
-            for m in block_misses(pg.evaluate(INFO_JS), i, f"block{i}@P{mid:.2f}"):
-                A.fail(tag, m)
-        if "g" in want:
-            c = pg.evaluate(CONTRAST_JS, {"blocks": [i]})
-            if c.get("err") or not c["checked"]:
-                A.fail(tag, f"contrast_block{i}:{c.get('err') or 'no_text'}")
-                continue
-            checked, failed, worst = checked + c["checked"], failed + c["fail"], min(worst, c["worst"])
-            for s in c["samples"][:2]:
-                A.fail(tag, f"contrast:{s}")
+    pg.evaluate("window.scrollTo(0, 0)")
+    pg.wait_for_timeout(250)
+    info = pg.evaluate(INFO_JS)
+    if "h" in want:
+        for m in flow_misses(info):
+            A.fail(tag, m)
+        for i, x in enumerate(info["blocks"]):              # every block can be brought under the header
+            y = min(max(0.0, x["dt"] - info["head"] - 8), info["maxY"])
+            pg.evaluate("y => window.scrollTo(0, y)", y)
+            pg.wait_for_timeout(200)
+            now = pg.evaluate(INFO_JS)["blocks"][i]
+            room = info["H"] - info["head"]
+            if now["t"] < info["head"] - 1.5 or (now["b"] > info["H"] + 1 and now["h"] <= room and y < info["maxY"] - 1) or not (now["vis"] and now["o"] >= VISIBLE_MIN):
+                A.fail(tag, f"block{i}_unreachable(t={now['t']:.0f},b={now['b']:.0f},head={info['head']:.0f},H={info['H']})")
     if "g" in want:
-        A.add("contrast", failed)
-        log(f"  {tag} contrast: texts={checked} fail={failed} worst={worst:.2f}")
+        c = pg.evaluate(CONTRAST_JS, None)
+        if c.get("err") or not c["inBlocks"] or not c["onGlass"]:
+            A.fail(tag, f"contrast:{c.get('err') or 'no_text(blocks=%s,glass=%s)' % (c['inBlocks'], c['onGlass'])}")
+        else:
+            A.add("contrast", c["fail"])
+            for s in c["samples"][:3]:
+                A.fail(tag, f"contrast:{s}")
+            log(f"  {tag} contrast: texts={c['checked']} (blocks={c['inBlocks']} glass={c['onGlass']}) fail={c['fail']} worst={c['worst']:.2f}")
 
 
-def static_misses(info, kind, low=False):
-    """(d) static page: `kind` = which picture must show (`base`/`static`), blocks visible, whole, apart."""
+def static_misses(info, kind, any_file=False):
+    """(d) static page: `kind` = which picture must show (`base`/`static`); the backdrop is fixed, the blocks are in the flow."""
     out = []
     if info["live"]:
         out.append("scene-live_present")
@@ -557,50 +677,35 @@ def static_misses(info, kind, low=False):
     pic = info[kind]
     if not (pic and pic["ok"] and pic["shown"] and pic["covers"]):
         out.append(f"{kind}_picture(file={(pic or {}).get('file')},ok={(pic or {}).get('ok')},shown={(pic or {}).get('shown')},covers={(pic or {}).get('covers')})")
-    elif not low and ("_after_" not in pic["file"] or ("_tel." in pic["file"]) != info["tall"]):
+    elif not any_file and ("_after_" not in pic["file"] or ("_tel." in pic["file"]) != info["tall"]):
         out.append(f"{kind}_is_not_after({pic['file']},tall={info['tall']})")
-    if info["top"] not in (kind, "offscreen"):
+    if info["top"] != kind:
         out.append(f"top_layer={info['top']}")
-    if info["pos"] in ("sticky", "fixed"):
-        out.append(f"stage_pinned({info['pos']})")
-    b = info["blocks"]
-    if len(b) != 4:
-        out.append(f"blocks={len(b)}")
-    sc_t, sc_b = info["sceneTop"], info["sceneTop"] + info["sceneH"]
-    for i, x in enumerate(b):
-        if not (x["vis"] and x["o"] >= VISIBLE_MIN):
-            out.append(f"block{i}_hidden(o={x['o']:.2f})")
-        elif x["dt"] < sc_t - 1 or x["db"] > min(sc_b, info["docH"]) + 1 or x["l"] < info["sceneL"] - 1 or x["r"] > info["sceneR"] + 1:
-            out.append(f"block{i}_clipped(top={x['dt']:.0f},bottom={x['db']:.0f},scene={sc_t:.0f}..{sc_b:.0f},l={x['l']:.0f},r={x['r']:.0f})")
-        for j in range(i):
-            if overlap(x, b[j]):
-                out.append(f"block{j}_overlaps_block{i}")
-    return out
+    if info["pos"] != "fixed" or abs(info["bgTop"] - info["head"]) > PIN_TOL:
+        out.append(f"backdrop_not_pinned({info['pos']},top={info['bgTop']:.0f},head={info['head']:.0f})")
+    return out + flow_misses(info)
 
 
 def static_sig(info, kind):
-    return (info["live"], info["failed"], (info[kind] or {}).get("file"), round(info["stageDocTop"]), info["pos"],
+    return (info["live"], info["failed"], (info[kind] or {}).get("file"), info["pos"], round(info["bgTop"]), (info[kind] or {}).get("covers"), info["top"],
             tuple((round(x["dt"]), round(x["db"]), round(x["o"], 2), x["vis"]) for x in info["blocks"]))
 
 
-def check_static(pg, tag, A, kind, low=False):
+def check_static(pg, tag, A, kind):
     """(d) one opened static page: the state at the top and the same state at three more scroll positions."""
     info = pg.evaluate(INFO_JS)
     if not info.get("ok"):
         A.fail(tag, f"no_scene(scenes={info.get('scenes')})")
         return
-    for m in static_misses(info, kind, low):
+    for m in static_misses(info, kind):
         A.fail(tag, m)
     sig0 = static_sig(info, kind)
-    for y in (info["sceneTop"] + info["sceneH"] * 0.4, info["sceneTop"] + info["sceneH"] * 0.8, info["maxY"]):
-        pg.evaluate("y => window.scrollTo(0, y)", min(y, info["maxY"]))
+    for y in (info["maxY"] * 0.4, info["maxY"] * 0.8, info["maxY"]):
+        pg.evaluate("y => window.scrollTo(0, y)", y)
         pg.wait_for_timeout(250)
         if static_sig(pg.evaluate(INFO_JS), kind) != sig0:
             A.fail(tag, f"changed_on_scroll@{y:.0f}")
             break
-    if low:                                                             # every block can be brought into the window
-        if info["blocks"] and max(x["db"] for x in info["blocks"]) > info["docH"] + 1:
-            A.fail(tag, "block_below_document")
 
 
 def click_cta(pg):
@@ -634,10 +739,16 @@ def check_anchors(pg, base, tag, A, want):
             if "f" in want and not good:
                 A.fail(tag, f"anchor_{how}(top={a.get('top')},off={a.get('off')})")
             if how == "load" and "i" in want:
-                pg.evaluate(WAIT_JS, {"exp": 1, "lim": 6000, "tol": P_TOL})
-                g = pg.evaluate(GRID_JS, {"inset": SPARK_INSET})
-                if g.get("err") or g["share"] < END_MIN or g["spark"]:
-                    A.fail(tag, f"load_at_tarify({g.get('err') or 'share=%.2f,spark=%s' % (g['share'], bool(g['spark']))})")
+                w = pg.evaluate(WAIT_JS, {"exp": None, "lim": 6000, "tol": P_TOL})
+                g = pg.evaluate(GRID_JS, {"inset": SPARK_INSET}) if w["ok"] else {"err": f"settle(p={w['p']},target={w['target']})"}
+                y, g2, w2 = pg.evaluate("scrollY"), {"err": "skipped"}, w
+                if not g.get("err"):                      # the same place reached by scrolling from the top
+                    go(pg, 0, P0)
+                    w2 = go(pg, y)
+                    g2 = pg.evaluate(GRID_JS, {"inset": SPARK_INSET}) if w2["ok"] else {"err": "settle_from_top"}
+                if g.get("err") or g2.get("err") or abs(g["share"] - g2["share"]) > RETURN_TOL or not spark_ok(g["spark"]) \
+                        or not 0.02 < g["share"] < END_MIN or abs(w["target"] - w2["target"]) > P_TOL:
+                    A.fail(tag, f"load_at_tarify({g.get('err') or g2.get('err') or 'share=%.2f_vs_%.2f,p=%.3f,spark:%s' % (g['share'], g2['share'], w['target'], spark_txt(g['spark']))})")
         except Exception as e:
             A.fail(tag, f"anchor_{how}:{err(e)}")
     if "f" in want:
@@ -664,6 +775,23 @@ def run_full(name, browser, base, A, log, shares_at):
                 shares_at[tag] = check_travel(pg, tag, A, T, want, log, spec)
             if T and want & set("gh"):
                 check_blocks(pg, tag, A, T, want, log)
+            if T and "o" in want:
+                blur = pg.evaluate(BLUR_JS)
+                if blur:
+                    A.fail(tag, f"backdrop_filter({'+'.join(blur)})")
+            vk = {"1440x900": "d", "390x844": "m"}.get(spec[0])
+            if T and vk and "e" in want and name == "chromium":
+                vals = []
+                for k in range(9):
+                    pg.evaluate("y => window.scrollTo(0, y)", T.y(k / 8))
+                    pg.wait_for_timeout(200)
+                    vals.append(pg.evaluate(OPEN_JS))
+                A.city[vk] = sum(vals) / len(vals)
+                if A.city[vk] < CITY_MIN[vk] or (vk == "m" and vals[0] < CITY_TOP_M):
+                    A.fail(tag, f"city_open_{vk}={A.city[vk]:.2f}<{CITY_MIN[vk]}(top={vals[0]:.2f})")
+                log(f"  {tag} city_open={['%.2f' % v for v in vals]} mean={A.city[vk]:.2f}")
+            if T and vk and "i" in want:
+                check_height(pg, tag, A, T)
             check_anchors(pg, base, tag, A, want)
         except Exception as e:
             A.fail(tag, err(e))
@@ -685,8 +813,8 @@ def run_geometry(name, browser, base, A, log):
             if T:
                 check_travel(pg, tag, A, T, want, log, spec)
                 if "k" in want and spec[3]:
-                    go(pg, T.y0, P0)
-                    log(f"  {tag} rebuilds_on_height_change={check_rebuilds(pg, tag, A, spec)}")
+                    extra = f" rotation_share={check_rotation(pg, tag, A, spec, T):.2f}" if spec[0] == "390x844@2" else ""
+                    log(f"  {tag} rebuilds_on_height_change={check_rebuilds(pg, tag, A, spec, T)}{extra}")
         except Exception as e:
             A.fail(tag, err(e))
         finally:
@@ -709,8 +837,8 @@ def run_static(name, browser, base, A, log):
                 if "d" in A.want:
                     check_static(pg, tag, A, kind)
                 if "g" in A.want and mode == "reduced_motion":
-                    c = pg.evaluate(CONTRAST_JS, {"blocks": [0, 1, 2, 3]})
-                    if c.get("err") or not c["checked"]:
+                    c = pg.evaluate(CONTRAST_JS, None)
+                    if c.get("err") or not c["inBlocks"] or not c["onGlass"]:
                         A.fail(tag, f"contrast:{c.get('err') or 'no_text'}")
                     else:
                         A.add("contrast", c["fail"])
@@ -723,87 +851,177 @@ def run_static(name, browser, base, A, log):
                     sink.flush(A)
                 ctx.close()
         log(f"  {name}:{mode} done")
+    if name == "chromium" and "d" in A.want:                 # "still" mode: the same static backdrop by one attribute
+        for spec in FAULT:
+            tag = f"{name}:still:{spec[0]}"
+            ctx, st, sink = new_ctx(browser, spec), {}, Sink(tag)
+            lite_route(ctx, base, st, "still")
+            try:
+                pg, status = open_page(ctx, base + "/", sink, extra=1200)
+                if st.get("patched") != 1:
+                    A.fail(tag, f"still_patch:applied_{st.get('patched')}_times")
+                    continue
+                check_static(pg, tag, A, "base")
+                if pg.evaluate("window.__sceneState ? window.__sceneState.frames : -1") != 0:
+                    A.fail(tag, "still_mode_draws")
+            except Exception as e:
+                A.fail(tag, err(e))
+            finally:
+                if "l" in A.want:
+                    sink.flush(A)
+                ctx.close()
 
 
 def run_low(name, browser, base, A, log):
-    """Low window 667x375: (h) one of two outcomes, the low-window part of (d), (l) errors."""
-    tag = f"{name}:{LOW[0]}"
-    ctx, sink = new_ctx(browser, LOW), Sink(tag)
-    try:
-        pg, status = open_page(ctx, base + "/", sink)
-        info = pg.evaluate(INFO_JS) if status == 200 else {"ok": False, "scenes": f"http{status}"}
-        if not info.get("ok"):
-            A.fail(tag, f"no_scene(scenes={info.get('scenes')})")
-        elif info["live"]:
-            T = scene_basics(info, tag, A)
-            if T and "h" in A.want:
-                check_blocks(pg, tag, A, T, {"h"}, log)
-            log(f"  {tag} outcome=motion")
-        else:
-            if A.want & set("dh"):
-                check_static(pg, tag, A, "base", low=True)
-            log(f"  {tag} outcome=static picture={(info['base'] or {}).get('file')}")
-    except Exception as e:
-        A.fail(tag, err(e))
-    finally:
-        if "l" in A.want:
-            sink.flush(A)
-        ctx.close()
+    """Low windows 667x375 and 720x450@2 (= 200 % zoom): the scene is live there as well: (e) pin, (g), (h), (l)."""
+    for spec in LOWS:
+        tag = f"{name}:{spec[0]}"
+        ctx, sink = new_ctx(browser, spec), Sink(tag)
+        try:
+            pg, status = open_page(ctx, base + "/", sink)
+            T = scene_basics(pg.evaluate(INFO_JS) if status == 200 else {"ok": False, "scenes": f"http{status}"}, tag, A)
+            if T and "e" in A.want:
+                check_travel(pg, tag, A, T, {"e"}, log, spec)
+            if T and A.want & set("gh"):
+                check_blocks(pg, tag, A, T, A.want & set("gh"), log)
+        except Exception as e:
+            A.fail(tag, err(e))
+        finally:
+            if "l" in A.want:
+                sink.flush(A)
+            ctx.close()
 
 
-def lite_route(ctx, base, state):
-    """Serve the home page with `data-scene-mode="lite"` on the backdrop (one attribute, patched in flight)."""
+def lite_route(ctx, base, state, mode="lite"):
+    """Serve the home page with `data-scene-mode` on the backdrop (one attribute, patched in flight)."""
     def h(route):
         resp = route.fetch()
-        body, n = LITE_AT.subn(r'\1 data-scene-mode="lite"', resp.text(), count=1)
+        body, n = LITE_AT.subn(r'\1 data-scene-mode="%s"' % mode, resp.text())
         state["patched"] = n
         route.fulfill(response=resp, body=body)
     ctx.route(re.compile("^" + re.escape(base) + r"/(index\.html)?(\?[^#]*)?$"), h)
 
 
-def run_smooth(name, browser, base, A, log, lite=False):
-    """(c) calibration on an empty page, then two passes over the scene; Chromium repeats them with CPU x4."""
+GPU_JS = r"""() => { try { const g = document.createElement('canvas').getContext('webgl'); const e = g.getExtension('WEBGL_debug_renderer_info');
+  return String(g.getParameter(e ? e.UNMASKED_RENDERER_WEBGL : g.RENDERER)); } catch (e) { return 'none:' + e.message; } }"""
+
+
+def gpu_proof(browser):
+    """(renderer, reasons): the proof that the video card draws the page: WebGL renderer + feature status of the GPU process."""
+    bad, rend = [], "none"
+    ctx = browser.new_context()
+    try:
+        pg = ctx.new_page()
+        pg.set_content("<!doctype html><title>gpu</title>")
+        rend = re.sub(r"\s+", "_", pg.evaluate(GPU_JS))[:70]
+        if SOFT_GPU.search(rend):
+            bad.append("renderer")
+        fs = browser.new_browser_cdp_session().send("SystemInfo.getInfo").get("gpu", {}).get("featureStatus", {})
+        bad += [f"{k}={fs.get(k)}" for k in GPU_FEATURES if not str(fs.get(k, "")).startswith("enabled")]
+    except Exception as e:
+        bad.append(type(e).__name__)
+    finally:
+        ctx.close()
+    return rend, bad
+
+
+def calibrate(ctx, spec, length):
+    """Long frames of the same scripted pass over an empty long page (a busy machine shows here)."""
+    cal = ctx.new_page()
+    cal.set_content(BLANK_HTML % int(length + spec[2] * 2))
+    cal.wait_for_timeout(300)
+    cg = frame_gaps(cal.evaluate(PASS_JS, {"y0": 0, "y1": length, "ms": PASS_MS})["ts"])
+    cal.close()
+    return cg
+
+
+# a fixed piece of script work, ms (best of three): the proof that CPU throttling is really on in this browser
+BENCH_JS = r"""() => { let best = 1e9; for (let k = 0; k < 3; k++) { const t = performance.now(); let x = 0; for (let i = 0; i < 3e6; i++) x += Math.sqrt(i ^ k); best = Math.min(best, performance.now() - t); } return best; }"""
+
+
+def one_pass(pg, cdp, kind, end, spec):
+    """A pass over the whole page: `script` = scrollTo from requestAnimationFrame, `gesture` = the wheel gesture of the browser."""
+    if kind == "script":
+        return pg.evaluate(PASS_JS, {"y0": 0, "y1": end, "ms": PASS_MS})
+    pg.evaluate(REC_JS)
+    cdp.send("Input.synthesizeScrollGesture", {"x": spec[1] / 2, "y": spec[2] * 0.6, "yDistance": -(end + 40), "speed": max(200, int(end * 1000 / PASS_MS)),
+                                               "gestureSourceType": "mouse"})
+    pg.wait_for_timeout(250)
+    return pg.evaluate(REC_END_JS, end)
+
+
+def watch_off_route(ctx, st):
+    def patch(route):
+        resp = route.fetch()
+        body, n = WATCH_OFF_AT.subn("SLOW = 1e9", resp.text())
+        st["watch_off"] = n
+        route.fulfill(response=resp, body=body)
+    ctx.route(re.compile(r"/assets/scene3\.js(\?|$)"), patch)
+
+
+def run_smooth(name, browser, base, A, log, lite=False, label=None, judge=False):
+    """(c) calibration on an empty page, then passes over the whole page; Chromium repeats them with CPU x4.
+    `judge` (Chromium with the video card): the gesture pass as well, the limits of the base, calibration after."""
+    label = label or name
     for spec in ([LITE] if lite else SMOOTH):
-        tag = f"{name}:{'lite:' if lite else ''}smooth:{spec[0]}"
+        tag = f"{label}:{'lite:' if lite else ''}smooth:{spec[0]}"
         ctx, st = new_ctx(browser, spec), {}
         if lite:
             lite_route(ctx, base, st)
+        if not judge:
+            watch_off_route(ctx, st)
         try:
             pg, status = open_page(ctx, base + "/")
             T = scene_basics(pg.evaluate(INFO_JS) if status == 200 else {"ok": False, "scenes": f"http{status}"}, tag, A, lite)
             if not T:
                 continue
-            cal = ctx.new_page()
-            cal.set_content(BLANK_HTML % int(T.end - T.y0 + spec[2] * 2))
-            cal.wait_for_timeout(300)
-            cg = frame_gaps(cal.evaluate(PASS_JS, {"y0": 0, "y1": T.end - T.y0, "ms": PASS_MS})["ts"])
-            cal.close()
+            if not judge and st.get("watch_off") != 1:
+                A.fail_c(tag, f"watch_off_patch_applied_{st.get('watch_off')}_times")
+            cg = calibrate(ctx, spec, T.end)
             if cg:
                 A.calib_bad.append(f"{tag}={cg}")
-            line = f"  {tag} calib={cg} (long/frames/paints/longest gap)"
+            cdp = ctx.new_cdp_session(pg) if name == "chromium" else None
+            line = f"  {tag} calib={cg} (long/frames/paints/longest gap/p95)"
             for mode in (("nt", "cpu4") if name == "chromium" else ("nt",)):
-                cdp = None
                 if mode == "cpu4":
-                    cdp = ctx.new_cdp_session(pg)
+                    b1 = pg.evaluate(BENCH_JS)
                     cdp.send("Emulation.setCPUThrottlingRate", {"rate": 4})
-                worst, runs = 0, []
-                for _ in range(2):
-                    w = go(pg, T.y0, P0, limit=20000)
-                    if not w["ok"]:
-                        A.fail_c(tag, f"{mode}:settle_before_pass(p={w['p']})")
-                        break
-                    r = pg.evaluate(PASS_JS, {"y0": T.y0, "y1": T.end, "ms": PASS_MS})
-                    lg, frames = frame_gaps(r["ts"]), len(r["ts"])
-                    worst = max(worst, lg)
-                    runs.append(f"{lg}/{frames}f/{r['paints']}p/{max((b - a for a, b in zip(r['ts'], r['ts'][1:])), default=0):.0f}ms")
-                    A.hi("p_lo", r["lo"])
-                    A.lo("p_hi", r["hi"])
-                    if frames < MIN_FRAMES or r["y"] < T.end - 2 or r["lo"] > 0.1 or r["hi"] < END_MIN:
-                        A.fail_c(tag, f"{mode}:pass_invalid(frames={frames},y={r['y']:.0f}/{T.end:.0f},p={r['lo']:.2f}-{r['hi']:.2f})")
-                    if mode == "cpu4":
-                        A.lo("paints", r["paints"])
-                        if r["paints"] < MIN_PAINTS:
-                            A.fail_c(tag, f"paints_cpu4={r['paints']}<{MIN_PAINTS}")
+                    b4 = pg.evaluate(BENCH_JS)
+                    line += f" throttle=x{b4 / max(b1, 0.01):.1f}"
+                    if judge and b4 < b1 * 2.5:                         # the slowdown did not take: the x4 numbers mean nothing
+                        A.calib_bad.append(f"{tag}:throttle=x{b4 / max(b1, 0.01):.1f}")
+                worst, runs, plain = 0, [], False
+                for kind in (("script", "gesture") if judge else ("script",)):
+                    for _ in range(2):
+                        if plain:                                       # the plain page has no travel to settle
+                            pg.evaluate("window.scrollTo(0, 0)")
+                            pg.wait_for_timeout(500)
+                        else:
+                            w = go(pg, 0, P0, limit=20000)
+                            if not w["ok"]:
+                                A.fail_c(tag, f"{mode}:settle_before_pass(p={w['p']})")
+                                break
+                        r = one_pass(pg, cdp, kind, T.end, spec)
+                        gaps = sorted(b - a for a, b in zip(r["ts"], r["ts"][1:]))
+                        lg, frames = frame_gaps(r["ts"]), len(r["ts"])
+                        p95 = gaps[int(len(gaps) * 0.95)] if gaps else 0.0
+                        worst = max(worst, lg)
+                        runs.append(f"{kind[0]}:{lg}/{frames}f/{r['paints']}p/{gaps[-1] if gaps else 0:.0f}ms/{p95:.0f}ms" + (f"/slow{r['slow']}" if r["slow"] else "") + ("/PLAIN" if r["plain"] else ""))
+                        if r["plain"] or r["slow"] > SLOW_OK:
+                            A.fail_c(tag, f"{mode}:{kind}:watchdog(plain={r['plain']},slow={r['slow']})")
+                        if r["plain"]:
+                            plain = A.plain_seen = True
+                            continue
+                        A.hi("p_lo", r["lo"])
+                        A.lo("p_hi", r["hi"])
+                        if frames < MIN_FRAMES or r["y"] < T.end - 2 or r["lo"] > 0.1 or r["hi"] < END_MIN:
+                            A.fail_c(tag, f"{mode}:{kind}:pass_invalid(frames={frames},y={r['y']:.0f}/{T.end:.0f},p={r['lo']:.2f}-{r['hi']:.2f})")
+                        if judge and mode == "nt" and (frames < GPU_FRAMES or r["paints"] < GPU_PAINTS or p95 > GPU_P95):
+                            A.fail_c(tag, f"nt:{kind}:below_base(frames={frames}<{GPU_FRAMES}|paints={r['paints']}<{GPU_PAINTS}|p95={p95:.0f}>{GPU_P95:.0f})")
+                        if mode == "cpu4":
+                            A.lo("paints", r["paints"])
+                            if r["paints"] < MIN_PAINTS:
+                                A.fail_c(tag, f"{kind}:paints_cpu4={r['paints']}<{MIN_PAINTS}")
                 if mode == "nt":
                     A.hi("long_nt", worst)
                     if worst > LONG_LIMIT_NOTHROTTLE:
@@ -814,11 +1032,174 @@ def run_smooth(name, browser, base, A, log, lite=False):
                         A.fail_c(tag, f"long_frames_cpu4={worst}>{A.long_limit}")
                     cdp.send("Emulation.setCPUThrottlingRate", {"rate": 1})
                 line += f" {mode}={runs}"
+            A.hi("slow_total", pg.evaluate("window.__sceneState.slowTotal | 0"))
+            if judge:
+                cg2 = calibrate(ctx, spec, T.end)
+                if cg2:
+                    A.calib_bad.append(f"{tag}:after={cg2}")
+                line += f" calib_after={cg2}"
             log(line)
         except Exception as e:
             A.fail_c(tag, err(e))
         finally:
             ctx.close()
+
+
+def run_early(browser, base, A, log):
+    """(c) the page is scrolled before it has loaded (slow network): the watchdog must not blame the device for the loading."""
+    spec = ("390x844", 390, 844, True, 1)
+    tag = "gpu:early:390x844"
+    ctx, sink = new_ctx(browser, spec), Sink(tag)
+    try:
+        pg = sink.attach(ctx.new_page())
+        cdp = ctx.new_cdp_session(pg)
+        cdp.send("Network.enable")
+        cdp.send("Network.emulateNetworkConditions", {"offline": False, "latency": 150, "downloadThroughput": 200000, "uploadThroughput": 93750})
+        pg.goto(base + "/", wait_until="domcontentloaded", timeout=60000)
+        end = pg.evaluate("document.documentElement.scrollHeight - innerHeight")
+        r1 = pg.evaluate(PASS_JS, {"y0": 0, "y1": end, "ms": PASS_MS})
+        pg.wait_for_function("() => window.__sceneState && (window.__sceneState.ready || window.__sceneState.plain || window.__sceneState.failed)", timeout=40000)
+        pg.evaluate("window.scrollTo(0, 0)")
+        pg.wait_for_timeout(400)
+        end = pg.evaluate("document.documentElement.scrollHeight - innerHeight")
+        r2 = pg.evaluate(PASS_JS, {"y0": 0, "y1": end, "ms": PASS_MS})
+        S = pg.evaluate("({plain: !!__sceneState.plain, slow: __sceneState.slow | 0, failed: !!__sceneState.failed, ready: !!__sceneState.ready, total: __sceneState.slowTotal | 0})")
+        if S["plain"] or S["failed"] or not S["ready"] or S["slow"] > SLOW_OK:
+            A.fail_c(tag, f"early_scroll(plain={S['plain']},failed={S['failed']},ready={S['ready']},slow={S['slow']})")
+        log(f"  {tag} long_before_ready={frame_gaps(r1['ts'])} long_after={frame_gaps(r2['ts'])} slow={S['slow']} slowTotal={S['total']} plain={S['plain']}")
+    except Exception as e:
+        A.fail_c(tag, err(e))
+    finally:
+        if "l" in A.want:
+            sink.flush(A)
+        ctx.close()
+
+
+# (n) what the page has told the outside: the event, the goal in the queue of the Metrika counter, the tab memory
+GOAL_JS = r"""() => { const q = (window.ym && window.ym.a) || []; const m = document.querySelector('meta[name=build]');
+  let keys = []; try { keys = Object.keys(sessionStorage).filter(k => k.startsWith('scene-plain')); } catch (e) { keys = ['error']; }
+  return {events: window.__plainEvents | 0, goals: [...q].filter(c => c[1] === 'reachGoal' && c[2] === 'scene_plain').length,
+          build: m ? m.getAttribute('content') : '', keys}; }"""
+
+
+def busy_route(ctx, st, every):
+    def patch(route):
+        resp = route.fetch()
+        body, n = BUSY_AT.subn(lambda m: m.group(0) + BUSY_CODE % every, resp.text())
+        st["patched"] = n
+        route.fulfill(response=resp, body=body)
+    ctx.route(re.compile(r"/assets/scene3\.js(\?|$)"), patch)
+
+
+def run_watchdog(name, browser, base, A, log):
+    """(n) a device that does not keep up (a 70 ms busy loop in every frame / in every 20th frame): the page turns plain,
+    stays whole and remembers that for the tab."""
+    for spec in WATCHES:
+        for every, passes in ((1, 1), (20, 3)):
+            tag = f"{name}:watchdog:{spec[0]}:every{every}"
+            ctx, st, sink = new_ctx(browser, spec), {}, Sink(tag, page_only=True)
+            try:
+                busy_route(ctx, st, every)
+                ctx.add_init_script("window.__plainEvents = 0; document.addEventListener('scene:plain', () => { window.__plainEvents++; });")
+                pg, status = open_page(ctx, base + "/", sink, extra=900)
+                if st.get("patched") != 1:
+                    A.calib_bad.append(f"{tag}:busy_patch_applied_{st.get('patched')}_times")
+                    continue
+                i0 = pg.evaluate(INFO_JS)
+                if not scene_basics(i0, tag, A):
+                    continue
+                used = 0
+                for used in range(1, passes + 1):
+                    r = pg.evaluate(PASS_JS, {"y0": 0, "y1": i0["maxY"], "ms": PASS_MS})
+                    if r["plain"]:
+                        break
+                    pg.wait_for_timeout(300)
+                pg.wait_for_timeout(400)
+                pg.evaluate("window.scrollTo(0, 0)")
+                pg.wait_for_timeout(300)
+                i1 = pg.evaluate(INFO_JS)
+                S, c, b = i1["S"] or {}, i1["canvas"] or {}, i1["base"] or {}
+                if not (S.get("plain") and i1["plain"]):
+                    A.fail(tag, f"not_plain_after_{used}_passes(state={S.get('plain')},class={i1['plain']},slow={S.get('slow')})")
+                    continue
+                if i1["live"] or S.get("ready") or (c.get("display") != "none" and c.get("visibility") != "hidden"):
+                    A.fail(tag, f"still_drawing(live={i1['live']},ready={S.get('ready')},canvas={c.get('display')}/{c.get('visibility')})")
+                if i1["pos"] == "fixed":
+                    A.fail(tag, "backdrop_still_fixed")
+                if not (b.get("ok") and b.get("shown")) or "_after_" not in (b.get("file") or ""):
+                    A.fail(tag, f"plain_picture(file={b.get('file')},ok={b.get('ok')},shown={b.get('shown')})")
+                moved = [i for i, (x, y) in enumerate(zip(i0["blocks"], i1["blocks"])) if abs(x["dt"] - y["dt"]) > 1 or abs(x["db"] - y["db"]) > 1]
+                if moved or len(i1["blocks"]) != 4 or flow_misses(i1):
+                    A.fail(tag, f"layout_changed(blocks={moved},misses={len(flow_misses(i1))})")
+                ev = pg.evaluate(GOAL_JS)
+                if S.get("plainAt") is None or S.get("slowTotal", 0) < 8 or S.get("maxGap", 0) < LONG_MS or ev["events"] != 1:
+                    A.fail(tag, f"counters(plainAt={S.get('plainAt')},slowTotal={S.get('slowTotal')},maxGap={S.get('maxGap'):.0f},events={ev['events']})")
+                if ev["goals"] != 1:
+                    A.fail(tag, f"metrika_goal_scene_plain_calls={ev['goals']}")
+                if not ev["build"] or ev["keys"] != [f"scene-plain:{ev['build']}:full"]:
+                    A.fail(tag, f"tab_memory_key({ev['keys']},build={ev['build']})")
+                cst = pg.evaluate(CONTRAST_JS, None)
+                if cst.get("err") or cst["fail"] or not cst["bodyOpaque"] or not cst["onGlass"]:
+                    A.fail(tag, f"plain_contrast(fail={cst.get('fail')},body_opaque={cst.get('bodyOpaque')},{cst.get('err') or ''})")
+                pg.evaluate("window.scrollTo(0, document.documentElement.scrollHeight)")
+                pg.wait_for_timeout(400)
+                f = pg.evaluate(FOOT_JS)
+                if not (f["foot"] and f["atEnd"] and f["top"] < f["H"]):
+                    A.fail(tag, "footer_not_reached")
+                pg.reload(wait_until="load")                             # the tab remembers: plain at once, nothing is drawn
+                settle(pg, 900)
+                i2 = pg.evaluate(INFO_JS)
+                S2, b2 = i2["S"] or {}, i2["base"] or {}
+                if pg.evaluate(GOAL_JS)["goals"] != 0:
+                    A.fail(tag, "metrika_goal_sent_again_after_reload")
+                if not (i2["plain"] and S2.get("plain")) or i2["live"] or S2.get("frames") or i2["pos"] == "fixed" or "_after_" not in (b2.get("file") or "") or not b2.get("ok"):
+                    A.fail(tag, f"reload(class={i2['plain']},state={S2.get('plain')},live={i2['live']},frames={S2.get('frames')},backdrop={i2['pos']},picture={b2.get('file')})")
+                log(f"  {tag} plain after {used} pass(es) at P={S.get('plainAt'):.2f} slowTotal={S.get('slowTotal')} maxGap={S.get('maxGap'):.0f}ms backdrop={i1['pos']} reload_plain={i2['plain']}")
+            except Exception as e:
+                A.fail(tag, err(e))
+            finally:
+                sink.flush(A)
+                ctx.close()
+
+
+def run_watchdog_calm(browser, base, A, log):
+    """(n) the negative: a healthy device (video card) with one long frame in 70 keeps the scene (three passes)."""
+    for spec in WATCHES:
+        tag = f"gpu:watchdog:{spec[0]}:every70"
+        ctx, st = new_ctx(browser, spec), {}
+        try:
+            busy_route(ctx, st, 70)
+            pg, status = open_page(ctx, base + "/", extra=900)
+            if st.get("patched") != 1:
+                A.calib_bad.append(f"{tag}:busy_patch_applied_{st.get('patched')}_times")
+                continue
+            i0 = pg.evaluate(INFO_JS)
+            if not scene_basics(i0, tag, A):
+                continue
+            for _ in range(3):
+                go(pg, 0, P0, limit=20000)
+                r = pg.evaluate(PASS_JS, {"y0": 0, "y1": i0["maxY"], "ms": PASS_MS})
+            S = pg.evaluate("({plain: !!__sceneState.plain, slow: __sceneState.slow | 0, total: __sceneState.slowTotal | 0})")
+            if S["plain"] or S["slow"] > SLOW_OK or r["plain"] or not S["total"]:
+                A.fail(tag, f"calm_device(plain={S['plain']},slow={S['slow']},slowTotal={S['total']})")
+            log(f"  {tag} plain={S['plain']} slow={S['slow']} slowTotal={S['total']}")
+        except Exception as e:
+            A.fail(tag, err(e))
+        finally:
+            ctx.close()
+
+
+def tree_of(base):
+    """(served sha, same as the working tree?) of the three files the scene lives in."""
+    hs, hl = hashlib.sha256(), hashlib.sha256()
+    for url, rel in TREE_FILES:
+        status, body = http_get(base + url)
+        hs.update(body if status == 200 else f"http{status}".encode())
+        try:
+            hl.update((ROOT / rel).read_bytes())
+        except OSError:
+            hl.update(b"missing")
+    return hs.hexdigest()[:12], hs.digest() == hl.digest()
 
 
 def run_lite(name, browser, base, A, log):
@@ -828,8 +1209,8 @@ def run_lite(name, browser, base, A, log):
     lite_route(ctx, base, st)
     try:
         pg, status = open_page(ctx, base + "/", sink)
-        if not st.get("patched"):
-            A.fail(tag, "lite_patch:attribute_data-scene-bg_not_found_in_home_page")
+        if st.get("patched") != 1:
+            A.fail(tag, f"lite_patch:applied_{st.get('patched')}_times")
             return
         T = scene_basics(pg.evaluate(INFO_JS) if status == 200 else {"ok": False, "scenes": f"http{status}"}, tag, A, lite=True)
         if T:
@@ -840,13 +1221,12 @@ def run_lite(name, browser, base, A, log):
     finally:
         sink.flush(A)
         ctx.close()
-    run_smooth(name, browser, base, A, log, lite=True)
 
 
 def failed_page_misses(info, want_file):
     """(l) the page after an engine failure: static, the visible base picture is loaded and is the wanted file."""
     out = [] if info["failed"] else ["scene-failed_missing"]
-    out += [m for m in static_misses(info, "base", low=True) if not m.startswith("top_layer")]
+    out += [m for m in static_misses(info, "base", any_file=True) if not m.startswith("top_layer")]
     b = info["base"] or {}
     if f"_{want_file}_" not in (b.get("file") or ""):
         out.append(f"base_is_not_{want_file}({b.get('file')})")
@@ -955,7 +1335,7 @@ def check_files(base, A):
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("base", nargs="?", default=None)
-    ap.add_argument("--dod", action="store_true", help="long frames with CPU x4 must be 0 as well (PLAN-3 DoD-3)")
+    ap.add_argument("--dod", action="store_true", help="long frames with CPU x4 must be 0 as well (PLAN-3 DoD-3, PLAN-4 DoD-3)")
     ap.add_argument("--only", default="", help="debug: comma-separated letters of the checks to run (never a full verdict)")
     a = ap.parse_args(argv)
     want = set(a.only.replace(",", "").lower()) or set(LETTERS)
@@ -963,9 +1343,16 @@ def main(argv=None) -> int:
         ap.error(f"--only takes letters of {LETTERS}")
     from playwright.sync_api import sync_playwright
     A, engines, webkit_reason, t0 = Agg(want, a.dod), 0, "", time.monotonic()
+    gpu, refs, tree, regress = "na", {}, "na", []
     log = lambda s: print(s, flush=True)
+    n = lambda v: "na" if v is None else str(v)
     try:
         with Served(a.base) as srv, sync_playwright() as p:
+            tree, same = tree_of(srv.base)
+            local = bool(re.match(r"https?://(127\.0\.0\.1|localhost)[:/]", srv.base + "/"))
+            log(f"  tree={tree} same_as_working_tree={same}")
+            if a.dod and local and not same:
+                A.fail("tree_mismatch", "the_served_files_differ_from_the_working_tree")
             if "a" in want:
                 check_files(srv.base, A)
             for name in ("chromium", "webkit"):
@@ -980,13 +1367,20 @@ def main(argv=None) -> int:
                     continue
                 engines += 1
                 shares_at: dict = {}
-                if "c" in want:
-                    run_smooth(name, br, srv.base, A, log)
+                if "c" in want:                              # reference only: a software renderer does not judge smoothness
+                    R = Agg(want, a.dod)
+                    run_smooth(name, br, srv.base, R, log, label=f"ref_{name}")
+                    key = "sw" if name == "chromium" else name
+                    refs[key] = f"{n(R.long_nt)}/{n(R.long) if name == 'chromium' else '-'}"
+                    refs["slow_" + key] = n(R.slow_total)
+                    for k, v in ((f"{key}_nt", R.long_nt), (f"{key}_cpu4", R.long)):
+                        if k in REF_MAX and v is not None and v > REF_MAX[k]:
+                            regress.append(f"{k}={v}>{REF_MAX[k]}")
                 if want & set("abefghil"):
                     run_full(name, br, srv.base, A, log, shares_at)
                 if want & set("dg"):
                     run_static(name, br, srv.base, A, log)
-                if want & set("dhl"):
+                if want & set("eghl"):
                     run_low(name, br, srv.base, A, log)
                 if "l" in want:
                     run_faults(name, br, srv.base, A, log, shares_at)
@@ -994,7 +1388,26 @@ def main(argv=None) -> int:
                     run_geometry(name, br, srv.base, A, log)
                 if name == "chromium" and "m" in want:
                     run_lite(name, br, srv.base, A, log)
+                if "n" in want:
+                    run_watchdog(name, br, srv.base, A, log)
                 br.close()
+            if want & set("cmn"):                            # the judged smoothness: Chromium with the video card, alone, last
+                try:
+                    gb = p.chromium.launch(args=GPU_ARGS)
+                    gpu, bad = gpu_proof(gb)
+                    log(f"  gpu renderer: {gpu} {'NOT A VIDEO CARD: ' + ','.join(bad) if bad else 'ok'}")
+                    if bad:
+                        A.calib_bad.append("gpu=" + "+".join(bad))
+                    if "c" in want:
+                        run_smooth("chromium", gb, srv.base, A, log, label="gpu", judge=True)
+                        run_early(gb, srv.base, A, log)
+                    if "m" in want:
+                        run_smooth("chromium", gb, srv.base, A, log, lite=True, label="gpu", judge=True)
+                    if "n" in want:
+                        run_watchdog_calm(gb, srv.base, A, log)
+                    gb.close()
+                except Exception as e:
+                    A.fail("gpu_chromium", err(e))
     except Exception as e:
         A.fail("gate_error", err(e))
     if engines < 2:
@@ -1007,14 +1420,16 @@ def main(argv=None) -> int:
     # a busy machine makes the smoothness numbers worthless: without other failures the verdict is `invalid`
     status = "fail" if A.miss or (A.miss_c and not A.calib_bad) else "invalid" if A.calib_bad else "ok"
     f2 = lambda v: "na" if v is None else f"{v:.2f}"
-    n = lambda v: "na" if v is None else str(v)
     extra = (f" only={''.join(sorted(want))}" if want != set(LETTERS) else "") + (f" calib={','.join(A.calib_bad)}" if A.calib_bad else "") \
         + (f" webkit={webkit_reason}" if webkit_reason else "") + ("" if not miss else " miss=" + ",".join(miss[:12]))
     print(f"TIME secs={time.monotonic() - t0:.0f}")
-    print(f"SCENE status={status} engines={engines} after_start={f2(A.start)} after_end={f2(A.end)} "
+    if regress:
+        print("  REFERENCE REGRESS (does not change the verdict; stop, find the reason, tell the owner):", ",".join(regress))
+    print(f"SCENE status={status} engines={engines} gpu={gpu} tree={tree} after_start={f2(A.start)} after_end={f2(A.end)} "
           f"p_range={f2(A.p_lo)}-{f2(A.p_hi)} long_frames={n(A.long)} long_frames_nothrottle={n(A.long_nt)} paints_cpu4={n(A.paints)} "
           f"pin_dev={'na' if A.pin is None else '%.1f' % A.pin} contrast_fail={n(A.contrast)} idle_frames={n(A.idle)} "
-          f"errors={n(A.errors) if 'l' in want else 'na'} scale_min={f2(A.scale)}{extra}")
+          f"errors={n(A.errors) if 'l' in want else 'na'} scale_min={f2(A.scale)} city_open_d={f2(A.city.get('d'))} city_open_m={f2(A.city.get('m'))} ref_sw={refs.get('sw', 'na')} "
+          f"ref_webkit={refs.get('webkit', 'na')} ref_slow_sw={refs.get('slow_sw', 'na')} ref_slow_webkit={refs.get('slow_webkit', 'na')} ref_regress={'yes' if regress else 'no'}{extra}")
     return {"ok": 0, "fail": 1, "invalid": 2}[status]
 
 
