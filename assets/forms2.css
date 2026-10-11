@@ -112,7 +112,7 @@ input[type=email]::placeholder,
 }
 .upload-zone__check::before{
   content:"";width:18px;height:9px;
-  border:3px solid #1A0C10;border-top:0;border-right:0;
+  border:3px solid #0C111A;border-top:0;border-right:0;
   transform:translateY(-2px) rotate(-45deg);
 }
 .upload-zone.has-file .upload-zone__file{font-size:15px}
@@ -160,7 +160,7 @@ input[type=email]::placeholder,
 .pay{
   display:inline-flex;align-items:center;justify-content:center;
   width:max-content;min-height:46px;margin-top:6px;padding:12px 22px;
-  color:#1A0C10;background:var(--brass);border:1px solid var(--brass);
+  color:#0C111A;background:var(--brass);border:1px solid var(--brass);
   border-radius:var(--r);font-weight:500;
   transition:background .18s var(--ease);
 }

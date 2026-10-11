@@ -20,18 +20,16 @@
 <link rel="icon" href="/favicon.ico" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 <link rel="stylesheet" href="/assets/fonts.css?v=20260813-vitrina" />
-<link rel="stylesheet" href="/assets/site3.css" />
-<script defer src="/assets/vendor/gsap.min.js"></script>
-<script defer src="/assets/vendor/ScrollTrigger.min.js"></script>
-<script defer src="/assets/scene.js"></script>
-<script defer src="/assets/site3.js"></script>
+<link rel="stylesheet" href="/assets/site3.css?v=79843645cb50" />
+<script defer src="/assets/scene3.js?v=79843645cb50"></script>
+<script defer src="/assets/site3.js?v=79843645cb50"></script>
 <script defer src="/assets/metrika.js?v=20261011-v2"></script>
 <!-- chrome:head:begin (scripts/build_chrome.py) -->
-<meta name="build" content="8a6d1fe9044a" />
-<link rel="stylesheet" href="/assets/chrome.css?v=8a6d1fe9044a" />
-<script defer src="/assets/chrome.js?v=8a6d1fe9044a"></script>
-<script defer src="/services.config.js?v=8a6d1fe9044a"></script>
-<script defer src="/assets/pay.js?v=8a6d1fe9044a"></script>
+<meta name="build" content="79843645cb50" />
+<link rel="stylesheet" href="/assets/chrome.css?v=79843645cb50" />
+<script defer src="/assets/chrome.js?v=79843645cb50"></script>
+<script defer src="/services.config.js?v=79843645cb50"></script>
+<script defer src="/assets/pay.js?v=79843645cb50"></script>
 <!-- chrome:head:end -->
 <!-- seo:jsonld:begin (scripts/build_seo_files.py) -->
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://ai-vibes.ru/#website","name":"AI Vibes","url":"https://ai-vibes.ru/","inLanguage":"ru"},{"@type":"Organization","@id":"https://ai-vibes.ru/#org","name":"AI Vibes","url":"https://ai-vibes.ru/","email":"lavr5000xxx@gmail.com","member":{"@id":"https://ai-vibes.ru/#person"}},{"@type":"Person","@id":"https://ai-vibes.ru/#person","name":"Денис Лавров","url":"https://ai-vibes.ru/about.html","sameAs":["https://max.ru/u/f9LHodD0cOJVteiYLPGUodY6uw7J5k_M_QzRJTDzXbK31nlTIokaEh5ebeM","https://t.me/lavr5000"]}]}</script>
@@ -69,7 +67,28 @@
 <!-- chrome:header:end -->
 <main id="main">
 
-<!-- ============================ ПЕРВЫЙ ЭКРАН ============================ -->
+<!-- ============================ СЦЕНА «ГОРОД И МОСТ» С ПЕРВЫМ ЭКРАНОМ ============================ -->
+<section class="scene" data-scene aria-label="Что меняется с помощником">
+<div class="scene-stage" data-scene-stage>
+<div class="scene-bg" data-scene-bg aria-hidden="true">
+  <picture>
+    <source media="(prefers-reduced-motion: reduce) and (max-aspect-ratio: 5/6)" type="image/webp" srcset="/assets/scene/gorodmost_after_tel.webp" />
+    <source media="(prefers-reduced-motion: reduce) and (max-aspect-ratio: 5/6)" srcset="/assets/scene/gorodmost_after_tel.jpg" />
+    <source media="(prefers-reduced-motion: reduce)" type="image/webp" srcset="/assets/scene/gorodmost_after_pc.webp" />
+    <source media="(prefers-reduced-motion: reduce)" srcset="/assets/scene/gorodmost_after_pc.jpg" />
+    <source media="(max-aspect-ratio: 5/6)" type="image/webp" srcset="/assets/scene/gorodmost_before_tel.webp" />
+    <source media="(max-aspect-ratio: 5/6)" srcset="/assets/scene/gorodmost_before_tel.jpg" />
+    <source type="image/webp" srcset="/assets/scene/gorodmost_before_pc.webp" />
+    <img data-scene-base src="/assets/scene/gorodmost_before_pc.jpg" alt="" fetchpriority="high" />
+  </picture>
+  <canvas data-scene-canvas></canvas>
+  <noscript><picture>
+    <source media="(max-aspect-ratio: 5/6)" type="image/webp" srcset="/assets/scene/gorodmost_after_tel.webp" />
+    <source media="(max-aspect-ratio: 5/6)" srcset="/assets/scene/gorodmost_after_tel.jpg" />
+    <source type="image/webp" srcset="/assets/scene/gorodmost_after_pc.webp" />
+    <img data-scene-static src="/assets/scene/gorodmost_after_pc.jpg" alt="" />
+  </picture></noscript>
+</div>
 <section class="hero" id="hero">
   <div class="wrap hero-in">
     <div class="hero-text">
@@ -92,45 +111,12 @@
     </div>
   </div>
 </section>
-
-<!-- ============================ СЦЕНА ============================ -->
-<section class="scene" data-scene aria-label="Как помощник наводит порядок в документах">
-  <div class="scene-stage" data-scene-stage>
-    <div class="scene-captions">
-      <div class="scene-cap" data-scene-cap>
-        <h2>Всё разбросано</h2>
-        <p>Письма, сметы, фото с объекта, таблицы, голосовые: в почте, мессенджерах и папках.</p>
-      </div>
-      <div class="scene-cap" data-scene-cap>
-        <h2>Вы просто говорите, что нужно</h2>
-        <p>С компьютера или с телефона, обычными словами — как попросили бы коллегу.</p>
-      </div>
-      <div class="scene-cap is-on" data-scene-cap>
-        <h2>Получаете готовый документ</h2>
-        <p>Помощник сам находит нужные файлы, собирает из них результат и показывает, откуда взял каждую цифру.</p>
-      </div>
-    </div>
-    <div class="scene-space" aria-hidden="true">
-      <div class="device device--laptop" data-device>
-        <div class="laptop-screen"><p class="ask" data-ask><b>Вы:</b> собери ведомость материалов из этих чертежей</p></div>
-        <div class="laptop-base"></div>
-      </div>
-      <div class="device device--phone" data-device>
-        <div class="phone-body"><p class="ask" data-ask>и письмо подрядчику</p></div>
-      </div>
-      <div class="scene-world" data-scene-world>
-        <div class="sheet sheet--lines" data-sheet><span class="sheet-title">Письмо</span><span class="sheet-body"></span></div>
-        <div class="sheet sheet--photo" data-sheet><span class="sheet-title">Фото объекта</span><span class="sheet-body"></span></div>
-        <div class="sheet sheet--draw" data-sheet><span class="sheet-title">Чертёж</span><span class="sheet-body"></span></div>
-        <div class="sheet sheet--voice" data-sheet><span class="sheet-title">Голосовое</span><span class="sheet-body"></span></div>
-        <div class="sheet sheet--table" data-sheet><span class="sheet-title">Смета</span><span class="sheet-body"></span></div>
-        <div class="sheet sheet--chat" data-sheet><span class="sheet-title">Переписка</span><span class="sheet-body"></span></div>
-        <div class="sheet sheet--stamp" data-sheet><span class="sheet-title">Акт</span><span class="sheet-body"></span></div>
-        <div class="sheet sheet--sum" data-sheet><span class="sheet-title">Счёт</span><span class="sheet-body"></span></div>
-        <div class="sheet sheet--done" data-sheet><span class="sheet-title">Готово</span><span class="sheet-body"></span></div>
-      </div>
-    </div>
-  </div>
+<div class="scene-caps">
+  <div class="scene-cap" data-scene-cap><small>Сейчас</small><h2>Документы, таблицы и переписка живут отдельно</h2><p>Сроки тянутся, мелкие ошибки копятся, нужное приходится искать.</p></div>
+  <div class="scene-cap" data-scene-cap><small>Помощник</small><h2>Проходит по вашим задачам</h2><p>Читает документы, сводит данные, готовит черновики. Вы говорите обычными словами.</p></div>
+  <div class="scene-cap" data-scene-cap><small>После</small><h2>Всё на своих местах</h2><p>Порядок в файлах, понятные сроки. Вы проверяете и подписываете.</p></div>
+</div>
+</div>
 </section>
 
 <!-- ============================ ТАРИФЫ ============================ -->

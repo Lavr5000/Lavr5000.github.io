@@ -22,7 +22,7 @@
 /* ---------- содержание ---------- */
 .toc{
   margin-bottom:clamp(38px,4vw,60px);padding:26px 28px;
-  border:1px solid var(--line);border-radius:var(--r);background:rgba(38,16,23,.4);
+  border:1px solid var(--line);border-radius:var(--r);background:rgba(16,24,38,.4);
 }
 .toc h3{
   margin:0 0 16px;font-family:var(--mono);font-size:13px;font-weight:500;
@@ -67,7 +67,7 @@
 
 .party-block{
   display:grid;gap:10px;margin:0 0 22px;padding:20px 22px;
-  border:1px solid var(--line);border-radius:var(--r);background:rgba(38,16,23,.4);
+  border:1px solid var(--line);border-radius:var(--r);background:rgba(16,24,38,.4);
   font-size:16px;color:var(--cream);
 }
 .label{
@@ -101,7 +101,7 @@
 }
 .right-item{
   padding:18px 20px;border:1px solid var(--line);border-radius:var(--r);
-  background:rgba(38,16,23,.4);
+  background:rgba(16,24,38,.4);
 }
 .right-title{color:var(--cream);font-size:16px;margin-bottom:8px}
 .right-desc{color:var(--cream-2);font-size:14.5px;line-height:1.55}

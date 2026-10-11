@@ -5,19 +5,19 @@
    Разметку шапки и подвала вставляет scripts/build_chrome.py.
    ============================================================ */
 :root{
-  --c-ink:#150B0F;
-  --c-ink-2:#22121A;
+  --c-ink:#0A111E;
+  --c-ink-2:#131E32;
   --c-paper:#F2EADD;
   --c-paper-2:#E7DCCB;
-  --c-text:#F3E9DE;
-  --c-text-2:#CDBBAE;
-  --c-dark:#1B1014;
+  --c-text:#F1F3F7;
+  --c-text-2:#C2CBDA;
+  --c-dark:#101826;
   --c-dark-2:#4E3F3A;
   --c-brass:#D9A961;
   --c-brass-2:#F0C888;
-  --c-brass-ink:#1A0C10;
-  --c-line:rgba(243,233,222,.14);
-  --c-line-dark:rgba(27,16,20,.16);
+  --c-brass-ink:#0A111E;
+  --c-line:rgba(200,220,255,.16);
+  --c-line-dark:rgba(16,24,38,.16);
   --c-err:#8E2B1E;
   --c-display:'Prata','Times New Roman',serif;
   --c-sans:'Golos Text','Segoe UI',system-ui,sans-serif;
@@ -33,7 +33,7 @@ html:root{scroll-behavior:auto}
 /* ---------- шапка ---------- */
 .chrome{
   position:sticky;top:0;z-index:90;
-  background:rgba(21,11,15,.92);
+  background:rgba(10,17,30,.92);
   -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
   border-bottom:1px solid var(--c-line);
   color:var(--c-text);font-family:var(--c-sans);
@@ -156,7 +156,7 @@ html:root{scroll-behavior:auto}
 .dlg-item span{font-family:var(--c-mono);font-size:17px;white-space:nowrap}
 .dlg label{display:grid;gap:6px;font-size:15px;font-weight:500}
 .dlg input[type="email"],.dlg input[type="text"]{
-  min-height:50px;padding:0 14px;border:1px solid rgba(27,16,20,.4);border-radius:3px;background:#FFFDF8;color:var(--c-dark);
+  min-height:50px;padding:0 14px;border:1px solid rgba(16,24,38,.4);border-radius:3px;background:#FFFDF8;color:var(--c-dark);
   font:inherit;font-weight:400;width:100%;
 }
 .dlg input:focus-visible{outline:2px solid #7A5418;outline-offset:2px}

@@ -1,26 +1,26 @@
 /* ============================================================
    AI VIBES — site3: главная, тарифы, «Для строителей», «Спасибо».
-   Раскладка: тёмные «сцены» (первый экран, сцена, контакты) чередуются со
+   Раскладка: сумеречно-синие тёмные «сцены» (первый экран, сцена, контакты) чередуются со
    светлыми «бумажными» разделами, где читают и принимают решение.
    Латунь — только главное действие. Шапка, подвал и окна — assets/chrome.css.
    ============================================================ */
 :root{
-  --ink:#150B0F;         /* тёмная сцена */
-  --ink-2:#1E1016;       /* приподнятая поверхность на тёмном */
-  --ink-3:#2B1620;
+  --ink:#0A111E;         /* тёмная сцена */
+  --ink-2:#121C2E;       /* приподнятая поверхность на тёмном */
+  --ink-3:#1B2942;
   --paper:#F2EADD;       /* светлый раздел */
   --paper-2:#E7DCCB;     /* карточка на светлом */
   --sheet:#FFFDF8;       /* лист документа */
-  --on-ink:#F3E9DE;
-  --on-ink-2:#CDBBAE;
-  --on-paper:#1B1014;
+  --on-ink:#F1F3F7;
+  --on-ink-2:#C2CBDA;
+  --on-paper:#101826;
   --on-paper-2:#4E3F3A;
   --brass:#D9A961;
   --brass-2:#F0C888;
   --brass-deep:#7A5418;  /* латунь для текста на светлом */
   --ok:#256B4B;          /* «входит в цену» */
-  --line-ink:rgba(243,233,222,.14);
-  --line-paper:rgba(27,16,20,.16);
+  --line-ink:rgba(200,220,255,.16);
+  --line-paper:rgba(16,24,38,.16);
 
   --display:'Prata','Times New Roman',serif;
   --sans:'Golos Text','Segoe UI',system-ui,sans-serif;
@@ -48,10 +48,10 @@ p{margin:0}
 ul,ol{margin:0;padding:0;list-style:none}
 :focus-visible{outline:2px solid var(--brass-2);outline-offset:3px;border-radius:2px}
 .paper :focus-visible{outline-color:var(--brass-deep)}
-::selection{background:var(--brass);color:#1A0C10}
+::selection{background:var(--brass);color:#0A111E}
 .skip{
   position:fixed;left:16px;top:-100px;z-index:200;padding:14px 20px;
-  background:var(--brass);color:#1A0C10;font-family:var(--mono);font-size:14px;
+  background:var(--brass);color:#0A111E;font-family:var(--mono);font-size:14px;
 }
 .skip:focus{top:12px}
 .wrap{max-width:var(--wrap);margin:0 auto;padding:0 20px;padding-inline:var(--pad)}
@@ -77,7 +77,7 @@ ul,ol{margin:0;padding:0;list-style:none}
 .hero{
   background:
     radial-gradient(900px 480px at 82% -10%, rgba(217,169,97,.16), transparent 60%),
-    radial-gradient(700px 500px at -10% 110%, rgba(120,40,60,.35), transparent 60%),
+    radial-gradient(700px 500px at -10% 110%, rgba(40,70,120,.35), transparent 60%),
     var(--ink);
   padding-block:clamp(20px,5vw,72px) clamp(28px,5vw,64px);
 }
@@ -96,101 +96,63 @@ ul,ol{margin:0;padding:0;list-style:none}
 .hero-tile--vip{border-color:rgba(217,169,97,.5);background:linear-gradient(135deg,rgba(217,169,97,.12),transparent 60%),var(--ink-2)}
 .hero-foot{font-size:15px;color:var(--on-ink-2)}
 
-/* ---------- сцена ---------- */
-.scene{background:linear-gradient(var(--ink),#0E0709 60%,var(--ink));position:relative}
-.scene-stage{
-  position:relative;overflow:clip;
-  display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:var(--gap);align-items:center;
-  max-width:var(--wrap);margin:0 auto;padding:clamp(40px,6vw,72px) var(--pad);
+/* ---------- сцена «Город и мост» ---------- */
+/* Без скриптов и при «меньше движения»: обычный раздел — первый экран и три подписи поверх картинки «после».
+   В движении (класс scene-live ставит assets/scene3.js): сцена закреплена под шапкой на длину хода,
+   первый экран и подписи сменяются на месте, искра открывает «после». */
+.scene{position:relative;background:var(--ink);overflow:clip}
+.scene-stage{position:relative;display:grid;align-content:center;min-height:calc(100vh - var(--c-head-h,68px))}
+.scene-bg{position:absolute;inset:0;overflow:hidden;background:var(--ink);pointer-events:none}
+.scene-bg img,.scene-bg canvas{position:absolute;left:0;top:0;width:100%;height:100%;max-width:none}
+.scene-bg img{object-fit:cover}
+.scene-bg canvas{display:none}
+.scene-live .scene-bg canvas{display:block}
+.scene .hero,.scene-caps{position:relative}
+.scene .hero{background:none}
+.scene .hero-text{padding:clamp(18px,2.4vw,30px);background:rgba(8,13,24,.74);border-radius:8px}
+.scene .hero-tile{background:rgba(8,13,24,.82)}
+.scene .hero-tile--vip{background:rgba(8,13,24,.82)}
+.scene .hero-foot{padding:0 12px;background:rgba(8,13,24,.74);border-radius:6px;width:max-content;max-width:100%}
+.scene-caps{display:grid;gap:18px;padding:0 var(--pad) clamp(28px,5vw,64px);max-width:var(--wrap);width:100%;margin:0 auto}
+.scene-cap{max-width:460px;padding:18px 20px;border:1px solid rgba(160,210,255,.22);border-radius:6px;background:rgba(8,13,24,.78);color:var(--on-ink)}
+.scene-cap h2{margin:0 0 6px;font-size:clamp(22px,3.2vw,32px);line-height:1.15;color:#fff}
+.scene-cap p{font-size:17px;line-height:1.5;color:var(--on-ink-2)}
+.scene-cap small{display:block;margin-bottom:8px;font-family:var(--mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#9AD4FF}
+.scene-cap:first-child small{color:#F2AE9A}
+.scene-live .scene{height:calc(100vh - var(--c-head-h,68px) + 220vh)}
+.scene-live .scene-stage{position:sticky;top:var(--c-head-h,68px);height:calc(100vh - var(--c-head-h,68px));height:calc(100svh - var(--c-head-h,68px));min-height:0}
+.scene-live .scene-bg{bottom:auto;height:calc(100vh - var(--c-head-h,68px));height:calc(100lvh - var(--c-head-h,68px))}
+.scene-live .scene-caps{position:absolute;inset:0;display:block;padding:0;max-width:none;pointer-events:none}
+.scene-live .scene-cap{position:absolute;left:max(var(--pad),calc(50% - 580px));bottom:12%;opacity:0;visibility:hidden;will-change:opacity,transform}
+.scene-live .scene-cap:nth-child(2){left:auto;right:max(var(--pad),calc(50% - 580px))}
+.scene-live .scene-cap:nth-child(3){left:50%;margin-left:-230px;width:460px;text-align:center}
+.scene-live .scene .hero{will-change:opacity,transform}
+@media (max-width:1000px){
+  .scene-live .scene-cap:nth-child(3){left:var(--pad);right:var(--pad);margin-left:0;width:auto;max-width:none}
+  /* запас фона под сворачивание адресной строки телефона: высота окна меняется, холст не пересобирается */
+  .scene-live .scene-bg{--scene-reserve:100px;height:calc(100vh - var(--c-head-h,68px) + 100px);height:calc(100lvh - var(--c-head-h,68px) + 100px)}
 }
-.scene-captions{display:grid;gap:22px;position:relative;z-index:3}
-.scene-cap{display:grid;gap:8px;padding-left:18px;border-left:2px solid var(--line-ink)}
-.scene-cap h2{font-size:clamp(22px,2.6vw,32px);line-height:1.15}
-.scene-cap p{color:var(--on-ink-2);max-width:40ch}
-.scene-cap.is-on{border-left-color:var(--brass)}
-.scene-space{--sx:210px;position:relative;height:min(560px,70vh);perspective:1100px;perspective-origin:50% 40%}
-.scene-world{position:absolute;inset:0;transform-style:preserve-3d}
-.sheet{
-  position:absolute;left:50%;top:50%;width:150px;height:196px;margin:-98px 0 0 -75px;
-  background:var(--sheet);color:var(--on-paper);border-radius:3px;
-  box-shadow:0 4px 10px rgba(0,0,0,.45); /* лёгкая тень: широкое размытие на девяти листах в объёме роняет кадры в Safari */
-  padding:12px 12px 10px;display:grid;grid-template-rows:auto 1fr;gap:8px;
-  transform-style:preserve-3d;backface-visibility:hidden;will-change:transform;
+@media (max-width:767px){
+  .scene .hero-in{padding:12px;background:rgba(8,13,24,.74);border-radius:8px}
+  .scene .hero-text{padding:0;background:none}
+  .scene .hero-foot{padding:0;background:none}
+  .scene-live .scene{height:calc(100vh - var(--c-head-h,68px) + 130vh)}
+  .scene-live .scene-cap,.scene-live .scene-cap:nth-child(2),.scene-live .scene-cap:nth-child(3){left:16px;right:16px;margin-left:0;width:auto;max-width:none;bottom:9%}
+  .scene-cap p{font-size:16px}
 }
-.sheet-title{font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:.04em;color:var(--on-paper-2);white-space:nowrap}
-.sheet-body{border-radius:2px;min-height:0}
-.sheet--lines .sheet-body{background:repeating-linear-gradient(#D9CEBD 0 3px,transparent 3px 14px)}
-.sheet--table .sheet-body{
-  background:
-    linear-gradient(#256B4B,#256B4B) 0 0/100% 16px no-repeat,
-    repeating-linear-gradient(90deg,transparent 0 31px,#CFC3B0 31px 32px),
-    repeating-linear-gradient(transparent 0 15px,#CFC3B0 15px 16px);
+/* телефон на боку: первый экран в две колонки, чтобы поместился по высоте */
+@media (max-height:500px) and (min-width:640px){
+  .scene .hero{padding-block:10px}
+  .scene .hero-in{grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:16px;align-items:center}
+  .scene .hero h1{font-size:24px}
+  .scene .hero .lead{font-size:15px}
+  .scene .hero-text{padding:12px 14px;gap:8px}
+  .scene .hero-tile{padding:8px 12px}
+  .scene .hero-tile-note,.scene .hero-foot{display:none}
+  .scene-live .scene-cap{bottom:8%;padding:12px 14px}
+  .scene-cap h2{font-size:22px}
+  .scene-cap p{font-size:15px}
 }
-.sheet--photo .sheet-body{background:linear-gradient(#9DB7C9 0 52%,#8A6F54 52% 100%);position:relative}
-.sheet--photo .sheet-body::after{content:"";position:absolute;left:18%;bottom:48%;width:46%;height:38%;background:#5B4A3E;clip-path:polygon(0 100%,0 30%,50% 0,100% 30%,100% 100%)}
-.sheet--draw{background:#1F3A5C;color:#E6EEF7}
-.sheet--draw .sheet-title{color:#C9D9EA}
-.sheet--draw .sheet-body{
-  background:
-    linear-gradient(#E6EEF7,#E6EEF7) 12% 20%/60% 2px no-repeat,
-    linear-gradient(#E6EEF7,#E6EEF7) 12% 20%/2px 62% no-repeat,
-    linear-gradient(#E6EEF7,#E6EEF7) 72% 20%/2px 62% no-repeat,
-    linear-gradient(#E6EEF7,#E6EEF7) 12% 82%/60% 2px no-repeat,
-    repeating-linear-gradient(rgba(230,238,247,.14) 0 1px,transparent 1px 14px);
-}
-.sheet--voice .sheet-body{
-  background:repeating-linear-gradient(90deg,#7A5418 0 4px,transparent 4px 10px);
-  -webkit-mask:linear-gradient(90deg,#000,#000) center/100% 28% no-repeat,radial-gradient(closest-side,#000 60%,transparent) center/70% 90% no-repeat;
-          mask:linear-gradient(90deg,#000,#000) center/100% 28% no-repeat,radial-gradient(closest-side,#000 60%,transparent) center/70% 90% no-repeat;
-}
-.sheet--chat .sheet-body{
-  background:
-    linear-gradient(#DDD1BE,#DDD1BE) 0 6%/68% 22% no-repeat,
-    linear-gradient(#E8C98F,#E8C98F) 100% 38%/56% 22% no-repeat,
-    linear-gradient(#DDD1BE,#DDD1BE) 0 72%/74% 22% no-repeat;
-}
-.sheet--stamp .sheet-body{background:repeating-linear-gradient(#D9CEBD 0 3px,transparent 3px 14px);position:relative}
-.sheet--stamp .sheet-body::after{content:"";position:absolute;right:8%;bottom:8%;width:44px;height:44px;border:3px solid #7C2D2D;border-radius:50%;opacity:.8}
-.sheet--sum .sheet-body{background:repeating-linear-gradient(#D9CEBD 0 3px,transparent 3px 14px) 0 0/100% 70% no-repeat,linear-gradient(#1B1014,#1B1014) 100% 92%/46% 5px no-repeat}
-.sheet--done{background:var(--sheet);outline:2px solid var(--brass);outline-offset:-2px}
-.sheet--done .sheet-title{color:var(--ok);font-weight:700}
-.sheet--done .sheet-body{
-  background:
-    linear-gradient(#256B4B,#256B4B) 0 0/100% 16px no-repeat,
-    repeating-linear-gradient(90deg,transparent 0 31px,#CFC3B0 31px 32px),
-    repeating-linear-gradient(transparent 0 15px,#CFC3B0 15px 16px);
-}
-/* итоговый кадр (покой, без скриптов, «меньше движения»): аккуратная стопка */
-.sheet:nth-child(1){transform:translate3d(calc(var(--sx) + -28px),34px,-80px) rotateZ(-7deg)}
-.sheet:nth-child(2){transform:translate3d(calc(var(--sx) + -20px),28px,-70px) rotateZ(5deg)}
-.sheet:nth-child(3){transform:translate3d(calc(var(--sx) + -14px),22px,-60px) rotateZ(-4deg)}
-.sheet:nth-child(4){transform:translate3d(calc(var(--sx) + -9px),16px,-50px) rotateZ(3deg)}
-.sheet:nth-child(5){transform:translate3d(calc(var(--sx) + -5px),11px,-40px) rotateZ(-2deg)}
-.sheet:nth-child(6){transform:translate3d(calc(var(--sx) + -2px),7px,-30px) rotateZ(2deg)}
-.sheet:nth-child(7){transform:translate3d(calc(var(--sx) + 0),4px,-20px) rotateZ(-1deg)}
-.sheet:nth-child(8){transform:translate3d(calc(var(--sx) + 1px),2px,-10px) rotateZ(1deg)}
-.sheet:nth-child(9){transform:translate3d(calc(var(--sx) + 2px),0,0)}
-.device{position:absolute;transform-style:preserve-3d}
-.device--laptop{left:4%;bottom:6%;width:46%;max-width:330px}
-.laptop-screen{
-  aspect-ratio:16/10;background:#0D0709;border:8px solid #3A2A30;border-bottom-width:10px;border-radius:8px 8px 2px 2px;
-  padding:12px;display:grid;align-content:end;gap:8px;
-}
-.laptop-base{height:12px;margin:0 -9%;background:linear-gradient(#59474D,#33252B);border-radius:0 0 10px 10px}
-.ask{
-  font-family:var(--mono);font-size:13px;line-height:1.45;color:var(--on-ink);
-  background:var(--ink-3);border:1px solid var(--line-ink);border-radius:4px;padding:8px 10px;
-}
-.ask b{color:var(--brass-2);font-weight:500}
-.device--phone{left:44%;bottom:4%;width:17%;max-width:112px;min-width:84px}
-.phone-body{aspect-ratio:9/18;background:#0D0709;border:6px solid #3A2A30;border-radius:16px;padding:10px 7px;display:grid;align-content:end}
-.phone-body .ask{font-size:13px;padding:6px 7px}
-
-/* сцена в движении: высота контейнера и закрепление (класс ставит assets/scene.js) */
-.scene-live .scene{height:250vh}
-.scene-live .scene-stage{position:sticky;top:var(--c-head-h,68px);min-height:calc(100vh - var(--c-head-h,68px));align-content:center}
-.scene-live .scene-cap{opacity:.38;transition:opacity .25s var(--ease)}
-.scene-live .scene-cap.is-on{opacity:1}
 
 /* ---------- тарифы ---------- */
 .tariffs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gap);align-items:start}
@@ -218,7 +180,7 @@ ul,ol{margin:0;padding:0;list-style:none}
 .tariff .btn-pay{width:100%}
 .support{
   margin-top:var(--gap);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 24px;
-  padding:18px clamp(18px,3vw,28px);border:1px dashed rgba(27,16,20,.35);border-radius:6px;
+  padding:18px clamp(18px,3vw,28px);border:1px dashed rgba(16,24,38,.35);border-radius:6px;
 }
 .support p{max-width:70ch}
 .support strong{font-weight:500}
@@ -284,7 +246,7 @@ ul,ol{margin:0;padding:0;list-style:none}
 .card .btn-line{min-height:48px;font-size:16px;color:var(--on-paper)}
 .card .btn-pay{min-height:48px;font-size:16px}
 .tag{display:inline-flex;align-items:center;min-height:26px;padding:0 10px;border-radius:13px;font-family:var(--mono);font-size:13px;background:rgba(37,107,75,.14);color:var(--ok);width:max-content}
-.tag--soon{background:rgba(27,16,20,.08);color:var(--on-paper-2)}
+.tag--soon{background:rgba(16,24,38,.08);color:var(--on-paper-2)}
 .tag--free{background:rgba(122,84,24,.14);color:var(--brass-deep)}
 .bullets{display:grid;gap:8px;color:var(--on-paper-2);font-size:16px}
 .bullets li{padding-left:16px;position:relative}
@@ -310,10 +272,6 @@ ul,ol{margin:0;padding:0;list-style:none}
   .hero-in{grid-template-columns:1fr}
   .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
   .split{grid-template-columns:1fr}
-  .scene-stage{grid-template-columns:1fr}
-  .scene-space{--sx:150px}
-  .scene-live .scene-cap:not(.is-on){display:none}
-  .scene-live .scene-cap{min-height:7.5em;align-content:start}
 }
 @media (max-width:767px){
   body{font-size:16px}
@@ -334,37 +292,14 @@ ul,ol{margin:0;padding:0;list-style:none}
   .tariff{gap:14px;padding:20px 18px}
   .tariff-list{gap:6px}
   .step{gap:6px;padding-top:14px}
-  .scene-stage{grid-template-columns:1fr;padding-block:28px}
-  .scene-captions{gap:14px}
-  .scene-cap p{font-size:15px}
-  .scene-space{--sx:96px;height:min(360px,46vh)}
-  .sheet{width:112px;height:146px;margin:-73px 0 0 -56px;padding:9px 9px 8px}
-  .sheet:nth-child(n+5):not(.sheet--done){display:none}
-  .device--laptop{left:0;width:50%}
-  .device--phone{left:46%}
-  .scene-live .scene{height:150vh}
-  .scene-live .scene-cap:not(.is-on){display:none}
-  .scene-live .scene-cap{min-height:9.5em;align-content:start}
 }
 @media (max-width:767px) and (max-height:700px){
   .hero{padding-top:14px}
   .hero h1{font-size:28px}
   .hero .kicker{margin-bottom:6px}
 }
-/* телефон на боку: подпись слева, пространство справа, всё в одну высоту окна */
-@media (max-height:500px) and (min-width:640px){
-  .scene-stage{grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);padding-block:16px;align-items:center}
-  .scene-space{--sx:120px;height:calc(100vh - var(--c-head-h,64px) - 40px);min-height:240px}
-  .sheet{display:grid;width:90px;height:118px;margin:-59px 0 0 -45px;padding:7px 7px 6px;gap:5px}
-  .scene-cap h2{font-size:22px}
-  .scene-cap p{font-size:15px}
-  .scene-live .scene{height:250vh}
-  .scene-live .scene-cap{min-height:0}
-  .device--laptop{left:2%;width:44%}
-  .device--phone{left:44%;min-width:64px;width:15%}
-}
 @media (hover:hover){
-  .tariff:hover{box-shadow:0 24px 48px rgba(27,16,20,.18)}
+  .tariff:hover{box-shadow:0 24px 48px rgba(16,24,38,.18)}
 }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}
