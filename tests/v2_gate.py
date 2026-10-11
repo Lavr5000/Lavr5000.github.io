@@ -10,7 +10,8 @@ Exit code 0 = ok, 1 = fail. `--strict` is accepted for compatibility with the pl
 
 Stages (the key lists and page lists below are constants; after Э0 they are not edited):
   e1   nav_variants overflow_pages_m pages_200 page_errors csp_violations         (13 pages, no upload pages, no Transkribator)
-  e2   e1 + the home-page keys (scene, fold, tariff cards, hidden*, dead CTA, small text, weight, contrast)
+  e2   e1 + the home-page keys (scene, image weight, versioned assets, LCP, fold, tariff cards, hidden*, dead CTA,
+       small text, weight, contrast)
   e3   every key except ym_form_protected and the font size inside the open pay dialog (same 13 pages as e1)
   full everything, all 16 pages
 
@@ -55,7 +56,7 @@ UNREADY_EXCLUDE: set[str] = set()
 CONTRAST_PAGES_E3 = ["/", "/services/"]
 
 E1_KEYS = ["pages_200", "page_errors", "csp_violations", "overflow_pages_m", "nav_variants"]
-HOME_KEYS = ["scene_home", "fold_360x640", "tariff_cards_home", "hidden_at_rest", "hidden_at_rest_rm", "hidden_nojs",
+HOME_KEYS = ["scene_home", "img_kb_home_m", "img_kb_home_d", "assets_versioned_home", "lcp_ms_home_m", "fold_360x640", "tariff_cards_home", "hidden_at_rest", "hidden_at_rest_rm", "hidden_nojs",
              "dead_cta_nojs", "small_text", "screens_m_home", "js_raw_kb_home", "js_gzip_kb_home",
              "claudecode_raw_home", "contrast_fail"]
 E3_EXTRA = ["hermes_raw", "removed_offers", "unready_prices", "llms_txt_200", "tariff_prices_match",
@@ -66,6 +67,12 @@ STAGES = {
     "e3": dict(pages=NO_UPLOAD_PAGES, keys=E1_KEYS + HOME_KEYS + E3_EXTRA, scope_home_only=False),
     "full": dict(pages=ALL_PAGES, keys=E1_KEYS + HOME_KEYS + E3_EXTRA + ["ym_form_protected"], scope_home_only=False),
 }
+# thresholds of the scene-era keys (PLAN-3 5.1); the two image limits are tightened to "fact + 10 %" after the build
+IMG_KB_HOME_M_MAX = 900     # KB of image/* response bodies, home page, 390x844, load + scroll to the footer
+IMG_KB_HOME_D_MAX = 1600    # the same at 1440x900
+LCP_MS_HOME_M_MAX = 2500    # Largest Contentful Paint, 390x844, CDP-throttled network
+LCP_NET = dict(offline=False, latency=150, downloadThroughput=int(1.6e6 / 8), uploadThroughput=int(0.75e6 / 8))   # 1.6 / 0.75 Mbit/s, 150 ms
+SCENE_PATH = "/assets/scene/"
 # informational keys printed next to the gated ones (never in miss=)
 INFO_KEYS = ["contrast_skipped", "pay_buttons_home", "claudecode_raw_llms", "small_text_dialog"]
 
@@ -73,6 +80,10 @@ CHECKS = {   # key -> predicate on the value; the verdict is the list of keys wh
     "pages_200": lambda v: isinstance(v, str) and v.split("/")[0] == v.split("/")[1],
     "page_errors": lambda v: v == 0, "csp_violations": lambda v: v == 0, "overflow_pages_m": lambda v: v == 0,
     "nav_variants": lambda v: v == 1, "scene_home": lambda v: v == 1, "fold_360x640": lambda v: v == 1,
+    "img_kb_home_m": lambda v: isinstance(v, (int, float)) and 0 < v <= IMG_KB_HOME_M_MAX,   # -1 = scene-file condition not met
+    "img_kb_home_d": lambda v: isinstance(v, (int, float)) and 0 < v <= IMG_KB_HOME_D_MAX,
+    "assets_versioned_home": lambda v: v == 1,
+    "lcp_ms_home_m": lambda v: isinstance(v, (int, float)) and 0 < v <= LCP_MS_HOME_M_MAX,
     "tariff_cards_home": lambda v: v == 2, "hidden_at_rest": lambda v: v == 0, "hidden_at_rest_rm": lambda v: v == 0,
     "hidden_nojs": lambda v: v == 0, "dead_cta_nojs": lambda v: v == 0, "small_text": lambda v: v == 0,
     "screens_m_home": lambda v: isinstance(v, (int, float)) and 0 < v <= 9,
@@ -287,11 +298,20 @@ PAGE_JS = r"""(opts) => {
 HOME_JS = r"""() => {
   const q = s => [...document.querySelectorAll(s)];
   const vis = e => e.getClientRects().length > 0 && getComputedStyle(e).visibility !== 'hidden';
-  const stage = document.querySelector('[data-scene] [data-scene-stage], [data-scene-stage]');
-  const sheets = q('[data-scene] [data-sheet], [data-sheet]');
-  const cs = stage ? getComputedStyle(stage) : null;
-  return {scenes: q('section[data-scene]').length, stage: !!stage, sticky: cs ? cs.position : '', top: cs ? cs.top : '',
-          sheets: sheets.length, sheetsVisible: sheets.filter(vis).length, live: document.documentElement.classList.contains('scene-live'),
+  const scenes = q('section[data-scene]');
+  const inScene = s => scenes.flatMap(sc => [...sc.querySelectorAll(s)]);
+  const base = q('img[data-scene-base]'), canv = q('canvas[data-scene-canvas]');
+  const canvasOk = c => { const s = getComputedStyle(c), r = c.getBoundingClientRect();
+    return s.display !== 'none' && s.visibility === 'visible' && c.getClientRects().length > 0 && r.width > 0 && r.height > 0; };
+  const sameOrigin = u => { try { return new URL(u, location.href).origin === location.origin; } catch (_) { return false; } };
+  const hasV = u => { try { return new URL(u, location.href).searchParams.has('v'); } catch (_) { return false; } };
+  const local = [...q('script[src]').map(e => e.getAttribute('src')), ...q('link[rel~=stylesheet][href]').map(e => e.getAttribute('href'))].filter(sameOrigin);
+  return {scenes: scenes.length, stages: inScene('[data-scene-stage]').length,
+          baseCount: base.length, baseLoaded: base.length > 0 && base.every(i => i.complete && i.naturalWidth > 0),
+          canvasCount: canv.length, canvasVisible: canv.length > 0 && canv.every(canvasOk),
+          caps: inScene('[data-scene-cap]').length, oldSheets: q('[data-sheet]').length,
+          live: document.documentElement.classList.contains('scene-live'),
+          localAssets: local.length, unversioned: local.filter(u => !hasV(u)),
           cards: q('[data-tariff]').map(c => ({scope: c.closest('#tarify') ? 'tarify' : 'other', id: c.getAttribute('data-tariff'),
             price: ((c.querySelector('.tariff-price') || {textContent: ''}).textContent || '').replace(/\s+/g, ' ').trim()}))};
 }"""
@@ -477,11 +497,12 @@ def run_gate(base: str, stage: str, exp: str, out_json: str | None) -> tuple[dic
 
         # --- home: scene / cards / fold / script weight
         home: dict = {}
-        if want & {"scene_home", "tariff_cards_home", "tariff_prices_match", "fold_360x640", "js_raw_kb_home", "js_gzip_kb_home"}:
+        if want & {"scene_home", "assets_versioned_home", "tariff_cards_home", "tariff_prices_match", "fold_360x640", "js_raw_kb_home", "js_gzip_kb_home"}:
             for vk, vv in views.items():
                 ctx = new_ctx(**vv)
                 pg, status, sink = open_page(ctx, "/")
                 if status == 200:
+                    pg.wait_for_timeout(1200)                                  # the first scene frame
                     try:
                         home[vk] = pg.evaluate(HOME_JS)
                     except Exception as e:
@@ -526,6 +547,66 @@ def run_gate(base: str, stage: str, exp: str, out_json: str | None) -> tuple[dic
                     raw_total += len(b); gz_total += sizes[f"inline#{i}"][1]
             home["scripts"] = sizes
             home["raw_kb"], home["gzip_kb"] = round(raw_total / 1024, 1), round(gz_total / 1024, 1)
+        # --- image weight of the home page (390 and 1440): load, scroll to the footer, sum image/* response bodies
+        img: dict = {}
+        if want & {"img_kb_home_m", "img_kb_home_d"}:
+            for vk, vv in views.items():
+                if f"img_kb_home_{vk}" not in want:
+                    continue
+                ctx = new_ctx(**vv)
+                pg = ctx.new_page()
+                got: list = []            # (url, bytes, content-type)
+
+                def on_resp(resp, got=got):
+                    try:
+                        ct = (resp.headers.get("content-type") or "").split(";")[0].strip().lower()
+                        if ct.startswith("image/"):
+                            got.append((resp.url, len(resp.body()), ct))
+                    except Exception:
+                        pass
+                pg.on("response", on_resp)
+                try:
+                    pg.goto(base + "/", wait_until="load", timeout=45000)
+                    settle(pg)
+                    h = pg.evaluate("document.documentElement.scrollHeight")
+                    for y in range(0, int(h) + 900, 600):
+                        pg.evaluate("y => window.scrollTo(0, y)", y); pg.wait_for_timeout(150)
+                    pg.evaluate("window.scrollTo(0, document.documentElement.scrollHeight)")
+                    settle(pg, 800)
+                except Exception as e:
+                    detail["notes"][f"img_{vk}_error"] = str(e)[:100]
+                pg.close(); ctx.close()
+                files: dict = {}
+                for u, n, ct in got:
+                    files[urlparse(u).path] = files.get(urlparse(u).path, 0) + n
+                scene_files = {p: n for p, n in files.items() if p.startswith(SCENE_PATH)}
+                orient = "_tel" if vk == "m" else "_pc"
+                names = sorted(Path(p).stem for p in scene_files)
+                scene_ok = (len(scene_files) == 2 and all(n.endswith(orient) for n in names)
+                            and sum("before" in n for n in names) == 1 and sum("after" in n for n in names) == 1)
+                img[vk] = dict(total_kb=round(sum(files.values()) / 1024, 1), scene_kb=round(sum(scene_files.values()) / 1024, 1),
+                               other_kb=round((sum(files.values()) - sum(scene_files.values())) / 1024, 1),
+                               scene_files=sorted(scene_files), scene_ok=scene_ok, files={p: files[p] for p in sorted(files)})
+
+        # --- LCP of the home page: 390x844, cache off, network throttled through CDP (1.6 Mbit/s down, 750 kbit/s up, 150 ms)
+        lcp: dict = {}
+        if "lcp_ms_home_m" in want:
+            ctx = new_ctx(viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True)
+            pg = ctx.new_page()
+            pg.add_init_script("window.__lcp = null; try { new PerformanceObserver(l => { const e = l.getEntries(); const x = e[e.length - 1];"
+                               " if (x) window.__lcp = {t: x.startTime, size: x.size, tag: x.element ? x.element.tagName.toLowerCase() : '',"
+                               " url: x.url || ''}; }).observe({type: 'largest-contentful-paint', buffered: true}); } catch (_) {}")
+            try:
+                cdp = ctx.new_cdp_session(pg)
+                cdp.send("Network.enable")
+                cdp.send("Network.setCacheDisabled", {"cacheDisabled": True})
+                cdp.send("Network.emulateNetworkConditions", LCP_NET)
+                pg.goto(base + "/", wait_until="load", timeout=90000)
+                pg.wait_for_timeout(2500)
+                lcp = pg.evaluate("window.__lcp") or {}
+            except Exception as e:
+                detail["notes"]["lcp_error"] = str(e)[:100]
+            pg.close(); ctx.close()
         br.close()
 
     # ---- raw HTML scans (no browser)
@@ -569,8 +650,20 @@ def run_gate(base: str, stage: str, exp: str, out_json: str | None) -> tuple[dic
     S["contrast_skipped"] = sum(c["skipped"] for c in cf)
     # home
     hm, hd = home.get("m", {}), home.get("d", {})
-    S["scene_home"] = int(hm.get("scenes") == 1 and hd.get("scenes") == 1 and hd.get("sticky") == "sticky"
-                          and hd.get("sheets") == 9 and hd.get("sheetsVisible") == 9 and hm.get("sheetsVisible") == 5 and bool(hd.get("live")))
+    scene_one = lambda h: (h.get("scenes") == 1 and h.get("stages") == 1 and h.get("baseCount") == 1 and bool(h.get("baseLoaded"))
+                           and h.get("canvasCount") == 1 and bool(h.get("canvasVisible")) and h.get("caps") == 3
+                           and bool(h.get("live")) and h.get("oldSheets") == 0)
+    S["scene_home"] = int(scene_one(hm) and scene_one(hd))
+    detail["scene_home_parts"] = {vk: {k: h.get(k) for k in ("scenes", "stages", "baseCount", "baseLoaded", "canvasCount", "canvasVisible",
+                                                            "caps", "live", "oldSheets")} for vk, h in (("m", hm), ("d", hd))}
+    S["assets_versioned_home"] = int(bool(hd) and hd.get("localAssets", 0) > 0 and not hd.get("unversioned"))
+    detail["unversioned_home"] = hd.get("unversioned", [])
+    for vk in ("m", "d"):
+        iv = img.get(vk)
+        S[f"img_kb_home_{vk}"] = (iv["total_kb"] if iv["scene_ok"] else -1) if iv else -1
+    detail["img"] = img
+    S["lcp_ms_home_m"] = round(lcp["t"]) if lcp.get("t") else -1
+    detail["lcp"] = lcp
     cards = [c for c in hm.get("cards", []) if c["scope"] == "tarify"]
     S["tariff_cards_home"] = len(cards)
     fd = home.get("fold", {})
@@ -654,6 +747,16 @@ def main(argv=None) -> int:
     print(f"SCORE suite=site-v2 exp={a.exp}: stage={a.stage} {fmt(score)} {fmt(extra['info'])}".rstrip())
     for sample in extra["detail"]["error_samples"][:6]:
         print("  error:", sample)
+    for vk, iv in extra["detail"].get("img", {}).items():
+        print(f"  img_kb_home_{vk}: total={iv['total_kb']} scene={iv['scene_kb']} other={iv['other_kb']} scene_ok={int(iv['scene_ok'])}"
+              f" scene_files={','.join(Path(p).name for p in iv['scene_files']) or '-'}")
+    if extra["detail"].get("lcp"):
+        l = extra["detail"]["lcp"]
+        print(f"  lcp_ms_home_m: {round(l.get('t', 0))} element={l.get('tag')} size={l.get('size')} url={l.get('url') or '-'}")
+    if extra["detail"].get("unversioned_home"):
+        print("  unversioned:", ", ".join(extra["detail"]["unversioned_home"][:8]))
+    if "scene_home" in extra["detail"]["score"] and not extra["detail"]["score"]["scene_home"]:
+        print("  scene_home parts:", json.dumps(extra["detail"]["scene_home_parts"], ensure_ascii=False))
     if a.json:
         Path(a.json).write_text(json.dumps(extra["detail"], ensure_ascii=False, indent=1, default=str), encoding="utf-8")
     print("GATE " + ("status=ok" if not miss else "status=fail miss=" + ",".join(miss)))
