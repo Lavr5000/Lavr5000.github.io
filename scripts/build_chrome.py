@@ -98,7 +98,6 @@ def header(active: str) -> str:
   </div>
   <div class="chrome-panel" id="chrome-panel" data-menu-panel hidden>
 {menu_links(active, "    ")}
-    <a class="chrome-cta" href="/#tarify">Выбрать тариф</a>
   </div>
   <span class="chrome-progress" data-progress aria-hidden="true"></span>
 </header>"""
@@ -159,9 +158,9 @@ def dialogs() -> str:
 <dialog class="dlg ym-hide-content" id="pay-dialog" aria-labelledby="pay-title">
   <div class="dlg-in">
     <button class="dlg-close" type="button" data-dlg-close aria-label="Закрыть">×</button>
-    <p class="dlg-kicker">Оплата</p>
-    <h2 id="pay-title">Оплата настройки</h2>
-    <div class="dlg-item"><strong id="pay-service"></strong><span id="pay-price"></span></div>
+    <p class="dlg-kicker">Оплата настройки</p>
+    <h2 class="dlg-title-item" id="pay-title"><span id="pay-service"></span></h2>
+    <div class="dlg-item"><strong>К оплате</strong><span id="pay-price"></span></div>
     <form class="ym-disable-keys" id="pay-form" novalidate>
       <div class="dlg-fields">
         <label for="pay-email">Почта для кассового чека

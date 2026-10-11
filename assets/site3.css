@@ -113,7 +113,7 @@ ul,ol{margin:0;padding:0;list-style:none}
 .sheet{
   position:absolute;left:50%;top:50%;width:150px;height:196px;margin:-98px 0 0 -75px;
   background:var(--sheet);color:var(--on-paper);border-radius:3px;
-  box-shadow:0 18px 40px rgba(0,0,0,.45),0 1px 0 rgba(255,255,255,.6) inset;
+  box-shadow:0 4px 10px rgba(0,0,0,.45); /* лёгкая тень: широкое размытие на девяти листах в объёме роняет кадры в Safari */
   padding:12px 12px 10px;display:grid;grid-template-rows:auto 1fr;gap:8px;
   transform-style:preserve-3d;backface-visibility:hidden;will-change:transform;
 }
@@ -310,9 +310,15 @@ ul,ol{margin:0;padding:0;list-style:none}
   .hero-in{grid-template-columns:1fr}
   .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
   .split{grid-template-columns:1fr}
+  .scene-stage{grid-template-columns:1fr}
+  .scene-space{--sx:150px}
+  .scene-live .scene-cap:not(.is-on){display:none}
+  .scene-live .scene-cap{min-height:7.5em;align-content:start}
 }
 @media (max-width:767px){
   body{font-size:16px}
+  :root{--band:40px}
+  #tools{padding-bottom:0}
   .hero-in{gap:14px}
   .hero-text{display:contents}
   .hero-text .kicker{order:1;margin:0}
@@ -325,15 +331,18 @@ ul,ol{margin:0;padding:0;list-style:none}
   .hero-tile .btn-pay{grid-row:1;min-height:48px;padding:0 16px;font-size:16px}
   .tariffs,.cards{grid-template-columns:1fr}
   .steps{grid-template-columns:1fr}
+  .tariff{gap:14px;padding:20px 18px}
+  .tariff-list{gap:6px}
+  .step{gap:6px;padding-top:14px}
   .scene-stage{grid-template-columns:1fr;padding-block:28px}
   .scene-captions{gap:14px}
   .scene-cap p{font-size:15px}
   .scene-space{--sx:96px;height:min(360px,46vh)}
   .sheet{width:112px;height:146px;margin:-73px 0 0 -56px;padding:9px 9px 8px}
-  .sheet:nth-child(n+6):not(.sheet--done){display:none}
+  .sheet:nth-child(n+5):not(.sheet--done){display:none}
   .device--laptop{left:0;width:50%}
   .device--phone{left:46%}
-  .scene-live .scene{height:170vh}
+  .scene-live .scene{height:150vh}
   .scene-live .scene-cap:not(.is-on){display:none}
   .scene-live .scene-cap{min-height:9.5em;align-content:start}
 }
@@ -341,6 +350,18 @@ ul,ol{margin:0;padding:0;list-style:none}
   .hero{padding-top:14px}
   .hero h1{font-size:28px}
   .hero .kicker{margin-bottom:6px}
+}
+/* телефон на боку: подпись слева, пространство справа, всё в одну высоту окна */
+@media (max-height:500px) and (min-width:640px){
+  .scene-stage{grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);padding-block:16px;align-items:center}
+  .scene-space{--sx:120px;height:calc(100vh - var(--c-head-h,64px) - 40px);min-height:240px}
+  .sheet{display:grid;width:90px;height:118px;margin:-59px 0 0 -45px;padding:7px 7px 6px;gap:5px}
+  .scene-cap h3{font-size:22px}
+  .scene-cap p{font-size:15px}
+  .scene-live .scene{height:250vh}
+  .scene-live .scene-cap{min-height:0}
+  .device--laptop{left:2%;width:44%}
+  .device--phone{left:44%;min-width:64px;width:15%}
 }
 @media (hover:hover){
   .tariff:hover{box-shadow:0 24px 48px rgba(27,16,20,.18)}
