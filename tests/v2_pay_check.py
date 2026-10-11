@@ -5,6 +5,8 @@
 
 Part 1 (always). Playwright intercepts every request to https://api.ai-vibes.ru/** (CORS preflight included) and the
 page's /services.config.js (enabled true/false), so no real API and no bank is ever called. Chromium, 1440x900.
+  * for every `a[data-request]` button of `/`, `/services/` and `/products.html` (services ordered by a message): the
+    request window opens with that button's own title and price, the pay window stays closed, no API request is made;
   * for every `[data-pay]` button of `/` and `/services/` (enumerated by selector): the pay window shows that button's
     own title and price; a valid submit sends product / consent_version / Idempotency-Key (uuid) / website="" and
     navigates to the payment_url (the navigation is caught by interception: pay hosts are answered with an empty page);
@@ -13,17 +15,19 @@ page's /services.config.js (enabled true/false), so no real API and no bank is e
     and creates a NEW key; a record older than a day gets a new key;
   * negative cases (counted as neg=K/K): empty e-mail / contact / unchecked consent block the request; amount mismatch,
     403, 429, 500, timeout, foreign payment_url host -> error state with "write to us" and no navigation; the second 409
-    stops after one retry; PAY_ENABLED=false -> no API request; /spasibo/ with markup in `n`, with a malformed `n`,
+    stops after one retry; 409 order_already_paid -> error state, exactly one POST (a paid order is never re-created); PAY_ENABLED=false -> no API request; /spasibo/ with markup in `n`, with a malformed `n`,
     with extra bank parameters (never shown, never claims the payment succeeded), without `n`; empty sessionStorage ->
     the retry link points to /#tarify.
 Part 2 (--backend URL): the same successful scenarios against the local BACK dev server (printed by
 `python scripts/dev_service_server.py` as `DEV_SERVER url=...` in ai-stroyka-orders-svc-wt): a real CORS preflight with
 the Idempotency-Key header, order_number AV-XXXXXXXX, amount = data-amount, payment_url present, the same key returns the
-same order. `--backend-disabled URL` (a second server with WEBINTAKE_SERVICE_PAYMENTS_ENABLED off) must answer 503
+same order. The page's CSP allows only https://api.ai-vibes.ru, so the contexts of part 2 bypass the CSP; the dev server's
+payment page is http://127.0.0.1, so the proxy hands the page the same address with https (pay.js accepts https only and
+is not relaxed for the test). `--backend-disabled URL` (a second server with WEBINTAKE_SERVICE_PAYMENTS_ENABLED off) must answer 503
 service_payments_disabled and the page must show the error state. Without --backend: backend=skipped.
 Contract expectation not in CONTRACT.md: the config may carry `timeoutMs` (the 15 s client timeout is shortened to 1.5 s
 by it); if pay.js ignores it the timeout case simply waits the full 15 s.
-Last line: PAY status=ok|fail buttons=N neg=K/K backend=local|skipped [disabled=..] [miss=..]
+Last line: PAY status=ok|fail buttons=N requests=M neg=K/K backend=local|skipped [disabled=..] [miss=..]
 """
 from __future__ import annotations
 
@@ -46,8 +50,10 @@ CONSENT = "setup-v1-2026-10"
 PAY_HOSTS = ["securepay.tinkoff.ru", "pay.tbank-online.com"]
 AMOUNTS = {"setup-start": 750000, "setup-vip": 4500000}
 PAGES = ["/", "/services/"]
+REQUEST_PAGES = ["/", "/services/", "/products.html"]      # pages that carry the order windows (a[data-request])
 UUID_RE = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$", re.I)
 ORDER_RE = re.compile(r"^AV-[0-9A-F]{8}$")
+LOCAL_PAY_RE = re.compile(r"^http://(127\.0\.0\.1|localhost)(:\d+)?/")
 EMAIL, CONTACT = "check@example.com", "+7 900 000-00-00"
 TIMEOUT_MS = 1500
 GOOD_N = "AV-0123ABCD"
@@ -101,9 +107,9 @@ class Mock:
 class Site:
     """One browser context with its page, the interception and the navigation log."""
 
-    def __init__(self, br, base, mock=None, enabled=True, api=API, extra_hosts=(), real_api=False):
+    def __init__(self, br, base, mock=None, enabled=True, api=API, extra_hosts=(), real_api=False, bypass_csp=False):
         self.base, self.mock, self.navs = base, mock, []
-        self.ctx = br.new_context(viewport={"width": 1440, "height": 900}, locale="ru-RU")
+        self.ctx = br.new_context(viewport={"width": 1440, "height": 900}, locale="ru-RU", bypass_csp=bypass_csp)
         host = urlparse(base).netloc
         keep = re.escape(host) + r"|127\.0\.0\.1|localhost"
         self.ctx.route(re.compile(rf"^https?://(?!(?:{keep})(?:[:/]|$))"), lambda r: r.abort())      # nothing leaves the machine
@@ -322,6 +328,48 @@ def case_409_twice(br, base, path, idx, btn):
         s.close()
 
 
+def case_409_already_paid(br, base, path, idx, btn):
+    mock = Mock([("status", 409, {"error_code": "order_already_paid", "message": "order_already_paid"}), ("ok",)])
+    s = Site(br, base, mock)
+    try:
+        s.goto(path)
+        k, u = flow_ok(s, idx)
+        need(k == "error", f"409 order_already_paid did not end in the error state ({k})")
+        s.pg.wait_for_timeout(800)
+        need(len(mock.posts) == 1, f"{len(mock.posts)} POSTs after order_already_paid, expected exactly 1 (no new order)")
+        error_checks(s, "409 already paid")
+    finally:
+        s.close()
+
+
+def request_buttons(s: Site):
+    return s.pg.evaluate("""() => [...document.querySelectorAll('a[data-request]')].map(b => ({id: b.getAttribute('data-service-id'),
+        order: b.getAttribute('data-order') || '', price: b.getAttribute('data-price-label') || '', href: b.getAttribute('href') || ''}))""")
+
+
+def case_request_button(br, base, path, idx, btn):
+    mock = Mock([("ok",)])
+    s = Site(br, base, mock)                                          # pay switch ON: a request button still never pays
+    try:
+        s.goto(path)
+        need(btn["href"].strip() not in ("", "#"), f"request button without a working href: {btn['href']!r}")
+        loc = s.pg.locator("a[data-request]").nth(idx)
+        loc.scroll_into_view_if_needed()
+        loc.click(timeout=5000)
+        s.pg.wait_for_selector("dialog#order-dialog[open]", state="visible", timeout=3500)
+        need(s.pg.locator("dialog#pay-dialog[open]").count() == 0, "pay window opened by a request button")
+        title, price = s.pg.inner_text("#order-service"), norm_price(s.pg.inner_text("#order-price"))
+        need(norm_price(btn["order"]) in norm_price(title), f"request window {title[:50]!r} lacks data-order {btn['order'][:40]!r}")
+        need(norm_price(btn["price"]) in price, f"request window price {price!r} lacks {btn['price']!r}")
+        n = s.pg.locator("dialog#order-dialog a[href*='max.ru'], dialog#order-dialog a[href*='t.me'], dialog#order-dialog a[href^='mailto:']").count()
+        need(n >= 3, f"request window has {n} contact links, need MAX, Telegram and mail")
+        s.pg.wait_for_timeout(500)
+        need(not mock.requests, f"API requests from a request button: {mock.requests[:2]}")
+        need(not s.left_site(), "navigated away")
+    finally:
+        s.close()
+
+
 def case_fail_path_new_key(br, base, path, idx, btn):
     mock = Mock([("ok",)])
     s = Site(br, base, mock)
@@ -524,9 +572,16 @@ def capture(s: Site, backend: str):
             body = resp.json()
         except Exception:
             body = {"_raw": resp.text()[:100]}
+        url = body.get("payment_url") if isinstance(body, dict) else None
+        if isinstance(url, str) and LOCAL_PAY_RE.match(url):          # the dev server pays on http://127.0.0.1; the page takes https only
+            body["payment_url"] = "https://" + url[len("http://"):]
+            got.append((resp.status, body))
+            return route.fulfill(status=resp.status, headers=resp.headers, body=json.dumps(body))
         got.append((resp.status, body))
         route.fulfill(response=resp)
     s.ctx.route(backend.rstrip("/") + "/api/orders*", h)
+    s.ctx.route(re.compile(r"^https://(127\.0\.0\.1|localhost)(:\d+)?/"),
+                lambda r: r.fulfill(status=200, content_type="text/html", body="<!doctype html><title>pay-stub</title>stub"))
     return got
 
 
@@ -534,7 +589,7 @@ def case_backend_button(backend):
     host = urlparse(backend).hostname or "127.0.0.1"
 
     def f(br, base, path, idx, btn):
-        s = Site(br, base, None, api=backend.rstrip("/"), extra_hosts=(host,))
+        s = Site(br, base, None, api=backend.rstrip("/"), extra_hosts=(host,), bypass_csp=True)
         try:
             orders = capture(s, backend)
             s.goto(path)
@@ -570,7 +625,7 @@ def case_backend_disabled(url):
     host = urlparse(url).hostname or "127.0.0.1"
 
     def f(br, base, path, idx, btn):
-        s = Site(br, base, None, api=url.rstrip("/"), extra_hosts=(host,))
+        s = Site(br, base, None, api=url.rstrip("/"), extra_hosts=(host,), bypass_csp=True)
         try:
             answers = capture(s, url)
             s.goto(path)
@@ -594,7 +649,7 @@ def main(argv=None) -> int:
     from playwright.sync_api import sync_playwright
     fails: list[str] = []
     backend, disabled = "skipped", "skipped"
-    stats = dict(buttons=0, neg_ok=0, neg_total=0)
+    stats = dict(buttons=0, requests=0, neg_ok=0, neg_total=0)
 
     def run(name, fn, neg=False):
         if neg:
@@ -629,6 +684,26 @@ def main(argv=None) -> int:
             finally:
                 probe.close()
             stats["buttons"] = len(buttons)
+            # services ordered by a message: every a[data-request] opens the request window and never calls the API
+            reqs, per_page = [], {}
+            probe = Site(br, base, Mock([("ok",)]))
+            try:
+                for path in REQUEST_PAGES:
+                    probe.goto(path)
+                    rb = request_buttons(probe)
+                    per_page[path] = len(rb)
+                    reqs += [(path, i, b) for i, b in enumerate(rb)]
+            except Exception as e:
+                fails.append("enumerate_requests")
+                print(f"  FAIL enumerate request buttons: {type(e).__name__}: {str(e)[:100]}")
+            finally:
+                probe.close()
+            stats["requests"] = len(reqs)
+            if per_page.get("/products.html", 0) < 2 or per_page.get("/services/", 0) < 1:
+                fails.append("request_buttons")
+                print(f"  FAIL request buttons per page {per_page}: need >= 2 on /products.html and >= 1 on /services/")
+            for path, i, b in reqs:
+                run(f"request {path}#{i} {b['id']}", lambda path=path, i=i, b=b: case_request_button(br, base, path, i, b))
             # positives, one run per button
             for path, i, b in buttons:
                 run(f"button {path}#{i} {b['id']}", lambda path=path, i=i, b=b: case_button(br, base, path, i, b))
@@ -644,7 +719,7 @@ def main(argv=None) -> int:
                     fails.append(nm)
                     print(f"  FAIL {nm}: no [data-pay] button to run it on")
                 for nm in ["email_empty", "contact_empty", "consent_off", "amount_mismatch", "http_403", "http_429", "http_500", "timeout",
-                           "foreign_host", "409_twice", "pay_disabled"]:
+                           "foreign_host", "409_twice", "409_already_paid", "pay_disabled"]:
                     stats["neg_total"] += 1
                     fails.append("neg:" + nm)
                     print(f"  FAIL neg {nm}: no [data-pay] button to run it on")
@@ -662,7 +737,7 @@ def main(argv=None) -> int:
                     ("http_500", neg_error([("status", 500, {"error_code": "server_error", "message": "server_error"})], "500")),
                     ("timeout", neg_error([("hang",)], "timeout", timeout_ms=22000)),
                     ("foreign_host", neg_error([("ok", {"payment_url": "https://evil.example/pay/1"})], "foreign payment_url")),
-                    ("409_twice", case_409_twice), ("pay_disabled", neg_disabled)]
+                    ("409_twice", case_409_twice), ("409_already_paid", case_409_already_paid), ("pay_disabled", neg_disabled)]
                 for nm, fn in negs:
                     run("neg " + nm, lambda fn=fn: fn(br, base, path, idx, btn), neg=True)
             for nm, fn in [("spasibo_markup_in_n", case_spasibo_markup), ("spasibo_malformed_n", case_spasibo_bad_format),
@@ -686,7 +761,7 @@ def main(argv=None) -> int:
     ok = not fails and stats["buttons"] >= 4
     extra = f" disabled={disabled}" if a.backend_disabled else ""
     extra += "" if ok else " miss=" + ",".join(re.sub(r"[\s,]+", "_", f) for f in fails[:10])
-    print(f"PAY status={'ok' if ok else 'fail'} buttons={stats['buttons']} neg={stats['neg_ok']}/{stats['neg_total']} backend={backend}{extra}")
+    print(f"PAY status={'ok' if ok else 'fail'} buttons={stats['buttons']} requests={stats['requests']} neg={stats['neg_ok']}/{stats['neg_total']} backend={backend}{extra}")
     return 0 if ok else 1
 
 
