@@ -174,7 +174,7 @@ def dialogs() -> str:
         <input class="dlg-trap" id="pay-site" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" />
         <label class="dlg-consent" for="pay-consent">
           <input id="pay-consent" name="consent" type="checkbox" required />
-          <span id="pay-consent-text">Принимаю условия <a href="/oferta.html" target="_blank" rel="noopener">оферты</a> и согласен на обработку персональных данных по <a href="/privacy.html" target="_blank" rel="noopener">политике конфиденциальности</a>.</span>
+          <span id="pay-consent-text">Я принимаю условия <a href="/oferta.html" target="_blank" rel="noopener">оферты</a> и даю согласие на обработку моих персональных данных — адреса электронной почты и контакта для связи — для оформления заказа, отправки кассового чека и связи со мной по этому заказу, как описано в <a href="/privacy.html" target="_blank" rel="noopener">политике конфиденциальности</a>.</span>
         </label>
         <button class="btn-pay" id="pay-submit" type="submit">Перейти к оплате</button>
         <p class="dlg-status" id="pay-status" data-state="idle" role="status" aria-live="polite"></p>

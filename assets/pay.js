@@ -95,7 +95,8 @@
     save(id, { key: key, email: email, contact: contact, ts: Date.now() });
     var payload = { product: id, email: email, contact: contact, consent_version: cfg.consentVersion, website: $('pay-site').value };
     return request(payload, key).then(function (res) {
-      if (res.status === 409 && !retried) {
+      /* устаревшая ссылка — новый заказ; уже оплаченный заказ (order_already_paid) повторять нельзя */
+      if (res.status === 409 && (res.body || {}).error_code === 'payment_link_expired' && !retried) {
         save(id, { key: '', email: email, contact: contact, ts: Date.now() });
         return send(true);
       }
