@@ -128,8 +128,8 @@ ul,ol{margin:0;padding:0;list-style:none}
 .scene-cap:first-child .scene-cap-when{color:#F2AE9A}
 /* разделы главной поверх города: светлые — листами, тёмные — тёмным стеклом */
 .scene ~ .band{width:min(1180px,calc(100% - 48px));margin:9vh auto;border-radius:10px;box-shadow:0 30px 80px rgba(0,0,0,.5)}
-.scene ~ .band:not(.paper):not(.paper-2){background:rgba(8,13,24,.84);border:1px solid var(--line-ink)}
-.scene ~ #tools{padding:0;background:none;border:0;box-shadow:none}
+.scene ~ .band:not(.paper):not(.paper-2){background:rgba(8,13,24,.84);box-shadow:0 30px 80px rgba(0,0,0,.5),inset 0 0 0 1px var(--line-ink)}
+.scene ~ #tools{padding:0;background:none;box-shadow:none}
 .scene ~ #tools .wrap{padding:0;max-width:none}
 @media (max-width:1000px){
   /* запас фона под сворачивание адресной строки телефона: высота окна меняется, холст не пересобирается */
