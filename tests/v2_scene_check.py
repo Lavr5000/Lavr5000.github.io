@@ -383,6 +383,8 @@ def scene_basics(info, tag, A, lite=False):
         A.fail(tag, f"markup(scenes={info['scenes']},canvases={info['canvases']},caps={info['caps']},hero={info['hero']})")
     if lite != S["lite"]:
         A.fail(tag, f"lite_mode={S['lite']}")
+    if "e" in A.want and info["pos"] != "sticky":
+        A.fail(tag, f"pin@rest(position={info['pos']})")
     T = Travel(info)
     if not T.ok:
         A.fail(tag, f"travel(span={T.span:.0f},y0={T.y0:.0f},maxY={info['maxY']:.0f})")
