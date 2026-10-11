@@ -86,7 +86,7 @@ def menu_links(active: str, indent: str) -> str:
 def header(active: str) -> str:
     return f"""<header class="chrome" data-chrome>
   <div class="chrome-in">
-    <a class="chrome-brand" href="/" aria-label="AI Vibes — на главную">
+    <a class="chrome-brand" href="/" aria-label="AI Vibes, на главную">
       <span class="chrome-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3.5h9l3 3V20.5H6z"/><path d="M15 3.5v3.5h3.5"/><path d="M9 14l2 2 4-4.5"/></svg></span>
       <span class="chrome-name">AI Vibes</span>
     </a>
@@ -111,7 +111,7 @@ def footer() -> str:
       <p>Настройка рабочего помощника на компьютере и телефоне. Сервисы для строительных документов.</p>
     </div>
     <div>
-      <h2>Разделы</h2>
+      <p class="chrome-foot-h">Разделы</p>
       <ul>
         <li><a href="/">Помощник</a></li>
         <li><a href="/services/">Тарифы</a></li>
@@ -121,14 +121,14 @@ def footer() -> str:
       </ul>
     </div>
     <div>
-      <h2>Каналы</h2>
+      <p class="chrome-foot-h">Каналы</p>
       <ul>
         <li><a href="{MAX_CHANNEL}" target="_blank" rel="noopener">Канал в MAX</a></li>
         <li><a href="{TG_CHANNEL}" target="_blank" rel="noopener">Канал в Telegram</a></li>
       </ul>
     </div>
     <div>
-      <h2>Документы</h2>
+      <p class="chrome-foot-h">Документы</p>
       <ul>
         <li><a href="/oferta.html">Оферта</a></li>
         <li><a href="/privacy.html">Конфиденциальность</a></li>
@@ -144,7 +144,7 @@ def dialogs() -> str:
   <div class="dlg-in">
     <button class="dlg-close" type="button" data-dlg-close aria-label="Закрыть">×</button>
     <p class="dlg-kicker">Заявка</p>
-    <h2 id="order-title">Напишите — договоримся о времени</h2>
+    <h2 id="order-title">Напишите, договоримся о времени</h2>
     <div class="dlg-item"><strong id="order-service"></strong><span id="order-price"></span></div>
     <p>Напишите в MAX, Telegram или на почту: отвечу, уточню задачу и пришлю счёт или ссылку на оплату.</p>
     <div class="dlg-channels">
@@ -178,7 +178,7 @@ def dialogs() -> str:
         <button class="btn-pay" id="pay-submit" type="submit">Перейти к оплате</button>
         <p class="dlg-status" id="pay-status" data-state="idle" role="status" aria-live="polite"></p>
         <p class="dlg-note">Оплата проходит на странице Т-Банка, картой или через СБП. Чек придёт на почту.
-          Не получается оплатить — <a href="{MAX_PERSONAL}" target="_blank" rel="noopener">напишите в MAX</a>,
+          Не получается оплатить? <a href="{MAX_PERSONAL}" target="_blank" rel="noopener">Напишите в MAX</a>,
           <a href="{TG_PERSONAL}" target="_blank" rel="noopener">в Telegram</a> или на
           <a href="mailto:{MAIL}">{MAIL}</a>.</p>
       </div>

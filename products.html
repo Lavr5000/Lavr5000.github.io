@@ -24,11 +24,11 @@
 <script defer src="/assets/site3.js"></script>
 <script defer src="/assets/metrika.js?v=20261011-v2"></script>
 <!-- chrome:head:begin (scripts/build_chrome.py) -->
-<meta name="build" content="81a3d7371223" />
-<link rel="stylesheet" href="/assets/chrome.css?v=81a3d7371223" />
-<script defer src="/assets/chrome.js?v=81a3d7371223"></script>
-<script defer src="/services.config.js?v=81a3d7371223"></script>
-<script defer src="/assets/pay.js?v=81a3d7371223"></script>
+<meta name="build" content="8a6d1fe9044a" />
+<link rel="stylesheet" href="/assets/chrome.css?v=8a6d1fe9044a" />
+<script defer src="/assets/chrome.js?v=8a6d1fe9044a"></script>
+<script defer src="/services.config.js?v=8a6d1fe9044a"></script>
+<script defer src="/assets/pay.js?v=8a6d1fe9044a"></script>
 <!-- chrome:head:end -->
 </head>
 <body>
@@ -37,7 +37,7 @@
 <!-- chrome:header:begin (scripts/build_chrome.py) -->
 <header class="chrome" data-chrome>
   <div class="chrome-in">
-    <a class="chrome-brand" href="/" aria-label="AI Vibes — на главную">
+    <a class="chrome-brand" href="/" aria-label="AI Vibes, на главную">
       <span class="chrome-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3.5h9l3 3V20.5H6z"/><path d="M15 3.5v3.5h3.5"/><path d="M9 14l2 2 4-4.5"/></svg></span>
       <span class="chrome-name">AI Vibes</span>
     </a>
@@ -66,7 +66,6 @@
 <section class="hero" id="hero">
   <div class="wrap">
     <div class="hero-text">
-      <p class="kicker">Для строителей</p>
       <h1>Один файл на входе — готовая таблица на выходе</h1>
       <p class="lead">Небольшие сервисы для документов стройки. Работают сами по себе: настройка помощника для них
         не нужна.</p>
@@ -79,8 +78,8 @@
   <div class="wrap">
     <div class="head">
       <p class="kicker">Сервисы</p>
-      <h2 class="h2">Загрузили PDF — получили Excel на почту</h2>
-      <p class="lead">Файл загружается прямо на странице сервиса. Первый заказ с новой почты — бесплатно.</p>
+      <h2 class="h2">Загрузили PDF, получили Excel на почту</h2>
+      <p class="lead">Файл загружается прямо на странице сервиса. Первый заказ с новой почты бесплатный.</p>
     </div>
     <div class="cards">
       <article class="card" data-product="material-takeoff">
@@ -195,7 +194,7 @@
       <p class="kicker">MAX, Telegram или почта</p>
       <h2 class="h2">Не нашли свой документ?</h2>
       <p class="lead">Напишите, что за файл и что нужно получить на выходе. Отвечу, есть ли готовый сервис, и если
-        нет — скажу прямо.</p>
+        нет, скажу прямо.</p>
     </div>
     <div class="contact-actions">
       <a class="btn-pay" href="https://max.ru/u/f9LHodD0cOJVteiYLPGUodY6uw7J5k_M_QzRJTDzXbK31nlTIokaEh5ebeM" target="_blank" rel="noopener">Написать в MAX</a>
@@ -215,7 +214,7 @@
       <p>Настройка рабочего помощника на компьютере и телефоне. Сервисы для строительных документов.</p>
     </div>
     <div>
-      <h2>Разделы</h2>
+      <p class="chrome-foot-h">Разделы</p>
       <ul>
         <li><a href="/">Помощник</a></li>
         <li><a href="/services/">Тарифы</a></li>
@@ -225,14 +224,14 @@
       </ul>
     </div>
     <div>
-      <h2>Каналы</h2>
+      <p class="chrome-foot-h">Каналы</p>
       <ul>
         <li><a href="https://max.ru/channel_ai_vibes" target="_blank" rel="noopener">Канал в MAX</a></li>
         <li><a href="https://t.me/ai_vibes_coding_ru" target="_blank" rel="noopener">Канал в Telegram</a></li>
       </ul>
     </div>
     <div>
-      <h2>Документы</h2>
+      <p class="chrome-foot-h">Документы</p>
       <ul>
         <li><a href="/oferta.html">Оферта</a></li>
         <li><a href="/privacy.html">Конфиденциальность</a></li>
@@ -247,7 +246,7 @@
   <div class="dlg-in">
     <button class="dlg-close" type="button" data-dlg-close aria-label="Закрыть">×</button>
     <p class="dlg-kicker">Заявка</p>
-    <h2 id="order-title">Напишите — договоримся о времени</h2>
+    <h2 id="order-title">Напишите, договоримся о времени</h2>
     <div class="dlg-item"><strong id="order-service"></strong><span id="order-price"></span></div>
     <p>Напишите в MAX, Telegram или на почту: отвечу, уточню задачу и пришлю счёт или ссылку на оплату.</p>
     <div class="dlg-channels">
@@ -281,7 +280,7 @@
         <button class="btn-pay" id="pay-submit" type="submit">Перейти к оплате</button>
         <p class="dlg-status" id="pay-status" data-state="idle" role="status" aria-live="polite"></p>
         <p class="dlg-note">Оплата проходит на странице Т-Банка, картой или через СБП. Чек придёт на почту.
-          Не получается оплатить — <a href="https://max.ru/u/f9LHodD0cOJVteiYLPGUodY6uw7J5k_M_QzRJTDzXbK31nlTIokaEh5ebeM" target="_blank" rel="noopener">напишите в MAX</a>,
+          Не получается оплатить? <a href="https://max.ru/u/f9LHodD0cOJVteiYLPGUodY6uw7J5k_M_QzRJTDzXbK31nlTIokaEh5ebeM" target="_blank" rel="noopener">Напишите в MAX</a>,
           <a href="https://t.me/lavr5000" target="_blank" rel="noopener">в Telegram</a> или на
           <a href="mailto:lavr5000xxx@gmail.com">lavr5000xxx@gmail.com</a>.</p>
       </div>

@@ -54,10 +54,10 @@ ul,ol{margin:0;padding:0;list-style:none}
   background:var(--brass);color:#1A0C10;font-family:var(--mono);font-size:14px;
 }
 .skip:focus{top:12px}
-.wrap{max-width:var(--wrap);margin:0 auto;padding-inline:var(--pad)}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 20px;padding-inline:var(--pad)}
 
 /* ---------- разделы ---------- */
-.band{padding-block:var(--band)}
+.band{padding:72px 0;padding-block:var(--band)}
 .paper{background:var(--paper);color:var(--on-paper);color-scheme:light}
 .paper-2{background:var(--paper-2);color:var(--on-paper);color-scheme:light}
 .kicker{
@@ -105,7 +105,7 @@ ul,ol{margin:0;padding:0;list-style:none}
 }
 .scene-captions{display:grid;gap:22px;position:relative;z-index:3}
 .scene-cap{display:grid;gap:8px;padding-left:18px;border-left:2px solid var(--line-ink)}
-.scene-cap h3{font-size:clamp(22px,2.6vw,32px);line-height:1.15}
+.scene-cap h2{font-size:clamp(22px,2.6vw,32px);line-height:1.15}
 .scene-cap p{color:var(--on-ink-2);max-width:40ch}
 .scene-cap.is-on{border-left-color:var(--brass)}
 .scene-space{--sx:210px;position:relative;height:min(560px,70vh);perspective:1100px;perspective-origin:50% 40%}
@@ -136,7 +136,6 @@ ul,ol{margin:0;padding:0;list-style:none}
     linear-gradient(#E6EEF7,#E6EEF7) 12% 20%/2px 62% no-repeat,
     linear-gradient(#E6EEF7,#E6EEF7) 72% 20%/2px 62% no-repeat,
     linear-gradient(#E6EEF7,#E6EEF7) 12% 82%/60% 2px no-repeat,
-    repeating-linear-gradient(90deg,rgba(230,238,247,.14) 0 1px,transparent 1px 14px),
     repeating-linear-gradient(rgba(230,238,247,.14) 0 1px,transparent 1px 14px);
 }
 .sheet--voice .sheet-body{
@@ -243,12 +242,13 @@ ul,ol{margin:0;padding:0;list-style:none}
 .plain-list{display:grid;gap:12px}
 .plain-list li{padding-left:20px;position:relative}
 .plain-list li::before{content:"";position:absolute;left:0;top:.72em;width:10px;height:2px;background:var(--brass-deep)}
-.note-card{display:grid;gap:14px;padding:clamp(20px,3vw,30px);background:var(--paper-2);border-radius:6px}
+.note-card{display:grid;gap:14px;padding:24px;padding-block:clamp(20px,3vw,30px);padding-inline:clamp(20px,3vw,30px);background:var(--paper-2);border-radius:6px}
 .note-card h3{font-size:24px}
 
 /* ---------- вопросы ---------- */
-.faq{display:grid;gap:0;border-top:1px solid var(--line-paper);max-width:860px}
+.faq{display:grid;gap:0;max-width:860px}
 .faq details{border-bottom:1px solid var(--line-paper)}
+.faq details:first-child{border-top:1px solid var(--line-paper)}
 .faq summary{
   display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:60px;padding:10px 0;
   font-family:var(--display);font-size:clamp(19px,2vw,23px);line-height:1.25;cursor:pointer;list-style:none;
@@ -292,7 +292,7 @@ ul,ol{margin:0;padding:0;list-style:none}
 .anchor{display:block;position:relative;top:calc(-1 * var(--c-head-h,68px) - 12px);visibility:hidden;height:0}
 
 /* ---------- таблица сравнения тарифов ---------- */
-.cmp-wrap{overflow-x:auto;border:1px solid var(--line-paper);border-radius:6px;background:var(--sheet)}
+.cmp-wrap{overflow-x:auto;padding:6px 10px;border:1px solid var(--line-paper);border-radius:6px;background:var(--sheet)}
 .cmp{width:100%;min-width:560px;border-collapse:collapse;font-size:16px}
 .cmp th,.cmp td{padding:14px 18px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line-paper)}
 .cmp thead th{font-family:var(--display);font-size:21px;font-weight:400}
@@ -356,7 +356,7 @@ ul,ol{margin:0;padding:0;list-style:none}
   .scene-stage{grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);padding-block:16px;align-items:center}
   .scene-space{--sx:120px;height:calc(100vh - var(--c-head-h,64px) - 40px);min-height:240px}
   .sheet{display:grid;width:90px;height:118px;margin:-59px 0 0 -45px;padding:7px 7px 6px;gap:5px}
-  .scene-cap h3{font-size:22px}
+  .scene-cap h2{font-size:22px}
   .scene-cap p{font-size:15px}
   .scene-live .scene{height:250vh}
   .scene-live .scene-cap{min-height:0}
