@@ -117,8 +117,8 @@ ul,ol{margin:0;padding:0;list-style:none}
 .scene-cap{max-width:460px;padding:18px 20px;border:1px solid rgba(160,210,255,.22);border-radius:6px;background:rgba(8,13,24,.78);color:var(--on-ink)}
 .scene-cap h2{margin:0 0 6px;font-size:clamp(22px,3.2vw,32px);line-height:1.15;color:#fff}
 .scene-cap p{font-size:17px;line-height:1.5;color:var(--on-ink-2)}
-.scene-cap small{display:block;margin-bottom:8px;font-family:var(--mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#9AD4FF}
-.scene-cap:first-child small{color:#F2AE9A}
+.scene-cap-when{display:block;color:#9AD4FF}
+.scene-cap:first-child .scene-cap-when{color:#F2AE9A}
 .scene-live .scene{height:calc(100vh - var(--c-head-h,68px) + 220vh)}
 .scene-live .scene-stage{position:sticky;top:var(--c-head-h,68px);height:calc(100vh - var(--c-head-h,68px));height:calc(100svh - var(--c-head-h,68px));min-height:0}
 .scene-live .scene-bg{bottom:auto;height:calc(100vh - var(--c-head-h,68px));height:calc(100lvh - var(--c-head-h,68px))}
