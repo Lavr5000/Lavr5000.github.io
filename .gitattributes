@@ -12,3 +12,16 @@ assets/pdfjs/** text eol=lf
 # The Pages workflow feeds this list to `rm`; a CRLF checkout would append a carriage
 # return to every path and silently disable the removal.
 .github/pages-drop.txt text eol=lf
+
+# The build id (<meta name="build">, scripts/build_chrome.py) is a hash of the text of these files, and
+# assets/vendor is vendored under sha384 hashes (assets/vendor/VENDOR-HASHES.md, checked by
+# scripts/verify_vendored_hashes.mjs). A CRLF checkout would change the bytes: keep them LF.
+assets/vendor/** text eol=lf
+assets/chrome.css text eol=lf
+assets/chrome.js text eol=lf
+assets/site3.css text eol=lf
+assets/site3.js text eol=lf
+assets/scene.js text eol=lf
+assets/pay.js text eol=lf
+assets/spasibo.js text eol=lf
+services.config.js text eol=lf
