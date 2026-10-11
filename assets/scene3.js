@@ -160,7 +160,10 @@
   function show(el, w) {
     var o = P < w[1] ? ease((P - w[0]) / (w[1] - w[0])) : 1 - ease((P - w[2]) / (w[3] - w[2]));
     el.style.opacity = o.toFixed(3);
-    el.style.visibility = o > 0.01 ? 'visible' : 'hidden';
+    /* a faded block ignores the pointer; captions are hidden, the first screen stays focusable so that the keyboard
+       can come back to its buttons (see the focusin handler) */
+    el.style.pointerEvents = o > 0.01 ? '' : 'none';
+    el.style.visibility = o > 0.01 || el === hero ? 'visible' : 'hidden';
     el.style.transform = o > 0.999 ? 'none' : 'translate3d(0,' + ((1 - o) * (P < w[1] ? 18 : -18)).toFixed(1) + 'px,0)';
   }
   function texts() { for (var i = 0; i < blocks.length && i < 4; i++) show(blocks[i], WIN[hero ? i : i + 1]); }
@@ -285,6 +288,10 @@
     if (pending === 0) layout(n, srcB);
   }
 
+  /* keyboard focus on a button of the faded first screen brings the page back to it */
+  if (hero) hero.addEventListener('focusin', function () {
+    if (live && ready && P > WIN[0][2]) { window.scrollTo(0, runTop); P = target = 0.03; first = true; kick(); }
+  });
   cv.style.visibility = 'hidden';
   root.classList.add('scene-live');
   if (base.complete && base.naturalWidth) source();
