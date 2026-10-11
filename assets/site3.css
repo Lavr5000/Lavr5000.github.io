@@ -96,50 +96,57 @@ ul,ol{margin:0;padding:0;list-style:none}
 .hero-tile--vip{border-color:rgba(217,169,97,.5);background:linear-gradient(135deg,rgba(217,169,97,.12),transparent 60%),var(--ink-2)}
 .hero-foot{font-size:15px;color:var(--on-ink-2)}
 
-/* ---------- сцена «Город и мост» ---------- */
-/* Без скриптов и при «меньше движения»: обычный раздел — первый экран и три подписи поверх картинки «после».
-   В движении (класс scene-live ставит assets/scene3.js): сцена закреплена под шапкой на длину хода,
-   первый экран и подписи сменяются на месте, искра открывает «после». */
-.scene{position:relative;background:var(--ink);overflow:clip}
-.scene-stage{position:relative;display:grid;align-content:center;min-height:calc(100vh - var(--c-head-h,68px))}
-.scene-bg{position:absolute;inset:0;overflow:hidden;background:var(--ink);pointer-events:none}
+/* ---------- сцена «Город и мост»: город закреплён за всей страницей ---------- */
+/* Фон сцены закреплён в окне под шапкой на всю длину страницы; первый экран, три подписи и разделы едут поверх.
+   Без скриптов и при «меньше движения» фон — картинка «после». В движении (класс scene-live ставит
+   assets/scene3.js) фон — холст: при прокрутке искра летит вдоль моста и открывает «после».
+   Класс scene-plain (ставит движок, если устройство не успевает рисовать): фон открепляется и остаётся
+   только за первым экраном, страница прокручивается как обычная. */
+.scene,.scene-stage{position:relative}
+.scene-bg{
+  position:fixed;z-index:-1;left:0;right:0;top:var(--c-head-h,68px);
+  height:calc(100vh - var(--c-head-h,68px));height:calc(100lvh - var(--c-head-h,68px));
+  overflow:hidden;background:var(--ink);pointer-events:none;
+}
 .scene-bg img,.scene-bg canvas{position:absolute;left:0;top:0;width:100%;height:100%;max-width:none}
 .scene-bg img{object-fit:cover}
 .scene-bg canvas{display:none}
 .scene-live .scene-bg canvas{display:block}
-.scene .hero,.scene-caps{position:relative}
-.scene .hero{background:none}
+.scene-plain .scene-bg{position:absolute;top:0}
+.scene .hero{background:none;display:grid;align-content:center;min-height:calc(100vh - var(--c-head-h,68px));min-height:calc(100svh - var(--c-head-h,68px))}
 .scene .hero-text{padding:clamp(18px,2.4vw,30px);background:rgba(8,13,24,.74);border-radius:8px}
 .scene .hero-tile{background:rgba(8,13,24,.82)}
 .scene .hero-tile--vip{background:rgba(8,13,24,.82)}
 .scene .hero-foot{padding:0 12px;background:rgba(8,13,24,.74);border-radius:6px;width:max-content;max-width:100%}
-.scene-caps{display:grid;gap:18px;padding:0 var(--pad) clamp(28px,5vw,64px);max-width:var(--wrap);width:100%;margin:0 auto}
+.scene-caps{display:grid;gap:56vh;padding:30vh var(--pad) 44vh;max-width:var(--wrap);width:100%;margin:0 auto}
 .scene-cap{max-width:460px;padding:18px 20px;border:1px solid rgba(160,210,255,.22);border-radius:6px;background:rgba(8,13,24,.78);color:var(--on-ink)}
+.scene-cap:nth-child(2){justify-self:end}
+.scene-cap:nth-child(3){justify-self:center;text-align:center}
 .scene-cap h2{margin:0 0 6px;font-size:clamp(22px,3.2vw,32px);line-height:1.15;color:#fff}
 .scene-cap p{font-size:17px;line-height:1.5;color:var(--on-ink-2)}
 .scene-cap-when{display:block;color:#9AD4FF}
 .scene-cap:first-child .scene-cap-when{color:#F2AE9A}
-.scene-live .scene{height:calc(100vh - var(--c-head-h,68px) + 220vh)}
-.scene-live .scene-stage{position:sticky;top:var(--c-head-h,68px);height:calc(100vh - var(--c-head-h,68px));height:calc(100svh - var(--c-head-h,68px));min-height:0}
-.scene-live .scene-bg{bottom:auto;height:calc(100vh - var(--c-head-h,68px));height:calc(100lvh - var(--c-head-h,68px))}
-.scene-live .scene-caps{position:absolute;inset:0;display:block;padding:0;max-width:none;pointer-events:none}
-.scene-live .scene-cap{position:absolute;left:max(var(--pad),calc(50% - 580px));bottom:12%;opacity:0;visibility:hidden;will-change:opacity,transform}
-.scene-live .scene-cap:nth-child(2){left:auto;right:max(var(--pad),calc(50% - 580px))}
-.scene-live .scene-cap:nth-child(3){left:50%;margin-left:-230px;width:460px;text-align:center}
-.scene-live .scene .hero{will-change:opacity,transform}
+/* разделы главной поверх города: светлые — листами, тёмные — тёмным стеклом */
+.scene ~ .band{width:min(1180px,calc(100% - 48px));margin:9vh auto;border-radius:10px;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.scene ~ .band:not(.paper):not(.paper-2){background:rgba(8,13,24,.84);border:1px solid var(--line-ink)}
+.scene ~ #tools{padding:0;background:none;border:0;box-shadow:none}
+.scene ~ #tools .wrap{padding:0;max-width:none}
 @media (max-width:1000px){
-  .scene-live .scene-cap:nth-child(3){left:var(--pad);right:var(--pad);margin-left:0;width:auto;max-width:none}
   /* запас фона под сворачивание адресной строки телефона: высота окна меняется, холст не пересобирается */
-  .scene-live .scene-bg{--scene-reserve:100px;height:calc(100vh - var(--c-head-h,68px) + 100px);height:calc(100lvh - var(--c-head-h,68px) + 100px)}
+  .scene-bg{--scene-reserve:100px;height:calc(100vh - var(--c-head-h,68px) + 100px);height:calc(100lvh - var(--c-head-h,68px) + 100px)}
 }
 @media (max-width:767px){
+  .scene .hero{min-height:0;padding-block:14px 0}
   .scene .hero-in{padding:12px;background:rgba(8,13,24,.74);border-radius:8px}
   .scene .hero-text{padding:0;background:none}
   .scene .hero-foot{padding:0;background:none}
-  .scene-live .scene{height:calc(100vh - var(--c-head-h,68px) + 130vh)}
-  .scene-live .scene-cap,.scene-live .scene-cap:nth-child(2),.scene-live .scene-cap:nth-child(3){left:16px;right:16px;margin-left:0;width:auto;max-width:none;bottom:9%}
+  .scene-caps{gap:24vh;padding:20vh 16px 18vh}
+  .scene-cap,.scene-cap:nth-child(2),.scene-cap:nth-child(3){justify-self:stretch;max-width:none}
   .scene-cap p{font-size:16px}
+  .scene ~ .band{width:calc(100% - 20px);margin:3vh auto;border-radius:8px;padding-block:28px}
+  .scene ~ #tools{padding:0}
 }
+@media print{.scene-bg{display:none}}
 /* телефон на боку: первый экран в две колонки, чтобы поместился по высоте */
 @media (max-height:500px) and (min-width:640px){
   .scene .hero{padding-block:10px}
@@ -149,7 +156,7 @@ ul,ol{margin:0;padding:0;list-style:none}
   .scene .hero-text{padding:12px 14px;gap:8px}
   .scene .hero-tile{padding:8px 12px}
   .scene .hero-tile-note,.scene .hero-foot{display:none}
-  .scene-live .scene-cap{bottom:8%;padding:12px 14px}
+  .scene-cap{padding:12px 14px}
   .scene-cap h2{font-size:22px}
   .scene-cap p{font-size:15px}
 }
@@ -276,7 +283,6 @@ ul,ol{margin:0;padding:0;list-style:none}
 @media (max-width:767px){
   body{font-size:16px}
   :root{--band:40px}
-  #tools{padding-bottom:0}
   .hero-in{gap:14px}
   .hero-text{display:contents}
   .hero-text .kicker{order:1;margin:0}

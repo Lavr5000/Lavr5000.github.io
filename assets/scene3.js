@@ -1,11 +1,14 @@
-/* Home-page scene "City and bridge". A stage pinned under the header for the length of the travel. One opaque
-   canvas holds everything: the "before" picture, the "after" picture through a soft mask that follows a spark,
-   and the spark itself; scrolling moves the spark along a route laid over the bridge. The first screen and three
-   captions take turns on the stage. The blend of the two pictures is kept in an off-screen canvas and only the
-   rectangle where the mask has changed is recomposed; a repaint is cut into three steps and a slow device spreads
-   them over several frames, so no single frame is long. The canvas is repainted only when the travel changes, at
-   rest the frame loop is stopped. Without scripts, with reduced motion, in a window too low for the stage or after
-   a failure the page is a plain static section. */
+/* Home-page scene "City and bridge". The backdrop is fixed in the window under the header for the whole length of
+   the page; the first screen, three captions and the sections scroll over it. One opaque canvas holds everything:
+   the "before" picture, the "after" picture through a soft mask that follows a spark, and the spark itself;
+   scrolling the page from top to bottom moves the spark along a route laid over the bridge. The blend of the two
+   pictures is kept in an off-screen canvas and only the rectangle where the mask has changed is recomposed; a
+   repaint is cut into three steps and a slow device spreads them over several frames, so no single frame is long.
+   The canvas is repainted only when the travel changes, at rest the frame loop is stopped. Without scripts, with
+   reduced motion or after a failure the backdrop is a static picture. A device that cannot keep up while the page
+   is scrolled (long gaps between frames) is switched to the plain page: the backdrop is unpinned and stops moving;
+   the tab remembers that. `data-scene-mode` on the backdrop: "lite" = a plain cross-fade instead of the mask,
+   "still" = no drawing at all, the fixed "after" picture. */
 (function () {
   'use strict';
   var root = document.documentElement;
@@ -22,22 +25,19 @@
     pc: [[0.95, 0.16], [0.8, 0.22], [0.62, 0.38], [0.5, 0.48], [0.4, 0.58], [0.27, 0.72], [0.12, 0.85], [0.3, 0.9], [0.52, 0.83], [0.7, 0.66], [0.86, 0.5]],
     tel: [[0.86, 0.31], [0.76, 0.355], [0.66, 0.41], [0.57, 0.465], [0.47, 0.535], [0.38, 0.6], [0.29, 0.675], [0.2, 0.735], [0.14, 0.83], [0.3, 0.9], [0.5, 0.84], [0.66, 0.74], [0.8, 0.63]]
   };
-  /* travel windows [fade in from, to, fade out from, to] of the first screen and the three captions */
-  var WIN = [[-1, 0, 0.06, 0.13], [0.15, 0.2, 0.36, 0.41], [0.43, 0.48, 0.64, 0.69], [0.71, 0.76, 2, 3]];
-  var BLOBS = 46, SETTLE = 0.075, BUDGET = 2400000, SLICE = 4, STRIP = 200000;
-  var lite = bg.getAttribute('data-scene-mode') === 'lite';
-  var hero = stage.querySelector('.hero');
-  var caps = Array.prototype.slice.call(stage.querySelectorAll('[data-scene-cap]'));
-  var blocks = (hero ? [hero] : []).concat(caps);
+  var BLOBS = 46, SETTLE = 0.075, BUDGET = 2400000, SLICE = 4, STRIP = 200000, GAP = 50, SLOW = 8, CALM = 60;
+  var mode = bg.getAttribute('data-scene-mode'), lite = mode === 'lite', meta = document.querySelector('meta[name="build"]');
+  /* the tab remembers a plain page only for this build and this mode: a new build or another mode tries again */
+  var KEY = 'scene-plain:' + (meta ? meta.getAttribute('content') : '') + ':' + (lite ? 'lite' : 'full');
   var cx = cv.getContext('2d', { alpha: false });
   var mask = document.createElement('canvas'), mx = mask.getContext('2d');
   var tmp = document.createElement('canvas'), tx = tmp.getContext('2d');
   var bufB = document.createElement('canvas'), bufA = document.createElement('canvas');
   var mix = document.createElement('canvas'), mc = mix.getContext('2d', { alpha: false });   /* "before" + masked "after", no spark */
   var after = new Image(), before = null;      /* `before` is loaded only if the base picture no longer shows it */
-  var W = 0, H = 0, VH = 0, D = 1, K = 5, mixP = -1, wasAll = 1, sparkBox = null, fit = null, route = ROUTES.pc, span = 1, runTop = 0;
-  var P = 0, Q = 0, step = 0, dirty = null, stripY = 0, target = 0, drawnP = -1, raf = 0, ready = false, first = true, live = false, tall = null;
-  var S = window.__sceneState = { p: 0, target: 0, spark: null, frames: 0, paints: 0, rebuilds: 0, ready: false, failed: false, live: false, scale: 0, lite: lite };
+  var W = 0, H = 0, VH = 0, D = 1, K = 5, mixP = -1, wasAll = 1, sparkBox = null, fit = null, route = ROUTES.pc, span = 1;
+  var P = 0, Q = 0, step = 0, dirty = null, stripY = 0, target = 0, drawnP = -1, raf = 0, ready = false, first = true, tall = null, lastT = 0, lastY = 0, calm = 0;
+  var S = window.__sceneState = { p: 0, target: 0, spark: null, frames: 0, paints: 0, rebuilds: 0, ready: false, failed: false, live: false, plain: false, slow: 0, slowTotal: 0, maxGap: 0, plainAt: null, scale: 0, lite: lite };
 
   function clamp(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
   function ease(v) { v = clamp(v); return v * v * (3 - 2 * v); }
@@ -157,23 +157,10 @@
     S.spark = [sp[0], sp[1]];
   }
 
-  function show(el, w) {
-    var o = P < w[1] ? ease((P - w[0]) / (w[1] - w[0])) : 1 - ease((P - w[2]) / (w[3] - w[2]));
-    el.style.opacity = o.toFixed(3);
-    /* a faded block ignores the pointer; captions are hidden, the first screen stays focusable so that the keyboard
-       can come back to its buttons (see the focusin handler) */
-    el.style.pointerEvents = o > 0.01 ? '' : 'none';
-    el.style.visibility = o > 0.01 || el === hero ? 'visible' : 'hidden';
-    el.style.transform = o > 0.999 ? 'none' : 'translate3d(0,' + ((1 - o) * (P < w[1] ? 18 : -18)).toFixed(1) + 'px,0)';
-  }
-  function texts() { for (var i = 0; i < blocks.length && i < 4; i++) show(blocks[i], WIN[hero ? i : i + 1]); }
-  function plain() { for (var i = 0; i < blocks.length; i++) blocks[i].removeAttribute('style'); }
-
-  /* the static page: no pinning, no canvas; the picture is "after" only if that file is really loaded */
+  /* the static backdrop: no canvas; the picture is "after" only if that file is really loaded */
   function still() {
-    live = S.live = false; ready = S.ready = false;
+    S.live = false; ready = S.ready = false;
     root.classList.remove('scene-live');
-    plain();
     base.style.visibility = '';
     if (after.complete && after.naturalWidth && (base.currentSrc || base.src) !== after.src) {
       var pic = base.parentNode;
@@ -187,17 +174,41 @@
     if (raf) { cancelAnimationFrame(raf); raf = 0; }
     still();
   }
+  /* the device does not keep up: unpin the backdrop and stop drawing, the page scrolls as a plain one */
+  function plain() {
+    S.plain = true; S.plainAt = P; root.classList.add('scene-plain');
+    if (raf) { cancelAnimationFrame(raf); raf = 0; }
+    still();
+    try { window.sessionStorage.setItem(KEY, '1'); } catch (e) { /* storage is closed: the next page tries again */ }
+    try { document.dispatchEvent(new CustomEvent('scene:plain', { detail: { at: P, gap: Math.round(S.maxGap) } })); } catch (e) { /* no listener is fine */ }
+  }
+  /* no drawing: the "after" picture as soon as it is loaded ("still" mode; a tab that has already gone plain) */
+  function rest(unpinned) {
+    if (unpinned) { S.plain = true; root.classList.add('scene-plain'); }
+    root.classList.remove('scene-live');
+    function swap() { var n = names(); if (!n) return; after.onload = still; after.onerror = function () {}; after.src = n.after; }
+    if (base.complete && base.naturalWidth) swap(); else base.addEventListener('load', swap, { once: true });
+  }
 
   function frame() {
     raf = 0;
     if (!ready) return;
     try {
       S.frames++;
-      target = 0.03 + 0.97 * clamp((window.scrollY - runTop) / span);
+      /* watchdog: long gaps between frames while the page is being scrolled; a calm stretch forgives one */
+      var now = performance.now(), sy = window.scrollY;
+      if (lastT && sy !== lastY) {
+        var gap = now - lastT;
+        if (gap > S.maxGap) S.maxGap = gap;
+        if (gap > GAP) { S.slow++; S.slowTotal++; calm = 0; }
+        else if (++calm >= CALM) { calm = 0; if (S.slow) S.slow--; }
+        if (S.slow >= SLOW) { plain(); return; }
+      }
+      lastT = now; lastY = sy;
+      target = 0.03 + 0.97 * clamp(sy / span);
       if (first) { P = target; first = false; }         /* a page opened in the middle starts in its own state */
       P += (target - P) * 0.14;
       if (Math.abs(target - P) < 0.0004) P = target;
-      texts();
       /* a repaint is a chain of short steps; a slow device does one step per frame, a fast one all of them at once */
       var t0 = performance.now();
       for (;;) {
@@ -211,27 +222,15 @@
         if (performance.now() - t0 > SLICE) break;
       }
     } catch (e) { fail(); return; }
-    if (P !== target || P !== drawnP || step) raf = requestAnimationFrame(frame);
+    if (P !== target || P !== drawnP || step) raf = requestAnimationFrame(frame); else lastT = 0;
   }
   function kick() { if (!raf && ready && !document.hidden) raf = requestAnimationFrame(frame); }
 
   var RESERVE = 0;     /* CSS px by which the background is taller than the stage (--scene-reserve, narrow screens) */
   function measure() {
-    var rr = run.getBoundingClientRect();
     RESERVE = parseFloat(getComputedStyle(bg).getPropertyValue('--scene-reserve')) || 0;
-    runTop = rr.top + window.scrollY - (parseFloat(getComputedStyle(stage).top) || 0);
-    span = Math.max(1, rr.height - stage.offsetHeight);
-    VH = stage.clientHeight;
-  }
-  /* motion is switched on only if the first screen and every caption fit into the stage */
-  function fits() {
-    var s = stage.getBoundingClientRect(), i, r;
-    for (i = 0; i < blocks.length; i++) {
-      blocks[i].style.transform = 'none';
-      r = blocks[i].getBoundingClientRect();
-      if (r.top < s.top - 1 || r.bottom > s.bottom + 1) return false;
-    }
-    return true;
+    span = Math.max(1, root.scrollHeight - root.clientHeight);
+    VH = Math.max(1, Math.min(bg.clientHeight - RESERVE, window.innerHeight - bg.getBoundingClientRect().top));
   }
   function names() {
     var cur = base.currentSrc || base.src, isTall = window.matchMedia('(max-aspect-ratio: 5/6)').matches;
@@ -243,14 +242,13 @@
   function layout(n, srcB) {
     try {
       root.classList.add('scene-live');
-      if (!fits()) { still(); return; }
       var w = bg.clientWidth, h = bg.clientHeight, nw = srcB.naturalWidth, nh = srcB.naturalHeight;
       if (!w || !h || !nw) { still(); return; }
-      live = S.live = true;
+      S.live = true;
       measure();
       /* a phone hides and shows its address bar: a small change of height at the same width keeps the buffers
          (the background is taller than the stage by a reserve, the canvas keeps its size in pixels) */
-      if (w === W && ready && n.tall === tall && (h === H || (RESERVE && Math.abs(h - H) <= RESERVE - 10))) { drawnP = -2; texts(); kick(); return; }
+      if (w === W && ready && n.tall === tall && (h === H || (RESERVE && Math.abs(h - H) <= RESERVE - 10))) { kick(); return; }
       W = w; H = h; tall = n.tall; cv.style.height = RESERVE ? H + 'px' : ''; route = tall ? ROUTES.tel : ROUTES.pc;
       D = Math.min(window.devicePixelRatio || 1, 2, Math.sqrt(BUDGET / (W * H)));
       var k = Math.max(W / nw, H / nh), cw = Math.max(2, Math.round(W * D)), ch = Math.max(2, Math.round(H * D));
@@ -267,12 +265,12 @@
       K = Math.max(2, Math.round(5 * D));
       mask.width = Math.ceil(cw / K) + 2; mask.height = Math.ceil(ch / K) + 2;
       S.scale = cw / W; drawnP = -1; mixP = -1; wasAll = 1; sparkBox = null; step = 0; dirty = null;
-      S.rebuilds++; S.ready = ready = true;
+      S.rebuilds++; S.ready = ready = true; lastT = 0;
       kick();
     } catch (e) { fail(); }
   }
   function source() {
-    if (S.failed) return;
+    if (S.failed || S.plain) return;
     var n = names();
     if (!n || !base.naturalWidth) return;
     var pending = 2, srcB = base;
@@ -288,10 +286,9 @@
     if (pending === 0) layout(n, srcB);
   }
 
-  /* keyboard focus on a button of the faded first screen brings the page back to it */
-  if (hero) hero.addEventListener('focusin', function () {
-    if (live && ready && P > WIN[0][2]) { window.scrollTo(0, runTop); P = target = 0.03; first = true; kick(); }
-  });
+  var gone = false;
+  try { gone = window.sessionStorage.getItem(KEY) === '1'; } catch (e) { /* storage is closed */ }
+  if (gone || mode === 'still') { rest(gone); return; }
   cv.style.visibility = 'hidden';
   root.classList.add('scene-live');
   if (base.complete && base.naturalWidth) source();
@@ -301,5 +298,7 @@
   window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(source, 150); });
   window.addEventListener('load', function () { if (ready) { measure(); kick(); } });
   window.addEventListener('scroll', kick, { passive: true });
-  document.addEventListener('visibilitychange', kick);
+  document.addEventListener('visibilitychange', function () { lastT = 0; kick(); });
+  /* the page changes its height (an opened answer, late fonts): the travel is the whole page */
+  if (window.ResizeObserver) new ResizeObserver(function () { if (ready) { measure(); kick(); } }).observe(document.body);
 })();

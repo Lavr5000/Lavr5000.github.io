@@ -8,6 +8,8 @@
  *   contact_max                - click on the MAX profile link; param place
  *   contact_telegram           - click on the personal t.me/lavr5000 link (not the channel); param place
  *   contact_email              - click on a mailto: link; param place
+ *   scene_plain                - the home-page scene has switched itself off on a device that does not keep up
+ *                                (event `scene:plain` of assets/scene3.js); params at (travel 0..1), gap (ms)
  * place = id of the nearest section or dialog (hero, tarify, contact, order-dialog, ...).
  * The /services/ goal is a page-visit goal and needs no code.
  * Disclosed in privacy.html, section "Яндекс Метрика".
@@ -49,6 +51,10 @@
     var s = el.closest("section[id], dialog[id], [role='dialog'][id]");
     return s ? s.id : "";
   }
+
+  d.addEventListener("scene:plain", function (e) {
+    w.ym(ID, "reachGoal", "scene_plain", e.detail || {});
+  });
 
   d.addEventListener("click", function (e) {
     var t = e.target;
