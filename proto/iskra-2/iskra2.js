@@ -64,10 +64,10 @@
     ctx.fillStyle = sc; ctx.fillRect(0, 0, W, H * 0.5);
     /* the spark and its trail */
     if (P < 0.995) {
-      ctx.lineCap = 'round'; ctx.globalCompositeOperation = 'lighter';
-      for (i = 34; i >= 1; i--) {
-        var u1 = P - i * 0.004, u2 = P - (i - 1) * 0.004; if (u1 < 0) continue;
-        var p1 = path(u1), p2 = path(u2), f = 1 - i / 34;
+      ctx.lineCap = 'butt'; ctx.globalCompositeOperation = 'lighter';
+      for (i = 90; i >= 1; i--) {
+        var u1 = P - i * 0.0016, u2 = P - (i - 1) * 0.0016 + 0.0003; if (u1 < 0) continue;
+        var p1 = path(u1), p2 = path(u2), f = 1 - i / 90;
         ctx.strokeStyle = 'rgba(255,' + Math.round(196 + 44 * f) + ',' + Math.round(120 + 110 * f) + ',' + 0.7 * f * f + ')';
         ctx.lineWidth = 1 + 9 * f; ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p2[0], p2[1]); ctx.stroke();
       }
