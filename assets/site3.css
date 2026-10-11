@@ -147,6 +147,8 @@ ul,ol{margin:0;padding:0;list-style:none}
   .scene ~ #tools{padding:0}
 }
 @media print{.scene-bg{display:none}}
+/* «меньше движения»: город не меняется, длинные промежутки для наблюдения не нужны */
+@media (prefers-reduced-motion:reduce){.scene-caps{gap:18vh;padding-block:14vh 18vh}}
 /* телефон на боку: первый экран в две колонки, чтобы поместился по высоте */
 @media (max-height:500px) and (min-width:640px){
   .scene .hero{padding-block:10px}
