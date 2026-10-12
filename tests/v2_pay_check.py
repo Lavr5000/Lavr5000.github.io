@@ -47,8 +47,9 @@ from v2_gate import Served, block_metrika, settle, norm_price   # noqa: E402
 
 API = "https://api.ai-vibes.ru"
 CONSENT = "setup-v1-2026-10"
+CONSENT_BY_SERVICE = {"setup-rieltor": "rieltor-v1-2026-10"}  # the realtor product has its own consent text and version
 PAY_HOSTS = ["securepay.tinkoff.ru", "pay.tbank-online.com"]
-AMOUNTS = {"setup-start": 750000, "setup-vip": 4500000}
+AMOUNTS = {"setup-start": 750000, "setup-vip": 4500000, "setup-rieltor": 990000}
 PAGES = ["/", "/services/"]
 REQUEST_PAGES = ["/", "/services/", "/products.html"]      # pages that carry the order windows (a[data-request])
 UUID_RE = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$", re.I)
@@ -237,7 +238,7 @@ def case_button(br, base, path, idx, btn):
         post = mock.posts[0]
         b, h = post["body"], post["headers"]
         need(b.get("product") == sid, f"product {b.get('product')!r} != {sid!r}")
-        need(b.get("consent_version") == CONSENT, f"consent_version {b.get('consent_version')!r}")
+        need(b.get("consent_version") == CONSENT_BY_SERVICE.get(sid, CONSENT), f"consent_version {b.get('consent_version')!r}")
         need(b.get("email") == EMAIL and b.get("contact") == CONTACT, "email/contact not sent as typed")
         need(b.get("website", "") == "", f"trap field sent non-empty: {b.get('website')!r}")
         key = h.get("idempotency-key", "")
