@@ -25,8 +25,13 @@
     return h.slice(0, 8) + '-' + h.slice(8, 12) + '-' + h.slice(12, 16) + '-' + h.slice(16, 20) + '-' + h.slice(20);
   };
 
+  /* оплата включена для кнопки, если включена в целом и услуга не придержана (cfg.heldServices) */
+  var payOn = function (b) {
+    return !!cfg.enabled && (cfg.heldServices || []).indexOf(b.dataset.serviceId) === -1;
+  };
+
   buttons.forEach(function (b) {
-    if (!cfg.enabled) b.textContent = 'Заказать за ' + b.dataset.priceLabel;
+    if (!payOn(b)) b.textContent = 'Заказать за ' + b.dataset.priceLabel;
   });
 
   /* ---------- окно заявки сообщением ---------- */
@@ -53,6 +58,11 @@
     $('pay-service').textContent = b.dataset.order;
     $('pay-price').textContent = b.dataset.priceLabel;
     submit.textContent = 'Перейти к оплате ' + b.dataset.priceLabel;
+    /* у набора для риэлторов свой текст согласия и своя версия */
+    var rl = b.dataset.consent === 'rieltor';
+    var t1 = $('pay-consent-text'), t2 = $('pay-consent-text-rieltor');
+    if (t1) t1.hidden = rl;
+    if (t2) t2.hidden = !rl;
     var saved = load(b.dataset.serviceId);
     if (saved) {
       if (saved.email && !$('pay-email').value) $('pay-email').value = saved.email;
@@ -93,7 +103,7 @@
     var same = saved.email === email && saved.contact === contact && saved.key;
     var key = same ? saved.key : uuid();
     save(id, { key: key, email: email, contact: contact, ts: Date.now() });
-    var payload = { product: id, email: email, contact: contact, consent_version: cfg.consentVersion, website: $('pay-site').value };
+    var payload = { product: id, email: email, contact: contact, consent_version: current.dataset.consentVersion || cfg.consentVersion, website: $('pay-site').value };
     return request(payload, key).then(function (res) {
       /* устаревшая ссылка — новый заказ; уже оплаченный заказ (order_already_paid) повторять нельзя */
       if (res.status === 409 && (res.body || {}).error_code === 'payment_link_expired' && !retried) {
@@ -131,7 +141,7 @@
 
   buttons.forEach(function (b) {
     b.addEventListener('click', function (e) {
-      var opened = cfg.enabled ? openPay(b, false) : openOrder(b);
+      var opened = payOn(b) ? openPay(b, false) : openOrder(b);
       if (opened) e.preventDefault();
     });
   });
