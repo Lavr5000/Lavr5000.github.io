@@ -13,3 +13,13 @@
 .blog-row a:hover .blog-row-title{color:var(--brass)}
 .blog-row time{display:block;margin:6px 0 8px;color:var(--cream-2);font-size:13.5px;letter-spacing:.04em}
 .legal-doc .blog-row p{margin:0;color:var(--cream-2);font-size:15.5px;line-height:1.6}
+
+/* site-v2: long links wrap instead of widening the page on a phone */
+main a{overflow-wrap:anywhere}
+
+/* site-v2: the «Дальше» block at the end of every article (between the v2:next markers) */
+.blog-next .next-actions{display:flex;flex-wrap:wrap;gap:12px;margin:18px 0 0}
+.blog-next .next-channels{margin:24px 0 0;color:var(--cream-2);font-size:15.5px;line-height:1.6}
+.blog-next .next-channels a{color:var(--brass);text-decoration:underline;text-underline-offset:3px}
+.blog-next .next-channels a:hover{color:var(--brass-2)}
+@media (max-width:640px){.blog-next .next-actions{flex-direction:column}.blog-next .btn{width:100%}}

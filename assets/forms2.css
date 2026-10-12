@@ -26,10 +26,10 @@
 .form{display:grid;gap:20px;margin-top:26px}
 .field{display:grid;gap:9px}
 .field > label:not(.upload-zone){
-  font-family:var(--mono);font-size:12px;letter-spacing:.14em;
+  font-family:var(--mono);font-size:13px;letter-spacing:.14em;
   text-transform:uppercase;color:var(--cream-3);
 }
-.hint{color:var(--cream-3);font-family:var(--mono);font-size:12px;line-height:1.5}
+.hint{color:var(--cream-3);font-family:var(--mono);font-size:13px;line-height:1.5}
 
 /* inline code fragments inside the side column (%PDF-, Authorization: Bearer …) */
 .mono{font-family:var(--mono);font-size:.92em;color:var(--brass-2)}
@@ -87,7 +87,7 @@ input[type=email]::placeholder,
 .upload-zone__text{max-width:420px;color:var(--cream-2);font-size:15px}
 .dropzone-hint,
 .upload-zone__replace-hint{
-  color:var(--cream-3);font-family:var(--mono);font-size:12px;letter-spacing:.06em;
+  color:var(--cream-3);font-family:var(--mono);font-size:13px;letter-spacing:.06em;
 }
 .upload-zone input[type=file]{
   position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;
@@ -112,7 +112,7 @@ input[type=email]::placeholder,
 }
 .upload-zone__check::before{
   content:"";width:18px;height:9px;
-  border:3px solid #1A0C10;border-top:0;border-right:0;
+  border:3px solid #0C111A;border-top:0;border-right:0;
   transform:translateY(-2px) rotate(-45deg);
 }
 .upload-zone.has-file .upload-zone__file{font-size:15px}
@@ -150,7 +150,7 @@ input[type=email]::placeholder,
 #status .line.on .dot{background:var(--brass)}
 #status .line-label{flex:1;min-width:0}
 #status .elapsed{
-  flex:none;color:var(--cream-3);font-family:var(--mono);font-size:12px;
+  flex:none;color:var(--cream-3);font-family:var(--mono);font-size:13px;
   font-variant-numeric:tabular-nums;white-space:nowrap;
 }
 #status .queue-info{color:var(--cream)}
@@ -160,7 +160,7 @@ input[type=email]::placeholder,
 .pay{
   display:inline-flex;align-items:center;justify-content:center;
   width:max-content;min-height:46px;margin-top:6px;padding:12px 22px;
-  color:#1A0C10;background:var(--brass);border:1px solid var(--brass);
+  color:#0C111A;background:var(--brass);border:1px solid var(--brass);
   border-radius:var(--r);font-weight:500;
   transition:background .18s var(--ease);
 }
@@ -175,7 +175,7 @@ input[type=email]::placeholder,
 .inline-rating__title,
 .inline-rating__label{
   margin:0;color:var(--cream-3);
-  font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+  font-family:var(--mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase;
 }
 .inline-rating__scores{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .inline-rating__score{
@@ -221,7 +221,7 @@ input[type=email]::placeholder,
 .rate-form{display:grid;gap:18px}
 .rate-label{
   margin:0;color:var(--cream-3);
-  font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+  font-family:var(--mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase;
 }
 .score-buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .score-button{

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """Generates robots.txt, sitemap.xml, llms.txt and the JSON-LD block of index.html and services/index.html
-from the site's own HTML. Stdlib only, deterministic (no dates), keeps each HTML file's line endings.
+from the site's own HTML (services and prices: the order links `a[data-pay]` / `a[data-request]` of /services/
+and /products.html, contacts: the #contact block, archived services of services.js are skipped). Stdlib only, deterministic (no dates), keeps each HTML file's line endings.
 
 DO NOT EDIT the generated files or the block between the seo:jsonld markers by hand:
 change the page and run `python scripts/build_seo_files.py --write`.
@@ -12,7 +13,9 @@ Without a flag: dry run (prints what would change). Last line:
 Exit 0 only for status=ok (in --check) or after a successful --write.
 
 A page gets into sitemap.xml when it carries a self-referencing <link rel="canonical"> on
-https://ai-vibes.ru/ and no noindex. Every fact in llms.txt and JSON-LD is read from the pages.
+https://ai-vibes.ru/ and no noindex (so /spasibo/ stays out).
+Independent from scripts/build_chrome.py: this script owns only the block between the seo:jsonld markers and
+the other one never touches it, so running them in any order gives the same files. Every fact in llms.txt and JSON-LD is read from the pages.
 """
 from __future__ import annotations
 
@@ -28,6 +31,7 @@ PERSON_NAME = "Денис Лавров"
 SKIP_DIRS = {".git", "node_modules", "tests", "docs", "idm", "scripts", "out", ".next"}
 TITLE_ONLY = {"about.html"}  # page summary omitted from llms.txt by policy
 CONTACT_PREFIXES = ("https://max.ru/", "https://t.me/lavr5000", "mailto:")
+SERVICE_PAGES = [("services/index.html", "/services/"), ("products.html", "/products.html")]  # llms.txt order
 ROBOTS = ("User-agent: *\nDisallow: /docs/\nDisallow: /idm/\nDisallow: /scripts/\n\n"
           f"Sitemap: {SITE}/sitemap.xml\n")
 BEGIN = "<!-- seo:jsonld:begin (scripts/build_seo_files.py) -->"
@@ -54,12 +58,10 @@ class Doc(HTMLParser):
         super().__init__(convert_charrefs=True)
         self.title, self.meta, self.canonical, self.robots = "", {}, None, ""
         self.stack = []          # open elements: (tag, id, class)
-        self.orders = []         # (service-id, data-order, data-price-label, enclosing service-N id)
+        self.orders = []         # (kind pay|request, service-id, data-order, data-price-label, nearest enclosing id)
         self.links = []          # (href, text, enclosing ids, enclosing classes)
-        self.pokaz = {"h2": "", "lead": "", "price": "", "dd": {}}
         self._a = None
-        self._cap = None         # what text is being captured: ("title"|"h2"|"lead"|"dt"|"dd"|"price", buffer)
-        self._dt = ""
+        self._cap = None         # text being captured: ["title", buffer]
         self._skip = 0
 
     def _ids(self):
@@ -88,21 +90,12 @@ class Doc(HTMLParser):
         self.stack.append((tag, a.get("id", ""), a.get("class", "")))
         if tag == "title":
             self._cap = ["title", []]
-        if "data-order" in a:
-            card = next((i for i in reversed(self._ids()) if re.fullmatch(r"service-\d+", i)), "")
-            self.orders.append((a.get("data-service-id", ""), a["data-order"], a.get("data-price-label", ""), card))
+        if "data-pay" in a or "data-request" in a:
+            card = next(iter(reversed(self._ids())), "")
+            self.orders.append(("pay" if "data-pay" in a else "request", a.get("data-service-id", ""),
+                                a.get("data-order", ""), a.get("data-price-label", ""), card))
         if tag == "a" and a.get("href"):
             self._a = [a["href"], [], self._ids(), [c for _, _, c in self.stack]]
-        if self._in("pokaz"):
-            cls = a.get("class", "").split()
-            if tag == "h2" and not self.pokaz["h2"]:
-                self._cap = ["h2", []]
-            elif tag == "p" and "lead" in cls and not self.pokaz["lead"]:
-                self._cap = ["lead", []]
-            elif tag == "dt":
-                self._cap = ["dt", []]
-            elif tag == "dd":
-                self._cap = ["dd", []]
 
     def handle_endtag(self, tag):
         if tag in ("script", "style", "noscript", "template"):
@@ -112,21 +105,8 @@ class Doc(HTMLParser):
             href, txt, ids, classes = self._a
             self.links.append((href, norm("".join(txt)), ids, classes))
             self._a = None
-        if self._cap and tag in ("title", "h2", "p", "dt", "dd"):
-            kind, buf = self._cap
-            text = norm("".join(buf))
-            if kind == "title" and tag == "title":
-                self.title = text
-            elif kind == "h2" and tag == "h2":
-                self.pokaz["h2"] = text
-            elif kind == "lead" and tag == "p":
-                self.pokaz["lead"] = text
-            elif kind == "dt" and tag == "dt":
-                self._dt = text
-            elif kind == "dd" and tag == "dd":
-                self.pokaz["dd"][self._dt] = text
-            else:
-                return
+        if self._cap and tag == "title":
+            self.title = norm("".join(self._cap[1]))
             self._cap = None
         for i in range(len(self.stack) - 1, -1, -1):
             if self.stack[i][0] == tag:
@@ -140,8 +120,16 @@ class Doc(HTMLParser):
             self._cap[1].append(data)
         if self._a is not None:
             self._a[1].append(data)
-        if self._in("pokaz") and self.stack and "price" in self.stack[-1][2].split() and not self.pokaz["price"]:
-            self.pokaz["price"] = norm(data)
+
+
+def archived_ids(root: Path) -> set[str]:
+    """Ids of services.js records marked `archived: true` (kept for id stability, never published)."""
+    f = root / "services.js"
+    if not f.exists():
+        return set()
+    recs = re.split(r"\n  \{", f.read_bytes().decode("utf-8"))
+    return {m.group(1) for r in recs if re.search(r"\barchived:\s*true\b", r)
+            for m in [re.search(r'\bid:\s*"([^"]+)"', r)] if m}
 
 
 def read_html(path: Path) -> tuple[str, str]:
@@ -173,8 +161,7 @@ def pages(root: Path) -> list[tuple[str, str, Doc]]:
 def contacts(doc: Doc) -> list[tuple[str, str]]:
     seen, out = set(), []
     for href, text, ids, classes in doc.links:
-        if "contact" in ids and any("final-actions" in c.split() for c in classes) \
-                and href.startswith(CONTACT_PREFIXES) and href not in seen:
+        if "contact" in ids and href.startswith(CONTACT_PREFIXES) and href not in seen:
             seen.add(href)
             out.append((href, text))
     return out
@@ -187,26 +174,28 @@ def build(root: Path) -> tuple[dict, list[str], list[str]]:
     cts = contacts(svc)
     email = next((h[len("mailto:"):] for h, _ in cts if h.startswith("mailto:")), "")
     if not site_name or not email:
-        raise SystemExit("SEO_FILES status=error pages=0 files= reason=no og:site_name or mailto")
+        raise SystemExit("SEO_FILES status=error pages=0 files= reason=no og:site_name or mailto in #contact")
     warns = []
+    skip = archived_ids(root)
     pg = pages(root)
     out = {"robots.txt": ROBOTS}
     out["sitemap.xml"] = ('<?xml version="1.0" encoding="UTF-8"?>\n'
                           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
                           + "".join(f"  <url><loc>{loc}</loc></url>\n" for loc, _, _ in pg) + "</urlset>\n")
     L = [f"# {site_name}", "", f"> {norm(idx.meta.get('description', ''))}", "", "## Услуги"]
-    seen = set()
-    for sid, name, price, card in svc.orders:
-        if sid in seen:
-            continue
-        seen.add(sid)
-        L.append(f"- [{norm(name)}]({SITE}/services/{'#' + card if card else ''}): {norm(price)}")
-    pk = svc.pokaz
-    if pk["h2"]:
-        detail = " · ".join(v for v in (pk["dd"].get("Стоимость", ""), pk["dd"].get("Как проходит", "")) if v)
-        L.append(f"- [{pk['h2']}]({SITE}/services/#pokaz): {detail}")
-    else:
-        warns.append("no #pokaz block")
+    seen, tariffs = set(), []
+    for rel, path in SERVICE_PAGES:
+        doc = svc if rel == "services/index.html" else parse(read_html(root / rel)[0])
+        for kind, sid, name, price, card in doc.orders:
+            if sid in seen or sid in skip:
+                continue
+            seen.add(sid)
+            url = f"{SITE}{path}{'#' + card if card else ''}"
+            L.append(f"- [{norm(name)}]({url}): {norm(price)}")
+            if rel == "services/index.html" and kind == "pay":
+                tariffs.append((name, price, url))
+    if not tariffs:
+        warns.append("no a[data-pay] tariff on /services/")
     L += ["", "## Контакты"] + [f"- [{t}]({h})" for h, t in cts] + ["", "## Страницы"]
     for loc, rel, doc in pg:
         desc = "" if rel in TITLE_ONLY else norm(doc.meta.get("description", ""))
@@ -219,15 +208,10 @@ def build(root: Path) -> tuple[dict, list[str], list[str]]:
               "sameAs": [h for h, _ in cts if not h.startswith("mailto:")]}
     website = {"@type": "WebSite", "@id": f"{SITE}/#website", "name": site_name, "url": f"{SITE}/", "inLanguage": "ru"}
     graphs = {"index.html": [website, org, person], "services/index.html": [org, person]}
-    if pk["h2"] and pk["price"]:
-        first = re.split(r"(?<=[.!?])\s+", pk["lead"])[0] if pk["lead"] else ""
-        service = {"@type": "Service", "@id": f"{SITE}/services/#pokaz", "name": pk["h2"], "url": f"{SITE}/services/#pokaz",
-                   "provider": {"@id": f"{SITE}/#org"},
-                   "offers": {"@type": "Offer", "price": re.sub(r"\D", "", pk["price"]), "priceCurrency": "RUB",
-                              "url": f"{SITE}/services/#pokaz"}}
-        if first:
-            service["description"] = first
-        graphs["services/index.html"].append(service)
+    for name, price, url in tariffs:
+        graphs["services/index.html"].append(
+            {"@type": "Service", "@id": url, "name": norm(name), "url": url, "provider": {"@id": f"{SITE}/#org"},
+             "offers": {"@type": "Offer", "price": re.sub(r"\D", "", price), "priceCurrency": "RUB", "url": url}})
     for rel, graph in graphs.items():
         raw, eol = read_html(root / rel)
         data = json.dumps({"@context": "https://schema.org", "@graph": graph}, ensure_ascii=False,

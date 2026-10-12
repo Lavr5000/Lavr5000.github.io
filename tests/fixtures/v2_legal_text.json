@@ -1,0 +1,13 @@
+{
+ "generated": "2026-10-11",
+ "source": "https://ai-vibes.ru",
+ "algorithm": "sha256(utf8(innerText of <main>; CRLF->LF; trailing spaces stripped per line; outer newlines stripped))",
+ "pages": {
+  "/oferta.html": "49e728d4ea1d644e7748b05be38f47f02f2c5018b0c155a4a34baeebd3fe9713",
+  "/privacy.html": "8c24237843c88254c91734c975cdb17795975ca225465c20ea2fb26de7da310a"
+ },
+ "chars": {
+  "/oferta.html": 36909,
+  "/privacy.html": 26438
+ }
+}

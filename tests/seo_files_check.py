@@ -7,23 +7,34 @@ Offline, stdlib only. Checks over the repository (or DIR):
   a. `scripts/build_seo_files.py --check` passes - the committed files are what the generator writes;
   b. sitemap.xml is valid XML and lists exactly the self-canonical pages without noindex;
   c. robots.txt, read by RFC 9309 (longest match wins, Allow wins a tie), leaves every sitemap path
-     and /assets/site2.css open for *, Googlebot, YandexBot, GPTBot, ClaudeBot, PerplexityBot,
-     and names the sitemap;
+     and the stylesheets /assets/site2.css, /assets/site3.css, /assets/chrome.css open for *, Googlebot,
+     YandexBot, GPTBot, ClaudeBot, PerplexityBot, and names the sitemap;
   d. every price in roubles, every label and every explanation of llms.txt is found word for word
      in the pages;
-  e. index.html and services/index.html carry exactly one generated JSON-LD block, the JSON parses,
-     and the Offer price equals the digits of `#pokaz .price`.
+  e. index.html and services/index.html carry exactly one generated JSON-LD block, the JSON parses;
+     the home page has WebSite + Organization + Person and no Service; /services/ has Organization + Person
+     and exactly one Service/Offer per tariff `a[data-pay]` (name = data-order, price = digits of
+     data-price-label, url = /services/#<id of the tariff card>: #service-5 and #vip);
+  f. the published files carry no archived service (services.js `archived: true`), no Hermes, no "15 000 ₽",
+     no #pokaz, and /spasibo/ (noindex) is in neither sitemap.xml nor llms.txt;
+  g. the two generators do not fight: on a scratch copy of the tree, seo -> chrome -> seo and
+     chrome -> seo -> chrome leave every page and generated file byte-identical (compared as LF text) to
+     the starting state, which must itself be the fixed point.
 Built-in negative probes (each one must be caught): `Disallow: /`; `Allow: /` + `Disallow: /services/`;
-a price that is on no page; a trailing comma in the JSON.
-Last line: SEO_FILES_CHECK status=<ok|fail> pages=<n> neg=<caught>/4
+a price that is on no page; a trailing comma in the JSON; a Service with a wrong Offer price; a Hermes line
+with 15 000 in llms.txt.
+Last line: SEO_FILES_CHECK status=<ok|fail> pages=<n> neg=<caught>/6
 """
 from __future__ import annotations
 
+import hashlib
 import html as htmllib
 import json
 import re
+import shutil
 import subprocess
 import sys
+import tempfile
 import xml.etree.ElementTree as ET
 from html.parser import HTMLParser
 from pathlib import Path
@@ -31,10 +42,11 @@ from pathlib import Path
 SITE = "https://ai-vibes.ru"
 SKIP_DIRS = {".git", "node_modules", "tests", "docs", "idm", "scripts", "out", ".next"}
 AGENTS = ["*", "Googlebot", "YandexBot", "GPTBot", "ClaudeBot", "PerplexityBot"]
-EXTRA_PATHS = ["/assets/site2.css"]
+EXTRA_PATHS = ["/assets/site2.css", "/assets/site3.css", "/assets/chrome.css"]
 LD_PAGES = ["index.html", "services/index.html"]
 BEGIN = "<!-- seo:jsonld:begin (scripts/build_seo_files.py) -->"
 END = "<!-- seo:jsonld:end -->"
+FORBIDDEN_TEXT = ["Hermes", "15 000", "#pokaz", "Покажу агента"]  # replaced offers: must not reach generated files
 LD_SCRIPT = re.compile(r'<script[^>]*type="application/ld\+json"[^>]*>(.*?)</script>', re.S | re.I)
 FORBIDDEN_KEYS = {"jobTitle", "worksFor", "legalName", "taxID", "vatID", "telephone", "address", "birthDate"}
 PRICE = re.compile(r"(?:от )?\d[\d ]*\d ₽|\d ₽")
@@ -224,12 +236,17 @@ def _keys(node):
             yield from _keys(v)
 
 
-def pokaz_price_digits(raw: str) -> str:
-    m = re.search(r'id="pokaz"', raw)
-    if not m:
-        return ""
-    m2 = re.search(r'class="price"[^>]*>([^<]+)<', raw[m.end():])
-    return re.sub(r"\D", "", htmllib.unescape(m2.group(1))) if m2 else ""
+def expected_tariffs(raw: str) -> list[tuple[str, str, str]]:
+    """(data-order, price digits, url) for every `a[data-pay]` of /services/, url from the card's own id."""
+    out = []
+    for art in re.finditer(r"<article\b([^>]*)>(.*?)</article>", raw, re.S):
+        cid = re.search(r'\bid="([^"]+)"', art.group(1))
+        for tag in re.findall(r"<a\b[^>]*\bdata-pay\b[^>]*>", art.group(2)):
+            order = re.search(r'\bdata-order="([^"]*)"', tag)
+            label = re.search(r'\bdata-price-label="([^"]*)"', tag)
+            if order and label and cid:
+                out.append((norm(order.group(1)), re.sub(r"\D", "", label.group(1)), f"{SITE}/services/#{cid.group(1)}"))
+    return out
 
 
 def check_jsonld(rel: str, raw: str) -> list[str]:
@@ -250,13 +267,90 @@ def check_jsonld(rel: str, raw: str) -> list[str]:
     extra = FORBIDDEN_KEYS & set(_keys(data))
     if extra:
         bad.append(f"{rel}: JSON-LD carries fields that must not be published: {sorted(extra)}")
+    graph = data.get("@graph", [])
+    types = [n.get("@type") for n in graph]
+    if rel == "index.html":
+        if sorted(types) != ["Organization", "Person", "WebSite"]:
+            bad.append(f"{rel}: expected WebSite, Organization, Person; got {types}")
     if rel == "services/index.html":
-        want = pokaz_price_digits(raw)
-        offers = [n.get("offers", {}).get("price") for n in data.get("@graph", []) if n.get("@type") == "Service"]
-        if want and offers != [want]:
-            bad.append(f"{rel}: Offer price {offers} differs from #pokaz .price {want!r}")
-        if not want and offers:
-            bad.append(f"{rel}: a Service is published but the page has no #pokaz price")
+        if [t for t in types if t != "Service"] != ["Organization", "Person"]:
+            bad.append(f"{rel}: expected Organization and Person besides the Services; got {types}")
+        want = expected_tariffs(raw)
+        got = [(n.get("name"), (n.get("offers") or {}).get("price"), n.get("url"))
+               for n in graph if n.get("@type") == "Service"]
+        if sorted(got) != sorted(want):
+            bad.append(f"{rel}: Services {got} differ from the a[data-pay] tariffs {want}")
+        if not want:
+            bad.append(f"{rel}: no a[data-pay] tariff found, nothing to compare the Services with")
+        for n in graph:
+            if n.get("@type") == "Service":
+                o = n.get("offers") or {}
+                if o.get("@type") != "Offer" or o.get("priceCurrency") != "RUB" or o.get("url") != n.get("url"):
+                    bad.append(f"{rel}: Service {n.get('url')} has no proper Offer (RUB, same url)")
+    return bad
+
+
+# --- f. nothing archived or replaced in the published files ---------------------------------------
+def archived_titles(root: Path) -> list[str]:
+    f = root / "services.js"
+    if not f.exists():
+        return []
+    out = []
+    for rec in re.split(r"\n  \{", read(f)):
+        if re.search(r"\barchived:\s*true\b", rec):
+            m = re.search(r'title:\s*\{\s*ru:\s*"([^"]+)"', rec)
+            if m:
+                out.append(m.group(1))
+    return out
+
+
+def check_forbidden(name: str, text: str, titles: list[str]) -> list[str]:
+    return [f"{name} contains {w!r}" for w in FORBIDDEN_TEXT + titles if w in text]
+
+
+def check_spasibo(sitemap: str, llms: str) -> list[str]:
+    return [f"{n} lists /spasibo/ (noindex page)" for n, t in (("sitemap.xml", sitemap), ("llms.txt", llms))
+            if "/spasibo" in t]
+
+
+# --- g. the generators are a fixed point in any order ---------------------------------------------
+def _lf_digest(root: Path) -> dict[str, str]:
+    out = {}
+    for f in sorted(root.rglob("*")):
+        rel = f.relative_to(root).as_posix()
+        if f.is_file() and f.suffix in (".html", ".txt", ".xml") and not set(rel.split("/")[:-1]) & SKIP_DIRS:
+            text = f.read_bytes().decode("utf-8").replace("\r\n", "\n")
+            out[rel] = hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
+    return out
+
+
+def check_generators_commute(root: Path, here: Path) -> list[str]:
+    seo, chrome = here / "scripts" / "build_seo_files.py", here / "scripts" / "build_chrome.py"
+    if not chrome.exists():
+        return ["scripts/build_chrome.py is missing, cannot prove the generators commute"]
+    ignore = shutil.ignore_patterns(".git", "node_modules", "idm", "docs", "tests", "out", ".next")
+    steps = {"S": lambda w: [sys.executable, str(w / "scripts" / "build_seo_files.py"), "--root", str(w), "--write"],
+             "C": lambda w: [sys.executable, str(w / "scripts" / "build_chrome.py"), "--write"]}
+    bad = []
+    with tempfile.TemporaryDirectory(prefix="seo-commute-") as tmp:
+        for order in ("SCS", "CSC"):
+            work = Path(tmp) / order
+            shutil.copytree(root, work, ignore=ignore)
+            (work / "scripts").mkdir(exist_ok=True)
+            shutil.copy2(seo, work / "scripts" / "build_seo_files.py")
+            shutil.copy2(chrome, work / "scripts" / "build_chrome.py")
+            start = _lf_digest(work)
+            for step in order:
+                r = subprocess.run(steps[step](work), capture_output=True, text=True, encoding="utf-8",
+                                   errors="replace", cwd=str(work))
+                if r.returncode != 0:
+                    bad.append(f"generators {order}: step {step} failed: {(r.stdout.strip().splitlines() or ['no output'])[-1]}")
+                    break
+            else:
+                end = _lf_digest(work)
+                moved = sorted(k for k in set(start) | set(end) if start.get(k) != end.get(k))
+                if moved:
+                    bad.append(f"generators {order} change the tree: {moved[:6]}")
     return bad
 
 
@@ -269,6 +363,8 @@ def negative_probes(robots: str, llms: str, pages: dict[str, Page], paths: list[
     probe = llms.replace(first.group(0), "1 500 ₽", 1) if first else llms + "- [x](%s/): 1 500 ₽\n" % SITE
     caught += bool(check_llms(probe, pages))
     caught += bool(check_jsonld("services/index.html", svc_raw.replace("}</script>", ",}</script>", 1)))
+    caught += bool(check_jsonld("services/index.html", svc_raw.replace('"price":"7500"', '"price":"7400"', 1)))
+    caught += bool(check_forbidden("llms.txt", llms + "- [Hermes Agent](%s/services/): 15 000 ₽\n" % SITE, []))
     return caught
 
 
@@ -287,7 +383,7 @@ def main() -> int:
         robots, sitemap, llms = read(root / "robots.txt"), read(root / "sitemap.xml"), read(root / "llms.txt")
     except FileNotFoundError as e:
         print(f"FAIL missing file: {e.filename}")
-        print(f"SEO_FILES_CHECK status=fail pages={len(expected)} neg=0/4")
+        print(f"SEO_FILES_CHECK status=fail pages={len(expected)} neg=0/6")
         return 1
     bad += check_sitemap(sitemap, expected)
     bad += check_robots(robots, paths)
@@ -295,11 +391,19 @@ def main() -> int:
     raws = {rel: read(root / rel) for rel in LD_PAGES}
     for rel, raw in raws.items():
         bad += check_jsonld(rel, raw)
+    titles = archived_titles(root)
+    for name, text in (("llms.txt", llms), ("sitemap.xml", sitemap), ("robots.txt", robots)):
+        bad += check_forbidden(name, text, titles)
+    for rel, raw in raws.items():
+        block = raw[raw.find(BEGIN): raw.find(END)]
+        bad += check_forbidden(rel + " (JSON-LD)", block, titles)
+    bad += check_spasibo(sitemap, llms)
+    bad += check_generators_commute(root, here)
     neg = negative_probes(robots, llms, pages, paths, raws["services/index.html"])
     for line in bad:
         print("FAIL " + line)
-    ok = not bad and neg == 4
-    print(f"SEO_FILES_CHECK status={'ok' if ok else 'fail'} pages={len(expected)} neg={neg}/4")
+    ok = not bad and neg == 6
+    print(f"SEO_FILES_CHECK status={'ok' if ok else 'fail'} pages={len(expected)} neg={neg}/6")
     return 0 if ok else 1
 
 

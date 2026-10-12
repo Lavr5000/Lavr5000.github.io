@@ -1,0 +1,744 @@
+{
+ "generated": "2026-10-11",
+ "source": "https://ai-vibes.ru",
+ "note": "label_only: address becomes a label/redirect in v2, only id existence is required",
+ "entries": [
+  {
+   "url": "/",
+   "kind": "page",
+   "sources": [
+    "link:/about.html",
+    "link:/apps/transkribator/",
+    "link:/blog/",
+    "link:/blog/apartment-auditor/"
+   ]
+  },
+  {
+   "url": "/#apps",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/",
+    "link:/apps/transkribator/"
+   ]
+  },
+  {
+   "url": "/#author",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/"
+   ]
+  },
+  {
+   "url": "/#contact",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/"
+   ]
+  },
+  {
+   "url": "/#fit",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/"
+   ]
+  },
+  {
+   "url": "/#hero",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/"
+   ]
+  },
+  {
+   "url": "/#main",
+   "kind": "anchor",
+   "sources": [
+    "link:/"
+   ]
+  },
+  {
+   "url": "/#process",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/"
+   ]
+  },
+  {
+   "url": "/#services",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/"
+   ],
+   "label_only": true
+  },
+  {
+   "url": "/#tools",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/"
+   ]
+  },
+  {
+   "url": "/about.html",
+   "kind": "page",
+   "sources": [
+    "link:/",
+    "link:/apps/transkribator/",
+    "link:/blog/",
+    "link:/blog/apartment-auditor/"
+   ]
+  },
+  {
+   "url": "/about.html#contact",
+   "kind": "anchor",
+   "sources": [
+    "link:/about.html"
+   ]
+  },
+  {
+   "url": "/about.html#demo",
+   "kind": "anchor",
+   "sources": [
+    "link:/about.html"
+   ]
+  },
+  {
+   "url": "/about.html#gov",
+   "kind": "anchor",
+   "sources": [
+    "link:/about.html"
+   ]
+  },
+  {
+   "url": "/about.html#main",
+   "kind": "anchor",
+   "sources": [
+    "link:/about.html"
+   ]
+  },
+  {
+   "url": "/about.html#projects",
+   "kind": "anchor",
+   "sources": [
+    "link:/about.html"
+   ]
+  },
+  {
+   "url": "/about.html#stack",
+   "kind": "anchor",
+   "sources": [
+    "link:/about.html"
+   ]
+  },
+  {
+   "url": "/apps/transkribator/",
+   "kind": "page",
+   "sources": [
+    "link:/",
+    "link:/blog/dva-prilozheniya/",
+    "link:/blog/transkribator-golosom/",
+    "page-of:/apps/transkribator/#main"
+   ]
+  },
+  {
+   "url": "/apps/transkribator/#main",
+   "kind": "anchor",
+   "sources": [
+    "link:/apps/transkribator/"
+   ]
+  },
+  {
+   "url": "/blog/",
+   "kind": "page",
+   "sources": [
+    "link:/",
+    "link:/about.html",
+    "link:/apps/transkribator/",
+    "link:/blog/"
+   ]
+  },
+  {
+   "url": "/blog/#main",
+   "kind": "anchor",
+   "sources": [
+    "link:/blog/"
+   ]
+  },
+  {
+   "url": "/blog/apartment-auditor/",
+   "kind": "page",
+   "sources": [
+    "link:/blog/",
+    "link:/blog/dva-prilozheniya/",
+    "link:/blog/transkribator-golosom/",
+    "page-of:/blog/apartment-auditor/#main"
+   ]
+  },
+  {
+   "url": "/blog/apartment-auditor/#main",
+   "kind": "anchor",
+   "sources": [
+    "link:/blog/apartment-auditor/"
+   ]
+  },
+  {
+   "url": "/blog/dva-prilozheniya/",
+   "kind": "page",
+   "sources": [
+    "link:/blog/",
+    "page-of:/blog/dva-prilozheniya/#main",
+    "post:max_batch",
+    "sitemap"
+   ]
+  },
+  {
+   "url": "/blog/dva-prilozheniya/#main",
+   "kind": "anchor",
+   "sources": [
+    "link:/blog/dva-prilozheniya/"
+   ]
+  },
+  {
+   "url": "/blog/ryazan-obmer-razvertki/",
+   "kind": "page",
+   "sources": [
+    "link:/blog/",
+    "page-of:/blog/ryazan-obmer-razvertki/#main",
+    "sitemap"
+   ]
+  },
+  {
+   "url": "/blog/ryazan-obmer-razvertki/#main",
+   "kind": "anchor",
+   "sources": [
+    "link:/blog/ryazan-obmer-razvertki/"
+   ]
+  },
+  {
+   "url": "/blog/smeta-osnovanie-list/",
+   "kind": "page",
+   "sources": [
+    "link:/blog/",
+    "page-of:/blog/smeta-osnovanie-list/#main",
+    "post:max_batch",
+    "sitemap"
+   ]
+  },
+  {
+   "url": "/blog/smeta-osnovanie-list/#main",
+   "kind": "anchor",
+   "sources": [
+    "link:/blog/smeta-osnovanie-list/"
+   ]
+  },
+  {
+   "url": "/blog/transkribator-golosom/",
+   "kind": "page",
+   "sources": [
+    "link:/blog/",
+    "link:/blog/apartment-auditor/",
+    "link:/blog/dva-prilozheniya/",
+    "page-of:/blog/transkribator-golosom/#main"
+   ]
+  },
+  {
+   "url": "/blog/transkribator-golosom/#main",
+   "kind": "anchor",
+   "sources": [
+    "link:/blog/transkribator-golosom/"
+   ]
+  },
+  {
+   "url": "/nakladnaya.html",
+   "kind": "page",
+   "sources": [
+    "link:/",
+    "link:/oferta.html",
+    "link:/products.html",
+    "page-of:/nakladnaya.html#main"
+   ]
+  },
+  {
+   "url": "/nakladnaya.html#main",
+   "kind": "anchor",
+   "sources": [
+    "link:/nakladnaya.html"
+   ]
+  },
+  {
+   "url": "/nakladnaya.html#order",
+   "kind": "anchor",
+   "sources": [
+    "link:/nakladnaya.html"
+   ]
+  },
+  {
+   "url": "/oferta.html",
+   "kind": "page",
+   "sources": [
+    "link:/",
+    "link:/about.html",
+    "link:/apps/transkribator/",
+    "link:/blog/"
+   ]
+  },
+  {
+   "url": "/oferta.html#doc",
+   "kind": "anchor",
+   "sources": [
+    "link:/oferta.html"
+   ]
+  },
+  {
+   "url": "/oferta.html#main",
+   "kind": "anchor",
+   "sources": [
+    "link:/oferta.html"
+   ]
+  },
+  {
+   "url": "/oferta.html#s1",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/oferta.html"
+   ]
+  },
+  {
+   "url": "/oferta.html#s10",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/oferta.html"
+   ]
+  },
+  {
+   "url": "/oferta.html#s11",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/oferta.html"
+   ]
+  },
+  {
+   "url": "/oferta.html#s12",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/oferta.html"
+   ]
+  },
+  {
+   "url": "/oferta.html#s13",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/oferta.html"
+   ]
+  },
+  {
+   "url": "/oferta.html#s14",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/oferta.html"
+   ]
+  },
+  {
+   "url": "/oferta.html#s15",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/oferta.html"
+   ]
+  },
+  {
+   "url": "/oferta.html#s16",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/oferta.html"
+   ]
+  },
+  {
+   "url": "/oferta.html#s17",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/oferta.html"
+   ]
+  },
+  {
+   "url": "/oferta.html#s18",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/oferta.html"
+   ]
+  },
+  {
+   "url": "/oferta.html#s19",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/oferta.html"
+   ]
+  },
+  {
+   "url": "/oferta.html#s2",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/oferta.html"
+   ]
+  },
+  {
+   "url": "/oferta.html#s3",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/oferta.html"
+   ]
+  },
+  {
+   "url": "/oferta.html#s4",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/oferta.html"
+   ]
+  },
+  {
+   "url": "/oferta.html#s5",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/oferta.html"
+   ]
+  },
+  {
+   "url": "/oferta.html#s6",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/oferta.html"
+   ]
+  },
+  {
+   "url": "/oferta.html#s7",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/oferta.html"
+   ]
+  },
+  {
+   "url": "/oferta.html#s8",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/oferta.html"
+   ]
+  },
+  {
+   "url": "/oferta.html#s9",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/oferta.html"
+   ]
+  },
+  {
+   "url": "/privacy.html",
+   "kind": "page",
+   "sources": [
+    "link:/",
+    "link:/about.html",
+    "link:/apps/transkribator/",
+    "link:/blog/"
+   ]
+  },
+  {
+   "url": "/privacy.html#doc",
+   "kind": "anchor",
+   "sources": [
+    "link:/privacy.html"
+   ]
+  },
+  {
+   "url": "/privacy.html#main",
+   "kind": "anchor",
+   "sources": [
+    "link:/privacy.html"
+   ]
+  },
+  {
+   "url": "/privacy.html#p1",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/privacy.html"
+   ]
+  },
+  {
+   "url": "/privacy.html#p10",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/privacy.html"
+   ]
+  },
+  {
+   "url": "/privacy.html#p11",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/privacy.html"
+   ]
+  },
+  {
+   "url": "/privacy.html#p12",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/privacy.html"
+   ]
+  },
+  {
+   "url": "/privacy.html#p2",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/privacy.html"
+   ]
+  },
+  {
+   "url": "/privacy.html#p3",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/privacy.html"
+   ]
+  },
+  {
+   "url": "/privacy.html#p4",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/privacy.html"
+   ]
+  },
+  {
+   "url": "/privacy.html#p5",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/privacy.html"
+   ]
+  },
+  {
+   "url": "/privacy.html#p6",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/privacy.html"
+   ]
+  },
+  {
+   "url": "/privacy.html#p7",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/privacy.html"
+   ]
+  },
+  {
+   "url": "/privacy.html#p8",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/privacy.html"
+   ]
+  },
+  {
+   "url": "/privacy.html#p9",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/privacy.html"
+   ]
+  },
+  {
+   "url": "/products.html",
+   "kind": "page",
+   "sources": [
+    "link:/",
+    "link:/about.html",
+    "link:/apps/transkribator/",
+    "link:/blog/"
+   ]
+  },
+  {
+   "url": "/products.html#catalog-section",
+   "kind": "anchor",
+   "sources": [
+    "link:/products.html"
+   ]
+  },
+  {
+   "url": "/products.html#main",
+   "kind": "anchor",
+   "sources": [
+    "link:/products.html"
+   ]
+  },
+  {
+   "url": "/rate.html",
+   "kind": "page",
+   "sources": [
+    "page-of:/rate.html#main",
+    "rate"
+   ]
+  },
+  {
+   "url": "/rate.html#main",
+   "kind": "anchor",
+   "sources": [
+    "link:/rate.html"
+   ]
+  },
+  {
+   "url": "/services/",
+   "kind": "page",
+   "sources": [
+    "link:/",
+    "link:/about.html",
+    "link:/apps/transkribator/",
+    "link:/blog/"
+   ]
+  },
+  {
+   "url": "/services/#contact",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/services/"
+   ]
+  },
+  {
+   "url": "/services/#documents",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/services/"
+   ],
+   "label_only": true
+  },
+  {
+   "url": "/services/#main",
+   "kind": "anchor",
+   "sources": [
+    "link:/services/"
+   ]
+  },
+  {
+   "url": "/services/#pokaz",
+   "kind": "anchor",
+   "sources": [
+    "known-id"
+   ],
+   "label_only": true
+  },
+  {
+   "url": "/services/#process",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/services/"
+   ]
+  },
+  {
+   "url": "/services/#service-1",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/"
+   ],
+   "label_only": true
+  },
+  {
+   "url": "/services/#service-2",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/"
+   ],
+   "label_only": true
+  },
+  {
+   "url": "/services/#service-3",
+   "kind": "anchor",
+   "sources": [
+    "known-id"
+   ],
+   "label_only": true
+  },
+  {
+   "url": "/services/#service-4",
+   "kind": "anchor",
+   "sources": [
+    "known-id"
+   ],
+   "label_only": true
+  },
+  {
+   "url": "/services/#service-5",
+   "kind": "anchor",
+   "sources": [
+    "known-id"
+   ],
+   "label_only": true
+  },
+  {
+   "url": "/services/#services",
+   "kind": "anchor",
+   "sources": [
+    "known-id",
+    "link:/services/"
+   ],
+   "label_only": true
+  },
+  {
+   "url": "/vedomost.html",
+   "kind": "page",
+   "sources": [
+    "link:/",
+    "link:/oferta.html",
+    "link:/products.html",
+    "page-of:/vedomost.html#main"
+   ]
+  },
+  {
+   "url": "/vedomost.html#main",
+   "kind": "anchor",
+   "sources": [
+    "link:/vedomost.html"
+   ]
+  },
+  {
+   "url": "/vedomost.html#order",
+   "kind": "anchor",
+   "sources": [
+    "link:/vedomost.html"
+   ]
+  }
+ ]
+}

@@ -11,6 +11,7 @@ on:
     paths:
       - "**/*.html"
       - "scripts/build_seo_files.py"
+      - "scripts/build_chrome.py"
       - ".github/workflows/seo-files.yml"
       - "!tests/**"                # paths and paths-ignore cannot be combined: use negation
       - "!idm/**"
@@ -33,6 +34,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
+
+      # A new article or page without the shared header/footer/dialogs fails here, before anything is committed.
+      - name: shared chrome is current
+        run: python scripts/build_chrome.py --check
 
       - name: regenerate
         run: python scripts/build_seo_files.py --write

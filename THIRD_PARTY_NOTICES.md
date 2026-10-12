@@ -13,6 +13,8 @@ License types taken from the LICENSE files inside the official npm tarballs
 
 Notes:
 
+- GSAP and ScrollTrigger were removed on 2026-10-11 together with the scroll scene that used them; the new
+  scene (`assets/scene3.js`) has no third-party code. No vendored copy is left in the repository.
 - React, ReactDOM, `<model-viewer>` and the Draco decoder were removed on
   2026-08-13 together with the last pages that used them (`products.html`,
   `about.html`); no vendored copy is left in the repository.

@@ -1,0 +1,180 @@
+/* ============================================================
+   AI VIBES — общая шапка, подвал, меню телефона и окна заказа/оплаты.
+   Подключается на всех страницах; свои токены (--c-*), чтобы не зависеть
+   от того, на какой системе стилей собрана страница (site2 или site3).
+   Разметку шапки и подвала вставляет scripts/build_chrome.py.
+   ============================================================ */
+:root{
+  --c-ink:#0A111E;
+  --c-ink-2:#131E32;
+  --c-paper:#F2EADD;
+  --c-paper-2:#E7DCCB;
+  --c-text:#F1F3F7;
+  --c-text-2:#C2CBDA;
+  --c-dark:#101826;
+  --c-dark-2:#4E3F3A;
+  --c-brass:#D9A961;
+  --c-brass-2:#F0C888;
+  --c-brass-ink:#0A111E;
+  --c-line:rgba(200,220,255,.16);
+  --c-line-dark:rgba(16,24,38,.16);
+  --c-err:#8E2B1E;
+  --c-display:'Prata','Times New Roman',serif;
+  --c-sans:'Golos Text','Segoe UI',system-ui,sans-serif;
+  --c-mono:'JetBrains Mono',ui-monospace,'Consolas',monospace;
+  --c-wrap:1200px;
+  --c-pad:clamp(16px,4vw,40px);
+  --c-head-h:68px;
+}
+html{scroll-padding-top:calc(var(--c-head-h) + 12px)}
+/* переход по якорю — сразу на место: плавная прокрутка из site2.css промахивается, пока страница дорастает по высоте */
+html:root{scroll-behavior:auto}
+
+/* ---------- шапка ---------- */
+.chrome{
+  position:sticky;top:0;z-index:90;
+  background:rgba(10,17,30,.92);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--c-line);
+  color:var(--c-text);font-family:var(--c-sans);
+}
+.chrome-in{
+  max-width:var(--c-wrap);margin:0 auto;padding:0 var(--c-pad);
+  min-height:var(--c-head-h);
+  display:flex;align-items:center;gap:24px;
+}
+.chrome-brand{display:inline-flex;align-items:center;gap:12px;color:var(--c-text);text-decoration:none;min-height:44px}
+.chrome-mark{width:34px;height:34px;display:grid;place-items:center;border:1px solid rgba(217,169,97,.5)}
+.chrome-mark svg{width:18px;height:18px;fill:none;stroke:var(--c-brass);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.chrome-name{font-family:var(--c-display);font-size:21px;letter-spacing:-.01em;white-space:nowrap}
+.chrome-nav{display:flex;align-items:center;gap:4px;margin-left:auto}
+.chrome-nav a{
+  display:inline-flex;align-items:center;min-height:44px;padding:0 14px;
+  color:var(--c-text-2);font-size:15px;text-decoration:none;white-space:nowrap;
+  border-bottom:2px solid transparent;transition:color .15s;
+}
+.chrome-nav a:hover{color:var(--c-text)}
+.chrome-nav a[aria-current="page"]{color:var(--c-text);border-bottom-color:var(--c-brass)}
+.chrome-cta{
+  display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 20px;
+  background:var(--c-brass);color:var(--c-brass-ink);font-family:var(--c-sans);font-size:15px;font-weight:500;
+  text-decoration:none;white-space:nowrap;border-radius:3px;transition:background .15s;
+}
+.chrome-cta:hover{background:var(--c-brass-2)}
+.chrome-toggle{
+  display:none;margin-left:auto;width:48px;height:48px;padding:0;
+  background:transparent;border:1px solid var(--c-line);border-radius:3px;color:var(--c-text);cursor:pointer;
+}
+.chrome-toggle span{display:block;width:20px;height:2px;margin:4px auto;background:currentColor;transition:transform .18s ease,opacity .18s ease}
+.chrome-toggle[aria-expanded="true"] span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+.chrome-toggle[aria-expanded="true"] span:nth-child(2){opacity:0}
+.chrome-toggle[aria-expanded="true"] span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+.chrome-panel{
+  border-top:1px solid var(--c-line);background:var(--c-ink);
+  padding:8px 16px 20px;padding-inline:var(--c-pad);
+}
+.chrome-panel a{
+  display:flex;align-items:center;min-height:52px;
+  color:var(--c-text);font-family:var(--c-display);font-size:21px;text-decoration:none;
+  border-bottom:1px solid var(--c-line);
+}
+.chrome-panel a[aria-current="page"]{color:var(--c-brass-2)}
+.chrome-progress{position:absolute;left:0;bottom:-1px;height:2px;width:100%;background:var(--c-brass);transform-origin:0 50%;transform:scaleX(0)}
+@media (max-width:900px){
+  .chrome-nav{display:none}
+  .chrome-in{gap:10px}
+  .chrome-in>.chrome-cta{margin-left:auto;min-height:44px;padding:0 12px;font-size:14px}
+  .chrome-toggle{display:block;margin-left:0;flex:none}
+  :root{--c-head-h:64px}
+}
+@media (max-width:380px){
+  .chrome-brand{gap:8px}
+  .chrome-in>.chrome-cta{padding:0 9px}
+}
+@media (min-width:901px){.chrome-panel{display:none!important}}
+
+/* ---------- подвал ---------- */
+.chrome-foot{
+  background:var(--c-ink);color:var(--c-text-2);font-family:var(--c-sans);font-size:15px;line-height:1.6;
+  border-top:1px solid var(--c-line);
+}
+.chrome-foot-in{
+  max-width:var(--c-wrap);margin:0 auto;padding:44px var(--c-pad) 32px;
+  display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:32px;
+}
+.chrome-foot-h{margin:0 0 12px;font-family:var(--c-mono);font-size:13px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--c-brass)}
+.chrome-foot ul{margin:0;padding:0;list-style:none;display:grid;gap:2px}
+.chrome-foot a{display:inline-flex;align-items:center;min-height:36px;color:var(--c-text);text-decoration:none}
+.chrome-foot a:hover{color:var(--c-brass-2)}
+.chrome-foot-about p{margin:0 0 10px;max-width:34ch}
+.chrome-foot-name{font-family:var(--c-display);font-size:22px;color:var(--c-text)}
+.chrome-foot-legal{
+  max-width:var(--c-wrap);margin:0 auto;padding:16px var(--c-pad) 28px;border-top:1px solid var(--c-line);
+  font-size:13px;color:var(--c-text-2);
+}
+@media (max-width:900px){.chrome-foot-in{grid-template-columns:1fr 1fr}}
+@media (max-width:520px){
+  .chrome-foot-in{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:20px 16px;padding-top:32px;padding-bottom:20px}
+  .chrome-foot-about{grid-column:1 / -1}
+  .chrome-foot-in > :nth-child(2){grid-row:span 2}
+  .chrome-foot a{overflow-wrap:anywhere}
+}
+
+/* ---------- кнопка оплаты (на любой странице) ---------- */
+.btn-pay,.btn-line{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:0 26px;
+  font-family:var(--c-sans);font-size:17px;font-weight:500;text-decoration:none;border-radius:3px;cursor:pointer;
+  transition:background .15s,transform .15s,border-color .15s;
+}
+.btn-pay{background:var(--c-brass);color:var(--c-brass-ink);border:1px solid var(--c-brass)}
+.btn-pay:hover{background:var(--c-brass-2)}
+.btn-pay:active{transform:translateY(1px)}
+.btn-line{background:transparent;color:inherit;border:1px solid currentColor}
+.btn-line:hover{border-color:var(--c-brass)}
+
+/* ---------- окна заказа и оплаты ---------- */
+.dlg{
+  width:min(560px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto;
+  padding:0;border:1px solid rgba(217,169,97,.45);border-radius:4px;
+  background:var(--c-paper);color:var(--c-dark);font-family:var(--c-sans);font-size:16px;line-height:1.55;
+  color-scheme:light;
+}
+.chrome-panel[hidden]{display:none}
+.dlg::backdrop{background:rgba(10,5,7,.72)}
+.dlg-in{padding:28px 20px 30px;padding-inline:clamp(18px,5vw,36px);display:grid;gap:16px}
+.dlg-fields{display:grid;gap:16px}
+.dlg-close{
+  position:absolute;right:10px;top:10px;width:44px;height:44px;border:1px solid var(--c-line-dark);border-radius:3px;
+  background:transparent;color:var(--c-dark);font-size:22px;line-height:1;cursor:pointer;
+}
+.dlg-kicker{margin:0;font-family:var(--c-mono);font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:#7A5418}
+.dlg h2{margin:0;font-family:var(--c-display);font-weight:400;font-size:clamp(24px,5vw,30px);line-height:1.2;padding-right:44px;text-wrap:balance}
+.dlg p{margin:0}
+.dlg-item{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:14px 16px;background:var(--c-paper-2);border:1px solid rgba(138,98,34,.35);border-radius:3px}
+.dlg-item strong{font-weight:500}
+.dlg h2.dlg-title-item{font-size:clamp(21px,4.4vw,26px)}
+.dlg-item span{font-family:var(--c-mono);font-size:17px;white-space:nowrap}
+.dlg label{display:grid;gap:6px;font-size:15px;font-weight:500}
+.dlg input[type="email"],.dlg input[type="text"]{
+  min-height:50px;padding:0 14px;border:1px solid rgba(16,24,38,.4);border-radius:3px;background:#FFFDF8;color:var(--c-dark);
+  font:inherit;font-weight:400;width:100%;
+}
+.dlg input:focus-visible{outline:2px solid #7A5418;outline-offset:2px}
+.dlg-hint{font-size:14px;font-weight:400;color:var(--c-dark-2)}
+.dlg-consent{display:grid;grid-template-columns:24px 1fr;gap:12px;align-items:start;font-weight:400;font-size:15px}
+.dlg-consent input{width:22px;height:22px;margin:2px 0 0;accent-color:#7A5418}
+.dlg-consent a,.dlg-note a{color:inherit;text-decoration:underline;text-underline-offset:3px}
+.dlg-trap{position:absolute!important;left:-9999px;width:1px;height:1px;opacity:0}
+.dlg .btn-pay{width:100%}
+.dlg .btn-pay[disabled]{opacity:.55;cursor:progress}
+.dlg-status{min-height:1.5em;font-size:15px}
+.dlg-status[data-state="error"]{color:var(--c-err);font-weight:500}
+.dlg-note{font-size:14px;color:var(--c-dark-2)}
+.dlg-channels{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dlg-channels a{min-height:50px}
+.dlg-channels a:first-child{grid-column:1/-1}
+@media (max-width:420px){.dlg-channels{grid-template-columns:1fr}}
+
+@media (prefers-reduced-motion:reduce){
+  .chrome-nav a,.chrome-cta,.btn-pay,.btn-line{transition:none}
+}
