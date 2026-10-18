@@ -16,12 +16,14 @@ is intercepted and recorded; nothing leaves the machine, no bank, no backend).
 Checks
   1. static: every html file with `data-pay` is enumerated (ids and amounts are checked against the known catalogue, an
      unknown id fails the gate so that a new button forces this test to be updated); VIP is held in the config; every
-     page with a payment window carries the setup-start consent text whose sha256 equals tests/fixtures/soglasie-setup-v2.txt
+     page with a payment window carries the two setup-start consent texts (part 1 - the offer, part 2 - personal data,
+     a separate checkbox, 152-FZ) whose join "part 1 + blank line + part 2" has the sha256 of tests/fixtures/soglasie-setup-v2.txt
      (without the final newline; the backend compares the same hash) and consentVersions[setup-start] = setup-v2-2026-10.
   2. browser, one fresh context per [data-pay] button on every such page (index.html x4, services/index.html x2 now):
      held  -> the request window opens, the payment window stays closed, button reads «Заказать …», 0 API requests,
               and a forged submit of the (closed) payment form creates no POST /api/orders either;
-     open  -> the payment window opens with the own consent text only, valid submit sends product=setup-start,
+     open  -> the payment window opens with the own consent texts only, both checkboxes unchecked; a submit with the offer
+              checked but personal data not checked sends nothing; valid submit sends product=setup-start,
               consent_version=setup-v2-2026-10, Idempotency-Key, and navigates to the (stub) bank host.
   3. forged config: held list emptied, enabled=true -> setup-vip still opens no payment window and makes no POST.
   4. /spasibo/ in the browser with the stubbed GET /api/rieltor/handoff: Start ready / bound / check_mail / pending->hostile
@@ -50,6 +52,7 @@ ALWAYS_HELD = {"setup-vip", "setup-rieltor"}      # never open for payment in th
 START_CONSENT_VERSION = "setup-v2-2026-10"
 EMAIL, CONTACT = "check@example.com", "+7 900 000-00-00"
 FIXTURE = ROOT / "tests" / "fixtures" / "soglasie-setup-v2.txt"
+CONSENT_PARTS = ("pay-consent-text-setup-start", "pay-consent-pd-text-setup-start")   # joined by a blank line = the fixture
 NUM = "AV-0123ABCD"
 KEY = "ABCDEFGHJKLMNPQRSTUV"
 EXCLUDE_DIRS = {".git", "node_modules", "assets", "docs", "scripts", "tests"}
@@ -218,16 +221,24 @@ def case_open(br, base, path, idx, btn, sha):
         loc.click(timeout=5000)
         c.pg.wait_for_selector("dialog#pay-dialog[open]", state="visible", timeout=3500)
         need(c.pg.locator("dialog#order-dialog[open]").count() == 0, "request window open together with the payment window")
-        own = c.pg.locator("#pay-consent-text-setup-start")
-        need(own.is_visible(), "own consent text of setup-start is not visible")
+        for el in CONSENT_PARTS:
+            need(c.pg.locator("#" + el).is_visible(), f"own consent text #{el} of setup-start is not visible")
         need(not c.pg.locator("#pay-consent-text").is_visible(), "the old consent text is visible next to the own one")
-        got = hashlib.sha256(own.evaluate("e => e.textContent").encode("utf-8")).hexdigest()
+        joined = "\n\n".join(c.pg.locator("#" + el).evaluate("e => e.textContent") for el in CONSENT_PARTS)
+        got = hashlib.sha256(joined.encode("utf-8")).hexdigest()
         need(got == sha, f"consent text sha256 {got[:12]} != fixture {sha[:12]}")
+        need(c.pg.locator("#pay-consent-pd").is_visible(), "the personal data checkbox is not visible")
+        need(not c.pg.is_checked("#pay-consent") and not c.pg.is_checked("#pay-consent-pd"), "a consent checkbox is checked in advance")
         need(norm_price(c.pg.inner_text("#pay-price")) == norm_price(btn["price"]), "payment window price")
         c.pg.wait_for_timeout(2200)                                    # past the 2 s "too fast" trap
         c.pg.fill("#pay-email", EMAIL)
         c.pg.fill("#pay-contact", CONTACT)
         c.pg.check("#pay-consent")
+        c.pg.click("#pay-submit", timeout=5000)                       # the offer only: personal data not checked
+        c.pg.wait_for_timeout(800)
+        need(not api.posts, "an order without the personal data consent")
+        need("персональных данных" in c.pg.inner_text("#pay-status"), f"status: {c.pg.inner_text('#pay-status')[:80]!r}")
+        c.pg.check("#pay-consent-pd")
         c.pg.click("#pay-submit", timeout=5000)
         c.pg.wait_for_timeout(1500)
         need(len(api.posts) == 1, f"{len(api.posts)} POSTs, expected 1")
@@ -382,9 +393,14 @@ def main(argv=None) -> int:
         sha = consent_sha()
         for url, _ in pay_pages:
             f = ROOT / (url.strip("/") + "/index.html" if url.endswith("/") and url != "/" else (url.strip("/") or "index.html"))
-            m = re.search(r'<span id="pay-consent-text-setup-start" data-consent-for="setup-start" hidden>(.*?)</span>', read(f), re.S)
+            page = read(f)
+            m = re.search(r'<span id="pay-consent-text-setup-start" data-consent-for="setup-start" hidden>(.*?)</span>', page, re.S)
             need(m, f"{url}: no own consent text of setup-start")
-            visible = re.sub(r"<[^>]+>", "", m.group(1))
+            m2 = re.search(r'<label class="dlg-consent" for="pay-consent-pd" data-consent-for="setup-start" hidden>\s*'
+                           r'<input id="pay-consent-pd" name="consent_pd" type="checkbox" />\s*'
+                           r'<span id="pay-consent-pd-text-setup-start">(.*?)</span>', page, re.S)
+            need(m2, f"{url}: no separate personal data checkbox of setup-start (hidden label, unchecked input, text)")
+            visible = "\n\n".join(re.sub(r"<[^>]+>", "", x.group(1)) for x in (m, m2))
             need(hashlib.sha256(visible.encode("utf-8")).hexdigest() == sha, f"{url}: consent text differs from the fixture")
         need("NEVER_PAY" in read(ROOT / "assets" / "pay.js") and "'setup-vip'" in read(ROOT / "assets" / "pay.js"), "NEVER_PAY[setup-vip] missing in pay.js")
         print(f"  ok   static (pages={len(pay_pages)}, buttons={sum(n for _, n in pay_pages)}, consent sha256={sha[:16]}…)", flush=True)

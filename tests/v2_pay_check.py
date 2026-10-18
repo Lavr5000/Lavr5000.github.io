@@ -169,10 +169,22 @@ class Site:
     def fill(self, email=EMAIL, contact=CONTACT, consent=True):
         self.pg.fill("#pay-email", email)
         self.pg.fill("#pay-contact", contact)
+        # setup-start has a second, separate checkbox (personal data); `consent` drives both
+        pd = self.pg.locator("#pay-consent-pd")
         if consent:
             self.pg.check("#pay-consent")
+            if pd.count() and pd.is_visible():
+                pd.check()
         else:
             self.pg.uncheck("#pay-consent")
+            if pd.count() and pd.is_visible():
+                pd.uncheck()
+
+    def check_consents(self):
+        self.pg.check("#pay-consent")
+        pd = self.pg.locator("#pay-consent-pd")
+        if pd.count() and pd.is_visible():
+            pd.check()
 
     def submit(self):
         self.pg.click("#pay-submit", timeout=5000)
@@ -390,7 +402,7 @@ def case_fail_path_new_key(br, base, path, idx, btn):
         s.pg.wait_for_selector("dialog#pay-dialog[open]", state="visible", timeout=4000)
         need(s.pg.input_value("#pay-email") == EMAIL, "retry window not prefilled from sessionStorage")
         s.pg.wait_for_timeout(2200)
-        s.pg.check("#pay-consent")
+        s.check_consents()
         s.submit()
         k, u = s.outcome()
         need(k == "redirect" and len(mock.posts) == 2, f"retry did not create a new order ({k}, posts={len(mock.posts)})")
@@ -417,7 +429,7 @@ def case_stale_record(br, base, path, idx, btn):
         s.pg.wait_for_timeout(2200)
         s.pg.fill("#pay-email", EMAIL)
         s.pg.fill("#pay-contact", CONTACT)
-        s.pg.check("#pay-consent")
+        s.check_consents()
         s.submit()
         k, u = s.outcome()
         need(k == "redirect", f"record older than a day did not end in a new order ({k})")

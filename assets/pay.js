@@ -37,6 +37,13 @@
   var consentVersionOf = function (id) {
     return (cfg.consentVersions && cfg.consentVersions[id]) || cfg.consentVersion;
   };
+  /* отдельная галочка ПДн: обязательна, когда её блок показан для текущей услуги ([data-consent-for] без hidden) */
+  var pdOk = function () {
+    var pd = $('pay-consent-pd');
+    var box = pd && pd.closest ? pd.closest('[data-consent-for]') : null;
+    if (!pd || !box || !current || box.getAttribute('data-consent-for') !== current.dataset.serviceId) return true;
+    return !!pd.checked;
+  };
 
   buttons.forEach(function (b) {
     if (!payOn(b)) b.textContent = 'Заказать за ' + b.dataset.priceLabel;
@@ -114,6 +121,7 @@
     if (!payOn(current)) return Promise.reject(new Error('service is not open for payment'));
     /* услуге с отдельной версией согласия нужен и отдельный текст на странице */
     if (consentVersionOf(id) !== cfg.consentVersion && !document.querySelector('[data-consent-for="' + id + '"]')) return Promise.reject(new Error('consent text missing'));
+    if (!pdOk()) return Promise.reject(new Error('personal data consent missing'));
     var email = $('pay-email').value.trim(), contact = $('pay-contact').value.trim();
     var saved = load(id) || {};
     var same = saved.email === email && saved.contact === contact && saved.key;
@@ -143,6 +151,8 @@
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { setStatus('error', 'Укажите почту — на неё придёт кассовый чек.'); $('pay-email').focus(); return; }
       if (contact.length < 3) { setStatus('error', 'Укажите телефон или ник в мессенджере — по нему свяжусь с вами.'); $('pay-contact').focus(); return; }
       if (!$('pay-consent').checked) { setStatus('error', 'Отметьте согласие с офертой и политикой.'); $('pay-consent').focus(); return; }
+      /* у услуги может быть отдельная обязательная галочка согласия на обработку персональных данных (152-ФЗ: отдельно от оферты) */
+      if (!pdOk()) { setStatus('error', 'Отметьте согласие на обработку персональных данных.'); $('pay-consent-pd').focus(); return; }
       /* ловушка: заполнена сразу после открытия — тихий отказ; автозаполнение позже её не трогает */
       if ($('pay-site').value && Date.now() - openedAt < 2000) { setStatus('error', FAIL_TEXT); return; }
       setBusy(true); setStatus('busy', 'Создаю заказ…');
