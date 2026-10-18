@@ -47,7 +47,8 @@ from v2_gate import Served, block_metrika, settle, norm_price   # noqa: E402
 
 API = "https://api.ai-vibes.ru"
 CONSENT = "setup-v1-2026-10"
-CONSENT_BY_SERVICE = {"setup-rieltor": "rieltor-v1-2026-10"}  # the realtor product has its own consent text and version
+CONSENT_BY_SERVICE = {"setup-start": "setup-v2-2026-10"}  # setup-start has its own consent text and version (draft, approve before release)
+NEVER_PAY = {"setup-vip"}                                   # assets/pay.js never creates a payment for these ids; tests/start_autosale_check.py covers them
 PAY_HOSTS = ["securepay.tinkoff.ru", "pay.tbank-online.com"]
 AMOUNTS = {"setup-start": 750000, "setup-vip": 4500000, "setup-rieltor": 990000}
 PAGES = ["/", "/services/"]
@@ -61,7 +62,7 @@ GOOD_N = "AV-0123ABCD"
 
 
 def config_js(enabled: bool, api: str = API, extra_hosts: tuple = ()) -> str:
-    return ("window.AI_PAY = " + json.dumps({"enabled": enabled, "api": api, "consentVersion": CONSENT,
+    return ("window.AI_PAY = " + json.dumps({"enabled": enabled, "api": api, "consentVersion": CONSENT, "consentVersions": CONSENT_BY_SERVICE,
                                               "allowedPayHosts": PAY_HOSTS + list(extra_hosts), "timeoutMs": TIMEOUT_MS}) + ";\n")
 
 
@@ -685,6 +686,7 @@ def main(argv=None) -> int:
             finally:
                 probe.close()
             stats["buttons"] = len(buttons)
+            buttons = [x for x in buttons if x[2]["id"] not in NEVER_PAY]      # their pay window is forbidden by pay.js; see start_autosale_check.py
             # services ordered by a message: every a[data-request] opens the request window and never calls the API
             reqs, per_page = [], {}
             probe = Site(br, base, Mock([("ok",)]))
