@@ -21,7 +21,7 @@ window.AI_PAY = {
   api: "https://api.ai-vibes.ru",
   consentVersion: "setup-v1-2026-10",
   consentVersions: { "setup-start": "setup-v2-2026-10" }, // draft, approve before release
-  heldServices: ["setup-start", "setup-vip", "setup-rieltor"],
+  heldServices: ["setup-vip", "setup-rieltor"], // release: setup-start is open for payment
   allowedPayHosts: ["securepay.tinkoff.ru", "pay.tbank-online.com"],
   timeoutMs: 15000
 };
