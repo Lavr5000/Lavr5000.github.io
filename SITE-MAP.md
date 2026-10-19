@@ -47,7 +47,7 @@ Public form fields and ids:
 
 Configuration:
 
-- `CONSENT_VERSION` lives in [vedomost.config.js](vedomost.config.js) and identifies the consent text/version submitted with the order. Current value `vedomost-v2-2026-06`. The `#optin` checkbox stays optional (extended 90-day storage, opt-in). The `vedomost.js` entry script and its internal config import are version-pinned (`?v=vedomost-v2-2026-06`) so the whole client module graph is cache-busted together.
+- `CONSENT_VERSION` lives in [vedomost.config.js](vedomost.config.js) and identifies the consent text/version submitted with the order. Current value `vedomost-v3-2026-10` (since 2026-10: the text names the cloud recognition service OpenRouter). The `#optin` checkbox stays optional (extended 90-day storage, opt-in). The `vedomost.js` entry script and its internal config import are version-pinned (`?v=vedomost-v3-2026-10`) so the whole client module graph is cache-busted together.
 - `PAYMENT_ENABLED` lives in [vedomost.config.js](vedomost.config.js) and controls whether the order UI exposes the paid path or free-mode behavior.
 
 ### Rating And Feedback Flow

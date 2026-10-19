@@ -12,7 +12,7 @@ import {
   API_ORIGIN,
   PAYMENT_ALLOWED_HOSTS,
   isValidPaymentUrl
-} from '../vedomost.config.js?v=vedomost-v2-2026-06';
+} from '../vedomost.config.js?v=vedomost-v3-2026-10';
 
 const MAX_SIZE = 200 * 1024 * 1024;  // matches backend WEBINTAKE_MAX_FILE_SIZE_BYTES=209715200 (1G preflight large-PDF intake)
 
