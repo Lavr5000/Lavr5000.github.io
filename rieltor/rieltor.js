@@ -12,7 +12,7 @@
   if (!root || !cat || typeof fmt !== 'function' || !cat.subscription || !Array.isArray(cat.services) || !Array.isArray(cat.backlog)) return;
 
   var API = 'https://api.ai-vibes.ru';
-  var CONSENT_VERSION = 'uslugi-site-v1-2026-10';   // keep in sync with the backend consent text
+  var CONSENT_VERSION = 'uslugi-site-v2-2026-10';   // keep in sync with the backend consent text
   var SUB_NOTE = 'Рабочий помощник для сделок с недвижимостью: считает, пишет, проверяет и раскладывает по папкам.';
   var SUB_UNIT = 'за одно рабочее место';
   var PAY_NOTE = 'Оплатите на сайте и продолжите в боте либо сразу закажите в боте: бот сам проведёт по шагам и покажет согласие.';

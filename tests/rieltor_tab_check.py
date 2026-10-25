@@ -61,7 +61,7 @@ PAGE = "/rieltor/"
 KIT_DEFAULT = Path(os.path.expanduser("~")) / ".claude" / "0 ProEKTi" / "client-agent-kit-rl-uslugi"
 MARK_B, MARK_E = "<!-- USLUGI:BEGIN -->", "<!-- USLUGI:END -->"
 PAY_NOTE = "закажите в боте"   # every enabled tile explains both ways: pay on the site or order in the bot
-CONSENT_VERSION = "uslugi-site-v1-2026-10"
+CONSENT_VERSION = "uslugi-site-v2-2026-10"
 
 SKIP = object()
 CASES: list[tuple[str, object, bool]] = []     # (id, function, needs_browser)
