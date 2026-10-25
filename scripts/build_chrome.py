@@ -38,6 +38,7 @@ MENU = [
     ("Помощник", "/", "home"),
     ("Тарифы", "/services/", "tariffs"),
     ("Для строителей", "/products.html", "builders"),
+    ("Риэлтор", "/rieltor/", "rieltor"),
     ("Статьи", "/blog/", "blog"),
     ("Об авторе", "/about.html", "about"),
 ]
@@ -47,6 +48,7 @@ PAGES: dict[str, tuple[str, bool]] = {
     "index.html": ("home", True),
     "services/index.html": ("tariffs", True),
     "products.html": ("builders", True),
+    "rieltor/index.html": ("rieltor", False),
     "about.html": ("about", False),
     "blog/index.html": ("blog", False),
     "apps/transkribator/index.html": ("builders", False),
@@ -116,6 +118,7 @@ def footer() -> str:
         <li><a href="/">Помощник</a></li>
         <li><a href="/services/">Тарифы</a></li>
         <li><a href="/products.html">Для строителей</a></li>
+        <li><a href="/rieltor/">Риэлтор</a></li>
         <li><a href="/blog/">Статьи</a></li>
         <li><a href="/about.html">Об авторе</a></li>
       </ul>

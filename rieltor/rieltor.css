@@ -1,0 +1,49 @@
+/* /rieltor/ - catalog tiles. Colours, fonts and the tag/button classes come from site3.css and chrome.css. */
+.rl-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gap)}
+.rl-grid:empty{display:none}
+.rl-tile{
+  display:grid;gap:12px;align-content:start;padding:clamp(20px,2.6vw,30px);
+  background:var(--sheet);border:1px solid var(--line-paper);border-radius:6px;color:var(--on-paper);
+}
+.rl-title{font-size:24px;line-height:1.2}
+.rl-note{color:var(--on-paper-2);font-size:16px}
+.rl-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-top:4px}
+.rl-price{font-family:var(--mono);font-size:22px;font-weight:500;font-variant-numeric:tabular-nums}
+.rl-btn{min-height:48px;font-size:16px;white-space:nowrap}
+
+/* the subscription: first, on the whole row, dark like the VIP tariff */
+.rl-tile--subscription{
+  grid-column:1 / -1;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:12px clamp(24px,5vw,64px);align-items:center;
+  padding:clamp(24px,4vw,44px);background:var(--ink);color:var(--on-ink);border-color:rgba(217,169,97,.55);color-scheme:dark;
+}
+.rl-tile--subscription .rl-title{grid-column:1;font-size:clamp(28px,3.4vw,40px);line-height:1.1}
+.rl-tile--subscription .rl-note{grid-column:1;color:var(--on-ink-2)}
+.rl-side{grid-column:2;grid-row:1 / span 2;display:grid;gap:14px;align-content:center}
+.rl-unit{color:var(--on-ink-2);font-size:15px}
+.rl-tile--subscription .rl-price{font-size:clamp(30px,3.6vw,42px);line-height:1}
+.rl-tile--subscription .rl-row{margin:0}
+
+/* "soon": no price, no button, quieter than the available tiles */
+.rl-tile--soon{background:transparent;border-style:dashed}
+.rl-tile--soon .rl-title{color:var(--on-paper-2)}
+.rl-tile--backlog .rl-title{font-size:21px}
+
+/* without scripts: the generated list of the page */
+.uslugi-fallback{display:grid;gap:12px}
+.uslugi-tile{
+  display:flex;flex-wrap:wrap;align-items:center;gap:6px 18px;padding:16px 18px;
+  background:var(--sheet);border:1px solid var(--line-paper);border-radius:6px;
+}
+.uslugi-tile--subscription{border-color:var(--brass-deep)}
+.uslugi-title{flex:1 1 280px;font-family:var(--display);font-size:20px;line-height:1.3}
+.uslugi-price{font-family:var(--mono);font-size:20px;font-weight:500}
+.uslugi-soon{font-family:var(--mono);font-size:14px;color:var(--on-paper-2)}
+.uslugi-btn{display:inline-flex;align-items:center;min-height:44px;color:inherit;text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--brass-deep)}
+
+@media (max-width:767px){
+  .rl-grid{grid-template-columns:1fr}
+  .rl-tile--subscription{grid-template-columns:1fr}
+  .rl-tile--subscription .rl-title,.rl-tile--subscription .rl-note,.rl-side{grid-column:1;grid-row:auto}
+  .rl-row{flex-direction:column;align-items:stretch}
+  .rl-btn{width:100%}
+}
