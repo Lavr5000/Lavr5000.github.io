@@ -80,7 +80,8 @@ html:root{scroll-behavior:auto}
 }
 .chrome-panel a[aria-current="page"]{color:var(--c-brass-2)}
 .chrome-progress{position:absolute;left:0;bottom:-1px;height:2px;width:100%;background:var(--c-brass);transform-origin:0 50%;transform:scaleX(0)}
-@media (max-width:900px){
+/* the menu has six items: it needs about 960px; below 1000px the menu button replaces it */
+@media (max-width:1000px){
   .chrome-nav{display:none}
   .chrome-in{gap:10px}
   .chrome-in>.chrome-cta{margin-left:auto;min-height:44px;padding:0 12px;font-size:14px}
@@ -91,7 +92,7 @@ html:root{scroll-behavior:auto}
   .chrome-brand{gap:8px}
   .chrome-in>.chrome-cta{padding:0 9px}
 }
-@media (min-width:901px){.chrome-panel{display:none!important}}
+@media (min-width:1001px){.chrome-panel{display:none!important}}
 
 /* ---------- подвал ---------- */
 .chrome-foot{

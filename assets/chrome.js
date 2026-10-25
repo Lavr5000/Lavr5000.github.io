@@ -14,7 +14,7 @@
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && !panel.hidden) { setOpen(false); toggle.focus(); }
     });
-    window.addEventListener('resize', function () { if (window.innerWidth > 900 && !panel.hidden) setOpen(false); });
+    window.addEventListener('resize', function () { if (window.innerWidth > 1000 && !panel.hidden) setOpen(false); });
   }
 
   var bar = document.querySelector('[data-progress]');
