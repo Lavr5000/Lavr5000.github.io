@@ -13,8 +13,22 @@
 
   var API = 'https://api.ai-vibes.ru';
   var CONSENT_VERSION = 'uslugi-site-v2-2026-10';   // keep in sync with the backend consent text
-  var SUB_NOTE = 'Рабочий помощник для сделок с недвижимостью: считает, пишет, проверяет и раскладывает по папкам.';
-  var SUB_UNIT = 'за одно рабочее место';
+  /* D-1: the tile copy is fixed by the owner decision (for-linejka.md, block 1); only the price still comes from the catalog */
+  var SUB_TITLE = 'Помощник риэлтора на вашем компьютере';
+  var SUB_LEAD = 'Рутина по объекту за минуты: справка о цене, проверка документов, договоры.';
+  var SUB_ABOUT = 'Агент работает на китайской модели GLM: ставится на ваш компьютер сам после оплаты, работает с вашими папками клиентов и понимает обычные просьбы своими словами.';
+  var SUB_CAN_LABEL = 'Что уже умеет:';
+  var SUB_CAN = [
+    'отчёт о цене по аналогам: три цены, Excel и Word для собственника;',
+    'проверка чужого договора (купля-продажа, аренда, услуги) и письмо с замечаниями;',
+    'расписка, акт приёма-передачи, соглашение о задатке — из карточки объекта;',
+    'разбор выписки ЕГРН и список документов, которых не хватает для сделки;',
+    'текст объявления для Авито и памятка, что вводить в поля Авито и ЦИАН;',
+    'визуализация ремонта по фото с подписью «визуализация».'
+  ];
+  var SUB_LIMITS = 'До 30 заказов в месяц. Пробного периода нет. Помощник не заменяет юриста и оценщика.';
+  var SUB_BTN = 'Подключить';
+  var SUB_PER_MONTH = 'в месяц';
   var PAY_NOTE = 'Оплатите на сайте и продолжите в боте либо сразу закажите в боте: бот сам проведёт по шагам и покажет согласие.';
 
   function el(tag, cls, text) {
@@ -152,17 +166,25 @@
     var frag = document.createDocumentFragment();
     var sub = cat.subscription;
     var subUrl = typeof sub.url === 'string' && sub.url.charAt(0) === '/' ? sub.url : '/services/';
-    var st = tile('subscription', sub.id, true, sub.title);
-    st.appendChild(el('p', 'rl-note', SUB_NOTE));
+    var st = tile('subscription', sub.id, true, SUB_TITLE);
+    var left = el('div', 'rl-sub-main');
+    left.appendChild(el('p', 'rl-note rl-sub-lead', SUB_LEAD));
+    left.appendChild(el('p', 'rl-note', SUB_ABOUT));
+    left.appendChild(el('p', 'rl-note rl-sub-can', SUB_CAN_LABEL));
+    var can = el('ul', 'rl-sub-list');
+    SUB_CAN.forEach(function (item) { can.appendChild(el('li', null, item)); });
+    left.appendChild(can);
+    left.appendChild(el('p', 'rl-note rl-sub-limits', SUB_LIMITS));
+    st.appendChild(left);
     var body = el('div', 'rl-side');
-    body.appendChild(el('p', 'rl-unit', SUB_UNIT));
-    st.appendChild(body);
-    var sr = el('div', 'rl-row');
-    sr.appendChild(el('span', 'rl-price', fmt(sub.price_kop)));
-    var sa = el('a', 'btn-pay rl-btn', 'Подробнее');
+    var priceLine = el('p', 'rl-price-line');
+    priceLine.appendChild(el('span', 'rl-price', fmt(sub.price_kop)));   // stays byte for byte the catalog label
+    priceLine.appendChild(el('span', 'rl-unit', SUB_PER_MONTH));
+    body.appendChild(priceLine);
+    var sa = el('a', 'btn-pay rl-btn', SUB_BTN);
     sa.setAttribute('href', subUrl);
-    sr.appendChild(sa);
-    body.appendChild(sr);
+    body.appendChild(sa);
+    st.appendChild(body);
     frag.appendChild(st);
 
     function botLink(id) {

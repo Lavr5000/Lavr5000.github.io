@@ -484,6 +484,9 @@ def _(ctx):
     v = View(ctx.br, ctx.base)
     v.goto()
     main = flat(v.pg.inner_text("main"))
+    # D-2 table (.rl-compare) is hand-written page copy, not a catalog position: its amounts are allowed as written
+    compare = v.pg.evaluate("() => { const t = document.querySelector('.rl-compare'); return t ? t.innerText : ''; }")
+    allowed |= set(re.findall(r"\d[\d ]*\d ?₽|\d ?₽", flat(compare)))
     found = set(re.findall(r"\d[\d ]*\d ?₽|\d ?₽", main))
     extra = {flat(x) for x in found} - allowed
     assert not extra, f"amounts not in the catalog: {sorted(extra)}"
