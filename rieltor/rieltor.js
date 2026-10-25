@@ -69,6 +69,18 @@
       frag.appendChild(t);
     });
 
+    (cat.bundles || []).forEach(function (b) {
+      var t = tile('bundle', b.id, !!b.enabled, b.title);
+      if (b.enabled) {
+        var href = String(cat.bot_link_prefix || '') + 'usl-' + b.id;
+        if (href.indexOf('https://max.ru/') !== 0) throw new Error('bot link');
+        row(t, b.price_kop, 'Заказать в боте', href, true);
+      } else {
+        soon(t);
+      }
+      frag.appendChild(t);
+    });
+
     cat.backlog.forEach(function (b) {
       var t = tile('backlog', b.id, false, b.title);
       soon(t);

@@ -15,13 +15,28 @@ window.USLUGI_CATALOG = {
   }
  ],
  "bot_link_prefix": "https://max.ru/id644404692540_3_bot?start=",
+ "bundles": [
+  {
+   "count": 5,
+   "decision": "2026-10-25 14:37",
+   "enabled": false,
+   "id": "paket-5",
+   "price_kop": 1000,
+   "title": "Пакет: 5 разовых услуг на выбор",
+   "valid_days": 90
+  }
+ ],
  "comment": "Canonical catalog of one-off services for realtors. Prices in kopecks; final prices are the owner's decision. Copies for the backend and the site are made by catalog/gen_catalog.py only (never edited by hand).",
  "currency": "RUB",
  "services": [
   {
    "allow_live": true,
+   "decision": "2026-10-25 14:37",
    "deliver_hours": 2,
    "enabled": true,
+   "evidence": {
+    "dod3": "C:\\Users\\user\\.claude\\plans\\rieltor-pomoshnik-2026-10\\razovye-uslugi\\artifacts\\holdout\\dod3-spravka-cena.json"
+   },
    "id": "spravka-cena",
    "input_deadline_h": 48,
    "inputs": [
@@ -144,17 +159,23 @@ window.USLUGI_CATALOG = {
     "city",
     "type"
    ],
-   "price_kop": 100000,
-   "price_label": "1 000 ₽",
+   "price_kop": 1000,
+   "price_label": "10 ₽",
    "result_format": "pdf",
+   "review_mode": "auto",
    "skill": "otchet-o-cene",
    "title": "Информационно-аналитическая справка о цене объекта",
    "version": "1"
   },
   {
    "allow_live": false,
+   "decision": "2026-10-25 14:37",
    "deliver_hours": 24,
-   "enabled": false,
+   "disclaimer": "Первичная юридическая проверка — не юридическая консультация и не юридическое заключение. Итоговую проверку документов осуществляет юрист.",
+   "enabled": true,
+   "evidence": {
+    "owner_override": "2026-10-25 14:22"
+   },
    "id": "yurproverka",
    "input_deadline_h": 72,
    "inputs": [
@@ -227,15 +248,17 @@ window.USLUGI_CATALOG = {
     }
    ],
    "precheck": [],
-   "price_kop": 100000,
-   "price_label": "1 000 ₽",
+   "price_kop": 1000,
+   "price_label": "10 ₽",
    "result_format": "pdf",
+   "review_mode": "auto",
    "skill": "egrn-i-papka",
-   "title": "Первичная юридическая проверка объекта недвижимости",
+   "title": "Первичная юридическая проверка",
    "version": "0"
   },
   {
    "allow_live": false,
+   "decision": "2026-10-25 14:37",
    "deliver_hours": 24,
    "enabled": false,
    "id": "foto-plan",
@@ -301,15 +324,17 @@ window.USLUGI_CATALOG = {
     }
    ],
    "precheck": [],
-   "price_kop": 50000,
-   "price_label": "500 ₽",
+   "price_kop": 1000,
+   "price_label": "10 ₽",
    "result_format": "zip",
+   "review_mode": "auto",
    "skill": "foto-posle-remonta",
    "title": "Визуализация ремонта по фото и поэтажный план",
    "version": "0"
   },
   {
    "allow_live": false,
+   "decision": "2026-10-25 14:37",
    "deliver_hours": 24,
    "enabled": false,
    "id": "dkp",
@@ -366,15 +391,17 @@ window.USLUGI_CATALOG = {
     }
    ],
    "precheck": [],
-   "price_kop": 100000,
-   "price_label": "1 000 ₽",
+   "price_kop": 1000,
+   "price_label": "10 ₽",
    "result_format": "docx",
+   "review_mode": "auto",
    "skill": "dokument-po-shablonu",
    "title": "Договор купли-продажи, расписка и акт приёма-передачи",
    "version": "0"
   },
   {
    "allow_live": false,
+   "decision": "2026-10-25 14:37",
    "deliver_hours": 24,
    "enabled": false,
    "id": "arenda",
@@ -412,23 +439,26 @@ window.USLUGI_CATALOG = {
     }
    ],
    "precheck": [],
-   "price_kop": 100000,
-   "price_label": "1 000 ₽",
+   "price_kop": 1000,
+   "price_label": "10 ₽",
    "result_format": "docx",
+   "review_mode": "auto",
    "skill": "dokument-po-shablonu",
    "title": "Договор аренды с описью, актами и графиком платежей",
    "version": "0"
   }
  ],
- "sha256": "f93eb74285dcbe9089c45746556a8c8358b06b9790bfddf58adfdeffadb9d721",
+ "sha256": "2e30964edddd2ae4e32c015570b1c5363162034f861d8fd05991d0b04a807144",
  "subscription": {
+  "decision": "2026-10-25 14:37",
   "id": "setup-rieltor",
-  "price_kop": 990000,
-  "price_label": "9 900 ₽",
+  "monthly_order_limit": 30,
+  "price_kop": 1000,
+  "price_label": "10 ₽",
   "title": "Настройка помощника риэлтора на одном рабочем месте",
   "url": "/services/#service-rieltor"
  },
- "version": "2026-10-25.1"
+ "version": "2026-10-25.2"
 };
 window.USLUGI_FORMAT_PRICE = function (kop) {
   if (typeof kop !== "number" || !Number.isInteger(kop)) { throw new TypeError("price must be an integer number of kopecks"); }

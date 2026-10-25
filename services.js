@@ -99,9 +99,9 @@ window.AI_SERVICES = [
   {
     id: "setup-rieltor",
     title: { ru: "Настройка помощника риэлтора на одном рабочем месте" },
-    price: { ru: "9900" },
+    price: { ru: "10" },
     pricingModel: "fixed",
-    priceLabel: { ru: "9 900 ₽" },
+    priceLabel: { ru: "10 ₽" },
     unit:  { ru: "одно рабочее место — компьютер и телефон одного риэлтора; 30 кадров «фото после ремонта» входят в цену" },
   },
 ];

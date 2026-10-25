@@ -13,7 +13,7 @@ What is checked (ids are printed as `  ok   <id>` / `  FAIL <id>: <reason>`):
   * the static fallback list between `<!-- USLUGI:BEGIN -->` and `<!-- USLUGI:END -->` (what a visitor without scripts sees)
     equals the catalog: ids, order, prices, bot links, enabled flags, hash;
   * the rendered page (scripts on): tiles are `#uslugi-tiles > [data-uslugi-id]`; the subscription tile is first and bigger,
-    its price = catalog = services.js, its button leads to the subscription card; the number of tiles = 1 + services + backlog;
+    its price = catalog = services.js, its button leads to the subscription card; the number of tiles = 1 + services + bundles + backlog;
     `enabled=false` and backlog tiles say «скоро» and have neither price nor button; an enabled tile carries the price and
     the button «Заказать в боте» with `?start=usl-<id>`; the tiles follow the catalog when it changes (the copy is intercepted);
     the line «оплата и выдача результата - в боте MAX»; no amount outside the catalog;
@@ -22,7 +22,7 @@ What is checked (ids are printed as `  ok   <id>` / `  FAIL <id>: <reason>`):
     390/901/1024/1440 px, links of the tiles go only to the site itself or to max.ru.
 
 How the next suite finds things (for tools/dev/rieltor_eval/suites/_uslugi_site.py):
-  tile:            `#uslugi-tiles > [data-uslugi-id]`   attributes data-uslugi-id, data-enabled ("1"/"0"), data-kind (subscription|service|backlog)
+  tile:            `#uslugi-tiles > [data-uslugi-id]`   attributes data-uslugi-id, data-enabled ("1"/"0"), data-kind (subscription|service|bundle|backlog)
   title / price:   `.rl-title` / `.rl-price` (absent on «скоро» tiles)
   «скоро» label:   `.rl-soon` (text «скоро»); enabled tile has none; a «скоро» tile has no `a` and no `button` inside
   button:          the only `a.rl-btn` of the tile
@@ -108,6 +108,9 @@ def expected_tiles(cat: dict) -> list[dict]:
         out.append(dict(id=s["id"], kind="service", enabled=bool(s["enabled"]), title=s["title"],
                         price=s["price_label"] if s["enabled"] else None,
                         href=cat["bot_link_prefix"] + "usl-" + s["id"] if s["enabled"] else None))
+    for b in cat.get("bundles", []):
+        # a bundle tile is checked as enabled/soon only: the copies carry no price_label for bundles yet
+        out.append(dict(id=b["id"], kind="bundle", enabled=bool(b["enabled"]), title=b["title"], price=None, href=None))
     for b in cat["backlog"]:
         out.append(dict(id=b["id"], kind="backlog", enabled=False, title=b["title"], price=None, href=None))
     return out
@@ -193,6 +196,9 @@ def _(ctx):
             assert it["href"] == e["href"], f"{e['id']}: href {it['href']!r} != {e['href']!r}"
         else:
             assert it["soon"] and it["price"] is None and it["href"] is None, f"{e['id']}: a soon tile must have no price and no link"
+    for s in cat["services"]:
+        if s.get("disclaimer"):
+            assert s["disclaimer"] in fallback_block(), f"{s['id']}: the disclaimer is missing from the fallback block"
 
 
 @case("fallback.hash_matches_copy")
@@ -274,7 +280,7 @@ def _(ctx):
     assert sub["id"] == "setup-rieltor"
     assert flat(sub["price_label"]) == flat(services_js_price("setup-rieltor")), \
         f"catalog {sub['price_label']!r} != services.js {services_js_price('setup-rieltor')!r}"
-    assert sub["price_kop"] == 990000
+    assert sub["price_kop"] == 1000  # owner 2026-10-25 14:37: all paid positions 10 RUB for the check period
 
 
 @case("subscription.target_card_exists")
@@ -341,11 +347,11 @@ def _(ctx):
     assert t, "no tiles in #uslugi-tiles: the page is not rendered from the catalog"
 
 
-@case("render.count_is_sub_plus_services_plus_backlog", browser=True)
+@case("render.count_is_sub_plus_services_plus_bundles_plus_backlog", browser=True)
 def _(ctx):
     cat = catalog()
     t = tiles_of(View(ctx.br, ctx.base))
-    n = 1 + len(cat["services"]) + len(cat["backlog"])
+    n = 1 + len(cat["services"]) + len(cat.get("bundles", [])) + len(cat["backlog"])
     assert len(t) == n, f"{len(t)} tiles, expected {n}"
 
 
@@ -362,7 +368,7 @@ def _(ctx):
     v.goto()
     left = v.pg.evaluate("document.querySelectorAll('.uslugi-fallback').length")
     ids = v.pg.evaluate("[...document.querySelectorAll('[data-uslugi-id]')].length")
-    assert left == 0 and ids == len(catalog()["services"]) + len(catalog()["backlog"]) + 1, f"fallback lists={left}, tiles with id={ids}"
+    assert left == 0 and ids == len(catalog()["services"]) + len(catalog().get("bundles", [])) + len(catalog()["backlog"]) + 1, f"fallback lists={left}, tiles with id={ids}"
 
 
 @case("subscription.first_and_larger", browser=True)
@@ -443,7 +449,7 @@ def _(ctx):
     _, end = json.JSONDecoder().raw_decode(tail[len(key):])
     new = head + key + json.dumps(cat, ensure_ascii=False) + tail[len(key) + end:]
     t = {x["id"]: x for x in tiles_of(View(ctx.br, ctx.base, cat_text=new))}
-    assert len(t) == 1 + len(cat["services"]) + 1, f"{len(t)} tiles after the catalog changed"
+    assert len(t) == 1 + len(cat["services"]) + len(cat.get("bundles", [])) + 1, f"{len(t)} tiles after the catalog changed"
     y = t["yurproverka"]
     assert y["enabled"] == "1" and y["price"] == cat["services"][1]["price_label"] and y["links"][0]["href"].endswith("?start=usl-yurproverka"), y
     sp = t["spravka-cena"]
@@ -529,7 +535,7 @@ def _(ctx):
     n = v.pg.evaluate("document.querySelectorAll('.uslugi-fallback li').length")
     vis = v.pg.evaluate("(() => { const u = document.querySelector('.uslugi-fallback'); return !!u && u.getBoundingClientRect().height > 0; })()")
     cat = catalog()
-    assert n == 1 + len(cat["services"]) + len(cat["backlog"]) and vis, f"fallback items={n} visible={vis}"
+    assert n == 1 + len(cat["services"]) + len(cat.get("bundles", [])) + len(cat["backlog"]) and vis, f"fallback items={n} visible={vis}"
 
 
 @case("menu.rieltor_item_in_browser", browser=True)
