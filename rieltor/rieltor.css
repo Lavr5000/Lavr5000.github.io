@@ -23,6 +23,20 @@
 .rl-tile--subscription .rl-price{font-size:clamp(30px,3.6vw,42px);line-height:1}
 .rl-tile--subscription .rl-row{margin:0}
 
+/* the site checkout: opens inside the tile; the bot link stays as the second way */
+.rl-btn-pay{min-width:min(100%,260px)}
+.rl-pay{display:grid;gap:10px;padding-top:4px}
+.rl-pay-l{display:grid;gap:6px;font-size:15px;color:var(--on-paper-2)}
+.rl-pay-t{line-height:1.4}
+.rl-pay-email{min-height:44px;padding:8px 12px;font:inherit;border:1px solid var(--line-paper);border-radius:6px;background:var(--paper);color:var(--on-paper)}
+.rl-pay-consent{grid-template-columns:auto 1fr;align-items:start;gap:10px}
+.rl-pay-check{width:20px;height:20px;margin-top:2px;accent-color:var(--brass-deep)}
+.rl-pay-consent a{color:inherit;text-underline-offset:3px}
+.rl-pay-err{color:#8c2f1d;font-size:14px;line-height:1.4}
+.rl-alt{font-size:15px}
+.rl-alt a{color:inherit;text-underline-offset:3px}
+.rl-disclaimer{font-style:italic}
+
 /* "soon": no price, no button, quieter than the available tiles */
 .rl-tile--soon{background:transparent;border-style:dashed}
 .rl-tile--soon .rl-title{color:var(--on-paper-2)}

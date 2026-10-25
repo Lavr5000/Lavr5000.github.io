@@ -117,5 +117,55 @@ for (const [status, word] of [["bound", "уже подключён"], ["check_ma
   const p = run("");
   check("plain page", visible(p).join() === "spasibo-plain");
 }
+
+// 10. a one-off service order (usl-…): its own handoff endpoint, lowercase hex key, r hidden and kept
+{
+  const UKEY = "0123456789abcdef0123"; // 20 lowercase hex, as the site checkout issues
+  const UNUM = "usl-1a2b3c4d";
+  const h = run(`?n=${UNUM}&r=${UKEY}`, { responses: [{ status: "paid", link: "https://max.ru/id644404692540_3_bot?start=usl_TOKEN1234567890ABCDEF" }] });
+  await settle(h);
+  check("uslugi: fetch url", h.fetched.length === 1 && h.fetched[0] === `https://api.ai-vibes.ru/api/uslugi-site/handoff?n=${UNUM}&r=${UKEY}`, h.fetched.join());
+  check("uslugi: paid shows the bot button", !h.els["rl-link-wrap"].hidden && h.els["rl-link"].href.endsWith("usl_TOKEN1234567890ABCDEF"), h.els["rl-link"].href);
+  check("uslugi: one-time note", h.els["rl-note"].textContent.includes("одноразовая"), h.els["rl-note"].textContent);
+  check("uslugi: order number shown", h.els["rl-number"].textContent === UNUM && h.els["order-number"].textContent === UNUM);
+  check("uslugi: r hidden from the address bar and kept", h.replaced.length === 1 && !h.replaced[0].includes("r=") && h.store[`av-rl:${UNUM}`] === UKEY, h.replaced.join());
+  // an uslugi key must not leak into the rieltor alphabet check and vice versa
+  const g = run(`?n=AV-0123ABCD&r=${UKEY}`);
+  await settle(g);
+  check("uslugi: hex key ignored for AV- orders", g.fetched.length === 0);
+}
+// 11. uslugi pending → the page keeps polling and does not invent a link
+{
+  const h = run("?n=usl-1a2b3c4d&r=0123456789abcdef0123", { responses: [{ status: "pending" }] });
+  await settle(h);
+  check("uslugi: pending text", visible(h).join() === "spasibo-rieltor" && h.els["rl-title"].textContent === "Оплата обрабатывается", h.els["rl-title"].textContent);
+  check("uslugi: pending polls again", h.fetched.length >= 2, String(h.fetched.length));
+  check("uslugi: pending shows no button", h.els["rl-link-wrap"].hidden);
+}
+// 12. uslugi expired / problem / a hostile link in a paid answer
+{
+  const e = run("?n=usl-1a2b3c4d&r=0123456789abcdef0123", { responses: [{ status: "expired" }] });
+  await settle(e);
+  check("uslugi: expired", e.els["rl-title"].textContent === "Срок оплаты истёк" && visible(e).join() === "spasibo-rieltor");
+  const p = run("?n=usl-1a2b3c4d&r=0123456789abcdef0123", { responses: [{ status: "problem" }] });
+  await settle(p);
+  check("uslugi: problem", p.els["rl-title"].textContent === "Заказ требует внимания" && p.els["rl-link-wrap"].hidden);
+  const x = run("?n=usl-1a2b3c4d&r=0123456789abcdef0123", { responses: [{ status: "paid", link: "https://evil.example/x" }] });
+  await settle(x);
+  check("uslugi: hostile link never shown", x.els["rl-link"].href === "" && x.els["rl-link-wrap"].hidden && x.els["rl-title"].textContent === "Оплата обрабатывается", x.els["rl-title"].textContent);
+}
+// 13. uslugi: a wrong-shape r or a wrong-shape n makes no request at all
+{
+  const a = run("?n=usl-1a2b3c4d&r=ABCDEFGHJKLMNPQRSTUV");
+  await settle(a);
+  check("uslugi: rieltor-alphabet r ignored", a.fetched.length === 0 && visible(a).join() === "spasibo-ok");
+  const b = run("?n=usl-short&r=0123456789abcdef0123");
+  await settle(b);
+  check("uslugi: bad n no request", b.fetched.length === 0 && visible(b).join() === "spasibo-plain");
+  const c = run(`?n=usl-1a2b3c4d`, { storage: { "av-rl:usl-1a2b3c4d": "0123456789abcdef0123" }, responses: [{ status: "paid", link: "https://max.ru/b?start=usl_ABCDEFGH" }] });
+  await settle(c);
+  check("uslugi: reload uses the stored r", c.fetched.length === 1 && !c.els["rl-link-wrap"].hidden);
+}
+
 console.log(`SPASIBO-RIELTOR status=${failures ? "fail" : "ok"} cases=${cases}`);
 process.exit(failures ? 1 : 0);

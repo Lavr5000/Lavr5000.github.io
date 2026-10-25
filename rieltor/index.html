@@ -2,18 +2,18 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8" />
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://api.ai-vibes.ru" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="robots" content="noindex" />
+<link rel="canonical" href="https://ai-vibes.ru/rieltor/" />
 <title>Риэлтор — помощник и разовые услуги | AI Vibes</title>
 <meta name="description" content="Для риэлторов: рабочий помощник на вашем компьютере и разовые услуги, которые заказывают в боте MAX. Цены и состав — на странице." />
 <link rel="icon" href="/favicon.ico" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 <link rel="stylesheet" href="/assets/fonts.css?v=20260813-vitrina" />
 <link rel="stylesheet" href="/assets/site3.css?v=9e3e15499f0d" />
-<link rel="stylesheet" href="/rieltor/rieltor.css?v=20261025" />
+<link rel="stylesheet" href="/rieltor/rieltor.css?v=20261025b" />
 <script defer src="/uslugi.catalog.js?v=20261025"></script>
-<script defer src="/rieltor/rieltor.js?v=20261025"></script>
+<script defer src="/rieltor/rieltor.js?v=20261025b"></script>
 <!-- chrome:head:begin (scripts/build_chrome.py) -->
 <meta name="build" content="9e3e15499f0d" />
 <link rel="stylesheet" href="/assets/chrome.css?v=9e3e15499f0d" />
@@ -59,7 +59,7 @@
     <div class="hero-text">
       <h1>Риэлтор: помощник на каждый день и разовые услуги</h1>
       <p class="lead">Подписка настраивает рабочего помощника на вашем компьютере. Разовые услуги не требуют подписки:
-        выбираете одну, заказываете в боте MAX и получаете готовый документ там же.</p>
+        оплачиваете на сайте или в боте MAX и получаете готовый документ в чате с ботом.</p>
     </div>
   </div>
 </section>
@@ -69,12 +69,12 @@
     <div class="head">
       <p class="kicker">Каталог</p>
       <h2 class="h2">Что можно заказать</h2>
-      <p class="lead">Цена на плитке окончательная. Оплата и выдача результата — в боте MAX; на сайте ничего не оплачивается.
-        Услуги со словом «скоро» пока не принимаются.</p>
+      <p class="lead">Цена на плитке окончательная. Оплатить можно прямо на сайте (после оплаты продолжите в чате с ботом)
+        или заказать в боте MAX. Услуги со словом «скоро» пока не принимаются.</p>
     </div>
     <div class="rl-grid" id="uslugi-tiles"></div>
     <!-- USLUGI:BEGIN -->
-<ul class="uslugi-fallback" data-uslugi-sha256="2e30964edddd2ae4e32c015570b1c5363162034f861d8fd05991d0b04a807144" data-uslugi-version="2026-10-25.2">
+<ul class="uslugi-fallback" data-uslugi-sha256="e8adae6522a4de5ba98b851df7897798a6f88594c651eeaca144c899d758bb13" data-uslugi-version="2026-10-25.2">
 <li class="uslugi-tile uslugi-tile--subscription" data-uslugi-id="setup-rieltor"><span class="uslugi-title">Настройка помощника риэлтора на одном рабочем месте</span> <span class="uslugi-price">10 ₽</span> <a class="uslugi-btn" href="/services/#service-rieltor">Подробнее</a></li>
 <li class="uslugi-tile" data-uslugi-id="spravka-cena" data-enabled="1"><span class="uslugi-title">Информационно-аналитическая справка о цене объекта</span> <span class="uslugi-price">10 ₽</span> <a class="uslugi-btn" href="https://max.ru/id644404692540_3_bot?start=usl-spravka-cena" rel="noopener">Заказать в боте</a></li>
 <li class="uslugi-tile" data-uslugi-id="yurproverka" data-enabled="1"><span class="uslugi-title">Первичная юридическая проверка</span> <span class="uslugi-price">10 ₽</span> <span class="uslugi-note">Первичная юридическая проверка — не юридическая консультация и не юридическое заключение. Итоговую проверку документов осуществляет юрист.</span> <a class="uslugi-btn" href="https://max.ru/id644404692540_3_bot?start=usl-yurproverka" rel="noopener">Заказать в боте</a></li>
@@ -97,10 +97,10 @@
       <h2 class="h2">Четыре шага в одном чате</h2>
     </div>
     <ol class="steps">
-      <li class="step"><h3>Выберите услугу</h3><p>Нажмите «Заказать в боте» на плитке: бот откроется сразу на нужной услуге.</p></li>
-      <li class="step"><h3>Ответьте на первые вопросы</h3><p>Бот уточнит город и тип объекта, покажет согласие и спросит почту для кассового чека.</p></li>
-      <li class="step"><h3>Оплатите по ссылке</h3><p>Ссылка на оплату приходит в чат. Оплата проходит на странице банка.</p></li>
-      <li class="step"><h3>Получите результат</h3><p>Остальные данные бот спрашивает по одному, готовый документ приходит в тот же чат.</p></li>
+      <li class="step"><h3>Выберите услугу</h3><p>Нажмите «Оплатить» на плитке и укажите почту для кассового чека — или сразу откройте бота.</p></li>
+      <li class="step"><h3>Оплатите на сайте банка</h3><p>Оплата проходит на странице банка. После неё сайт переведёт вас в чат с ботом.</p></li>
+      <li class="step"><h3>Ответьте на вопросы</h3><p>Бот уточнит данные по услуге — по одному вопросу за раз. Кто заказывает в боте сразу, оплату получит ссылкой в чат.</p></li>
+      <li class="step"><h3>Получите результат</h3><p>Готовый документ приходит в тот же чат с ботом.</p></li>
     </ol>
   </div>
 </section>

@@ -7,6 +7,8 @@
   var q = new URLSearchParams(window.location.search);
   var n = q.get('n') || '';
   var valid = /^AV-[0-9A-F]{8}$/.test(n);
+  var isUslugi = /^usl-[0-9a-f]{8}$/.test(n);
+  var KEY_RE = isUslugi ? /^[0-9a-f]{20}$/ : /^[A-Z2-9]{20}$/;
   var SECTIONS = ['spasibo-plain', 'spasibo-ok', 'spasibo-fail', 'spasibo-rieltor'];
   var $ = function (id) { return document.getElementById(id); };
   var show = function (id) {
@@ -19,14 +21,14 @@
   var readReturnKey = function () {
     var r = q.get('r') || '';
     try {
-      if (r && /^[A-Z2-9]{20}$/.test(r)) {
+      if (r && KEY_RE.test(r)) {
         sessionStorage.setItem('av-rl:' + n, r);
         if (window.history && history.replaceState) history.replaceState(null, '', window.location.pathname + '?n=' + encodeURIComponent(n));
       } else if (!r) {
         r = sessionStorage.getItem('av-rl:' + n) || '';
       }
     } catch (e) { /* storage is optional */ }
-    return /^[A-Z2-9]{20}$/.test(r) ? r : '';
+    return KEY_RE.test(r) ? r : '';
   };
 
   var setText = function (id, text) { var el = $(id); if (el) el.textContent = text; };
@@ -92,6 +94,44 @@
     poll();
   };
 
+  /* разовая услуга (usl-): банк вернул с номером заказа и r; подтверждение — опрос статуса заказа */
+  var renderUslugi = function (j) {
+    setText('rl-number', n);
+    setHidden('rl-link-wrap', true); setHidden('rl-code-wrap', true); setText('rl-note', '');
+    show('spasibo-rieltor');
+    if (j && j.status === 'paid' && typeof j.link === 'string' && SAFE_LINK.test(j.link)) {
+      setText('rl-title', 'Оплата получена');
+      setText('rl-lead', 'Откройте бота в MAX по кнопке — заказ уже привязан к этому чату, продолжите там: бот задаст вопросы по услуге и пришлёт готовый документ.');
+      $('rl-link').href = j.link;
+      setHidden('rl-link-wrap', false);
+      setText('rl-fallback', 'Ссылка не открылась? Напишите нам и назовите номер заказа выше — отправим новую.');
+      setText('rl-note', 'Ссылка одноразовая: открывается один раз и привязывает заказ к первому чату.');
+      return true;
+    }
+    if (j && (j.status === 'expired' || j.status === 'problem')) {
+      setText('rl-title', j.status === 'expired' ? 'Срок оплаты истёк' : 'Заказ требует внимания');
+      setText('rl-lead', 'Напишите нам и назовите номер заказа выше — разберёмся и поможем.');
+      return true;
+    }
+    setText('rl-title', 'Оплата обрабатывается');
+    setText('rl-lead', 'Банк подтверждает платёж; это занимает до пары минут. Не закрывайте страницу — как только подтвердится, здесь появится кнопка для перехода в чат с ботом.');
+    return false; /* pending: продолжаем опрос */
+  };
+
+  var startUslugi = function (r) {
+    var tries = 0;
+    var poll = function () {
+      var url = API + '/api/uslugi-site/handoff?n=' + encodeURIComponent(n) + '&r=' + encodeURIComponent(r);
+      fetch(url, { cache: 'no-store' }).then(function (res) {
+        return res.ok ? res.json() : null;
+      }).then(function (j) {
+        if (renderUslugi(j)) return;
+        if (++tries < 24) setTimeout(poll, 5000);
+      }).catch(function () { /* без связи остаётся текст «обрабатывается»; письмо с чеком придёт отдельно */ });
+    };
+    poll();
+  };
+
   if (q.get('fail') === '1') {
     show('spasibo-fail');
     var retry = $('retry-pay');
@@ -101,10 +141,11 @@
         if (id) sessionStorage.setItem('av-pay:retry', id);
       } catch (e) { /* storage is optional */ }
     });
-  } else if (valid) {
+  } else if (valid || isUslugi) {
     $('order-number').textContent = n;
     show('spasibo-ok');
     var r = readReturnKey();
-    if (r) startRieltor(r);
+    if (r && isUslugi) startUslugi(r);
+    else if (r) startRieltor(r);
   }
 })();

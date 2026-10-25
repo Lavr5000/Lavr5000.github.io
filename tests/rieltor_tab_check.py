@@ -14,18 +14,25 @@ What is checked (ids are printed as `  ok   <id>` / `  FAIL <id>: <reason>`):
     equals the catalog: ids, order, prices, bot links, enabled flags, hash;
   * the rendered page (scripts on): tiles are `#uslugi-tiles > [data-uslugi-id]`; the subscription tile is first and bigger,
     its price = catalog = services.js, its button leads to the subscription card; the number of tiles = 1 + services + bundles + backlog;
-    `enabled=false` and backlog tiles say «скоро» and have neither price nor button; an enabled tile carries the price and
-    the button «Заказать в боте» with `?start=usl-<id>`; the tiles follow the catalog when it changes (the copy is intercepted);
-    the line «оплата и выдача результата - в боте MAX»; no amount outside the catalog;
+    `enabled=false` and backlog tiles say «скоро» and have neither price nor button; an enabled tile carries the price, the button
+    «Оплатить <цена>» (opens the site-checkout form inside the tile) and the second way «Или заказать в боте MAX» with
+    `?start=usl-<id>`; the service disclaimer is rendered on the tile; the tiles follow the catalog when it changes (the copy is
+    intercepted: a service switched off loses the button and the price — the site half of the pay kill switch); no amount
+    outside the catalog;
+  * the site-checkout form: e-mail + consent checkbox with a link to the offer section; a submit with an empty/invalid e-mail
+    shows the error and calls nothing; a valid submit (fetch mocked in the page) posts to the order API exactly once with the
+    catalog service id, the consent version and a UUID idempotency key, then stores the return key for the success page;
   * the menu item «Риэлтор» is on every page with the shared header, highlighted (aria-current) only on /rieltor/;
-  * hygiene: no page error, no CSP violation, no foreign request, no call of the order API, no horizontal overflow at
-    390/901/1024/1440 px, links of the tiles go only to the site itself or to max.ru.
+  * hygiene: no page error, no CSP violation, no foreign request, no call of the order API without a submit,
+    no horizontal overflow at 390/901/1024/1440 px, links of the tiles go only to the site itself or to max.ru.
 
 How the next suite finds things (for tools/dev/rieltor_eval/suites/_uslugi_site.py):
   tile:            `#uslugi-tiles > [data-uslugi-id]`   attributes data-uslugi-id, data-enabled ("1"/"0"), data-kind (subscription|service|bundle|backlog)
   title / price:   `.rl-title` / `.rl-price` (absent on «скоро» tiles)
   «скоро» label:   `.rl-soon` (text «скоро»); enabled tile has none; a «скоро» tile has no `a` and no `button` inside
-  button:          the only `a.rl-btn` of the tile
+  pay button:      the only `button.rl-btn-pay` of the tile («Оплатить <цена>»), opens `.rl-pay` with `.rl-pay-email`,
+                   `.rl-pay-check` and the submit `button[type=submit]`
+  bot link:        `.rl-alt a` («Или заказать в боте MAX», `?start=usl-<id>`)
 Last line: RIELTOR-TAB status=ok|fail cases=N pass=K skip=S
 """
 from __future__ import annotations
@@ -53,7 +60,8 @@ BOT = "https://max.ru/id644404692540_3_bot?start="
 PAGE = "/rieltor/"
 KIT_DEFAULT = Path(os.path.expanduser("~")) / ".claude" / "0 ProEKTi" / "client-agent-kit-rl-uslugi"
 MARK_B, MARK_E = "<!-- USLUGI:BEGIN -->", "<!-- USLUGI:END -->"
-PAY_NOTE = "оплата и выдача результата — в боте MAX"
+PAY_NOTE = "закажите в боте"   # every enabled tile explains both ways: pay on the site or order in the bot
+CONSENT_VERSION = "uslugi-site-v1-2026-10"
 
 SKIP = object()
 CASES: list[tuple[str, object, bool]] = []     # (id, function, needs_browser)
@@ -392,7 +400,7 @@ def _(ctx):
     assert s["links"][0]["text"], "button without a text"
 
 
-@case("enabled.price_and_bot_link", browser=True)
+@case("enabled.price_pay_button_and_bot_link", browser=True)
 def _(ctx):
     cat = catalog()
     t = {x["id"]: x for x in tiles_of(View(ctx.br, ctx.base))}
@@ -403,9 +411,11 @@ def _(ctx):
         seen += 1
         x = t[s["id"]]
         assert x["enabled"] == "1" and x["price"] == s["price_label"], f"{s['id']}: price {x['price']!r}"
-        assert len(x["links"]) == 1 and x["links"][0]["href"] == cat["bot_link_prefix"] + "usl-" + s["id"], f"{s['id']}: links {x['links']}"
-        assert x["links"][0]["text"] == "Заказать в боте", x["links"][0]["text"]
-        assert "noopener" in x["links"][0]["rel"], "external link without rel=noopener"
+        assert x["buttons"] == 1, f"{s['id']}: expected the single pay button, buttons={x['buttons']}"
+        assert "Оплатить" in x["text"] and s["price_label"] in x["text"], f"{s['id']}: no «Оплатить <цена>» on the tile"
+        alt = [a for a in x["links"] if a["href"] == cat["bot_link_prefix"] + "usl-" + s["id"]]
+        assert len(alt) == 1 and "в боте" in alt[0]["text"], f"{s['id']}: the bot link as the second way {x['links']}"
+        assert "noopener" in alt[0]["rel"], "external link without rel=noopener"
         assert x["soon"] is None, "an enabled tile must not say «скоро»"
     assert seen >= 1, "the catalog has no enabled service"
 
@@ -451,19 +461,20 @@ def _(ctx):
     t = {x["id"]: x for x in tiles_of(View(ctx.br, ctx.base, cat_text=new))}
     assert len(t) == 1 + len(cat["services"]) + len(cat.get("bundles", [])) + 1, f"{len(t)} tiles after the catalog changed"
     y = t["yurproverka"]
-    assert y["enabled"] == "1" and y["price"] == cat["services"][1]["price_label"] and y["links"][0]["href"].endswith("?start=usl-yurproverka"), y
+    assert y["enabled"] == "1" and y["price"] == cat["services"][1]["price_label"], y
+    assert any(a["href"].endswith("?start=usl-yurproverka") for a in y["links"]) and y["buttons"] == 1, y
     sp = t["spravka-cena"]
-    assert sp["soon"] == "скоро" and not sp["links"] and sp["price"] is None, sp
+    assert sp["soon"] == "скоро" and not sp["links"] and sp["price"] is None and sp["buttons"] == 0, sp   # the site half of the kill switch
 
 
-@case("page.pay_note_in_bot", browser=True)
+@case("page.pay_note_site_or_bot", browser=True)
 def _(ctx):
     v = View(ctx.br, ctx.base)
     v.goto()
     body = flat(v.pg.inner_text("main")).lower()
-    assert PAY_NOTE.lower() in body, "no «оплата и выдача результата — в боте MAX» on the page"
-    enabled = [x for x in v.tiles() if x["enabled"] == "1" and x["kind"] == "service"]
-    assert enabled and all(PAY_NOTE.lower() in flat(x["text"]).lower() for x in enabled), "an enabled tile lacks the payment note"
+    assert "оплатить можно прямо на сайте" in body, "the page does not say the services can be paid on the site"
+    enabled = [x for x in v.tiles() if x["enabled"] == "1" and x["kind"] in ("service", "bundle")]
+    assert enabled and all(PAY_NOTE in flat(x["text"]).lower() for x in enabled), "an enabled tile lacks the both-ways note"
 
 
 @case("page.no_amount_outside_catalog", browser=True)
@@ -498,11 +509,96 @@ def _(ctx):
     assert not v.api, f"the order API was called: {v.api[:3]}"
 
 
-@case("page.no_pay_buttons", browser=True)
+@case("pay.disclaimer_on_enabled_tile", browser=True)
 def _(ctx):
+    cat = catalog()
     v = View(ctx.br, ctx.base)
     v.goto()
-    assert v.pg.evaluate("document.querySelectorAll('[data-pay], #pay-dialog, [data-request]').length") == 0, "payment elements on the tab"
+    for s in cat["services"]:
+        if not s.get("disclaimer"):
+            continue
+        x = v.pg.locator(f'[data-uslugi-id="{s["id"]}"]')
+        assert x.count() == 1, s["id"]
+        shown = flat(x.locator(".rl-disclaimer").inner_text() if x.locator(".rl-disclaimer").count() else "")
+        if s["enabled"]:
+            assert shown == flat(s["disclaimer"]), f"{s['id']}: disclaimer {shown!r}"
+        else:
+            assert not shown, f"{s['id']}: a disabled tile shows the disclaimer"
+
+
+MOCK_FETCH = """
+(() => {
+  // the call log lives in sessionStorage: a successful answer makes rieltor.js navigate away
+  // (to payment_url), which restarts init scripts and would wipe a window log
+  const log = () => { try { return JSON.parse(sessionStorage.getItem('av-mock-calls') || '[]'); } catch (e) { return []; } };
+  window.fetch = (url, opts) => {
+    try { sessionStorage.setItem('av-mock-calls', JSON.stringify(log().concat([{ url: String(url), opts: opts || {} }]))); } catch (e) {}
+    return Promise.resolve({ ok: true, json: () => Promise.resolve({
+      order: 'usl-1a2b3c4d', payment_url: 'https://max.ru/pay-stub', amount_kop: 1000, r: 'r0123456789abcdef'
+    }) });
+  };
+})();
+"""
+
+
+def mock_calls(v: "View") -> list:
+    return v.pg.evaluate("(() => { try { return JSON.parse(sessionStorage.getItem('av-mock-calls') || '[]'); } catch (e) { return []; } })()")
+
+
+@case("pay.form_opens_and_validates_locally", browser=True)
+def _(ctx):
+    cat = catalog()
+    sid = next(s["id"] for s in cat["services"] if s["enabled"])
+    v = View(ctx.br, ctx.base)
+    v.pg.add_init_script(MOCK_FETCH)
+    v.goto()
+    tile = v.pg.locator(f'[data-uslugi-id="{sid}"]')
+    tile.locator("button.rl-btn-pay").click()
+    settle(v.pg, 200)
+    f = tile.locator(".rl-pay")
+    assert f.count() == 1, "the pay form did not open inside the tile"
+    assert tile.locator(".rl-pay-email").count() == 1 and tile.locator(".rl-pay-check").count() == 1, "no e-mail / consent inputs"
+    offer = tile.locator(".rl-pay-consent a")
+    assert offer.count() == 1 and offer.get_attribute("href") == "/oferta.html#uslugi", "the consent link must lead to the offer section"
+    f.locator("button[type=submit]").click()
+    settle(v.pg, 200)
+    err = tile.locator(".rl-pay-err")
+    assert err.is_visible() and "почт" in err.inner_text().lower(), f"no e-mail error: {err.inner_text()!r}"
+    assert not mock_calls(v), "a submit with an empty e-mail must not call the API"
+
+
+@case("pay.order_request_and_return_key", browser=True)
+def _(ctx):
+    cat = catalog()
+    sid = next(s["id"] for s in cat["services"] if s["enabled"])
+    v = View(ctx.br, ctx.base)
+    # the mocked answer sends the page to payment_url (https is required by rieltor.js);
+    # the stub is routed back here, otherwise the browser lands on a foreign error page
+    # and the origin's sessionStorage (where the call log lives) is lost
+    v.ctx.route("**/pay-stub*", lambda r: r.fulfill(status=302, headers={"Location": v.base + "/rieltor/"}))
+    v.pg.add_init_script(MOCK_FETCH)
+    v.goto()
+    tile = v.pg.locator(f'[data-uslugi-id="{sid}"]')
+    tile.locator("button.rl-btn-pay").click()
+    settle(v.pg, 200)
+    tile.locator(".rl-pay-email").fill("realtor@example.com")
+    tile.locator(".rl-pay-check").check()
+    tile.locator(".rl-pay button[type=submit]").click()
+    v.pg.wait_for_url("**/rieltor/**", timeout=8000)
+    settle(v.pg, 300)
+    calls = mock_calls(v)
+    assert len(calls) == 1, f"expected exactly one order request, got {len(calls)}"
+    c = calls[0]
+    assert c["url"] == API + "/api/uslugi-site/order", c["url"]
+    assert c["opts"]["method"] == "POST", c["opts"]
+    key = c["opts"]["headers"]["Idempotency-Key"]
+    assert re.fullmatch(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", key), f"not a UUID: {key!r}"
+    body = json.loads(c["opts"]["body"])
+    assert body == {"service": sid, "email": "realtor@example.com", "consent_version": CONSENT_VERSION}, body
+    assert v.pg.evaluate("sessionStorage.getItem('av-uslugi-r:usl-1a2b3c4d')") == "r0123456789abcdef", \
+        "the return key of the order was not stored for the success page"
+    assert v.pg.evaluate("sessionStorage.getItem('av-uslugi-key:" + sid + "')") == key, "the idempotency key was not kept for a retry"
+    assert not v.api, f"the order API was really called: {v.api[:2]}"
 
 
 @case("page.no_overflow_at_widths", browser=True)

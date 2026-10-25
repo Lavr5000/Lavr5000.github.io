@@ -168,7 +168,7 @@ window.USLUGI_CATALOG = {
    "version": "1"
   },
   {
-   "allow_live": false,
+   "allow_live": true,
    "decision": "2026-10-25 14:37",
    "deliver_hours": 24,
    "disclaimer": "Первичная юридическая проверка — не юридическая консультация и не юридическое заключение. Итоговую проверку документов осуществляет юрист.",
@@ -448,7 +448,7 @@ window.USLUGI_CATALOG = {
    "version": "0"
   }
  ],
- "sha256": "2e30964edddd2ae4e32c015570b1c5363162034f861d8fd05991d0b04a807144",
+ "sha256": "e8adae6522a4de5ba98b851df7897798a6f88594c651eeaca144c899d758bb13",
  "subscription": {
   "decision": "2026-10-25 14:37",
   "id": "setup-rieltor",
