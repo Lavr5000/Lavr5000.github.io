@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://api.ai-vibes.ru">
   <title>AI Vibes — ведомость объёмов по PDF</title>
-  <meta name="description" content="Загрузите PDF с текстовым слоем и получите ведомость объёмов работ.">
+  <meta name="description" content="Загрузите PDF чертежей РД — векторный, скан или смешанный — и получите ведомость объёмов работ.">
   <link rel="canonical" href="https://ai-vibes.ru/vedomost.html">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="AI Vibes">
@@ -23,9 +23,9 @@
   <script defer src="/assets/nav-inject.js"></script>
   <script defer src="/assets/soft-prompt.js"></script>
 <!-- chrome:head:begin (scripts/build_chrome.py) -->
-<meta name="build" content="9e3e15499f0d" />
-<link rel="stylesheet" href="/assets/chrome.css?v=9e3e15499f0d" />
-<script defer src="/assets/chrome.js?v=9e3e15499f0d"></script>
+<meta name="build" content="7e5628056651" />
+<link rel="stylesheet" href="/assets/chrome.css?v=7e5628056651" />
+<script defer src="/assets/chrome.js?v=7e5628056651"></script>
 <!-- chrome:head:end -->
 </head>
 <body>
@@ -94,7 +94,7 @@
           <label class="upload-zone" for="file">
             <span class="upload-zone__icon" aria-hidden="true"></span>
             <span class="upload-zone__title">Загрузить чертёж</span>
-            <span class="upload-zone__text">PDF с текстовым слоем. Сканированные PDF не принимаются.</span>
+            <span class="upload-zone__text">PDF чертежей РД: векторные, сканы и смешанные, до 200 МБ.</span>
             <span class="dropzone-hint">PDF · до 200 МБ · один файл</span>
             <span class="upload-zone__check" aria-hidden="true"></span>
             <span class="upload-zone__file" id="file-selected-name" aria-live="polite"></span>
@@ -112,7 +112,7 @@
           <label for="website">Website</label>
           <input id="website" name="website" tabindex="-1" autocomplete="off">
         </div>
-          <label class="check"><input id="consent" type="checkbox" required> <span>Согласен с <a href="oferta.html">офертой</a> и <a href="privacy.html">политикой обработки персональных данных</a>.</span></label>
+          <label class="check"><input id="consent" type="checkbox" required> <span>Согласен с <a href="oferta.html">офертой</a> и <a href="privacy.html">политикой обработки персональных данных</a>. Если файл нельзя разобрать по текстовому слою, листы документа (изображения и извлечённые данные) будут переданы внешнему сервису распознавания <strong>OpenRouter</strong> (любой из доступных через него моделей) только для формирования результата; файл и данные удаляются после доставки, при неуспешной обработке — не позднее 7 дней. Подтверждаю, что вправе передавать этот документ.</span></label>
           <label class="check"><input id="optin" type="checkbox"> <span>Разрешаю хранение файла до 90 дней для разбора спорных случаев по моей оценке (необязательно, можно отозвать — см. <a href="privacy.html">политику</a>).</span></label>
         <button id="submitBtn" class="btn btn-primary" type="submit">Отправить заказ</button>
       </form>
@@ -173,6 +173,6 @@
 
 
 
-<script type="module" src="vedomost.js?v=vedomost-v2-2026-06"></script>
+<script type="module" src="vedomost.js?v=vedomost-v3-2026-10"></script>
 </body>
 </html>

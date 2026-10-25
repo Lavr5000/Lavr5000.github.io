@@ -25,9 +25,24 @@
     return h.slice(0, 8) + '-' + h.slice(8, 12) + '-' + h.slice(12, 16) + '-' + h.slice(16, 20) + '-' + h.slice(20);
   };
 
-  /* оплата включена для кнопки, если включена в целом и услуга не придержана (cfg.heldServices) */
+  /* Услуги, по которым эта версия сайта НЕ создаёт платёж ни при каких настройках (запрет в коде, не в конфиге).
+   * VIP 45 000 ₽: оплата откроется отдельным решением — тогда id убирают отсюда и из heldServices. */
+  var NEVER_PAY = ['setup-vip'];
+  var inList = function (list, id) { return (list || []).indexOf(id) !== -1; };
+  /* оплата включена для кнопки, если включена в целом, услуга не придержана (cfg.heldServices) и не запрещена */
   var payOn = function (b) {
-    return !!cfg.enabled && (cfg.heldServices || []).indexOf(b.dataset.serviceId) === -1;
+    var id = b.dataset.serviceId;
+    return !!cfg.enabled && !inList(cfg.heldServices, id) && !inList(NEVER_PAY, id);
+  };
+  var consentVersionOf = function (id) {
+    return (cfg.consentVersions && cfg.consentVersions[id]) || cfg.consentVersion;
+  };
+  /* отдельная галочка ПДн: обязательна, когда её блок показан для текущей услуги ([data-consent-for] без hidden) */
+  var pdOk = function () {
+    var pd = $('pay-consent-pd');
+    var box = pd && pd.closest ? pd.closest('[data-consent-for]') : null;
+    if (!pd || !box || !current || box.getAttribute('data-consent-for') !== current.dataset.serviceId) return true;
+    return !!pd.checked;
   };
 
   buttons.forEach(function (b) {
@@ -58,11 +73,19 @@
     $('pay-service').textContent = b.dataset.order;
     $('pay-price').textContent = b.dataset.priceLabel;
     submit.textContent = 'Перейти к оплате ' + b.dataset.priceLabel;
-    /* у набора для риэлторов свой текст согласия и своя версия */
+    /* у услуги может быть свой текст согласия и своя версия: [data-consent-for="<id>"] + cfg.consentVersions */
+    var own = null;
+    Array.prototype.forEach.call(document.querySelectorAll('[data-consent-for]'), function (el) {
+      var mine = el.getAttribute('data-consent-for') === b.dataset.serviceId;
+      el.hidden = !mine;
+      if (mine) own = el;
+    });
+    var t1 = $('pay-consent-text');
+    if (t1) t1.hidden = !!own;
+/* у набора для риэлторов свой текст согласия и своя версия */
     var rl = b.dataset.consent === 'rieltor';
-    var t1 = $('pay-consent-text'), t2 = $('pay-consent-text-rieltor');
-    if (t1) t1.hidden = rl;
-    if (t2) t2.hidden = !rl;
+    var t2 = $('pay-consent-text-rieltor');
+    if (rl && t2) t2.hidden = false; /* показан и общим переключателем [data-consent-for] */
     var saved = load(b.dataset.serviceId);
     if (saved) {
       if (saved.email && !$('pay-email').value) $('pay-email').value = saved.email;
@@ -98,12 +121,17 @@
 
   var send = function (retried) {
     var id = current.dataset.serviceId;
+    /* ещё одна страховка к payOn: запрещённая или придержанная услуга заказ не создаёт */
+    if (!payOn(current)) return Promise.reject(new Error('service is not open for payment'));
+    /* услуге с отдельной версией согласия нужен и отдельный текст на странице */
+    if (consentVersionOf(id) !== cfg.consentVersion && !document.querySelector('[data-consent-for="' + id + '"]')) return Promise.reject(new Error('consent text missing'));
+    if (!pdOk()) return Promise.reject(new Error('personal data consent missing'));
     var email = $('pay-email').value.trim(), contact = $('pay-contact').value.trim();
     var saved = load(id) || {};
     var same = saved.email === email && saved.contact === contact && saved.key;
     var key = same ? saved.key : uuid();
     save(id, { key: key, email: email, contact: contact, ts: Date.now() });
-    var payload = { product: id, email: email, contact: contact, consent_version: current.dataset.consentVersion || cfg.consentVersion, website: $('pay-site').value };
+    var payload = { product: id, email: email, contact: contact, consent_version: current.dataset.consentVersion || consentVersionOf(id), website: $('pay-site').value };
     return request(payload, key).then(function (res) {
       /* устаревшая ссылка — новый заказ; уже оплаченный заказ (order_already_paid) повторять нельзя */
       if (res.status === 409 && (res.body || {}).error_code === 'payment_link_expired' && !retried) {
@@ -127,6 +155,8 @@
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { setStatus('error', 'Укажите почту — на неё придёт кассовый чек.'); $('pay-email').focus(); return; }
       if (contact.length < 3) { setStatus('error', 'Укажите телефон или ник в мессенджере — по нему свяжусь с вами.'); $('pay-contact').focus(); return; }
       if (!$('pay-consent').checked) { setStatus('error', 'Отметьте согласие с офертой и политикой.'); $('pay-consent').focus(); return; }
+      /* у услуги может быть отдельная обязательная галочка согласия на обработку персональных данных (152-ФЗ: отдельно от оферты) */
+      if (!pdOk()) { setStatus('error', 'Отметьте согласие на обработку персональных данных.'); $('pay-consent-pd').focus(); return; }
       /* ловушка: заполнена сразу после открытия — тихий отказ; автозаполнение позже её не трогает */
       if ($('pay-site').value && Date.now() - openedAt < 2000) { setStatus('error', FAIL_TEXT); return; }
       setBusy(true); setStatus('busy', 'Создаю заказ…');
@@ -155,7 +185,7 @@
     if (retry && cfg.enabled) {
       sessionStorage.removeItem('av-pay:retry');
       var btn = document.querySelector('#tarify a[data-pay][data-service-id="' + retry.replace(/[^a-z-]/g, '') + '"]');
-      if (btn) openPay(btn, true);
+      if (btn && payOn(btn)) openPay(btn, true);
     }
   } catch (e) { /* storage is optional */ }
 })();

@@ -1,21 +1,11 @@
 import {
   PAYMENT_ENABLED,
   CONSENT_VERSION
-} from './vedomost.config.js?v=vedomost-v2-2026-06';
+} from './vedomost.config.js?v=vedomost-v3-2026-10';
 import { initOrderFlow } from './assets/order-flow.js';
 
-const NO_TEXT_MESSAGE = `Файл не принят: нет машиночитаемого текстового слоя
-
-Похоже, это скан. Сервис работает только с PDF, выгруженными из проектной программы
-с текстовым слоем.
-
-Что делать: запросите у заказчика или проектировщика исходную РД с текстовым слоем.
-Пример формулировки:
-
-«Прошу выгрузить рабочую документацию (раздел КЖ/АР) в формате PDF с текстовым
-(машиночитаемым) слоем — печатью в PDF напрямую из AutoCAD/Revit/nanoCAD,
-без сканирования бумажных листов».`;
-
+// Since 2026-10 (consent vedomost-v3-2026-10) scans and mixed PDFs are accepted: a file the text layer
+// cannot cover is read by the cloud recognition service on the server, so the browser no longer rejects scans.
 initOrderFlow({
   product: null, // omitted in /api/orders — backend uses its default (material-takeoff)
   consentVersion: CONSENT_VERSION,
@@ -41,8 +31,8 @@ initOrderFlow({
   ratingTitle: 'Ведомость подошла?',
   maxPollAttempts: 120,
   payButtonText: 'Оплатить картой или через СБП',
-  checkTextLayer: true,
-  noTextMessage: NO_TEXT_MESSAGE,
+  checkTextLayer: false,
+  noTextMessage: '',
   consentError: 'Нужно подтвердить согласие с офертой и политикой.',
   hasOptin: true,
   uploadMessage: () => 'Загружаем PDF...',

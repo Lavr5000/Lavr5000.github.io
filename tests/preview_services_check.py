@@ -78,7 +78,10 @@ def shot_name(path, w, h):
 def dialog_ids(page, enabled, trigger):
     """(dialog selector, title selector, price selector) the trigger is expected to open."""
     is_pay = trigger.get_attribute("data-pay") is not None
-    if is_pay and enabled:
+    # a held service keeps the request window even when payment is on (services.config.js heldServices)
+    held = page.evaluate("(id) => ((window.AI_PAY && window.AI_PAY.heldServices) || []).includes(id)",
+                         trigger.get_attribute("data-service-id"))
+    if is_pay and enabled and not held:
         return "#pay-dialog", "#pay-service", "#pay-price"
     return "#order-dialog", "#order-service", "#order-price"
 

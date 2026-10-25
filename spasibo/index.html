@@ -8,12 +8,12 @@
 <title>Заказ создан — AI Vibes</title>
 <link rel="icon" href="/favicon.ico" />
 <link rel="stylesheet" href="/assets/fonts.css?v=20260813-vitrina" />
-<link rel="stylesheet" href="/assets/site3.css?v=9e3e15499f0d" />
+<link rel="stylesheet" href="/assets/site3.css?v=7e5628056651" />
 <script defer src="/assets/spasibo.js"></script>
 <!-- chrome:head:begin (scripts/build_chrome.py) -->
-<meta name="build" content="9e3e15499f0d" />
-<link rel="stylesheet" href="/assets/chrome.css?v=9e3e15499f0d" />
-<script defer src="/assets/chrome.js?v=9e3e15499f0d"></script>
+<meta name="build" content="7e5628056651" />
+<link rel="stylesheet" href="/assets/chrome.css?v=7e5628056651" />
+<script defer src="/assets/chrome.js?v=7e5628056651"></script>
 <!-- chrome:head:end -->
 </head>
 <body>
@@ -61,6 +61,17 @@
       <p>Обычно это занимает несколько минут. Кассовый чек придёт на вашу почту от Т-Банка.
         Напишите нам и назовите номер заказа — договоримся о времени настройки. Если не напишете, свяжусь с вами сам
         по контакту, который вы оставили.</p>
+    </div>
+    <div class="prose" id="spasibo-handoff" hidden>
+      <p class="order-number" id="ho-number"></p>
+      <h1 class="h2" id="ho-title"></h1>
+      <p id="ho-lead"></p>
+      <p id="ho-link-wrap" hidden><a class="btn-pay" id="ho-link" href="#" target="_blank" rel="noopener">Открыть бота в MAX</a></p>
+      <div id="ho-code-wrap" hidden>
+        <p id="ho-fallback"></p>
+        <p class="order-number" id="ho-code"></p>
+      </div>
+      <p id="ho-note"></p>
     </div>
     <div class="prose" id="spasibo-rieltor" hidden>
       <p class="order-number" id="rl-number"></p>

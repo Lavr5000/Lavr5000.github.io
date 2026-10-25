@@ -3,11 +3,11 @@
  "source": "https://ai-vibes.ru",
  "algorithm": "sha256(utf8(innerText of <main>; CRLF->LF; trailing spaces stripped per line; outer newlines stripped))",
  "pages": {
-  "/oferta.html": "49e728d4ea1d644e7748b05be38f47f02f2c5018b0c155a4a34baeebd3fe9713",
+  "/oferta.html": "3c34db09d4a17d611dd769d3b13a9fc636df8c1474dc7552ea58ca4d62fd2b08",
   "/privacy.html": "8c24237843c88254c91734c975cdb17795975ca225465c20ea2fb26de7da310a"
  },
  "chars": {
-  "/oferta.html": 36909,
+  "/oferta.html": 53635,
   "/privacy.html": 26438
  }
 }
