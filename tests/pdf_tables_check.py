@@ -35,7 +35,7 @@ from v2_gate import Served, settle  # noqa: E402
 from playwright.sync_api import sync_playwright  # noqa: E402
 
 API = "https://api.ai-vibes.ru"
-PAY_HOST = "securepay.tinkoff.ru"
+PAY_HOST = "pay.tbank-online.com"   # the host T-Bank hands out since 2026-10 (prod check 26.10)
 PAGE = "/products.html"
 PDF = Path(__file__).resolve().parent / "fixtures" / "text.pdf"
 EMAIL = "check@example.com"
