@@ -11,7 +11,7 @@ assets/metrika.js and proves, per page:
 and, on the pages with download, order or contact buttons, that a click sends the matching goal
 (download_transkribator / download_apartment_auditor / order_click / contact_max). An order trigger
 `[data-order]` (a[data-pay] or a[data-request]) must open `dialog#order-dialog` in place (navigation is
-prevented), and the goal call must carry the trigger's own service id and a `place` equal to the id of the
+prevented; a pay button whose payment is on opens `dialog#pay-dialog` instead), and the goal call must carry the trigger's own service id and a `place` equal to the id of the
 nearest section (the dialog is closed afterwards). Contact clicks inside the order dialog report the
 dialog id as `place`.
 On every page with a payment link `a[data-pay]` the payment window is closed to Metrika:
@@ -143,9 +143,14 @@ def main() -> int:
                     want = t.eval(f"""(()=>{{const b=document.querySelector('{sel}'); if(!b) return null;
                         const s = b.closest('section[id], [role="dialog"][id]');
                         return JSON.stringify({{service: b.getAttribute('data-service-id'), place: s ? s.id : ''}});}})()""")
-                    n = t.eval(f"""(()=>{{const b=document.querySelector('{sel}'); if(!b) return 0; b.click();
-                        const d=document.querySelector('#order-dialog');
-                        return d && d.open ? 1 : 0;}})()""")
+                    # a request button opens #order-dialog; a pay button opens #pay-dialog while the payment of its
+                    # service is on (setup-start is sold directly since the services went live), else #order-dialog
+                    dlg = t.eval(f"""(()=>{{const b=document.querySelector('{sel}'); if(!b) return '';
+                        const allowed = b.hasAttribute('data-pay') ? ['order-dialog', 'pay-dialog'] : ['order-dialog'];
+                        b.click();
+                        const d = allowed.map(id => document.getElementById(id)).find(x => x && x.open);
+                        return d ? d.id : '';}})()""")
+                    n = 1 if dlg else 0
                     drain(t, 3)
                     n = bool(n) and t.eval("location.href") == before
                     # The goal hit carries its params as site-info={"service":..,"place":..}: they must be this
@@ -159,8 +164,9 @@ def main() -> int:
                             got = None
                     exp = json.loads(want) if want else None
                     n = n and got is not None and exp is not None and bool(got.get("place"))                         and got.get("service") == exp["service"] and got.get("place") == exp["place"]
-                    t.eval("document.querySelector('#order-dialog').close()")
-                    n = n and not t.eval("!!document.querySelector('#order-dialog[open]')")
+                    if dlg:
+                        t.eval(f"document.getElementById('{dlg}').close()")
+                    n = n and not t.eval("!!document.querySelector('#order-dialog[open], #pay-dialog[open]')")
                 else:
                     n = t.eval(f"""(()=>{{const a=document.querySelector('{sel}'); if(!a) return 0;
                         a.addEventListener('click', e=>e.preventDefault(), {{once:true}}); a.click(); return 1;}})()""")
