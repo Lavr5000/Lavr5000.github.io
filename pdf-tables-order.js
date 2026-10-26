@@ -44,6 +44,11 @@ export function mountPdfTablesOrder(root) {
   let stageStartedAt = 0;
   let elapsedEl = null;
 
+  // the dialog scrolls inside itself: keep the status and the pay button in view
+  function reveal(el) {
+    try { el.scrollIntoView({ block: 'nearest' }); } catch (_) { /* old browsers */ }
+  }
+
   function setMessage(text, kind = '') {
     message.textContent = text;
     message.dataset.state = kind || 'idle';
@@ -95,6 +100,7 @@ export function mountPdfTablesOrder(root) {
     });
     statusBox.prepend(list);
     ladderIndex = active;
+    reveal(statusBox);
     stopTicker();
     if (active === 2) {
       tickerHandle = setInterval(() => {
@@ -140,9 +146,10 @@ export function mountPdfTablesOrder(root) {
       startedKey = null;
       setFormEnabled(true);
       setMessage('Выберите другой PDF — проверка начнётся сама.');
-      zone.focus();
+      fileInput.focus();
     });
     statusBox.append(btn);
+    reveal(btn);
   }
 
   // --- payment: the link is asked for only when the user clicks ---
@@ -180,6 +187,7 @@ export function mountPdfTablesOrder(root) {
       }
     });
     statusBox.append(btn);
+    reveal(btn);
   }
 
   // --- polling ---

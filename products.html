@@ -31,7 +31,9 @@
 <script defer src="/assets/pay.js?v=7e5628056651"></script>
 <!-- chrome:head:end -->
 <script defer src="/products.js?v=20261026-tile"></script>
-<script type="module" src="/products.render.js?v=20261026-tile"></script>
+<script type="module" src="/products.render.js?v=20261026-dlg"></script>
+<link rel="stylesheet" href="/assets/pdf-tables-dialog.css?v=20261026-dlg" />
+<script type="module" src="/pdf-tables-dialog.js?v=20261026-dlg"></script>
 </head>
 <body>
 <a class="skip" href="#main">Перейти к содержанию</a>
@@ -300,5 +302,40 @@
   </div>
 </dialog>
 <!-- chrome:dialogs:end -->
+<!-- pdf-tables:dialog (PLAN-7 Э7c): order of «Таблицы из PDF» over the catalog, pay only after the pre-check -->
+<dialog class="dlg ym-hide-content" id="pt-dialog" aria-labelledby="pt-title">
+  <div class="dlg-in">
+    <button class="dlg-close" type="button" data-dlg-close aria-label="Закрыть">×</button>
+    <p class="dlg-kicker">Заказ</p>
+    <div class="dlg-item"><h2 class="dlg-title-item" id="pt-title">Таблицы из PDF → Excel</h2><span>499 ₽</span></div>
+    <ul class="pt-req">
+      <li>PDF до 25 листов, один файл</li>
+      <li>Таблицы набраны текстом: экспорт из программы, не скан и не фото</li>
+      <li>В Excel попадут только проверенные таблицы; что не выдано, будет с пояснением</li>
+    </ul>
+    <div class="pt-file">
+      <label class="pt-zone" data-pt="zone" for="pt-file">
+        <span class="pt-zone-title">Выбрать PDF</span>
+        <span class="pt-zone-hint">Нажмите или перетащите файл сюда</span>
+        <span class="pt-zone-name" data-pt="file-name" aria-live="polite"></span>
+        <span class="pt-zone-replace">Заменить файл</span>
+        <input class="pt-file-input" id="pt-file" data-pt="file" type="file" accept="application/pdf,.pdf" />
+      </label>
+      <button class="pt-remove" type="button" data-pt="remove" hidden>Убрать файл</button>
+    </div>
+    <label for="pt-email">Почта
+      <input class="ym-disable-keys" id="pt-email" data-pt="email" type="email" inputmode="email" autocomplete="email" required placeholder="name@example.com" />
+      <span class="dlg-hint">Сюда придёт готовый Excel</span>
+    </label>
+    <input class="dlg-trap" data-pt="website" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" />
+    <label class="dlg-consent" for="pt-consent">
+      <input id="pt-consent" data-pt="consent" type="checkbox" required />
+      <span>Согласен с <a href="oferta.html" target="_blank" rel="noopener">офертой</a> и <a href="privacy.html" target="_blank" rel="noopener">политикой обработки персональных данных</a>. Листы загруженного PDF (изображения и извлечённые данные) будут переданы внешнему сервису распознавания <strong>OpenRouter</strong> только для формирования результата; файл и данные удаляются после доставки, при неуспешной обработке — не позднее 7 дней. Понимаю, что в Excel попадут только таблицы, прошедшие автоматическую проверку; если не прошла ни одна, оплата возвращается полностью. Подтверждаю, что вправе передавать этот документ.</span>
+    </label>
+    <p class="dlg-status" data-pt="message" data-state="idle" role="status" aria-live="polite"></p>
+    <div class="pt-status" data-pt="status"></div>
+    <p class="dlg-note">Ноль проверенных таблиц или техсбой: деньги вернутся автоматически. Срок: до 24 часов после оплаты.</p>
+  </div>
+</dialog>
 </body>
 </html>

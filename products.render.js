@@ -89,6 +89,8 @@ import { API_ORIGIN } from './vedomost.config.js?v=vedomost-v3-2026-10';
     cta.className = 'btn-pay';
     cta.href = product.cta && product.cta.url ? product.cta.url : '#';
     cta.textContent = 'Загрузить PDF';
+    // the order dialog on this page (pdf-tables-dialog.js) opens instead; href stays as the no-JS path
+    if (product.gate === 'pdf_tables') cta.setAttribute('data-pt-open', '');
     row.appendChild(cta);
 
     el.appendChild(row);

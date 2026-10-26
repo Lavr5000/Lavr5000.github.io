@@ -83,6 +83,9 @@ class Mock:
         origin = request.headers.get("origin", "*")
         cors = {"access-control-allow-origin": origin, "access-control-allow-headers": "content-type, idempotency-key",
                 "access-control-allow-methods": "POST, GET, OPTIONS", "vary": "Origin"}
+        if request.method == "GET" and urlparse(request.url).path.rstrip("/") == "/api/products/status":
+            # the catalog asks for gated tiles on page load (products.render.js), not a button request
+            return route.fulfill(status=200, headers=cors, content_type="application/json", body='{"pdf_tables":"hidden"}')
         self.requests.append((request.method, request.url))
         if request.method == "OPTIONS":
             return route.fulfill(status=204, headers=cors)
