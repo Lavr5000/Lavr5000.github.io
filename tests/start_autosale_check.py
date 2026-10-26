@@ -47,7 +47,7 @@ from v2_gate import ROOT, Served, block_metrika, settle, norm_price   # noqa: E4
 
 API = "https://api.ai-vibes.ru"
 PAY_HOST = "pay.tbank-online.com"
-CATALOGUE = {"setup-start": 750000, "setup-vip": 4500000, "setup-rieltor": 990000}   # known data-pay ids -> kopecks
+CATALOGUE = {"setup-start": 750000, "setup-vip": 4500000, "setup-rieltor": 1000}   # rieltor: 10 RUB subscription, PO decision 2026-10-25 14:37   # known data-pay ids -> kopecks
 ALWAYS_HELD = {"setup-vip", "setup-rieltor"}      # never open for payment in the start/autosale line of branches
 START_CONSENT_VERSION = "setup-v2-2026-10"
 EMAIL, CONTACT = "check@example.com", "+7 900 000-00-00"

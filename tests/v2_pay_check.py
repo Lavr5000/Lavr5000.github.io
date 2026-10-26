@@ -47,10 +47,10 @@ from v2_gate import Served, block_metrika, settle, norm_price   # noqa: E402
 
 API = "https://api.ai-vibes.ru"
 CONSENT = "setup-v1-2026-10"
-CONSENT_BY_SERVICE = {"setup-start": "setup-v2-2026-10"}  # setup-start has its own consent text and version (draft, approve before release)
+CONSENT_BY_SERVICE = {"setup-start": "setup-v2-2026-10", "setup-rieltor": "rieltor-v1-2026-10"}  # per-service consent text and version (setup-start draft, approve before release; setup-rieltor own text)
 NEVER_PAY = {"setup-vip"}                                   # assets/pay.js never creates a payment for these ids; tests/start_autosale_check.py covers them
 PAY_HOSTS = ["securepay.tinkoff.ru", "pay.tbank-online.com"]
-AMOUNTS = {"setup-start": 750000, "setup-vip": 4500000, "setup-rieltor": 990000}
+AMOUNTS = {"setup-start": 750000, "setup-vip": 4500000, "setup-rieltor": 1000}
 PAGES = ["/", "/services/"]
 REQUEST_PAGES = ["/", "/services/", "/products.html"]      # pages that carry the order windows (a[data-request])
 UUID_RE = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$", re.I)

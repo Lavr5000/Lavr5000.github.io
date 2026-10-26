@@ -14,6 +14,7 @@
  *                first). Branch start/autosale-release removes only "setup-start" — the last step of the rollout
  *                (PLAN E11 step 8). "setup-vip" is also forbidden in assets/pay.js (NEVER_PAY): no payment, ever,
  *                from this version of the site.
+ *               "setup-rieltor" is held until the backend switch RIELTOR_ENABLED is on (DEPLOY-RIELTOR.md).
  * allowedPayHosts the only hosts pay.js will navigate to.
  */
 window.AI_PAY = {

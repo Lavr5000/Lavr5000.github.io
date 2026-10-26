@@ -82,6 +82,10 @@
     });
     var t1 = $('pay-consent-text');
     if (t1) t1.hidden = !!own;
+/* у набора для риэлторов свой текст согласия и своя версия */
+    var rl = b.dataset.consent === 'rieltor';
+    var t2 = $('pay-consent-text-rieltor');
+    if (rl && t2) t2.hidden = false; /* показан и общим переключателем [data-consent-for] */
     var saved = load(b.dataset.serviceId);
     if (saved) {
       if (saved.email && !$('pay-email').value) $('pay-email').value = saved.email;
@@ -127,7 +131,7 @@
     var same = saved.email === email && saved.contact === contact && saved.key;
     var key = same ? saved.key : uuid();
     save(id, { key: key, email: email, contact: contact, ts: Date.now() });
-    var payload = { product: id, email: email, contact: contact, consent_version: consentVersionOf(id), website: $('pay-site').value };
+    var payload = { product: id, email: email, contact: contact, consent_version: current.dataset.consentVersion || consentVersionOf(id), website: $('pay-site').value };
     return request(payload, key).then(function (res) {
       /* устаревшая ссылка — новый заказ; уже оплаченный заказ (order_already_paid) повторять нельзя */
       if (res.status === 409 && (res.body || {}).error_code === 'payment_link_expired' && !retried) {

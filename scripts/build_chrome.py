@@ -38,6 +38,7 @@ MENU = [
     ("Помощник", "/", "home"),
     ("Тарифы", "/services/", "tariffs"),
     ("Для строителей", "/products.html", "builders"),
+    ("Риэлтор", "/rieltor/", "rieltor"),
     ("Статьи", "/blog/", "blog"),
     ("Об авторе", "/about.html", "about"),
 ]
@@ -47,6 +48,7 @@ PAGES: dict[str, tuple[str, bool]] = {
     "index.html": ("home", True),
     "services/index.html": ("tariffs", True),
     "products.html": ("builders", True),
+    "rieltor/index.html": ("rieltor", False),
     "about.html": ("about", False),
     "blog/index.html": ("blog", False),
     "apps/transkribator/index.html": ("builders", False),
@@ -116,6 +118,7 @@ def footer() -> str:
         <li><a href="/">Помощник</a></li>
         <li><a href="/services/">Тарифы</a></li>
         <li><a href="/products.html">Для строителей</a></li>
+        <li><a href="/rieltor/">Риэлтор</a></li>
         <li><a href="/blog/">Статьи</a></li>
         <li><a href="/about.html">Об авторе</a></li>
       </ul>
@@ -176,6 +179,7 @@ def dialogs() -> str:
           <span id="pay-consent-text">Я принимаю условия <a href="/oferta.html" target="_blank" rel="noopener">оферты</a> и даю согласие на обработку моих персональных данных — адреса электронной почты и контакта для связи — для оформления заказа, отправки кассового чека и связи со мной по этому заказу, как описано в <a href="/privacy.html" target="_blank" rel="noopener">политике конфиденциальности</a>.</span>
           <!-- draft, approve before release: setup-start consent setup-v2 = part 1 (offer, here) + blank line + part 2 (personal data, next label), as in tests/fixtures/soglasie-setup-v2.txt; the sha256 of the two visible texts joined by a blank line is checked by the server and by tests/start_autosale_check.py -->
           <span id="pay-consent-text-setup-start" data-consent-for="setup-start" hidden>Я принимаю условия <a href="/oferta.html" target="_blank" rel="noopener">оферты</a> редакции 1.6, в том числе порядок проверки компьютера перед установкой, удалённого доступа к нему на время настройки, доступа к модели и возврата оплаты.</span>
+          <span id="pay-consent-text-rieltor" data-consent-for="setup-rieltor" hidden>Я принимаю условия <a href="/oferta.html" target="_blank" rel="noopener">оферты</a> и даю согласие на обработку моих персональных данных — адреса электронной почты и контакта для связи — для оформления заказа, отправки кассового чека, письма со ссылкой на подключение и связи со мной по этому заказу, как описано в <a href="/privacy.html" target="_blank" rel="noopener">политике конфиденциальности</a>. Я знаю, что тексты моих задач помощник передаёт на обработку зарубежной модели, а паспортные данные в модель не передаются.</span>
         </label>
         <label class="dlg-consent" for="pay-consent-pd" data-consent-for="setup-start" hidden>
           <input id="pay-consent-pd" name="consent_pd" type="checkbox" />

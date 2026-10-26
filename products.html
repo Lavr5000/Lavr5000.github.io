@@ -20,15 +20,15 @@
 <link rel="icon" href="/favicon.ico" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 <link rel="stylesheet" href="/assets/fonts.css?v=20260813-catalog" />
-<link rel="stylesheet" href="/assets/site3.css?v=4a70010665b3" />
-<script defer src="/assets/site3.js?v=4a70010665b3"></script>
+<link rel="stylesheet" href="/assets/site3.css?v=7e5628056651" />
+<script defer src="/assets/site3.js?v=7e5628056651"></script>
 <script defer src="/assets/metrika.js?v=20261011-v2"></script>
 <!-- chrome:head:begin (scripts/build_chrome.py) -->
-<meta name="build" content="4a70010665b3" />
-<link rel="stylesheet" href="/assets/chrome.css?v=4a70010665b3" />
-<script defer src="/assets/chrome.js?v=4a70010665b3"></script>
-<script defer src="/services.config.js?v=4a70010665b3"></script>
-<script defer src="/assets/pay.js?v=4a70010665b3"></script>
+<meta name="build" content="7e5628056651" />
+<link rel="stylesheet" href="/assets/chrome.css?v=7e5628056651" />
+<script defer src="/assets/chrome.js?v=7e5628056651"></script>
+<script defer src="/services.config.js?v=7e5628056651"></script>
+<script defer src="/assets/pay.js?v=7e5628056651"></script>
 <!-- chrome:head:end -->
 <script defer src="/products.js?v=20261026-tile"></script>
 <script type="module" src="/products.render.js?v=20261026-tile"></script>
@@ -47,6 +47,7 @@
       <a href="/">Помощник</a>
       <a href="/services/">Тарифы</a>
       <a href="/products.html" aria-current="page">Для строителей</a>
+      <a href="/rieltor/">Риэлтор</a>
       <a href="/blog/">Статьи</a>
       <a href="/about.html">Об авторе</a>
     </nav>
@@ -57,6 +58,7 @@
     <a href="/">Помощник</a>
     <a href="/services/">Тарифы</a>
     <a href="/products.html" aria-current="page">Для строителей</a>
+    <a href="/rieltor/">Риэлтор</a>
     <a href="/blog/">Статьи</a>
     <a href="/about.html">Об авторе</a>
   </div>
@@ -221,6 +223,7 @@
         <li><a href="/">Помощник</a></li>
         <li><a href="/services/">Тарифы</a></li>
         <li><a href="/products.html">Для строителей</a></li>
+        <li><a href="/rieltor/">Риэлтор</a></li>
         <li><a href="/blog/">Статьи</a></li>
         <li><a href="/about.html">Об авторе</a></li>
       </ul>
@@ -280,6 +283,7 @@
           <span id="pay-consent-text">Я принимаю условия <a href="/oferta.html" target="_blank" rel="noopener">оферты</a> и даю согласие на обработку моих персональных данных — адреса электронной почты и контакта для связи — для оформления заказа, отправки кассового чека и связи со мной по этому заказу, как описано в <a href="/privacy.html" target="_blank" rel="noopener">политике конфиденциальности</a>.</span>
           <!-- draft, approve before release: setup-start consent setup-v2 = part 1 (offer, here) + blank line + part 2 (personal data, next label), as in tests/fixtures/soglasie-setup-v2.txt; the sha256 of the two visible texts joined by a blank line is checked by the server and by tests/start_autosale_check.py -->
           <span id="pay-consent-text-setup-start" data-consent-for="setup-start" hidden>Я принимаю условия <a href="/oferta.html" target="_blank" rel="noopener">оферты</a> редакции 1.6, в том числе порядок проверки компьютера перед установкой, удалённого доступа к нему на время настройки, доступа к модели и возврата оплаты.</span>
+          <span id="pay-consent-text-rieltor" data-consent-for="setup-rieltor" hidden>Я принимаю условия <a href="/oferta.html" target="_blank" rel="noopener">оферты</a> и даю согласие на обработку моих персональных данных — адреса электронной почты и контакта для связи — для оформления заказа, отправки кассового чека, письма со ссылкой на подключение и связи со мной по этому заказу, как описано в <a href="/privacy.html" target="_blank" rel="noopener">политике конфиденциальности</a>. Я знаю, что тексты моих задач помощник передаёт на обработку зарубежной модели, а паспортные данные в модель не передаются.</span>
         </label>
         <label class="dlg-consent" for="pay-consent-pd" data-consent-for="setup-start" hidden>
           <input id="pay-consent-pd" name="consent_pd" type="checkbox" />

@@ -23,3 +23,7 @@ assets/scene3.js text eol=lf
 assets/pay.js text eol=lf
 assets/spasibo.js text eol=lf
 services.config.js text eol=lf
+
+# Copies of the services catalog (catalog/gen_catalog.py of the kit): compared byte for byte with a rebuild.
+uslugi.catalog.js text eol=lf
+rieltor/index.html text eol=lf
