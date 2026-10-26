@@ -39,6 +39,8 @@ const files = [
   "products.js",
   "products.render.js",
   "vedomost.js",
+  "vedomost-dialog.js",
+  "assets/vedomost-dialog.css",
   "nakladnaya.js",
   "rate.js"
 ];

@@ -54,7 +54,6 @@ PAGES: dict[str, tuple[str, bool]] = {
     "apps/transkribator/index.html": ("builders", False),
     "oferta.html": ("", False),
     "privacy.html": ("", False),
-    "vedomost.html": ("builders", False),
     "nakladnaya.html": ("builders", False),
     "rate.html": ("", False),
     "spasibo/index.html": ("", False),

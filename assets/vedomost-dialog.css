@@ -1,0 +1,45 @@
+/* «Ведомость материалов из РД» — order dialog on the catalog (PO 26.10 Р-4).
+   The file zone reuses .pt-* from pdf-tables-dialog.css; here: the form, the message and the status
+   lines that assets/order-flow.js renders (.notice, .line/.dot, a.pay, .inline-rating). */
+html.vd-modal-open{overflow:hidden}
+#vd-dialog .dlg-item{align-items:center}
+#vd-dialog .dlg-item h2{padding-right:0}
+#vd-dialog .vd-form{display:grid;gap:14px}
+#vd-dialog .pt-remove:not(.is-visible){display:none}
+#vd-dialog .vd-submit{width:100%;min-height:50px}
+#vd-dialog .vd-submit:disabled{opacity:.6;cursor:default}
+#vd-dialog .notice{margin:0;font-size:15px;color:var(--c-dark-2)}
+#vd-dialog .notice.ok{color:var(--c-dark)}
+#vd-dialog .notice.bad{color:var(--c-err);font-weight:500}
+#vd-dialog .notice:empty{display:none}
+.vd-status{display:grid;gap:8px}
+.vd-status:empty{display:none}
+.vd-status .line{display:flex;gap:10px;align-items:baseline;font-size:15px;color:var(--c-dark-2)}
+.vd-status .dot{flex:0 0 12px;height:12px;border:1px solid rgba(16,24,38,.35);border-radius:50%;transform:translateY(1px)}
+.vd-status .line.on{color:var(--c-dark)}
+.vd-status .line.on .dot{background:var(--c-brass);border-color:var(--c-brass)}
+.vd-status .line-label{flex:1 1 auto}
+.vd-status .elapsed{font-family:var(--c-mono);font-size:13px;color:var(--c-dark-2)}
+.vd-status .queue-info,.vd-status .queue-note,.vd-status .free-quota{margin:0;font-size:14px;color:var(--c-dark-2)}
+.vd-status a.pay{
+  display:flex;align-items:center;justify-content:center;width:100%;min-height:50px;margin-top:4px;
+  background:var(--c-brass);color:var(--c-brass-ink);border-radius:3px;font-weight:600;text-decoration:none;
+}
+.vd-status a.pay:hover{filter:brightness(1.05)}
+.vd-status a.pay:focus-visible{outline:2px solid #7A5418;outline-offset:2px}
+.vd-status .inline-rating{display:grid;gap:10px;margin-top:4px}
+.vd-status .inline-rating__form{display:grid;gap:10px}
+.vd-status .inline-rating__title,.vd-status .inline-rating__label{margin:0;font-weight:500}
+.vd-status .inline-rating__scores{display:flex;flex-wrap:wrap;gap:8px}
+.vd-status .inline-rating__score,.vd-status .inline-rating__open{
+  min-height:44px;padding:0 14px;border:1px solid rgba(16,24,38,.35);border-radius:3px;background:none;
+  color:var(--c-dark);font:inherit;font-size:15px;cursor:pointer;
+}
+.vd-status .inline-rating__score[aria-pressed="true"]{border-color:#7A5418;background:var(--c-paper-2)}
+.vd-status .inline-rating__reasons{display:grid;gap:6px}
+.vd-status .inline-rating__reason{display:flex;gap:8px;align-items:baseline;font-size:15px}
+.vd-status .inline-rating__comment{display:grid;gap:4px}
+.vd-status .inline-rating__comment textarea{font:inherit;font-size:15px;padding:8px;border:1px solid rgba(16,24,38,.35);border-radius:3px}
+.vd-status .inline-rating__error{margin:0;color:var(--c-err);font-size:14px}
+.vd-status .inline-rating__error:empty{display:none}
+.vd-status .inline-rating__thanks{margin:0;font-size:15px}

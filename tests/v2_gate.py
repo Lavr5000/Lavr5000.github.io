@@ -47,7 +47,7 @@ NBSPS = "   "
 ALL_PAGES = ["/", "/services/", "/products.html", "/about.html", "/blog/",
              "/blog/smeta-osnovanie-list/", "/blog/apartment-auditor/", "/blog/dva-prilozheniya/",
              "/blog/transkribator-golosom/", "/blog/ryazan-obmer-razvertki/", "/apps/transkribator/",
-             "/oferta.html", "/privacy.html", "/vedomost.html", "/nakladnaya.html", "/spasibo/"]
+             "/oferta.html", "/privacy.html", "/nakladnaya.html", "/spasibo/"]
 NO_UPLOAD_PAGES = [p for p in ALL_PAGES if p not in ("/vedomost.html", "/nakladnaya.html", "/apps/transkribator/")]
 BLOG_ARTICLES = [p for p in ALL_PAGES if p.startswith("/blog/") and p != "/blog/"]
 HERMES_EXCLUDE = set(BLOG_ARTICLES) | {"/oferta.html", "/privacy.html"}      # llms.txt is never excluded

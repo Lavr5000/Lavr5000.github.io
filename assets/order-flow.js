@@ -1,4 +1,4 @@
-// assets/order-flow.js — shared order+payment engine for vedomost.html and nakladnaya.html.
+// assets/order-flow.js — shared order+payment engine for the vedomost dialog (products.html) and nakladnaya.html.
 // Usage: import { initOrderFlow } from './assets/order-flow.js'; initOrderFlow(config);
 // All DOM queries and state variables live INSIDE initOrderFlow() for module isolation.
 //
@@ -34,42 +34,48 @@ const MAX_SIZE = 200 * 1024 * 1024;  // matches backend WEBINTAKE_MAX_FILE_SIZE_
 //   uploadMessage      (paymentRequired: boolean) => string
 //   sourceViewLabels   string[]
 //   awaitingFallbackMessage string       — shown at awaiting_payment when no valid URL yet
+// optional (vedomost in the catalog dialog, PO 26.10 Р-4; nakladnaya passes none of them):
+//   root               Element           — container of the form; queries stay inside it (default: document)
+//   onPayClick         (orderToken) => void — the user follows the payment link (lock the dialog, keep the token)
+//   onStage            (stage) => void   — every status the order shows (a stored token is dropped at the end)
+// Returns { resume(orderToken) } — picks the order status up again after the return from the bank.
 
 export function initOrderFlow(config) {
+  const root = config.root || document;
   // --- Init-validation: fail-closed if required DOM is missing ---
   const REQUIRED_IDS = ['orderForm', 'file', 'email', 'consent', 'submitBtn', 'message', 'status', 'removeFile'];
   for (const id of REQUIRED_IDS) {
-    if (!document.querySelector(`#${id}`)) {
+    if (!root.querySelector(`#${id}`)) {
       console.error(`[order-flow] Required element #${id} not found — aborting init.`);
-      return;
+      return null;
     }
   }
-  if (!document.querySelector('.upload-zone')) {
+  if (!root.querySelector('.upload-zone')) {
     console.error('[order-flow] Required element .upload-zone not found — aborting init.');
-    return;
+    return null;
   }
-  if (!document.querySelector('.upload-zone__file')) {
+  if (!root.querySelector('.upload-zone__file')) {
     console.error('[order-flow] Required element .upload-zone__file not found — aborting init.');
-    return;
+    return null;
   }
-  if (config.hasOptin && !document.querySelector('#optin')) {
+  if (config.hasOptin && !root.querySelector('#optin')) {
     console.error('[order-flow] config.hasOptin is true but #optin not found — aborting init.');
-    return;
+    return null;
   }
 
   // --- DOM refs ---
-  const form = document.querySelector('#orderForm');
-  const fileInput = document.querySelector('#file');
-  const uploadZone = document.querySelector('.upload-zone');
-  const fileNameBox = document.querySelector('.upload-zone__file');
-  const removeFileBtn = document.querySelector('#removeFile');
-  const emailInput = document.querySelector('#email');
-  const websiteInput = document.querySelector('#website');
-  const consentInput = document.querySelector('#consent');
-  const optinInput = config.hasOptin ? document.querySelector('#optin') : null;
-  const submitBtn = document.querySelector('#submitBtn');
-  const message = document.querySelector('#message');
-  const statusBox = document.querySelector('#status');
+  const form = root.querySelector('#orderForm');
+  const fileInput = root.querySelector('#file');
+  const uploadZone = root.querySelector('.upload-zone');
+  const fileNameBox = root.querySelector('.upload-zone__file');
+  const removeFileBtn = root.querySelector('#removeFile');
+  const emailInput = root.querySelector('#email');
+  const websiteInput = root.querySelector('#website');
+  const consentInput = root.querySelector('#consent');
+  const optinInput = config.hasOptin ? root.querySelector('#optin') : null;
+  const submitBtn = root.querySelector('#submitBtn');
+  const message = root.querySelector('#message');
+  const statusBox = root.querySelector('#status');
 
   function setMessage(text, kind = '') {
     message.textContent = text;
@@ -204,6 +210,7 @@ export function initOrderFlow(config) {
         pay.rel = 'noopener noreferrer';
         // Redirect in same tab (no target attribute), per spec §3
         pay.textContent = config.payButtonText;
+        if (config.onPayClick) pay.addEventListener('click', () => config.onPayClick(activeOrderToken));
         statusBox.append(pay);
       } else if (paymentUrl) {
         // URL present but invalid host — show error message
@@ -216,6 +223,7 @@ export function initOrderFlow(config) {
   }
 
   function setStage(stage, apiMessage = '', paymentUrl = null, canRate = false, orderToken = '') {
+    if (config.onStage) config.onStage(stage);
     activeCanRate = canRate === true;
     if (orderToken) activeOrderToken = orderToken;
     // Monotonic guard: ignore a known stage that moves backwards (failed always wins)
@@ -429,7 +437,7 @@ export function initOrderFlow(config) {
   }
 
   function renderInlineRatingWidget() {
-    const existing = document.querySelector('#inline-rating');
+    const existing = root.querySelector('#inline-rating');
     if (activeStage !== 'delivered' || !activeCanRate || ratingSubmitted || !activeOrderToken) {
       if (existing) existing.remove();
       return;
@@ -580,8 +588,8 @@ export function initOrderFlow(config) {
     }
   });
 
-  const sourceTabs = [...document.querySelectorAll('.source-tab')];
-  const previewLabel = document.querySelector('.result-preview__head .mono');
+  const sourceTabs = [...root.querySelectorAll('.source-tab')];
+  const previewLabel = root.querySelector('.result-preview__head .mono');
 
   function activateSourceTab(activeIndex) {
     sourceTabs.forEach((tab, i) => {
@@ -597,4 +605,24 @@ export function initOrderFlow(config) {
   sourceTabs.forEach((tab, index) => {
     tab.addEventListener('click', () => activateSourceTab(index));
   });
+
+  let resuming = false;
+  async function resume(orderToken) {
+    if (!orderToken || resuming || submitBtn.disabled) return false;
+    resuming = true;
+    submitBtn.disabled = true;
+    try {
+      startProcessing('Восстанавливаем статус заказа.');
+      await pollStatus(orderToken);
+    } catch (err) {
+      stopStatusTimer();
+      setMessage(err.message || 'Не удалось получить статус заказа.', 'bad');
+    } finally {
+      submitBtn.disabled = false;
+      resuming = false;
+    }
+    return true;
+  }
+
+  return { resume };
 }

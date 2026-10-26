@@ -34,6 +34,8 @@
 <script type="module" src="/products.render.js?v=20261026-dlg"></script>
 <link rel="stylesheet" href="/assets/pdf-tables-dialog.css?v=20261026-dlg" />
 <script type="module" src="/pdf-tables-dialog.js?v=20261026-dlg"></script>
+<link rel="stylesheet" href="/assets/vedomost-dialog.css?v=20261026-vd" />
+<script type="module" src="/vedomost-dialog.js?v=20261026-vd"></script>
 </head>
 <body>
 <a class="skip" href="#main">Перейти к содержанию</a>
@@ -99,7 +101,7 @@
         </ul>
         <div class="card-row">
           <span class="card-price">990 ₽</span>
-          <a class="btn-pay" href="/vedomost.html">Загрузить PDF</a>
+          <a class="btn-pay" href="/vedomost.html" data-vd-open>Загрузить PDF</a>
         </div>
       </article>
       <article class="card" data-product="nakladnaya-m15">
@@ -335,6 +337,47 @@
     <p class="dlg-status" data-pt="message" data-state="idle" role="status" aria-live="polite"></p>
     <div class="pt-status" data-pt="status"></div>
     <p class="dlg-note">Ноль проверенных таблиц или техсбой: деньги вернутся автоматически. Срок: до 24 часов после оплаты.</p>
+  </div>
+</dialog>
+<!-- vedomost:dialog (PO 26.10 Р-4): order of «Ведомость материалов из РД» over the catalog; engine assets/order-flow.js -->
+<dialog class="dlg ym-hide-content" id="vd-dialog" aria-labelledby="vd-title">
+  <div class="dlg-in">
+    <button class="dlg-close" type="button" data-dlg-close aria-label="Закрыть">×</button>
+    <p class="dlg-kicker">Заказ</p>
+    <div class="dlg-item"><h2 class="dlg-title-item" id="vd-title">Ведомость материалов из РД</h2><span>990 ₽</span></div>
+    <ul class="pt-req">
+      <li>PDF рабочей документации: векторный, скан или смешанный</li>
+      <li>Один файл до 200 МБ</li>
+      <li>Excel-ведомость материалов и объёмов придёт на почту</li>
+    </ul>
+    <form id="orderForm" class="vd-form" novalidate>
+      <div class="pt-file">
+        <label class="pt-zone upload-zone" for="file">
+          <span class="pt-zone-title">Выбрать PDF</span>
+          <span class="pt-zone-hint">Нажмите или перетащите файл сюда</span>
+          <span class="pt-zone-name upload-zone__file" id="file-selected-name" aria-live="polite"></span>
+          <span class="pt-zone-replace">Заменить файл</span>
+          <input class="pt-file-input" id="file" name="file" type="file" accept="application/pdf,.pdf" aria-describedby="file-selected-name" required />
+        </label>
+        <button class="pt-remove" type="button" id="removeFile">Убрать файл</button>
+      </div>
+      <label for="email">Почта
+        <input class="ym-disable-keys" id="email" name="email" type="email" inputmode="email" autocomplete="email" required placeholder="name@example.com" />
+        <span class="dlg-hint">Сюда придёт статус и готовая ведомость</span>
+      </label>
+      <input class="dlg-trap" id="website" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" />
+      <label class="dlg-consent" for="consent">
+        <input id="consent" type="checkbox" required />
+        <span>Согласен с <a href="oferta.html" target="_blank" rel="noopener">офертой</a> и <a href="privacy.html" target="_blank" rel="noopener">политикой обработки персональных данных</a>. Если файл нельзя разобрать по текстовому слою, листы документа (изображения и извлечённые данные) будут переданы внешнему сервису распознавания <strong>OpenRouter</strong> (любой из доступных через него моделей) только для формирования результата; файл и данные удаляются после доставки, при неуспешной обработке — не позднее 7 дней. Подтверждаю, что вправе передавать этот документ.</span>
+      </label>
+      <label class="dlg-consent" for="optin">
+        <input id="optin" type="checkbox" />
+        <span>Разрешаю хранение файла до 90 дней для разбора спорных случаев по моей оценке (необязательно, можно отозвать — см. <a href="privacy.html" target="_blank" rel="noopener">политику</a>).</span>
+      </label>
+      <button class="btn-pay vd-submit" id="submitBtn" type="submit">Отправить заказ</button>
+    </form>
+    <p id="message" class="notice" role="status">Выберите PDF, укажите email и подтвердите согласие.</p>
+    <div id="status" class="vd-status" aria-live="polite"></div>
   </div>
 </dialog>
 </body>
