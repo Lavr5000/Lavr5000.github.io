@@ -46,42 +46,7 @@ window.USLUGI_CATALOG = {
      "prompt": "В каком городе или области объект?",
      "required": true,
      "validate": {
-      "normalize": "lower, ё -> е, без «г.» и «город»",
-      "one_of": [
-       "тольятти",
-       "москва",
-       "самарская обл",
-       "самарская обл.",
-       "самарская область",
-       "люберцы",
-       "самара",
-       "санкт-петербург",
-       "новосибирск",
-       "екатеринбург",
-       "казань",
-       "нижний новгород",
-       "челябинск",
-       "красноярск",
-       "уфа",
-       "ростов-на-дону",
-       "омск",
-       "краснодар",
-       "воронеж",
-       "пермь",
-       "волгоград",
-       "саратов",
-       "ульяновск",
-       "пенза",
-       "оренбург",
-       "чебоксары",
-       "йошкар-ола",
-       "саранск",
-       "ижевск",
-       "астрахань",
-       "набережные челны"
-      ],
-      "refuse_code": "city_not_supported",
-      "source": "relay/analogs/cities.json"
+      "max_len": 120
      }
     },
     {
@@ -234,6 +199,26 @@ window.USLUGI_CATALOG = {
        "png"
       ],
       "max_mb": 20
+     }
+    },
+    {
+     "key": "proekt_dogovora",
+     "kind": "file",
+     "prompt": "Проект договора, если уже есть (PDF, Word или фото). Нет — напишите «нет».",
+     "required": false,
+     "validate": {
+      "count": [
+       1,
+       5
+      ],
+      "ext": [
+       "pdf",
+       "jpg",
+       "jpeg",
+       "png"
+      ],
+      "max_mb": 20,
+      "pd_scan": true
      }
     },
     {
@@ -448,7 +433,7 @@ window.USLUGI_CATALOG = {
    "version": "0"
   }
  ],
- "sha256": "e8adae6522a4de5ba98b851df7897798a6f88594c651eeaca144c899d758bb13",
+ "sha256": "0396a196a8091ff3c21382848554dfd9427865db5f93f119fceb8338a775b40b",
  "subscription": {
   "decision": "2026-10-25 14:37",
   "id": "setup-rieltor",
@@ -458,7 +443,7 @@ window.USLUGI_CATALOG = {
   "title": "Настройка помощника риэлтора на одном рабочем месте",
   "url": "/services/#service-rieltor"
  },
- "version": "2026-10-25.2"
+ "version": "2026-10-26.1"
 };
 window.USLUGI_FORMAT_PRICE = function (kop) {
   if (typeof kop !== "number" || !Number.isInteger(kop)) { throw new TypeError("price must be an integer number of kopecks"); }
