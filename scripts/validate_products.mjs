@@ -58,6 +58,15 @@ products.forEach((p, i) => {
     }
   }
   if (!STATUSES.includes(p.status)) errors.push(`${tag}: status "${p.status}" outside enum ${STATUSES.join("|")}`);
+  if (p.gate !== undefined) {
+    if (typeof p.gate !== "string" || !/^[a-z0-9_]+$/.test(p.gate)) {
+      errors.push(`${tag}: gate must be a snake_case string`);
+    } else if (p.visible !== false) {
+      // render contract: a gated record ships hidden and is shown by products.render.js
+      // only after /api/products/status answers "public" for the gate
+      errors.push(`${tag}: a gated record must ship visible:false`);
+    }
+  }
   if (p.icon && !ICONS.includes(p.icon)) errors.push(`${tag}: icon "${p.icon}" outside enum (renders as list)`);
   if (p.serviceType && !SERVICE_TYPES.includes(p.serviceType)) errors.push(`${tag}: serviceType "${p.serviceType}" outside enum`);
   if (!p.cta || typeof p.cta !== "object") errors.push(`${tag}: cta missing`);

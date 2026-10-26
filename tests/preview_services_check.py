@@ -27,6 +27,10 @@ from urllib.parse import unquote
 
 from playwright.sync_api import sync_playwright
 
+# products.html probes the gated catalog tile at page load; a preview must not call the production API
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from v2_gate import preview_api_stub  # noqa: E402
+
 # Failure lines quote prices ("3 500 ₽"); a cp1251 console would raise UnicodeEncodeError and hide
 # the very failure we are here to see.
 for stream in (sys.stdout, sys.stderr):
@@ -122,6 +126,7 @@ with sync_playwright() as p:
     for path in PAGES:
         for w, h in VIEWPORTS:
             ctx = browser.new_context(viewport={"width": w, "height": h})
+            preview_api_stub(ctx, BASE)
             page = ctx.new_page()
             errors = []
             # Metrika's tag.js tries an ad cookie-matching pixel (yandex.ru/an/mapuid); the page CSP
@@ -175,6 +180,7 @@ with sync_playwright() as p:
     # prefers-reduced-motion: the scene stays off, the page is ordinary, the triggers still work.
     for path in PAGES:
         ctx = browser.new_context(viewport={"width": 1440, "height": 1000}, reduced_motion="reduce")
+        preview_api_stub(ctx, BASE)
         page = ctx.new_page()
         page.goto(BASE + path, wait_until="networkidle")
         where = f"{path} reduced-motion"

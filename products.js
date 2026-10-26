@@ -11,6 +11,9 @@
  *   slug*     URL fragment (#product/<slug>) — reserved for future sub-pages
  *   order     ascending sort (default 999)
  *   visible   default true; set false to hide without deleting
+ *   gate      optional snake_case key of GET <API_ORIGIN>/api/products/status;
+ *             a gated record ships visible:false and products.render.js adds it
+ *             to the catalog only when the backend answers "public" for the gate
  *   status*   available | soon | dev | planned   -> pill colour
  *   icon      list | diff | mail | mic | spark    (unknown -> 'list')
  *   categories* audience filter keys:
@@ -123,5 +126,23 @@ window.AI_PRODUCTS = [
                      en: "Hi! I'm interested in “Printed M-15 delivery notes → Excel”. Attaching the PDF scan of printed M-15 delivery notes. I have read the offer terms: https://ai-vibes.ru/oferta.html" } },
     // price.ru "79" must equal backend WEBINTAKE_M15_PAYMENT_AMOUNT/100 (7900 коп) — see test_payment_amount.py
     tier: "freemium", free_quota: 1,
+  },
+  {
+    id: "pdf-tables", slug: "pdf-tables", order: 70, visible: false,
+    status: "available", icon: "list", serviceType: "request_form",
+    gate: "pdf_tables",
+    categories: ["pto", "procurement", "estimators"],
+    price: { ru: "499", en: "499" },
+    title:   { ru: "Таблицы из PDF → Excel", en: "Tables from PDF → Excel" },
+    tagline: { ru: "Переношу таблицы из PDF (спецификации, ведомости) в Excel — только проверенные, остальное с пояснением.",
+               en: "I move tables from a PDF (specifications, schedules) into Excel — only the verified ones, the rest with an explanation." },
+    input:   { ru: "PDF до 25 листов с векторными таблицами или текстовым слоем (не скан)",
+               en: "PDF up to 25 sheets with vector tables or a text layer (not a scan)" },
+    output:  { ru: "Excel только проверенных таблиц + пояснение, что не выдано и почему",
+               en: "Excel of verified tables only + a note on what was not delivered and why" },
+    cta: { url: "/pdf-tables.html", tgText: { ru: "Здравствуйте! Интересует «Таблицы из PDF → Excel». Прикладываю PDF с таблицами. С офертой ознакомлен(а): https://ai-vibes.ru/oferta.html",
+                     en: "Hi! I'm interested in “Tables from PDF → Excel”. Attaching a PDF with tables. I have read the offer terms: https://ai-vibes.ru/oferta.html" } },
+    // price.ru "499" must equal backend pdf-tables price 49900 коп
+    tier: "paid", free_quota: null,
   },
 ];

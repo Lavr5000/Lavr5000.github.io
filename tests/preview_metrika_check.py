@@ -58,6 +58,24 @@ PAY_PAGES = ["/", "/services/", "/products.html"]  # pages that carry the paymen
 INTENDED = ("yandex.ru/an/mapuid",)
 BASELINE = ("Loading the image 'blob:", "Loading the image 'data:image/svg+xml")
 
+# products.html probes the gated catalog tile (GET /api/products/status) at page load; a preview on
+# 127.0.0.1 must not call the production API (the CORS refusal fills the log with security errors).
+# This CDP harness has no route interception, so fetch is shimmed in the page before any script runs.
+API_SHIM = """
+(() => {
+  const orig = window.fetch;
+  if (!orig) return;
+  window.fetch = (input, init) => {
+    const url = typeof input === 'string' ? input : (input && input.url) || '';
+    if (url.indexOf('/api/products/status') !== -1) {
+      return Promise.resolve(new Response('{"pdf_tables":"hidden"}',
+        {status: 200, headers: {'content-type': 'application/json'}}));
+    }
+    return orig(input, init);
+  };
+})();
+"""
+
 
 def drain(t: Tab, sec: float) -> None:
     time.sleep(sec)
@@ -101,6 +119,8 @@ def main() -> int:
     with Tab() as t:
         t.send("Network.enable")
         t.send("Log.enable")
+        t.send("Page.enable")
+        t.send("Page.addScriptToEvaluateOnNewDocument", source=API_SHIM)
         for page in PAGES:
             t.events.clear()
             t.goto(base + page, wait=3)

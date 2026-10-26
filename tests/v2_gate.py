@@ -168,6 +168,10 @@ def preview_api_stub(ctx, base: str):
         if request.method == "GET" and request.url.split("?")[0].endswith("/api/feature-status"):
             return route.fulfill(status=200, headers=cors, content_type="application/json",
                                  body='{"accounts_enabled":false,"registration_enabled":false}')
+        if request.method == "GET" and request.url.split("?")[0].endswith("/api/products/status"):
+            # products.html asks this at load for its gated tile; "hidden" keeps the catalog static here
+            return route.fulfill(status=200, headers=cors, content_type="application/json",
+                                 body='{"pdf_tables":"hidden"}')
         return route.fulfill(status=404, headers=cors, content_type="application/json", body='{"error":"preview_stub"}')
     ctx.route(re.compile(r"^https://api\.ai-vibes\.ru/"), h)
 

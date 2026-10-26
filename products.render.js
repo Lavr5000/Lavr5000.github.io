@@ -1,81 +1,146 @@
-/* products.render.js — renders the catalog of products.html from window.AI_PRODUCTS.
+/* products.render.js — gated catalog tiles on products.html.
  *
- * Replaces the React app (products.app.js + assets/catalog.js): five rows of a static
- * page do not need a framework, and the page has to run under `default-src 'self'`
- * without inline scripts.
+ * Since the layout-v2 rebuild the catalog of products.html is static markup: every
+ * product WITHOUT a `gate` is rendered by the page itself and never waits for the
+ * network. This file handles only records that carry `gate` (a backend switch key,
+ * e.g. "pdf_tables"): they ship `visible: false` in products.js and are added to the
+ * catalog only after `GET <API_ORIGIN>/api/products/status` answers "public" for
+ * that gate. A network error, a non-200 answer or the 4 s timeout leaves the tile
+ * hidden — a hidden product must never break or delay the rest of the page.
  *
- * Data contract stays products.js, validated by scripts/validate_products.mjs — this
- * file only reads it. A record is shown when visible !== false; price and CTA appear
- * only for status "available", because everything else is not on sale yet and a price
- * next to it would read as a public offer.
+ * API_ORIGIN comes from vedomost.config.js, the same single source the order forms
+ * import, so the catalog and the forms can never drift apart. The CSP meta of
+ * products.html allows this origin in connect-src.
+ *
+ * Data contract stays products.js, validated by scripts/validate_products.mjs.
  */
+import { API_ORIGIN } from './vedomost.config.js?v=vedomost-v3-2026-10';
+
 (function (window, document) {
   'use strict';
 
-  var STATE_LABEL = {
-    available: 'Доступен',
-    soon: 'Скоро',
-    planned: 'В планах',
-    dev: 'В разработке'
-  };
+  var STATUS_URL = API_ORIGIN + '/api/products/status';
+  var STATUS_TIMEOUT_MS = 4000;
+
+  function fetchStatus() {
+    var controller = new AbortController();
+    var timer = setTimeout(function () { controller.abort(); }, STATUS_TIMEOUT_MS);
+    return fetch(STATUS_URL, { signal: controller.signal })
+      .then(function (res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      })
+      .finally(function () { clearTimeout(timer); });
+  }
 
   function formatPrice(value) {
     // "1490" -> "1 490 ₽"; the registry stores digits without a currency symbol
-    return String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₽';
+    return String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₽';
   }
 
-  function row(product) {
-    var available = product.status === 'available';
-    var url = available && product.cta && product.cta.url;
-    var el = document.createElement(url ? 'a' : 'div');
-    el.className = 'tool';
-    if (url) el.href = url;
+  // The same .card markup as the static tiles of products.html (site3.css)
+  function card(product) {
+    var el = document.createElement('article');
+    el.className = 'card';
+    el.setAttribute('data-product', product.id);
 
-    var name = document.createElement('span');
-    name.className = 'tool-name';
-    name.appendChild(document.createTextNode(product.title.ru));
-    if (product.tagline && product.tagline.ru) {
-      var sub = document.createElement('small');
-      sub.textContent = product.tagline.ru;
-      name.appendChild(sub);
-    }
+    var tag = document.createElement('span');
+    tag.className = 'tag';
+    tag.textContent = 'доступен';
+    el.appendChild(tag);
+
+    var name = document.createElement('h3');
+    name.textContent = product.title.ru;
     el.appendChild(name);
 
+    if (product.tagline && product.tagline.ru) {
+      var lead = document.createElement('p');
+      lead.textContent = product.tagline.ru;
+      el.appendChild(lead);
+    }
+
+    var bullets = document.createElement('ul');
+    bullets.className = 'bullets';
+    if (product.input && product.input.ru) {
+      var li = document.createElement('li');
+      li.textContent = 'Вход: ' + product.input.ru;
+      bullets.appendChild(li);
+    }
+    if (product.output && product.output.ru) {
+      var li2 = document.createElement('li');
+      li2.textContent = 'Выход: ' + product.output.ru;
+      bullets.appendChild(li2);
+    }
+    if (product.audience && product.audience.ru) {
+      var li3 = document.createElement('li');
+      li3.textContent = 'Кому: ' + product.audience.ru;
+      bullets.appendChild(li3);
+    }
+    el.appendChild(bullets);
+
+    var row = document.createElement('div');
+    row.className = 'card-row';
     var price = document.createElement('span');
-    price.className = 'price';
-    // не продаётся — цена не показывается (иначе читается как публичная оферта)
-    price.textContent = available ? formatPrice(product.price.ru) : '';
-    el.appendChild(price);
+    price.className = 'card-price';
+    price.textContent = formatPrice(product.price.ru);
+    row.appendChild(price);
 
-    var state = document.createElement('span');
-    state.className = 'tool-state' + (available ? ' on' : '');
-    state.textContent = STATE_LABEL[product.status] || product.status;
-    el.appendChild(state);
+    var cta = document.createElement('a');
+    cta.className = 'btn-pay';
+    cta.href = product.cta && product.cta.url ? product.cta.url : '#';
+    cta.textContent = 'Загрузить PDF';
+    row.appendChild(cta);
 
-    var arrow = document.createElement('i');
-    arrow.setAttribute('aria-hidden', 'true');
-    arrow.textContent = url ? '→' : '';
-    el.appendChild(arrow);
-
+    el.appendChild(row);
     return el;
   }
 
-  function render() {
-    var host = document.querySelector('#catalog');
-    var products = window.AI_PRODUCTS;
-    if (!host || !Array.isArray(products)) return;
+  function orderIn(registry, id) {
+    for (var i = 0; i < registry.length; i++) {
+      if (registry[i] && registry[i].id === id) return registry[i].order || 999;
+    }
+    return 999;
+  }
 
-    products
-      .filter(function (p) {
-        return p && p.visible !== false && p.id && p.title && p.title.ru && p.price && p.price.ru;
+  // Insert by registry order among the static [data-product] tiles: before the first
+  // tile whose product has a higher order, else at the end of the grid.
+  function insertByOrder(host, el, registry, order) {
+    var tiles = host.querySelectorAll('[data-product]');
+    for (var i = 0; i < tiles.length; i++) {
+      var id = tiles[i].getAttribute('data-product');
+      if (orderIn(registry, id) > order) {
+        host.insertBefore(el, tiles[i]);
+        return;
+      }
+    }
+    host.appendChild(el);
+  }
+
+  function activate() {
+    var registry = window.AI_PRODUCTS;
+    var host = document.querySelector('#catalog-section .cards');
+    if (!Array.isArray(registry) || !host) return;
+
+    var gated = registry.filter(function (p) {
+      return p && p.gate && p.id && p.title && p.title.ru
+        && p.price && p.price.ru && p.cta && p.cta.url;
+    });
+    if (!gated.length) return;
+
+    fetchStatus()
+      .then(function (status) {
+        gated.forEach(function (p) {
+          if (status && status[p.gate] === 'public') {
+            insertByOrder(host, card(p), registry, p.order || 999);
+          }
+        });
       })
-      .sort(function (a, b) { return (a.order || 999) - (b.order || 999); })
-      .forEach(function (p) { host.appendChild(row(p)); });
+      .catch(function () { /* offline / non-200 / timeout — the tile stays hidden */ });
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', render);
+    document.addEventListener('DOMContentLoaded', activate);
   } else {
-    render();
+    activate();
   }
 })(window, document);

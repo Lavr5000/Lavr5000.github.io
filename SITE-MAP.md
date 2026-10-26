@@ -8,9 +8,10 @@ Public-safe navigation map for the GitHub Pages site. Links use repository filen
 - [services/index.html](services/index.html) - tariffs page at the stable public URL `/services/`, the address publications link to. Self-canonical. Two tariffs as `article[data-tariff]` cards — «Старт» (`#service-5`, 7 500 ₽, registry id `setup-start`) and VIP (`#vip`, 45 000 ₽, `setup-vip`) — each with an `a[data-pay]` button, a comparison table (`#compare`), monthly support (`#support`, 5 000 ₽, an `a[data-request]` link, id `support-monthly`), the process (`#process`) and `#contact`. Anchors `#service-1`…`#service-4` and `#pokaz` of the old page stay as empty `<span class="anchor">`s so that published links still land on the page. Payment: see Tariff buttons and payment below. Styles [assets/site3.css](assets/site3.css) + [assets/chrome.css](assets/chrome.css).
 - [about.html](about.html) - public "about" page for visitors who want context about the project, author, or service positioning. Static page on [assets/site2.css](assets/site2.css); the AI-setup price lives on `/services/` only, and the page is Russian-only. The «Системы» section lists eight projects (P-01…P-08); Transkribator was inserted as P-02 on 02.09.2026 and the cards below it shifted by one, ids `#p-02`…`#p-08` with them. Together with the blog, the legal pages and the forms it stays on `site2.css` (see Layout v2); only the shared header, footer and build id come from `build_chrome.py`.
 - [apps/transkribator/](apps/transkribator/) - public page for the free Windows dictation app Transkribator: what it does, install steps (including the SmartScreen notice), requirements, an honest note on recognition quality, and the download button pointing at the GitHub release `releases/latest`. Static page on [assets/site2.css](assets/site2.css) + [assets/legal2.css](assets/legal2.css) + [assets/blog.css](assets/blog.css); no version or archive size in the copy (they change with every release), no form and no API call. Self-canonical (`/apps/transkribator/`), absolute asset paths so the deep URL resolves.
-- [products.html](products.html) - «Для строителей» (layout v2): the two self-service PDF tools rendered from [products.js](products.js) by [products.render.js](products.render.js) (price and CTA only for records with `status: available`) plus the two document services as `article.card` (`#service-3` extract data from drawings, `#service-4` as-built documentation package; price in `.card-price`, `a[data-request]` links that open the request dialog). Self-canonical (`/products.html`). Styles [assets/site3.css](assets/site3.css) + [assets/chrome.css](assets/chrome.css).
+- [products.html](products.html) - «Для строителей» (layout v2): the sellable self-service PDF tools as static `article.card` markup (`#catalog-section .cards`, one per available product, keyed `data-product`) plus the two document services (`#service-3` extract data from drawings, `#service-4` as-built documentation package; price in `.card-price`, `a[data-request]` links that open the request dialog). A registry record with a `gate` (see Products Catalog below) is not in the static markup: [products.js](products.js) + [products.render.js](products.render.js) add its card only after `GET /api/products/status` answers `public` for the gate (page CSP `connect-src` allows `https://api.ai-vibes.ru`). Self-canonical (`/products.html`). Styles [assets/site3.css](assets/site3.css) + [assets/chrome.css](assets/chrome.css).
 - [vedomost.html](vedomost.html) - public order form for users who want to submit a PDF ведомость for processing.
 - [nakladnaya.html](nakladnaya.html) - public order form for printed M-15 delivery-note scans: one PDF upload, email, product-scoped consent, payment, OCR, and Excel delivery.
+- [pdf-tables.html](pdf-tables.html) - public order page for the «Таблицы из PDF» service (499 ₽, gated): one PDF upload (up to 25 sheets, vector tables or a text layer — not a scan), email, product-scoped consent, server pre-check before payment, payment, two-read verified extraction, Excel delivery. `noindex` and out of `sitemap.xml` / `llms.txt` until the product goes public; the catalog tile on products.html is likewise hidden until `pdf_tables: public`. Files: [pdf-tables.js](pdf-tables.js), [pdf-tables.config.js](pdf-tables.config.js).
 - [rate.html](rate.html) - public feedback page for users who received a result and want to rate whether it worked for them. It is opened only from the link in the result e-mail, so since 2026-10-11 it carries `noindex` and is not listed in `sitemap.xml` or `llms.txt` (15 pages in the sitemap).
 - [spasibo/index.html](spasibo/index.html) - the page a customer returns to after the bank page (`/spasibo/`). `noindex`, no Metrika counter, not in `sitemap.xml` or `llms.txt`. Three blocks, one visible at a time: `#spasibo-ok` (query `?n=AV-XXXXXXXX`, the order number shown as text), `#spasibo-fail` (`?fail=1`, a «try again» link to `/#tarify`) and `#spasibo-plain` (no valid number). The wording says that the bank is still checking the payment — the page never claims that the payment went through. Behaviour: [assets/spasibo.js](assets/spasibo.js). With the payer's return parameter `r` the page also asks `GET /api/rieltor/handoff` and shows, in a fourth block `#spasibo-handoff`, the personal bot link (max.ru only) and the code for any handoff product (texts per `product`, Start has its own).
 - [blog/](blog/index.html) - the article list and the articles `blog/<slug>/index.html` (five at the time of writing). They stay on `site2.css` + `legal2.css` + `blog.css` with the shared header and footer; every article ends with the «Дальше» block between the markers `<!-- v2:next:begin -->` / `<!-- v2:next:end -->` (links to `/services/`, `/products.html` and the two channels), styles at the end of [assets/blog.css](assets/blog.css).
@@ -66,17 +67,11 @@ The rating flow is for product feedback only. It should not expose private proce
 
 ### Products Catalog
 
-Files: [products.html](products.html), [products.js](products.js), [products.render.js](products.render.js)
+Files: [products.html](products.html), [products.js](products.js), [products.render.js](products.render.js), [scripts/validate_products.mjs](scripts/validate_products.mjs)
 
-The products page is a public append-only catalog. Product data is maintained as a registry, and each registered product renders as a tile on [products.html](products.html).
+The products page is a public append-only catalog. The tiles of the sellable products are static `article.card` markup in [products.html](products.html); [products.js](products.js) is the registry — the single source of truth, validated by `node scripts/validate_products.mjs` with the record count snapshotted in `.github/products-count.txt` — and keeps every product, including the ones that only appear in the «Готовятся» line and never get a card.
 
-Typical tile rendering includes:
-
-- product name or title;
-- short public description;
-- visible status, price, or mode if the registry provides it;
-- link or action target for the product;
-- any public badges or labels defined by the registry.
+A record may carry a `gate`: a snake_case key of a backend switch. Such a record ships `visible: false` and is absent from the static markup; on page load [products.render.js](products.render.js) asks `GET <API_ORIGIN>/api/products/status` (`API_ORIGIN` imported from [vedomost.config.js](vedomost.config.js), the same origin the order forms use; allowed in the page CSP `connect-src`) and adds the card to `#catalog-section .cards` at its `order` position only when the answer for the gate is `"public"`. A network error, a non-200 answer or the 4 s timeout leaves the tile hidden — the static catalog never waits for the request. Currently gated: `pdf_tables` → [pdf-tables.html](pdf-tables.html) (order 70, 499 ₽, `tests/products_tile_check.py`).
 
 New products should be added by appending to the existing registry structure rather than rewriting previous entries, so old public links and catalog behavior stay stable.
 
@@ -98,6 +93,18 @@ Public form fields and ids:
 - `email` - email address where the result is delivered.
 - `consent` - required OCR consent checkbox for external OpenRouter processing.
 - `website` - hidden honeypot field intended to remain empty for real users.
+
+### PDF Tables Flow («Таблицы из PDF», gated)
+
+Files: [pdf-tables.html](pdf-tables.html), [pdf-tables.js](pdf-tables.js), [pdf-tables.config.js](pdf-tables.config.js), [tests/pdf_tables_check.py](tests/pdf_tables_check.py)
+
+User-visible flow (consent → order → upload → pre-check → pay 499 → status):
+
+1. The user opens [pdf-tables.html](pdf-tables.html) — from the catalog tile, itself hidden until the backend switch `pdf_tables` answers `public` (see Products Catalog above).
+2. The user accepts the required consent (`pdf-tables-v1-2026-10`: sheets go to cloud recognition via OpenRouter only to build the result, only tables that passed the automatic check are delivered, full refund when none passed), enters an email and uploads one PDF (up to 25 sheets, vector tables or a text layer — not a scan).
+3. The client creates the order; the server pre-checks the file BEFORE any payment — a file that fails the pre-check never gets a payment link.
+4. Pre-check passed → the «Оплатить 499 ₽» button opens the bank page; on return the page resumes by the order token saved in sessionStorage.
+5. Status ladder: проверка → оплата → извлечение → готово; the Excel with the verified tables and the note on what was not delivered and why arrives by email. Zero verified tables, a technical failure or a missed deadline refunds the payment automatically.
 
 ### Legal Pages
 
