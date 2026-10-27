@@ -78,7 +78,7 @@ window.AI_SERVICES = [
     price: { ru: "7500" },
     pricingModel: "fixed",
     priceLabel: { ru: "7 500 ₽" },
-    unit:  { ru: "одно рабочее место — компьютер и телефон одного Клиента" },
+    unit:  { ru: "одно рабочее место — компьютер одного Клиента" },
   },
   {
     id: "setup-vip",
