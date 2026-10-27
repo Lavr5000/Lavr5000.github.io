@@ -242,9 +242,10 @@ window.USLUGI_CATALOG = {
    "version": "0"
   },
   {
-   "allow_live": false,
-   "decision": "2026-10-25 14:37",
+   "allow_live": true,
+   "decision": "2026-10-26 16:57",
    "deliver_hours": 24,
+   "disclaimer": "Пришлите 4–6 фото комнат без людей и документов в кадре. Срок готовности: 24 ч. Это визуализация, а не фото готового ремонта. В комнате без окон модель размещает картину или предмет интерьера там, где могло бы быть окно. Так задумано.",
    "enabled": false,
    "id": "foto-plan",
    "input_deadline_h": 72,
@@ -252,7 +253,7 @@ window.USLUGI_CATALOG = {
     {
      "key": "photos",
      "kind": "file",
-     "prompt": "Фото комнат: от 4 до 6 снимков.",
+     "prompt": "Фото комнат без людей и документов в кадре, 4–6 снимков.",
      "required": true,
      "validate": {
       "count": [
@@ -287,35 +288,16 @@ window.USLUGI_CATALOG = {
        "loft"
       ]
      }
-    },
-    {
-     "key": "plans",
-     "kind": "file",
-     "prompt": "Планировка: 1–2 файла (схема БТИ или фото плана).",
-     "required": true,
-     "validate": {
-      "count": [
-       1,
-       2
-      ],
-      "ext": [
-       "pdf",
-       "jpg",
-       "jpeg",
-       "png"
-      ],
-      "max_mb": 20
-     }
     }
    ],
    "precheck": [],
-   "price_kop": 1000,
-   "price_label": "10 ₽",
+   "price_kop": 50000,
+   "price_label": "500 ₽",
    "result_format": "zip",
    "review_mode": "auto",
    "skill": "foto-posle-remonta",
-   "title": "Визуализация ремонта по фото и поэтажный план",
-   "version": "0"
+   "title": "Визуализация ремонта по фото",
+   "version": "1"
   },
   {
    "allow_live": false,
@@ -433,7 +415,7 @@ window.USLUGI_CATALOG = {
    "version": "0"
   }
  ],
- "sha256": "0396a196a8091ff3c21382848554dfd9427865db5f93f119fceb8338a775b40b",
+ "sha256": "2387d4c90c634b8280ac7983c30e2ff76850f49e0489e8a4e071e18984180fdc",
  "subscription": {
   "decision": "2026-10-25 14:37",
   "id": "setup-rieltor",
@@ -443,7 +425,7 @@ window.USLUGI_CATALOG = {
   "title": "Настройка помощника риэлтора на одном рабочем месте",
   "url": "/services/#service-rieltor"
  },
- "version": "2026-10-26.1"
+ "version": "2026-10-26.2"
 };
 window.USLUGI_FORMAT_PRICE = function (kop) {
   if (typeof kop !== "number" || !Number.isInteger(kop)) { throw new TypeError("price must be an integer number of kopecks"); }
