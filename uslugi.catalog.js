@@ -243,10 +243,13 @@ window.USLUGI_CATALOG = {
   },
   {
    "allow_live": true,
-   "decision": "2026-10-26 16:57",
+   "decision": "2026-10-25 14:37",
    "deliver_hours": 24,
    "disclaimer": "Пришлите 4–6 фото комнат без людей и документов в кадре. Срок готовности: 24 ч. Это визуализация, а не фото готового ремонта. В комнате без окон модель размещает картину или предмет интерьера там, где могло бы быть окно. Так задумано.",
-   "enabled": false,
+   "enabled": true,
+   "evidence": {
+    "owner_override": "2026-10-27 17:45"
+   },
    "id": "foto-plan",
    "input_deadline_h": 72,
    "inputs": [
@@ -291,8 +294,8 @@ window.USLUGI_CATALOG = {
     }
    ],
    "precheck": [],
-   "price_kop": 50000,
-   "price_label": "500 ₽",
+   "price_kop": 1000,
+   "price_label": "10 ₽",
    "result_format": "zip",
    "review_mode": "auto",
    "skill": "foto-posle-remonta",
@@ -415,7 +418,7 @@ window.USLUGI_CATALOG = {
    "version": "0"
   }
  ],
- "sha256": "2387d4c90c634b8280ac7983c30e2ff76850f49e0489e8a4e071e18984180fdc",
+ "sha256": "c36f3f9e17a50ba275440518bc5fea41f6a4f6b24d908316fae249d8afcbf1b8",
  "subscription": {
   "decision": "2026-10-25 14:37",
   "id": "setup-rieltor",
@@ -425,7 +428,7 @@ window.USLUGI_CATALOG = {
   "title": "Настройка помощника риэлтора на одном рабочем месте",
   "url": "/services/#service-rieltor"
  },
- "version": "2026-10-26.2"
+ "version": "2026-10-27.1"
 };
 window.USLUGI_FORMAT_PRICE = function (kop) {
   if (typeof kop !== "number" || !Number.isInteger(kop)) { throw new TypeError("price must be an integer number of kopecks"); }
