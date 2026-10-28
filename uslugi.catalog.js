@@ -303,9 +303,10 @@ window.USLUGI_CATALOG = {
    "version": "1"
   },
   {
-   "allow_live": false,
+   "allow_live": true,
    "decision": "2026-10-25 14:37",
    "deliver_hours": 24,
+   "disclaimer": "Пришлите выписку ЕГРН и опишите стороны сделки и расчёты. Срок готовности: 24 ч. Это проект договора, не юридическая консультация; паспортные данные вписываются при подписании. Итоговую проверку документов осуществляет юрист.",
    "enabled": false,
    "id": "dkp",
    "input_deadline_h": 72,
@@ -332,7 +333,7 @@ window.USLUGI_CATALOG = {
     {
      "key": "storony",
      "kind": "text",
-     "prompt": "Стороны сделки: кто продаёт и кто покупает.",
+     "prompt": "Стороны сделки: ФИО продавцов и покупателей полностью, доли; кто по доверенности (номер и дата).",
      "required": true,
      "validate": {
       "max_len": 1000,
@@ -352,7 +353,7 @@ window.USLUGI_CATALOG = {
     {
      "key": "raschety",
      "kind": "text",
-     "prompt": "Порядок расчётов: задаток, аванс, ячейка, аккредитив.",
+     "prompt": "Цена и порядок расчётов: задаток или аванс (сколько и когда), аккредитив / СБР / ячейка, ипотека покупателя, маткапитал.",
      "required": true,
      "validate": {
       "max_len": 1000,
@@ -363,11 +364,11 @@ window.USLUGI_CATALOG = {
    "precheck": [],
    "price_kop": 1000,
    "price_label": "10 ₽",
-   "result_format": "docx",
+   "result_format": "zip",
    "review_mode": "auto",
    "skill": "dokument-po-shablonu",
    "title": "Договор купли-продажи, расписка и акт приёма-передачи",
-   "version": "0"
+   "version": "1"
   },
   {
    "allow_live": false,
@@ -418,7 +419,7 @@ window.USLUGI_CATALOG = {
    "version": "0"
   }
  ],
- "sha256": "c36f3f9e17a50ba275440518bc5fea41f6a4f6b24d908316fae249d8afcbf1b8",
+ "sha256": "7b13a99847e9c9e588fd6f7e9a42acd880df9001ffd3025feadaf31ff2c9570a",
  "subscription": {
   "decision": "2026-10-25 14:37",
   "id": "setup-rieltor",
@@ -428,7 +429,7 @@ window.USLUGI_CATALOG = {
   "title": "Настройка помощника риэлтора на одном рабочем месте",
   "url": "/services/#service-rieltor"
  },
- "version": "2026-10-27.1"
+ "version": "2026-10-28.1"
 };
 window.USLUGI_FORMAT_PRICE = function (kop) {
   if (typeof kop !== "number" || !Number.isInteger(kop)) { throw new TypeError("price must be an integer number of kopecks"); }
