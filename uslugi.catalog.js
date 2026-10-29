@@ -307,7 +307,10 @@ window.USLUGI_CATALOG = {
    "decision": "2026-10-25 14:37",
    "deliver_hours": 24,
    "disclaimer": "Пришлите выписку ЕГРН и опишите стороны сделки и расчёты. Срок готовности: 24 ч. Это проект договора, не юридическая консультация; паспортные данные вписываются при подписании. Итоговую проверку документов осуществляет юрист.",
-   "enabled": false,
+   "enabled": true,
+   "evidence": {
+    "dod3": "C:\\Users\\user\\.claude\\plans\\rieltor-pomoshnik-2026-10\\linejka-2026-10-25\\D7\\dod3-dkp.json"
+   },
    "id": "dkp",
    "input_deadline_h": 72,
    "inputs": [
@@ -419,7 +422,7 @@ window.USLUGI_CATALOG = {
    "version": "0"
   }
  ],
- "sha256": "7b13a99847e9c9e588fd6f7e9a42acd880df9001ffd3025feadaf31ff2c9570a",
+ "sha256": "aa33f4435d7e00abac917efb9690860e0dca11bc0ca30335ed303dbd7e23f3c4",
  "subscription": {
   "decision": "2026-10-25 14:37",
   "id": "setup-rieltor",
@@ -429,7 +432,7 @@ window.USLUGI_CATALOG = {
   "title": "Настройка помощника риэлтора на одном рабочем месте",
   "url": "/services/#service-rieltor"
  },
- "version": "2026-10-28.1"
+ "version": "2026-10-29.1"
 };
 window.USLUGI_FORMAT_PRICE = function (kop) {
   if (typeof kop !== "number" || !Number.isInteger(kop)) { throw new TypeError("price must be an integer number of kopecks"); }
