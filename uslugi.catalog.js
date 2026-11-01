@@ -160,6 +160,7 @@ window.USLUGI_CATALOG = {
        "jpeg",
        "png"
       ],
+      "formats_v2": "any",
       "max_mb": 20
      }
     },
@@ -179,6 +180,7 @@ window.USLUGI_CATALOG = {
        "jpeg",
        "png"
       ],
+      "formats_v2": "any",
       "max_mb": 20
      }
     },
@@ -198,6 +200,7 @@ window.USLUGI_CATALOG = {
        "jpeg",
        "png"
       ],
+      "formats_v2": "any",
       "max_mb": 20
      }
     },
@@ -217,6 +220,7 @@ window.USLUGI_CATALOG = {
        "jpeg",
        "png"
       ],
+      "formats_v2": "any",
       "max_mb": 20,
       "pd_scan": true
      }
@@ -269,6 +273,7 @@ window.USLUGI_CATALOG = {
        "png",
        "webp"
       ],
+      "formats_v2": "image",
       "max_mb": 20
      }
     },
@@ -330,6 +335,7 @@ window.USLUGI_CATALOG = {
        "jpeg",
        "png"
       ],
+      "formats_v2": "any",
       "max_mb": 20
      }
     },
@@ -422,7 +428,7 @@ window.USLUGI_CATALOG = {
    "version": "0"
   }
  ],
- "sha256": "aa33f4435d7e00abac917efb9690860e0dca11bc0ca30335ed303dbd7e23f3c4",
+ "sha256": "de173be090a95a4c8ce1f0fd12759c5470c0592ecc292ca92f8c178be13f88a8",
  "subscription": {
   "decision": "2026-10-25 14:37",
   "id": "setup-rieltor",
@@ -432,7 +438,7 @@ window.USLUGI_CATALOG = {
   "title": "Настройка помощника риэлтора на одном рабочем месте",
   "url": "/services/#service-rieltor"
  },
- "version": "2026-10-29.1"
+ "version": "2026-11-01.1"
 };
 window.USLUGI_FORMAT_PRICE = function (kop) {
   if (typeof kop !== "number" || !Number.isInteger(kop)) { throw new TypeError("price must be an integer number of kopecks"); }
