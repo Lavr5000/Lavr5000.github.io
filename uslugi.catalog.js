@@ -28,6 +28,10 @@ window.USLUGI_CATALOG = {
  ],
  "comment": "Canonical catalog of one-off services for realtors. Prices in kopecks; final prices are the owner's decision. Copies for the backend and the site are made by catalog/gen_catalog.py only (never edited by hand).",
  "currency": "RUB",
+ "params": {
+  "batch_quiet_s": 10,
+  "late_file_mode": "ask"
+ },
  "services": [
   {
    "allow_live": true,
@@ -428,7 +432,7 @@ window.USLUGI_CATALOG = {
    "version": "0"
   }
  ],
- "sha256": "de173be090a95a4c8ce1f0fd12759c5470c0592ecc292ca92f8c178be13f88a8",
+ "sha256": "5f8109f986c9df592fd826d9554cd5cfaa4feea60e776ca1d8a7c4288ede03fc",
  "subscription": {
   "decision": "2026-10-25 14:37",
   "id": "setup-rieltor",
