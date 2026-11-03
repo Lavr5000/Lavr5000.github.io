@@ -124,6 +124,100 @@ window.USLUGI_CATALOG = {
      }
     }
    ],
+   "inputs_v2": [
+    {
+     "key": "type",
+     "kind": "choice",
+     "prompt": "Что оцениваем?",
+     "required": true,
+     "validate": {
+      "labels": {
+       "apartment": "Апартаменты",
+       "commercial": "Коммерческая",
+       "cottage": "Коттедж",
+       "dacha": "Дача",
+       "flat": "Квартира",
+       "house": "Дом",
+       "land": "Земельный участок",
+       "room": "Комната",
+       "townhouse": "Таунхаус"
+      },
+      "options": [
+       "house",
+       "dacha",
+       "cottage",
+       "townhouse",
+       "land",
+       "flat",
+       "apartment",
+       "room",
+       "commercial"
+      ]
+     }
+    },
+    {
+     "key": "egrn",
+     "kind": "file",
+     "prompt": "Выписка ЕГРН, если есть",
+     "required": false,
+     "validate": {
+      "count": [
+       0,
+       3
+      ],
+      "ext": [
+       "pdf",
+       "xml",
+       "jpg",
+       "jpeg",
+       "png"
+      ],
+      "formats_v2": "any",
+      "max_mb": 20
+     }
+    },
+    {
+     "key": "address",
+     "kind": "text",
+     "prompt": "Адрес объекта: улица и дом (без телефонов и паспортных данных).",
+     "required": false,
+     "validate": {
+      "max_len": 200,
+      "pd_scan": true
+     }
+    },
+    {
+     "key": "area",
+     "kind": "number",
+     "prompt": "Общая площадь, м²?",
+     "required": false,
+     "validate": {
+      "max": 1000,
+      "min": 8
+     }
+    },
+    {
+     "key": "floor",
+     "kind": "text",
+     "prompt": "Этаж и этажность дома, например 5/9 (для дома — число этажей).",
+     "required": false,
+     "validate": {
+      "pattern": "^\\d{1,3}(/\\d{1,3})?$"
+     }
+    },
+    {
+     "key": "seller_price",
+     "kind": "number",
+     "prompt": "Цена продавца в рублях, если есть (или «нет»).",
+     "required": false,
+     "validate": {
+      "integer": true,
+      "max": 10000000000,
+      "min": 100000,
+      "unit": "rub"
+     }
+    }
+   ],
    "precheck": [
     "city",
     "type"
@@ -258,6 +352,7 @@ window.USLUGI_CATALOG = {
    "evidence": {
     "owner_override": "2026-10-27 17:45"
    },
+   "foto_min_px": 0,
    "id": "foto-plan",
    "input_deadline_h": 72,
    "inputs": [
@@ -287,6 +382,12 @@ window.USLUGI_CATALOG = {
      "prompt": "Стиль ремонта.",
      "required": true,
      "validate": {
+      "descriptions": {
+       "classic": "тёплая гамма, лепнина и классическая мебель",
+       "loft": "кирпич, бетон, металл и открытые коммуникации",
+       "modern": "спокойные тона, прямые линии и минимум декора",
+       "scandi": "светлое дерево, белый с серым и много света"
+      },
       "labels": {
        "classic": "Классический",
        "loft": "Лофт",
@@ -432,7 +533,7 @@ window.USLUGI_CATALOG = {
    "version": "0"
   }
  ],
- "sha256": "5f8109f986c9df592fd826d9554cd5cfaa4feea60e776ca1d8a7c4288ede03fc",
+ "sha256": "3a8939d58e7fc40f53230187da76db0adfc2672bdf53a3086737ace40cd3f727",
  "subscription": {
   "decision": "2026-10-25 14:37",
   "id": "setup-rieltor",
