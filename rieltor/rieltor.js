@@ -12,7 +12,7 @@
   if (!root || !cat || typeof fmt !== 'function' || !cat.subscription || !Array.isArray(cat.services) || !Array.isArray(cat.backlog)) return;
 
   var API = 'https://api.ai-vibes.ru';
-  var CONSENT_VERSION = 'uslugi-site-v2-2026-10';   // keep in sync with the backend consent text
+  var CONSENT_VERSION = 'uslugi-site-v3-2026-11';   // keep in sync with the backend consent text
   /* D-1: the tile copy is fixed by the owner decision (for-linejka.md, block 1); only the price still comes from the catalog */
   var SUB_TITLE = 'Помощник риэлтора на вашем компьютере';
   var SUB_LEAD = 'Рутина по объекту за минуты: справка о цене, проверка документов, договоры.';
