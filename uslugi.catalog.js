@@ -347,7 +347,7 @@ window.USLUGI_CATALOG = {
    "allow_live": true,
    "decision": "2026-10-25 14:37",
    "deliver_hours": 24,
-   "disclaimer": "Пришлите 4–6 фото комнат без людей и документов в кадре. Срок готовности: 24 ч. Это визуализация, а не фото готового ремонта. В комнате без окон модель размещает картину или предмет интерьера там, где могло бы быть окно. Так задумано.",
+   "disclaimer": "Пришлите 4–6 фото комнат без людей и документов в кадре. По желанию добавьте эскиз планировки от руки (фото или PDF): по нему нарисуем аккуратный план квартиры с размерами. Срок готовности: 24 ч. Это визуализация, а не фото готового ремонта. В комнате без окон модель размещает картину или предмет интерьера там, где могло бы быть окно. Так задумано.",
    "enabled": true,
    "evidence": {
     "owner_override": "2026-10-27 17:45"
@@ -400,6 +400,28 @@ window.USLUGI_CATALOG = {
        "classic",
        "loft"
       ]
+     }
+    },
+    {
+     "flag": "plan_enabled",
+     "key": "plans",
+     "kind": "file",
+     "prompt": "Нарисуйте от руки план квартиры: подпишите комнаты и длину каждой стены в метрах. Сфотографируйте лист или пришлите PDF — до 2 файлов. Эскиза нет — напишите «нет».",
+     "required": false,
+     "validate": {
+      "count": [
+       1,
+       2
+      ],
+      "ext": [
+       "jpg",
+       "jpeg",
+       "png",
+       "webp",
+       "pdf"
+      ],
+      "formats_v2": "image_pdf",
+      "max_mb": 20
      }
     }
    ],
@@ -533,7 +555,7 @@ window.USLUGI_CATALOG = {
    "version": "0"
   }
  ],
- "sha256": "3a8939d58e7fc40f53230187da76db0adfc2672bdf53a3086737ace40cd3f727",
+ "sha256": "78451b8a43d7d28924ef9928669c629661d712c47268d6720119abd8a1e91bcc",
  "subscription": {
   "decision": "2026-10-25 14:37",
   "id": "setup-rieltor",
@@ -543,7 +565,7 @@ window.USLUGI_CATALOG = {
   "title": "Настройка помощника риэлтора на одном рабочем месте",
   "url": "/services/#service-rieltor"
  },
- "version": "2026-11-01.1"
+ "version": "2026-11-08.1"
 };
 window.USLUGI_FORMAT_PRICE = function (kop) {
   if (typeof kop !== "number" || !Number.isInteger(kop)) { throw new TypeError("price must be an integer number of kopecks"); }
