@@ -431,7 +431,7 @@ window.USLUGI_CATALOG = {
    "result_format": "zip",
    "review_mode": "auto",
    "skill": "foto-posle-remonta",
-   "title": "Визуализация ремонта по фото",
+   "title": "Фото до/после и планировка",
    "version": "1"
   },
   {
@@ -503,7 +503,99 @@ window.USLUGI_CATALOG = {
    "result_format": "zip",
    "review_mode": "auto",
    "skill": "dokument-po-shablonu",
-   "title": "Договор купли-продажи, расписка и акт приёма-передачи",
+   "title": "Договор купли-продажи, акт приёма-передачи и расписка",
+   "version": "1"
+  },
+  {
+   "allow_live": true,
+   "decision": "2026-10-25 14:37",
+   "deliver_hours": 24,
+   "disclaimer": "Пришлите выписку ЕГРН, опишите стороны, расчёты и задаток, дату основного договора и что остаётся в квартире. Срок готовности: 24 ч. Это проект предварительного договора, не юридическая консультация; паспортные данные вписываются при подписании. Итоговую проверку документов осуществляет юрист.",
+   "enabled": true,
+   "evidence": {
+    "dod3": "C:\\Users\\user\\.claude\\plans\\rieltor-pomoshnik-2026-10\\inna-zamechaniya-2026-11-08\\dod3-predv-dkp.json"
+   },
+   "id": "predv-dkp",
+   "input_deadline_h": 72,
+   "inputs": [
+    {
+     "key": "egrn",
+     "kind": "file",
+     "prompt": "Выписка ЕГРН на объект.",
+     "required": true,
+     "validate": {
+      "count": [
+       1,
+       5
+      ],
+      "ext": [
+       "pdf",
+       "jpg",
+       "jpeg",
+       "png"
+      ],
+      "formats_v2": "any",
+      "max_mb": 20
+     }
+    },
+    {
+     "key": "storony",
+     "kind": "text",
+     "prompt": "Стороны сделки: ФИО продавцов и покупателей полностью, доли; кто по доверенности (номер и дата).",
+     "required": true,
+     "validate": {
+      "max_len": 1000,
+      "pd_scan": true
+     }
+    },
+    {
+     "key": "bank",
+     "kind": "text",
+     "prompt": "Банк и ипотека, если есть (или «без банка»).",
+     "required": true,
+     "validate": {
+      "max_len": 1000,
+      "pd_scan": true
+     }
+    },
+    {
+     "key": "raschety",
+     "kind": "text",
+     "prompt": "Цена и расчёты по основному договору: задаток (сколько и когда), аккредитив / СБР / ячейка, ипотека покупателя, маткапитал.",
+     "required": true,
+     "validate": {
+      "max_len": 1000,
+      "pd_scan": true
+     }
+    },
+    {
+     "key": "srok",
+     "kind": "text",
+     "prompt": "Когда подписать основной договор: дата, например до 15.12.2026.",
+     "required": true,
+     "validate": {
+      "max_len": 300,
+      "pd_scan": true
+     }
+    },
+    {
+     "key": "opis",
+     "kind": "text",
+     "prompt": "Что остаётся в квартире: мебель и техника через точку с запятой. Если ничего, напишите «нет».",
+     "required": true,
+     "validate": {
+      "max_len": 1500,
+      "pd_scan": true
+     }
+    }
+   ],
+   "precheck": [],
+   "price_kop": 1000,
+   "price_label": "10 ₽",
+   "result_format": "zip",
+   "review_mode": "auto",
+   "skill": "dokument-po-shablonu",
+   "title": "Предварительный договор, соглашение о задатке, расписка и опись имущества",
    "version": "1"
   },
   {
@@ -555,9 +647,10 @@ window.USLUGI_CATALOG = {
    "version": "0"
   }
  ],
- "sha256": "78451b8a43d7d28924ef9928669c629661d712c47268d6720119abd8a1e91bcc",
+ "sha256": "f5a9e87cbe997383efa9994ef1aea066074929dae55dac198f393500db5b64c9",
  "subscription": {
   "decision": "2026-10-25 14:37",
+  "enabled": false,
   "id": "setup-rieltor",
   "monthly_order_limit": 30,
   "price_kop": 1000,
@@ -565,7 +658,7 @@ window.USLUGI_CATALOG = {
   "title": "Настройка помощника риэлтора на одном рабочем месте",
   "url": "/services/#service-rieltor"
  },
- "version": "2026-11-08.1"
+ "version": "2026-11-08.2"
 };
 window.USLUGI_FORMAT_PRICE = function (kop) {
   if (typeof kop !== "number" || !Number.isInteger(kop)) { throw new TypeError("price must be an integer number of kopecks"); }

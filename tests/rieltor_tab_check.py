@@ -111,7 +111,10 @@ def flat(s: str) -> str:
 
 def expected_tiles(cat: dict) -> list[dict]:
     sub = cat["subscription"]
-    out = [dict(id=sub["id"], kind="subscription", enabled=True, title=sub["title"], price=sub["price_label"], href=sub["url"])]
+    sub_open = sub.get("enabled", True) is not False
+    sub_tile = dict(id=sub["id"], kind="subscription", enabled=sub_open, title=sub["title"],
+                    price=sub["price_label"] if sub_open else None, href=sub["url"] if sub_open else None)
+    out = [sub_tile] if sub_open else []
     for s in cat["services"]:
         out.append(dict(id=s["id"], kind="service", enabled=bool(s["enabled"]), title=s["title"],
                         price=s["price_label"] if s["enabled"] else None,
@@ -121,7 +124,13 @@ def expected_tiles(cat: dict) -> list[dict]:
         out.append(dict(id=b["id"], kind="bundle", enabled=bool(b["enabled"]), title=b["title"], price=None, href=None))
     for b in cat["backlog"]:
         out.append(dict(id=b["id"], kind="backlog", enabled=False, title=b["title"], price=None, href=None))
+    if not sub_open:                       # a closed subscription goes last, «скоро», no price, no link (Inna 2026-11-08)
+        out.append(sub_tile)
     return out
+
+
+def sub_open() -> bool:
+    return catalog()["subscription"].get("enabled", True) is not False
 
 
 class Fallback(HTMLParser):
@@ -199,7 +208,7 @@ def _(ctx):
     for it, e in zip(p.items, exp):
         assert flat(it["title"]) == flat(e["title"]), f"{e['id']}: title {it['title']!r}"
         assert (it["enabled"] == "1") == e["enabled"] or e["kind"] == "subscription", f"{e['id']}: enabled flag {it['enabled']!r}"
-        if e["kind"] == "subscription" or e["enabled"]:
+        if (e["kind"] == "subscription" and e["enabled"]) or e["enabled"]:
             assert it["price"] == e["price"], f"{e['id']}: price {it['price']!r} != {e['price']!r}"
             assert it["href"] == e["href"], f"{e['id']}: href {it['href']!r} != {e['href']!r}"
         else:
@@ -382,6 +391,10 @@ def _(ctx):
 @case("subscription.first_and_larger", browser=True)
 def _(ctx):
     t = tiles_of(View(ctx.br, ctx.base))
+    if not sub_open():                     # closed: the last tile, marked «скоро», nothing to buy
+        assert t and t[-1]["id"] == "setup-rieltor" and t[-1]["kind"] == "subscription", "a closed subscription is not last"
+        assert t[-1]["soon"] == "скоро" and t[-1]["enabled"] == "0", t[-1]
+        return
     assert t and t[0]["id"] == "setup-rieltor" and t[0]["kind"] == "subscription", "the subscription tile is not first"
     others = [x for x in t[1:] if x["w"] > 0]
     assert others, "no other tiles"
@@ -393,6 +406,10 @@ def _(ctx):
 @case("subscription.price_and_button", browser=True)
 def _(ctx):
     cat = catalog()
+    if not sub_open():
+        s = tiles_of(View(ctx.br, ctx.base))[-1]
+        assert s["price"] is None and not s["links"] and s["buttons"] == 0, f"a closed subscription sells: {s}"
+        return
     s = tiles_of(View(ctx.br, ctx.base))[0]
     assert flat(s["price"] or "") == flat(services_js_price("setup-rieltor")) == flat(cat["subscription"]["price_label"]), f"price {s['price']!r}"
     assert s["price"] == cat["subscription"]["price_label"], "tile price must be the catalog string byte for byte (NBSP)"

@@ -21,10 +21,10 @@
   var SUB_CAN = [
     'отчёт о цене по аналогам: три цены, Excel и Word для собственника;',
     'проверка чужого договора (купля-продажа, аренда, услуги) и письмо с замечаниями;',
-    'расписка, акт приёма-передачи, соглашение о задатке — из карточки объекта;',
+    'договор купли-продажи, предварительный договор, соглашение о задатке, расписка, акт и опись имущества — из карточки объекта;',
     'разбор выписки ЕГРН и список документов, которых не хватает для сделки;',
     'текст объявления для Авито и памятка, что вводить в поля Авито и ЦИАН;',
-    'визуализация ремонта по фото с подписью «визуализация».'
+    'фото до/после и планировка с подписью «визуализация».'
   ];
   var SUB_LIMITS = 'До 30 заказов в месяц. Пробного периода нет. Помощник не заменяет юриста и оценщика.';
   var SUB_BTN = 'Подключить';
@@ -166,7 +166,8 @@
     var frag = document.createDocumentFragment();
     var sub = cat.subscription;
     var subUrl = typeof sub.url === 'string' && sub.url.charAt(0) === '/' ? sub.url : '/services/';
-    var st = tile('subscription', sub.id, true, SUB_TITLE);
+    var subOpen = sub.enabled !== false;   // a closed subscription goes last, marked «скоро», with no price and no button
+    var st = tile('subscription', sub.id, subOpen, SUB_TITLE);
     var left = el('div', 'rl-sub-main');
     left.appendChild(el('p', 'rl-note rl-sub-lead', SUB_LEAD));
     left.appendChild(el('p', 'rl-note', SUB_ABOUT));
@@ -176,16 +177,20 @@
     left.appendChild(can);
     left.appendChild(el('p', 'rl-note rl-sub-limits', SUB_LIMITS));
     st.appendChild(left);
-    var body = el('div', 'rl-side');
-    var priceLine = el('p', 'rl-price-line');
-    priceLine.appendChild(el('span', 'rl-price', fmt(sub.price_kop)));   // stays byte for byte the catalog label
-    priceLine.appendChild(el('span', 'rl-unit', SUB_PER_MONTH));
-    body.appendChild(priceLine);
-    var sa = el('a', 'btn-pay rl-btn', SUB_BTN);
-    sa.setAttribute('href', subUrl);
-    body.appendChild(sa);
-    st.appendChild(body);
-    frag.appendChild(st);
+    if (subOpen) {
+      var body = el('div', 'rl-side');
+      var priceLine = el('p', 'rl-price-line');
+      priceLine.appendChild(el('span', 'rl-price', fmt(sub.price_kop)));   // stays byte for byte the catalog label
+      priceLine.appendChild(el('span', 'rl-unit', SUB_PER_MONTH));
+      body.appendChild(priceLine);
+      var sa = el('a', 'btn-pay rl-btn', SUB_BTN);
+      sa.setAttribute('href', subUrl);
+      body.appendChild(sa);
+      st.appendChild(body);
+      frag.appendChild(st);
+    } else {
+      soon(st);
+    }
 
     function botLink(id) {
       var href = String(cat.bot_link_prefix || '') + 'usl-' + id;
@@ -221,6 +226,7 @@
       soon(t);
       frag.appendChild(t);
     });
+    if (!subOpen) frag.appendChild(st);
     return frag;
   }
 
