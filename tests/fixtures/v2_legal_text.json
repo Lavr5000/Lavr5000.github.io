@@ -1,13 +1,13 @@
 {
- "generated": "2026-10-26",
+ "generated": "2026-11-11",
  "source": "https://ai-vibes.ru",
  "algorithm": "sha256(utf8(innerText of <main>; CRLF->LF; trailing spaces stripped per line; outer newlines stripped))",
  "pages": {
-  "/oferta.html": "e59888722bedf5767bd28e2801d59acee8bdd96731d58476fc94a4bdd9abf84b",
+  "/oferta.html": "ce7e65c2e62d868940b4fa050c226a3f3fc5ea7b94cc12b4a5b4beff05693ad5",
   "/privacy.html": "558022942db766c3c0006fd9d4c0fcabe4b20f0dfd218260e1e7e7efe2897903"
  },
  "chars": {
-  "/oferta.html": 60329,
+  "/oferta.html": 60854,
   "/privacy.html": 26623
  }
 }
