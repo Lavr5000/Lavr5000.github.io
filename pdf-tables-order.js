@@ -13,6 +13,50 @@ import {
   isValidPaymentUrl
 } from './pdf-tables.config.js?v=pdf-tables-v1-2026-10';
 
+// --- 13.11: one Idempotency-Key per form content until a final answer ---------------------------------
+// A network error / 5xx / timeout keeps the key, so the user's retry recovers the SAME order; 2xx or a 4xx
+// (except idempotency_in_progress) ends it; another form content gets a new key.
+const IDEM_STORE = 'aiv-order-idem';
+function newIdemKey() {
+  if (globalThis.crypto && crypto.randomUUID) return crypto.randomUUID();
+  const b = crypto.getRandomValues(new Uint8Array(16));
+  b[6] = (b[6] & 0x0f) | 0x40;
+  b[8] = (b[8] & 0x3f) | 0x80;
+  const h = Array.from(b, x => x.toString(16).padStart(2, '0')).join('');
+  return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`;
+}
+function idemKeyFor(fingerprint) {
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(IDEM_STORE) || 'null');
+    if (saved && saved.fp === fingerprint && saved.key) return saved.key;
+  } catch (_) { /* storage is optional */ }
+  const key = newIdemKey();
+  try { sessionStorage.setItem(IDEM_STORE, JSON.stringify({ fp: fingerprint, key })); } catch (_) { /* optional */ }
+  return key;
+}
+function idemSettled(err) {
+  // err undefined = success; err.status undefined = network/timeout -> keep the key for the retry
+  if (err && (!err.status || err.status >= 500 || err.errorCode === 'idempotency_in_progress')) return;
+  try { sessionStorage.removeItem(IDEM_STORE); } catch (_) { /* storage is optional */ }
+}
+// App errors are {error_code, message, retry_after}; nginx ones are {error: {code, message}} + Retry-After.
+function apiError(res, data, path = '') {
+  const code = data.error_code || (data.error && data.error.code) || '';
+  const wait = Number(data.retry_after || res.headers.get('Retry-After')) || 0;
+  const message = data.message || (data.error && data.error.message) || '';
+  let text = message || 'Ошибка запроса.';
+  if (res.status === 409 && code === 'order_duplicate') {
+    text = `Заявка уже отправлена. Подождите ${wait || 10} сек. и обновите страницу.`;
+  } else if (res.status === 429 && (code === 'rate_limited' || !message)) {
+    text = `Слишком много запросов. Повторите через ${wait || 30} сек.`;
+  } else if (res.status === 413 && !path.startsWith('/api/upload')) {
+    text = 'Слишком большой запрос. Сократите текст в полях формы.';
+  } else if (wait) {
+    text += ` Повторите через ${wait} сек.`;
+  }
+  return Object.assign(new Error(text), { status: res.status, errorCode: code, data });
+}
+
 const MAX_SIZE = 200 * 1024 * 1024;      // backend WEBINTAKE_MAX_FILE_SIZE_BYTES; the real limit is 25 sheets
 const POLL_MS = 5000;
 const MAX_POLL_ATTEMPTS = 240;           // 20 min of polling; past the cap the calm email notice shows
@@ -119,10 +163,7 @@ export function mountPdfTablesOrder(root) {
   async function request(path, options = {}) {
     const res = await fetch(`${API_ORIGIN}${path}`, options);
     const data = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      const wait = data.retry_after ? ` Повторите через ${data.retry_after} сек.` : '';
-      throw Object.assign(new Error(`${data.message || 'Ошибка запроса.'}${wait}`), { errorCode: data.error_code, data });
-    }
+    if (!res.ok) throw apiError(res, data, path);
     return data;
   }
 
@@ -296,16 +337,25 @@ export function mountPdfTablesOrder(root) {
       if (file.size > MAX_SIZE) throw new Error('Файл слишком большой. Нужен PDF до 25 листов.');
       if (await readMagic(file) !== '%PDF-') throw new Error('Это не PDF. Выберите файл PDF.');
       setMessage('Создаём заказ…', 'ok');
-      const order = await request('/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          product: 'pdf-tables',
-          consent_version: CONSENT_VERSION,
-          email: emailInput.value.trim(),
-          website: websiteInput ? websiteInput.value || '' : ''
-        })
-      });
+      const email = emailInput.value.trim();
+      const idemKey = idemKeyFor(JSON.stringify(['pdf-tables', email, file.name, file.size, file.lastModified]));
+      let order;
+      try {
+        order = await request('/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Idempotency-Key': idemKey },
+          body: JSON.stringify({
+            product: 'pdf-tables',
+            consent_version: CONSENT_VERSION,
+            email,
+            website: websiteInput ? websiteInput.value || '' : ''
+          })
+        });
+        idemSettled();
+      } catch (err) {
+        idemSettled(err);
+        throw err;
+      }
       if (!order.order_id || !order.order_token || !order.upload_token) {
         throw new Error('Не удалось создать заказ. Попробуйте ещё раз.');
       }
