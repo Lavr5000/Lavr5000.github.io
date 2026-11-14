@@ -30,6 +30,10 @@
   var SUB_BTN = 'Подключить';
   var SUB_PER_MONTH = 'в месяц';
   var PAY_NOTE = 'Оплатите на сайте и продолжите в боте либо сразу закажите в боте: бот сам проведёт по шагам и покажет согласие.';
+  /* The optional promo code: ?promo= on the page pre-fills the form field; the backend checks the code,
+   * the discounted amount is confirmed by the bank page (the button keeps the catalog price). */
+  var pm = /[?&]promo=([^&]*)/.exec(window.location.search || '');
+  var PROMO_PRESET = pm ? decodeURIComponent(pm[1].replace(/\+/g, '%20')) : '';
 
   function el(tag, cls, text) {
     var e = document.createElement(tag);
@@ -76,6 +80,24 @@
     email.required = true;
     email.autocomplete = 'email';
     emailLabel.appendChild(email);
+    var promoLabel = el('label', 'rl-pay-l');
+    promoLabel.appendChild(el('span', 'rl-pay-t', 'Промокод (если есть)'));
+    var promo = el('input', 'rl-pay-promo');
+    promo.type = 'text';
+    promo.name = 'promo';
+    promo.autocomplete = 'off';
+    promo.maxLength = 64;
+    if (PROMO_PRESET) promo.value = PROMO_PRESET;
+    promoLabel.appendChild(promo);
+    var promoHint = el('p', 'rl-pay-promo-hint');
+    promoHint.hidden = true;
+    function syncPromoHint() {
+      var on = promo.value.trim() !== '' && s.promo_price_kop;
+      promoHint.hidden = !on;
+      if (on) promoHint.textContent = 'С промокодом — ' + fmt(s.promo_price_kop) + '; итоговую сумму покажет банк.';
+    }
+    promo.addEventListener('input', syncPromoHint);
+    syncPromoHint();
     var checkLabel = el('label', 'rl-pay-l rl-pay-consent');
     var check = el('input', 'rl-pay-check');
     check.type = 'checkbox';
@@ -92,6 +114,8 @@
     var err = el('p', 'rl-pay-err');
     err.hidden = true;
     wrap.appendChild(emailLabel);
+    wrap.appendChild(promoLabel);
+    wrap.appendChild(promoHint);
     wrap.appendChild(checkLabel);
     wrap.appendChild(submit);
     wrap.appendChild(err);
@@ -113,12 +137,15 @@
         store.set('av-uslugi-key:' + s.id, key);
       }
       submit.disabled = true;
+      var body = { service: s.id, email: email.value.trim(), consent_version: CONSENT_VERSION };
+      var pc = promo.value.trim();
+      if (pc) body.promo = pc;
       var stop = window.AbortController ? new AbortController() : null;
       var timer = stop ? setTimeout(function () { stop.abort(); }, 15000) : null;
       fetch(API + '/api/uslugi-site/order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Idempotency-Key': key },
-        body: JSON.stringify({ service: s.id, email: email.value.trim(), consent_version: CONSENT_VERSION }),
+        body: JSON.stringify(body),
         signal: stop ? stop.signal : undefined
       }).then(function (res) {
         return res.json().then(function (j) { return { ok: res.ok, j: j }; });
