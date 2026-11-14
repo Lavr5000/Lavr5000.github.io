@@ -24,3 +24,7 @@ next-env.d.ts
 
 # local TLS material for the mock API (never publish)
 *.pem
+
+# d-snapshot shots (step D)
+evals/before-d/
+evals/after-d/
