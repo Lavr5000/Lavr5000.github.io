@@ -4,35 +4,8 @@
    светлыми «бумажными» разделами, где читают и принимают решение.
    Латунь — только главное действие. Шапка, подвал и окна — assets/chrome.css.
    ============================================================ */
-:root{
-  --ink:#0A111E;         /* тёмная сцена */
-  --ink-2:#121C2E;       /* приподнятая поверхность на тёмном */
-  --ink-3:#1B2942;
-  --paper:#F2EADD;       /* светлый раздел */
-  --paper-2:#E7DCCB;     /* карточка на светлом */
-  --sheet:#FFFDF8;       /* лист документа */
-  --on-ink:#F1F3F7;
-  --on-ink-2:#C2CBDA;
-  --on-paper:#101826;
-  --on-paper-2:#4E3F3A;
-  --brass:#D9A961;
-  --brass-2:#F0C888;
-  --brass-deep:#7A5418;  /* латунь для текста на светлом */
-  --ok:#256B4B;          /* «входит в цену» */
-  --line-ink:rgba(200,220,255,.16);
-  --line-paper:rgba(16,24,38,.16);
-
-  --display:'Prata','Times New Roman',serif;
-  --sans:'Golos Text','Segoe UI',system-ui,sans-serif;
-  --mono:'JetBrains Mono',ui-monospace,'Consolas',monospace;
-
-  --wrap:1200px;
-  --pad:clamp(16px,4vw,40px);
-  --gap:clamp(16px,2.4vw,28px);
-  --band:clamp(56px,8vw,112px);
-  --ease:cubic-bezier(.22,.61,.36,1);
-  color-scheme:dark;
-}
+/* D-2: палитра, шрифты и ритм — в assets/tokens.css (общий источник с site2/chrome). */
+:root{color-scheme:dark}
 *,*::before,*::after{box-sizing:border-box}
 [hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%}
@@ -48,10 +21,10 @@ p{margin:0}
 ul,ol{margin:0;padding:0;list-style:none}
 :focus-visible{outline:2px solid var(--brass-2);outline-offset:3px;border-radius:2px}
 .paper :focus-visible{outline-color:var(--brass-deep)}
-::selection{background:var(--brass);color:#0A111E}
+::selection{background:var(--brass);color:var(--ink)}
 .skip{
   position:fixed;left:16px;top:-100px;z-index:200;padding:14px 20px;
-  background:var(--brass);color:#0A111E;font-family:var(--mono);font-size:14px;
+  background:var(--brass);color:var(--ink);font-family:var(--mono);font-size:14px;
 }
 .skip:focus{top:12px}
 .wrap{max-width:var(--wrap);margin:0 auto;padding:0 20px;padding-inline:var(--pad)}
@@ -76,8 +49,8 @@ ul,ol{margin:0;padding:0;list-style:none}
 /* ---------- первый экран ---------- */
 .hero{
   background:
-    radial-gradient(900px 480px at 82% -10%, rgba(217,169,97,.16), transparent 60%),
-    radial-gradient(700px 500px at -10% 110%, rgba(40,70,120,.35), transparent 60%),
+    radial-gradient(900px 480px at 82% -10%, color-mix(in srgb, var(--brass) 16%, transparent), transparent 60%),
+    radial-gradient(700px 500px at -10% 110%, color-mix(in srgb, var(--glow-cobalt) 35%, transparent), transparent 60%),
     var(--ink);
   padding-block:clamp(20px,5vw,72px) clamp(28px,5vw,64px);
 }
@@ -93,7 +66,7 @@ ul,ol{margin:0;padding:0;list-style:none}
 .hero-tile-name{font-family:var(--display);font-size:22px;line-height:1.2}
 .hero-tile-note{grid-column:1;font-size:15px;color:var(--on-ink-2)}
 .hero-tile .btn-pay{grid-column:2;grid-row:1 / span 2;white-space:nowrap}
-.hero-tile--vip{border-color:rgba(217,169,97,.5);background:linear-gradient(135deg,rgba(217,169,97,.12),transparent 60%),var(--ink-2)}
+.hero-tile--vip{border-color:color-mix(in srgb, var(--brass) 50%, transparent);background:linear-gradient(135deg,color-mix(in srgb, var(--brass) 12%, transparent),transparent 60%),var(--ink-2)}
 .hero-foot{font-size:15px;color:var(--on-ink-2)}
 
 /* ---------- сцена «Город и мост»: город закреплён за всей страницей ---------- */
@@ -114,21 +87,21 @@ ul,ol{margin:0;padding:0;list-style:none}
 .scene-live .scene-bg canvas{display:block}
 .scene-plain .scene-bg{position:absolute;top:0}
 .scene .hero{background:none;display:grid;align-content:center;min-height:calc(100vh - var(--c-head-h,68px));min-height:calc(100svh - var(--c-head-h,68px))}
-.scene .hero-text{padding:clamp(18px,2.4vw,30px);background:rgba(8,13,24,.74);border-radius:8px}
-.scene .hero-tile{background:rgba(8,13,24,.82)}
-.scene .hero-tile--vip{background:rgba(8,13,24,.82)}
-.scene .hero-foot{padding:0 12px;background:rgba(8,13,24,.74);border-radius:6px;width:max-content;max-width:100%}
+.scene .hero-text{padding:clamp(18px,2.4vw,30px);background:color-mix(in srgb, var(--scene-veil) 74%, transparent);border-radius:8px}
+.scene .hero-tile{background:color-mix(in srgb, var(--scene-veil) 82%, transparent)}
+.scene .hero-tile--vip{background:color-mix(in srgb, var(--scene-veil) 82%, transparent)}
+.scene .hero-foot{padding:0 12px;background:color-mix(in srgb, var(--scene-veil) 74%, transparent);border-radius:6px;width:max-content;max-width:100%}
 .scene-caps{display:grid;gap:56vh;padding:30vh var(--pad) 44vh;max-width:var(--wrap);width:100%;margin:0 auto}
-.scene-cap{max-width:460px;padding:18px 20px;border:1px solid rgba(160,210,255,.22);border-radius:6px;background:rgba(8,13,24,.78);color:var(--on-ink)}
+.scene-cap{max-width:460px;padding:18px 20px;border:1px solid color-mix(in srgb, var(--scene-cap-line) 22%, transparent);border-radius:6px;background:color-mix(in srgb, var(--scene-veil) 78%, transparent);color:var(--on-ink)}
 .scene-cap:nth-child(2){justify-self:end}
 .scene-cap:nth-child(3){justify-self:center;text-align:center}
-.scene-cap h2{margin:0 0 6px;font-size:clamp(22px,3.2vw,32px);line-height:1.15;color:#fff}
+.scene-cap h2{margin:0 0 6px;font-size:clamp(22px,3.2vw,32px);line-height:1.15;color:var(--pure-light)}
 .scene-cap p{font-size:17px;line-height:1.5;color:var(--on-ink-2)}
-.scene-cap-when{display:block;color:#9AD4FF}
-.scene-cap:first-child .scene-cap-when{color:#F2AE9A}
+.scene-cap-when{display:block;color:var(--sky)}
+.scene-cap:first-child .scene-cap-when{color:var(--dawn)}
 /* разделы главной поверх города: светлые — листами, тёмные — тёмным стеклом */
-.scene ~ .band{width:min(1180px,calc(100% - 48px));margin:9vh auto;border-radius:10px;box-shadow:0 30px 80px rgba(0,0,0,.5)}
-.scene ~ .band:not(.paper):not(.paper-2){background:rgba(8,13,24,.84);box-shadow:0 30px 80px rgba(0,0,0,.5),inset 0 0 0 1px var(--line-ink)}
+.scene ~ .band{width:min(1180px,calc(100% - 48px));margin:9vh auto;border-radius:10px;box-shadow:0 30px 80px color-mix(in srgb, var(--pure-dark) 50%, transparent)}
+.scene ~ .band:not(.paper):not(.paper-2){background:color-mix(in srgb, var(--scene-veil) 84%, transparent);box-shadow:0 30px 80px color-mix(in srgb, var(--pure-dark) 50%, transparent),inset 0 0 0 1px var(--line-ink)}
 .scene ~ #tools{padding:0;background:none;box-shadow:none}
 .scene ~ #tools .wrap{padding:0;max-width:none}
 @media (max-width:1000px){
@@ -137,7 +110,7 @@ ul,ol{margin:0;padding:0;list-style:none}
 }
 @media (max-width:767px){
   .scene .hero{min-height:0;padding-block:14px 0}
-  .scene .hero-in{padding:12px;background:rgba(8,13,24,.74);border-radius:8px}
+  .scene .hero-in{padding:12px;background:color-mix(in srgb, var(--scene-veil) 74%, transparent);border-radius:8px}
   .scene .hero-text{padding:0;background:none}
   .scene .hero-foot{padding:0;background:none}
   .scene-caps{gap:24vh;padding:20vh 16px 18vh}
@@ -170,7 +143,7 @@ ul,ol{margin:0;padding:0;list-style:none}
   background:var(--sheet);border:1px solid var(--line-paper);border-radius:6px;
   transform-style:preserve-3d;transition:transform .2s var(--ease),box-shadow .2s var(--ease);
 }
-.tariff--vip{background:var(--ink);color:var(--on-ink);border-color:rgba(217,169,97,.55);color-scheme:dark}
+.tariff--vip{background:var(--ink);color:var(--on-ink);border-color:color-mix(in srgb, var(--brass) 55%, transparent);color-scheme:dark}
 .tariff-top{display:grid;gap:6px}
 .tariff-name{font-family:var(--display);font-size:clamp(28px,3.4vw,40px);line-height:1.1}
 .tariff-for{color:var(--on-paper-2)}
@@ -189,7 +162,7 @@ ul,ol{margin:0;padding:0;list-style:none}
 .tariff .btn-pay{width:100%}
 .support{
   margin-top:var(--gap);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 24px;
-  padding:18px clamp(18px,3vw,28px);border:1px dashed rgba(16,24,38,.35);border-radius:6px;
+  padding:18px clamp(18px,3vw,28px);border:1px dashed color-mix(in srgb, var(--on-paper) 35%, transparent);border-radius:6px;
 }
 .support p{max-width:70ch}
 .support strong{font-weight:500}
@@ -254,9 +227,9 @@ ul,ol{margin:0;padding:0;list-style:none}
 .card-price{font-family:var(--mono);font-size:22px;font-weight:500;font-variant-numeric:tabular-nums}
 .card .btn-line{min-height:48px;font-size:16px;color:var(--on-paper)}
 .card .btn-pay{min-height:48px;font-size:16px}
-.tag{display:inline-flex;align-items:center;min-height:26px;padding:0 10px;border-radius:13px;font-family:var(--mono);font-size:13px;background:rgba(37,107,75,.14);color:var(--ok);width:max-content}
-.tag--soon{background:rgba(16,24,38,.08);color:var(--on-paper-2)}
-.tag--free{background:rgba(122,84,24,.14);color:var(--brass-deep)}
+.tag{display:inline-flex;align-items:center;min-height:26px;padding:0 10px;border-radius:13px;font-family:var(--mono);font-size:13px;background:color-mix(in srgb, var(--ok) 14%, transparent);color:var(--ok);width:max-content}
+.tag--soon{background:color-mix(in srgb, var(--on-paper) 8%, transparent);color:var(--on-paper-2)}
+.tag--free{background:color-mix(in srgb, var(--brass-deep) 14%, transparent);color:var(--brass-deep)}
 .bullets{display:grid;gap:8px;color:var(--on-paper-2);font-size:16px}
 .bullets li{padding-left:16px;position:relative}
 .bullets li::before{content:"";position:absolute;left:0;top:.7em;width:6px;height:6px;border-radius:50%;background:var(--brass-deep)}
@@ -284,7 +257,8 @@ ul,ol{margin:0;padding:0;list-style:none}
 }
 @media (max-width:767px){
   body{font-size:16px}
-  :root{--band:40px}
+  /* html:root — специфичнее :root в tokens.css (тот грузится позже, chrome:head) */
+  html:root{--band:40px}
   .hero-in{gap:14px}
   .hero-text{display:contents}
   .hero-text .kicker{order:1;margin:0}
@@ -307,7 +281,7 @@ ul,ol{margin:0;padding:0;list-style:none}
   .hero .kicker{margin-bottom:6px}
 }
 @media (hover:hover){
-  .tariff:hover{box-shadow:0 24px 48px rgba(16,24,38,.18)}
+  .tariff:hover{box-shadow:0 24px 48px color-mix(in srgb, var(--on-paper) 18%, transparent)}
 }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}
@@ -334,11 +308,11 @@ ul,ol{margin:0;padding:0;list-style:none}
 }
 .scene2-flow{position:relative;z-index:1;margin-top:-100vh;margin-top:-100svh}
 .scene2-hero{min-height:68vh;display:grid;align-content:center;padding:24px var(--pad);max-width:var(--wrap);margin:0 auto}
-.scene2-hero-in{display:grid;gap:clamp(12px,1.6vw,18px);max-width:640px;padding:clamp(18px,2.4vw,30px);background:var(--cap-bg,rgba(8,13,24,.8));border-radius:8px}
+.scene2-hero-in{display:grid;gap:clamp(12px,1.6vw,18px);max-width:640px;padding:clamp(18px,2.4vw,30px);background:var(--cap-bg,color-mix(in srgb, var(--scene-veil) 80%, transparent));border-radius:8px}
 .scene2-hero h1{font-size:clamp(28px,4vw,50px);line-height:1.08}
 .scene2-go{justify-self:start}
 .scene2-caps{display:grid;gap:7vh;padding:4vh var(--pad) 0;max-width:var(--wrap);margin:0 auto}
-.scene2-cap{max-width:440px;padding:16px 20px;border-radius:6px;background:var(--cap-bg,rgba(8,13,24,.8));color:var(--on-ink);font-size:17px;line-height:1.45}
+.scene2-cap{max-width:440px;padding:16px 20px;border-radius:6px;background:var(--cap-bg,color-mix(in srgb, var(--scene-veil) 80%, transparent));color:var(--on-ink);font-size:17px;line-height:1.45}
 .scene2-cap:nth-child(even){justify-self:end}
 .scene2-cap h2{margin:0 0 4px;font-size:clamp(20px,2.4vw,26px);line-height:1.15;color:inherit}
 .scene2-cap p{color:inherit}

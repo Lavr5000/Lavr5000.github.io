@@ -206,7 +206,8 @@ def build_id() -> str:
 
 
 def head_block(bid: str, has_pay: bool) -> str:
-    lines = [f'<meta name="build" content="{bid}" />',
+    lines = [f'<link rel="stylesheet" href="/assets/tokens.css?v={bid}" />',
+             f'<meta name="build" content="{bid}" />',
              f'<link rel="stylesheet" href="/assets/chrome.css?v={bid}" />',
              f'<script defer src="/assets/chrome.js?v={bid}"></script>']
     if has_pay:
