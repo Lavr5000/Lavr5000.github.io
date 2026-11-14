@@ -12,6 +12,9 @@
  *                                (event `scene:plain` of assets/scene3.js); params at (travel 0..1), gap (ms)
  * place = id of the nearest section or dialog (hero, tarify, contact, order-dialog, ...).
  * The tariffs goal is a page-visit goal (a visit of the tariffs section on the home page) and needs no code.
+ * Pageviews: init runs with `defer: true` (no automatic hit); the one and only hit is sent right after init,
+ * with `referer` from the `av-ref` sessionStorage mark left by the redirect pages that replaced the retired
+ * tariffs and about pages, so the original visit source survives the redirect.
  * Disclosed in privacy.html, section "Яндекс Метрика".
  */
 (function (w, d) {
@@ -33,8 +36,16 @@
     webvisor: false,
     clickmap: false,
     trackLinks: true,
-    accurateTrackBounce: true
+    accurateTrackBounce: true,
+    defer: true
   });
+
+  var ref = "";
+  try {
+    ref = sessionStorage.getItem("av-ref") || "";
+    sessionStorage.removeItem("av-ref");
+  } catch (e) {}
+  w.ym(ID, "hit", location.href, ref ? {title: d.title, referer: ref} : {title: d.title});
 
   var GOALS = [
     [/github\.com\/Lavr5000\/Transkribator\/releases/i, "download_transkribator"],

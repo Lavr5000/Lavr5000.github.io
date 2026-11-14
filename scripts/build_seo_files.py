@@ -1,7 +1,8 @@
 #!/usr/bin/env python
-"""Generates robots.txt, sitemap.xml, llms.txt and the JSON-LD block of index.html and services/index.html
-from the site's own HTML (services and prices: the order links `a[data-pay]` / `a[data-request]` of /services/
-and /products.html, contacts: the #contact block, archived services of services.js are skipped). Stdlib only, deterministic (no dates), keeps each HTML file's line endings.
+"""Generates robots.txt, sitemap.xml, llms.txt and the JSON-LD block of index.html
+from the site's own HTML (services and prices: the order links `a[data-pay]` / `a[data-request]` of the home
+page index.html and /products.html, contacts: the #contact block of the home page, archived services of
+services.js are skipped). Stdlib only, deterministic (no dates), keeps each HTML file's line endings.
 
 DO NOT EDIT the generated files or the block between the seo:jsonld markers by hand:
 change the page and run `python scripts/build_seo_files.py --write`.
@@ -29,9 +30,9 @@ from pathlib import Path
 SITE = "https://ai-vibes.ru"
 PERSON_NAME = "Денис Лавров"
 SKIP_DIRS = {".git", "node_modules", "tests", "docs", "idm", "scripts", "out", ".next"}
-TITLE_ONLY = {"about.html"}  # page summary omitted from llms.txt by policy
+TITLE_ONLY: set[str] = set()  # page summary omitted from llms.txt by policy (empty set is fine)
 CONTACT_PREFIXES = ("https://max.ru/", "https://t.me/lavr5000", "mailto:")
-SERVICE_PAGES = [("services/index.html", "/services/"), ("products.html", "/products.html")]  # llms.txt order
+SERVICE_PAGES = [("index.html", "/"), ("products.html", "/products.html")]  # llms.txt order
 ROBOTS = ("User-agent: *\nDisallow: /docs/\nDisallow: /idm/\nDisallow: /scripts/\n\n"
           f"Sitemap: {SITE}/sitemap.xml\n")
 BEGIN = "<!-- seo:jsonld:begin (scripts/build_seo_files.py) -->"
@@ -58,7 +59,7 @@ class Doc(HTMLParser):
         super().__init__(convert_charrefs=True)
         self.title, self.meta, self.canonical, self.robots = "", {}, None, ""
         self.stack = []          # open elements: (tag, id, class)
-        self.orders = []         # (kind pay|request, service-id, data-order, data-price-label, nearest enclosing id)
+        self.orders = []         # (kind pay|request, service-id, data-order, data-price-label, nearest enclosing id, enclosing article id)
         self.links = []          # (href, text, enclosing ids, enclosing classes)
         self._a = None
         self._cap = None         # text being captured: ["title", buffer]
@@ -92,8 +93,9 @@ class Doc(HTMLParser):
             self._cap = ["title", []]
         if "data-pay" in a or "data-request" in a:
             card = next(iter(reversed(self._ids())), "")
+            art = next((i for t, i, _ in reversed(self.stack) if t == "article" and i), "")
             self.orders.append(("pay" if "data-pay" in a else "request", a.get("data-service-id", ""),
-                                a.get("data-order", ""), a.get("data-price-label", ""), card))
+                                a.get("data-order", ""), a.get("data-price-label", ""), card, art))
         if tag == "a" and a.get("href"):
             self._a = [a["href"], [], self._ids(), [c for _, _, c in self.stack]]
 
@@ -169,9 +171,8 @@ def contacts(doc: Doc) -> list[tuple[str, str]]:
 
 def build(root: Path) -> tuple[dict, list[str], list[str]]:
     idx = parse(read_html(root / "index.html")[0])
-    svc = parse(read_html(root / "services" / "index.html")[0])
     site_name = idx.meta.get("og:site_name", "")
-    cts = contacts(svc)
+    cts = contacts(idx)
     email = next((h[len("mailto:"):] for h, _ in cts if h.startswith("mailto:")), "")
     if not site_name or not email:
         raise SystemExit("SEO_FILES status=error pages=0 files= reason=no og:site_name or mailto in #contact")
@@ -183,19 +184,23 @@ def build(root: Path) -> tuple[dict, list[str], list[str]]:
                           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
                           + "".join(f"  <url><loc>{loc}</loc></url>\n" for loc, _, _ in pg) + "</urlset>\n")
     L = [f"# {site_name}", "", f"> {norm(idx.meta.get('description', ''))}", "", "## Услуги"]
-    seen, tariffs = set(), []
+    tariffs = []
+    rows: dict[str, dict] = {}  # service-id -> chosen variant (first seen, but a tariff card wins over a button without one)
     for rel, path in SERVICE_PAGES:
-        doc = svc if rel == "services/index.html" else parse(read_html(root / rel)[0])
-        for kind, sid, name, price, card in doc.orders:
-            if sid in seen or sid in skip:
+        doc = idx if rel == "index.html" else parse(read_html(root / rel)[0])
+        for kind, sid, name, price, card, art in doc.orders:
+            if sid in skip:
                 continue
-            seen.add(sid)
-            url = f"{SITE}{path}{'#' + card if card else ''}"
-            L.append(f"- [{norm(name)}]({url}): {norm(price)}")
-            if rel == "services/index.html" and kind == "pay":
-                tariffs.append((name, price, url))
+            old = rows.get(sid)
+            if old is None or (art and not old["art"]):
+                rows[sid] = {"path": path, "kind": kind, "name": name, "price": price, "card": card, "art": art}
+    for r in rows.values():
+        url = f"{SITE}{r['path']}{'#' + r['card'] if r['card'] else ''}"
+        L.append(f"- [{norm(r['name'])}]({url}): {norm(r['price'])}")
+        if r["path"] == "/" and r["kind"] == "pay":
+            tariffs.append((r["name"], r["price"], url))
     if not tariffs:
-        warns.append("no a[data-pay] tariff on /services/")
+        warns.append("no a[data-pay] tariff on /")
     L += ["", "## Контакты"] + [f"- [{t}]({h})" for h, t in cts] + ["", "## Страницы"]
     for loc, rel, doc in pg:
         desc = "" if rel in TITLE_ONLY else norm(doc.meta.get("description", ""))
@@ -204,12 +209,12 @@ def build(root: Path) -> tuple[dict, list[str], list[str]]:
 
     org = {"@type": "Organization", "@id": f"{SITE}/#org", "name": site_name, "url": f"{SITE}/",
            "email": email, "member": {"@id": f"{SITE}/#person"}}
-    person = {"@type": "Person", "@id": f"{SITE}/#person", "name": PERSON_NAME, "url": f"{SITE}/about.html",
+    person = {"@type": "Person", "@id": f"{SITE}/#person", "name": PERSON_NAME, "url": f"{SITE}/#author",
               "sameAs": [h for h, _ in cts if not h.startswith("mailto:")]}
     website = {"@type": "WebSite", "@id": f"{SITE}/#website", "name": site_name, "url": f"{SITE}/", "inLanguage": "ru"}
-    graphs = {"index.html": [website, org, person], "services/index.html": [org, person]}
+    graphs = {"index.html": [website, org, person]}
     for name, price, url in tariffs:
-        graphs["services/index.html"].append(
+        graphs["index.html"].append(
             {"@type": "Service", "@id": url, "name": norm(name), "url": url, "provider": {"@id": f"{SITE}/#org"},
              "offers": {"@type": "Offer", "price": re.sub(r"\D", "", price), "priceCurrency": "RUB", "url": url}})
     for rel, graph in graphs.items():
