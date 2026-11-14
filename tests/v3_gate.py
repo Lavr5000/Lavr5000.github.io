@@ -121,7 +121,7 @@ CONSENT_JS = r"""() => {
 }"""
 
 LEGAL_JS = r"""() => { const b = document.body.cloneNode(true);
-  b.querySelectorAll('[data-chrome], script, style, noscript').forEach(e => e.remove());
+  b.querySelectorAll('[data-chrome], [data-chrome-foot], script, style, noscript').forEach(e => e.remove());
   return b.textContent.replace(/\s+/g, ' ').trim(); }"""
 
 SCENE_JS_PROBE = r"""(name) => {

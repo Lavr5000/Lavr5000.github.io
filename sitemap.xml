@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://ai-vibes.ru/</loc></url>
-  <url><loc>https://ai-vibes.ru/about.html</loc></url>
   <url><loc>https://ai-vibes.ru/apps/transkribator/</loc></url>
   <url><loc>https://ai-vibes.ru/blog/</loc></url>
   <url><loc>https://ai-vibes.ru/blog/apartment-auditor/</loc></url>
@@ -15,5 +14,4 @@
   <url><loc>https://ai-vibes.ru/privacy.html</loc></url>
   <url><loc>https://ai-vibes.ru/products.html</loc></url>
   <url><loc>https://ai-vibes.ru/rieltor/</loc></url>
-  <url><loc>https://ai-vibes.ru/services/</loc></url>
 </urlset>
