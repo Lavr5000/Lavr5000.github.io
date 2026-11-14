@@ -165,7 +165,7 @@
   function build() {
     var frag = document.createDocumentFragment();
     var sub = cat.subscription;
-    var subUrl = typeof sub.url === 'string' && sub.url.charAt(0) === '/' ? sub.url : '/services/';
+    var subUrl = typeof sub.url === 'string' && sub.url.charAt(0) === '/' ? sub.url : '/#service-rieltor';
     var subOpen = sub.enabled !== false;   // a closed subscription goes last, marked «скоро», with no price and no button
     var st = tile('subscription', sub.id, subOpen, SUB_TITLE);
     var left = el('div', 'rl-sub-main');
