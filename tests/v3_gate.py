@@ -711,7 +711,9 @@ class Gate:
                         pg2.evaluate("() => window.__scene2.go(1)")
                         f1 = pg2.locator(sel).screenshot()
                         r[vk]["ssim_p0"] = ssim(f0, FIX / "scene2" / f"{name}_p0_{vk}.png")
-                        poster = ROOT / urlparse(pr["posterSrc"]).path.lstrip("/") if pr.get("posterSrc") else Path("-")
+                        # the poster of this screen: with JS the lazy <picture> is not fetched, so currentSrc is empty
+                        # and img.src is always the desktop file; scripts/build_scene_posters.py names them by screen
+                        poster = ROOT / "assets" / "scene2" / f"{name}_{vk}.webp" if pr.get("posterSrc") else Path("-")
                         r[vk]["ssim_p1"] = ssim(f1, poster)
                         import numpy as np
                         from PIL import Image

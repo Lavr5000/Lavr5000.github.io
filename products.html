@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://mc.yandex.ru https://mc.yandex.com https://yastatic.net; img-src 'self' blob: https://mc.yandex.ru https://mc.yandex.com; connect-src 'self' https://mc.yandex.ru https://mc.yandex.com wss://mc.yandex.ru wss://mc.yandex.com https://api.ai-vibes.ru; frame-src blob: https://mc.yandex.ru https://mc.yandex.com; child-src blob: https://mc.yandex.ru https://mc.yandex.com" />
+<script src="/assets/js-flag.js?v=20261114-s2"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Для строителей — сервисы AI Vibes для документов стройки</title>
 <meta name="description" content="Сервисы для строительных документов: ведомость материалов из PDF рабочей документации — 990 ₽, печатные накладные М-15 в Excel — 79 ₽, данные из чертежей КЖ, комплект исполнительной документации и бесплатные приложения." />
@@ -20,16 +21,19 @@
 <link rel="icon" href="/favicon.ico" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 <link rel="stylesheet" href="/assets/fonts.css?v=20260813-catalog" />
-<link rel="stylesheet" href="/assets/site3.css?v=9667e79a3285" />
-<script defer src="/assets/site3.js?v=9667e79a3285"></script>
+<link rel="stylesheet" href="/assets/site3.css?v=b6ff3a53acbd" />
+<script defer src="/assets/site3.js?v=b6ff3a53acbd"></script>
 <script defer src="/assets/metrika.js?v=20261011-v2"></script>
 <!-- chrome:head:begin (scripts/build_chrome.py) -->
-<meta name="build" content="9667e79a3285" />
-<link rel="stylesheet" href="/assets/chrome.css?v=9667e79a3285" />
-<script defer src="/assets/chrome.js?v=9667e79a3285"></script>
-<script defer src="/services.config.js?v=9667e79a3285"></script>
-<script defer src="/assets/pay.js?v=9667e79a3285"></script>
+<meta name="build" content="b6ff3a53acbd" />
+<link rel="stylesheet" href="/assets/chrome.css?v=b6ff3a53acbd" />
+<script defer src="/assets/chrome.js?v=b6ff3a53acbd"></script>
+<script defer src="/services.config.js?v=b6ff3a53acbd"></script>
+<script defer src="/assets/pay.js?v=b6ff3a53acbd"></script>
 <!-- chrome:head:end -->
+<script defer src="/assets/scene-guard.js?v=20261114-s2"></script>
+<script defer src="/assets/scene2/crane.js?v=20261114-s2"></script>
+<script defer src="/assets/scene2.js?v=20261114-s2"></script>
 <script defer src="/products.js?v=20261026-tile"></script>
 <script type="module" src="/products.render.js?v=20261026-dlg"></script>
 <link rel="stylesheet" href="/assets/pdf-tables-dialog.css?v=20261026-dlg" />
@@ -71,12 +75,42 @@
 <!-- chrome:header:end -->
 <main id="main">
 
-<section class="hero" id="hero">
-  <div class="wrap">
-    <div class="hero-text">
-      <h1>Один файл на входе — готовая таблица на выходе</h1>
-      <p class="lead">Небольшие сервисы для документов стройки. Работают сами по себе: настройка помощника для них
-        не нужна.</p>
+<section class="scene2" data-scene2="crane" aria-labelledby="hero-title">
+  <div class="scene2-stage" data-scene2-stage>
+    <canvas data-scene2-canvas aria-hidden="true"></canvas>
+    <picture>
+      <source media="(max-width:767px)" srcset="/assets/scene2/crane_tel.webp" />
+      <img data-scene2-poster src="/assets/scene2/crane_pc.webp" loading="lazy" decoding="async" width="1600" height="1000"
+        alt="Вечерняя стройплощадка: башенный кран рядом с готовым многоэтажным домом, в окнах горит свет" />
+    </picture>
+  </div>
+  <div class="scene2-flow">
+    <div class="scene2-hero" id="hero">
+      <div class="scene2-hero-in">
+        <p class="kicker">Для строителей</p>
+        <h1 id="hero-title">Один файл на входе — готовая таблица на выходе</h1>
+        <p class="lead">Небольшие сервисы для документов стройки. Работают сами по себе: настройка помощника для них
+          не нужна.</p>
+        <a class="btn-line scene2-go" href="#catalog-section">К услугам</a>
+      </div>
+    </div>
+    <div class="scene2-caps">
+      <div class="scene2-cap" data-scene2-cap>
+        <h2>Рабочая документация → ведомость</h2>
+        <p>PDF рабочки превращается в ведомость материалов в Excel.</p>
+      </div>
+      <div class="scene2-cap" data-scene2-cap>
+        <h2>Накладные и поставки → Excel</h2>
+        <p>Печатные М-15 — в таблицу для учёта поставок.</p>
+      </div>
+      <div class="scene2-cap" data-scene2-cap>
+        <h2>Исполнительная документация</h2>
+        <p>Комплект ИД собирается из данных, а не вручную.</p>
+      </div>
+      <div class="scene2-cap" data-scene2-cap>
+        <h2>Объект сдан</h2>
+        <p>Документы готовы вместе со зданием.</p>
+      </div>
     </div>
   </div>
 </section>
