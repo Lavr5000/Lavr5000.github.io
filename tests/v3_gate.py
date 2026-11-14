@@ -807,7 +807,9 @@ class Gate:
                 for y in range(0, int(pages_h), 700):
                     pg.evaluate(f"window.scrollTo(0, {y})")
                     pg.wait_for_timeout(80)
-                poster_dl += sum(1 for u, ct in got if "data-scene2-poster" and ct.startswith("image/") and "/assets/scene2/" in u)
+                # only the poster files <scene>_{pc,tel}.webp: photo chapters (<scene>_<n>_*.webp) are the live scene itself
+                poster_dl += sum(1 for u, ct in got if ct.startswith("image/")
+                                 and re.search(r"/assets/scene2/[a-z]+_(?:pc|tel)\.webp$", urlparse(u).path))
                 w = 0
                 for u in {u for u, ct in got if SCENE_JS.search(urlparse(u).path) and urlparse(u).path.endswith(".js")}:
                     st, body = http_get(u)

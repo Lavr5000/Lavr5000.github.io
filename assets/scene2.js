@@ -5,7 +5,7 @@
    P, dpr). P = the share of the section scrolled; the canvas is repainted only while the section is on screen and P
    changes. Without scripts, with reduced motion, after a failure or on a device that cannot keep up
    (SceneGuard.watch) the scene shows the poster. `?scene-test=1`: no frame loop, window.__scene2.go(P) paints P
-   at once (gate and posters). */
+   at once (gate and posters). A drawer that loads pictures calls window.Scene2Repaint() when they arrive. */
 (function (w, d) {
   'use strict';
   var root = d.documentElement;
@@ -69,7 +69,13 @@
       P = clamp(+P || 0);
       var flow = sec.querySelector('.scene2-flow');
       if (flow) flow.style.setProperty('--scene2-shift', -Math.round(P * Math.max(0, sec.offsetHeight - stage.clientHeight)) + 'px');
-      size(); paint(P); return s.drawn;
+      s.at = P; size(); paint(P); return s.drawn;
+    };
+    /* a drawer whose pictures arrive later (photo chapters) asks for the current frame again */
+    s.repaint = function () {
+      if (s.dead) return;
+      if (test) { if (s.at != null) paint(s.at); return; }
+      s.drawn = -1; if (s.on) { if (s.W) { try { paint(s.P); } catch (e) { stop('fail'); } } s.kick(); }
     };
     s.start = function () {
       if (guard && guard.plain) { stop('remembered'); return false; }
@@ -83,6 +89,8 @@
     s.resize = function () { if (!s.dead && size()) { paint(s.P); s.kick(); } };
     return s;
   }
+
+  w.Scene2Repaint = function () { for (var i = 0; i < scenes.length; i++) scenes[i].repaint(); };
 
   function init() {
     var list = d.querySelectorAll('section[data-scene2]');

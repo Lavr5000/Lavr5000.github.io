@@ -12,7 +12,7 @@ everything below lives in `assets/tokens.css` and is consumed through `var(--…
 | Home, builders, offer pages | `assets/site3.css` |
 | Realtor page | `rieltor/rieltor.css` |
 | Legacy "work sheet" pages (blog, tools) | `assets/site2.css`, `assets/legal2.css` |
-| Scroll scenes | `assets/scene2.js` + `assets/scene2/<name>.js`, posters `assets/scene2/<name>_{pc,tel}.webp` |
+| Scroll scenes | `assets/scene2.js` (engine) + `assets/scene2/photo.js` (photo chapters `<name>_<n>_{pc,tel}.webp`, built by `scripts/build_scene_photos.py`), posters `<name>_{pc,tel}.webp` |
 
 Rule: no colour literal (hex, rgb, named colour) outside `tokens.css`. Transparency is
 `color-mix(in srgb, var(--token) P%, transparent)`. The gate metric `hex_outside_tokens` must be 0.
@@ -61,7 +61,9 @@ Radii: 6px for captions and small cards, 8px for panels, 50% for dots. No horizo
 ## Motion
 
 - Easing `--ease` (`cubic-bezier(.22,.61,.36,1)`), UI transitions .2s.
-- Scroll scenes: a sticky full-screen stage (`.scene2-stage`) with captions flowing over it;
+- Scroll scenes: a sticky full-screen stage (`.scene2-stage`) with captions flowing over it; the stage shows
+  photorealistic chapters (pit -> frame -> facade -> handed over; city -> one window -> keys) that cross-fade
+  with a slow pull-back (zoom 1.07 -> 1), no people and no text in the frames;
   captions sit on a veil `color-mix(--scene-veil 80%)`. Frame budget: p95 gap ≤ 33 ms.
 - Without JavaScript or with `prefers-reduced-motion: reduce` the scene shows its static poster
   and all transitions are off; content is never hidden at rest (gates `hidden_nojs=0`,
