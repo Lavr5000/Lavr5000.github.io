@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://api.ai-vibes.ru" />
+<script src="/assets/js-flag.js?v=20261114-s2"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="canonical" href="https://ai-vibes.ru/rieltor/" />
 <title>Риэлтор — разовые услуги и помощник | AI Vibes</title>
@@ -13,6 +14,9 @@
 <link rel="stylesheet" href="/assets/site3.css?v=b6ff3a53acbd" />
 <link rel="stylesheet" href="/rieltor/rieltor.css?v=20261025c" />
 <script defer src="/uslugi.catalog.js?v=20261025"></script>
+<script defer src="/assets/scene-guard.js?v=20261114-s2"></script>
+<script defer src="/assets/scene2/deal.js?v=20261114-s2"></script>
+<script defer src="/assets/scene2.js?v=20261114-s2"></script>
 <script defer src="/rieltor/rieltor.js?v=20261025c"></script>
 <!-- chrome:head:begin (scripts/build_chrome.py) -->
 <meta name="build" content="b6ff3a53acbd" />
@@ -54,13 +58,43 @@
 <!-- chrome:header:end -->
 <main id="main">
 
-<section class="hero" id="hero">
-  <div class="wrap">
-    <div class="hero-text">
-      <h1>Риэлтор: разовые услуги по объекту</h1>
-      <p class="lead">Справка о цене, первичная юридическая проверка, фото до/после и планировка, договор купли-продажи
-        и предварительный договор с задатком. Ничего не нужно ставить: оплачиваете на сайте или в боте MAX и получаете
-        готовые файлы в чате с ботом. Помощник на вашем компьютере (подписка) — скоро.</p>
+<section class="scene2" data-scene2="deal" aria-labelledby="hero-title">
+  <div class="scene2-stage" data-scene2-stage>
+    <canvas data-scene2-canvas aria-hidden="true"></canvas>
+    <picture>
+      <source media="(max-width:767px)" srcset="/assets/scene2/deal_tel.webp" />
+      <img data-scene2-poster src="/assets/scene2/deal_pc.webp" loading="lazy" decoding="async" width="1600" height="1000"
+        alt="Окно квартиры изнутри: тёплый свет, гирлянда, двое у окна, на подоконнике ключи" />
+    </picture>
+  </div>
+  <div class="scene2-flow">
+    <div class="scene2-hero" id="hero">
+      <div class="scene2-hero-in">
+        <p class="kicker">Для риелторов</p>
+        <h1 id="hero-title">Из сотен объявлений — к одной сделке</h1>
+        <p class="lead">Справка о цене, первичная юридическая проверка, фото до/после и планировка, договор купли-продажи
+          и предварительный договор с задатком. Ничего не нужно ставить: оплачиваете на сайте или в боте MAX и получаете
+          готовые файлы в чате с ботом. Помощник на вашем компьютере (подписка) — скоро.</p>
+        <a class="btn-line scene2-go" href="#uslugi">К услугам</a>
+      </div>
+    </div>
+    <div class="scene2-caps">
+      <div class="scene2-cap" data-scene2-cap>
+        <h2>Сотни объявлений → справка о цене</h2>
+        <p>Цена объекта среди похожих — с обоснованием.</p>
+      </div>
+      <div class="scene2-cap" data-scene2-cap>
+        <h2>Фото до/после и планировка</h2>
+        <p>Аккуратный план квартиры с размерами по эскизу от руки.</p>
+      </div>
+      <div class="scene2-cap" data-scene2-cap>
+        <h2>Первичная юридическая проверка</h2>
+        <p>Документы, долги, обременения — до задатка.</p>
+      </div>
+      <div class="scene2-cap" data-scene2-cap>
+        <h2>Договор и ключи</h2>
+        <p>Проект договора, акт и расписка — к дню сделки.</p>
+      </div>
     </div>
   </div>
 </section>
