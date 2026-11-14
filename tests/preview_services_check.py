@@ -45,12 +45,17 @@ if "--shots" in sys.argv:
     SHOTS = Path(sys.argv[sys.argv.index("--shots") + 1])
     SHOTS.mkdir(parents=True, exist_ok=True)
 
-PAGES = ["/", "/services/", "/products.html"]
+# IA step: the tariff cards live on the home page; /services/ and /about.html are static redirect pages
+PAGES = ["/", "/products.html"]
 EXPECTED_IDS = {  # service ids that must be reachable by a trigger on the page
-    "/": {"setup-start", "setup-vip"},
-    "/services/": {"setup-start", "setup-vip", "support-monthly"},
+    "/": {"setup-start", "setup-vip", "setup-rieltor", "support-monthly"},
     "/products.html": {"extract-drawings-data", "as-built-package"},
 }
+MIN_COUNTS = {  # explicit minimums per page: (selector, minimum, what)
+    "/": [("[data-pay]", 5, "data-pay (hero 2 + 3 cards)"), ("[data-request]", 1, "data-request"),
+          ("#service-5, #vip, #service-rieltor", 3, "tariff cards")],
+}
+REDIRECT_PAGES = {"/services/": "/#tarify", "/about.html": "/"}  # page -> noscript refresh target
 MAX_URL = "https://max.ru/u/f9LHodD0cOJVteiYLPGUodY6uw7J5k_M_QzRJTDzXbK31nlTIokaEh5ebeM"
 TG_URL = "https://t.me/lavr5000"
 VIEWPORTS = [(1440, 1000), (768, 1024), (390, 844)]
@@ -75,7 +80,7 @@ def check(ok, label):
 
 
 def shot_name(path, w, h):
-    stem = {"/": "home", "/services/": "services", "/products.html": "products"}[path]
+    stem = {"/": "home", "/products.html": "products"}[path]
     return f"{stem}-{w}x{h}.png"
 
 
@@ -121,7 +126,35 @@ def check_trigger(page, where, trigger, enabled, via_keyboard):
     page.wait_for_selector(f"{dlg}[open]", state="detached", timeout=3000)
 
 
+def check_redirect_page(path, target):
+    """/services/ and /about.html: static redirect pages (plan 3.2): no-referrer meta first in head, the two
+    synchronous scripts, noscript meta refresh to this page's own target, canonical of the home page, no noindex."""
+    import re
+    import urllib.request
+    try:
+        html = urllib.request.urlopen(BASE + path, timeout=10).read().decode("utf-8", "replace")
+    except Exception as e:  # noqa: BLE001
+        check(False, f"{path}: cannot fetch redirect page: {e}")
+        return
+    head = re.search(r"<head[^>]*>(.*?)</head>", html, re.S | re.I)
+    head = head.group(1) if head else ""
+    m = re.search(r"<meta\s+name=[\"']referrer[\"']\s+content=[\"']no-referrer[\"']\s*/?>", head, re.I)
+    # the referrer meta must be the first element of head (charset meta may precede it)
+    pre = re.sub(r"<meta\s+charset=[^>]*>", "", head, flags=re.I).lstrip()
+    check(bool(m) and pre.lower().startswith(m.group(0).lower()), f"{path}: <meta name=referrer no-referrer> is not the first element of head")
+    i_map = head.find("/assets/redirect-map.js")
+    i_red = head.find("/assets/redirect.js")
+    check(0 <= i_map < i_red, f"{path}: redirect-map.js must be loaded before redirect.js")
+    check(not re.search(r"<script[^>]*redirect[^>]*(defer|async)", head, re.I), f"{path}: redirect scripts must be synchronous")
+    ns = re.search(r"<noscript>\s*<meta\s+http-equiv=[\"']refresh[\"']\s+content=[\"']0;\s*url=([^\"']+)[\"']", head, re.I)
+    check(bool(ns) and ns.group(1) == target, f"{path}: noscript meta refresh must go to {target}, got {ns.group(1) if ns else None}")
+    check('<link rel="canonical" href="https://ai-vibes.ru/">' in head.replace("'", '"'), f"{path}: canonical must be https://ai-vibes.ru/")
+    check("noindex" not in html.lower(), f"{path}: redirect page must not carry noindex")
+
+
 with sync_playwright() as p:
+    for rpath, rtarget in REDIRECT_PAGES.items():
+        check_redirect_page(rpath, rtarget)
     browser = p.chromium.launch()
     for path in PAGES:
         for w, h in VIEWPORTS:
@@ -157,6 +190,9 @@ with sync_playwright() as p:
             ids = {triggers.nth(i).get_attribute("data-service-id") for i in range(n)}
             missing = EXPECTED_IDS[path] - ids
             check(not missing, f"{where}: no order trigger for {sorted(missing)} (found {sorted(ids)})")
+            for sel, minimum, what in MIN_COUNTS.get(path, []):
+                got = page.locator(sel).count()
+                check(got >= minimum, f"{where}: {what}: {got} found, expected >= {minimum}")
             for i in range(n):
                 t = triggers.nth(i)
                 if t.get_attribute("data-pay") is not None:

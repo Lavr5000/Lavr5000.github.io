@@ -22,7 +22,9 @@ What is checked (ids are printed as `  ok   <id>` / `  FAIL <id>: <reason>`):
   * the site-checkout form: e-mail + consent checkbox with a link to the offer section; a submit with an empty/invalid e-mail
     shows the error and calls nothing; a valid submit (fetch mocked in the page) posts to the order API exactly once with the
     catalog service id, the consent version and a UUID idempotency key, then stores the return key for the success page;
-  * the menu item «Риэлтор» is on every page with the shared header, highlighted (aria-current) only on /rieltor/;
+  * the menu item of the rieltor tab (label = RIELTOR_LABEL of scripts/build_chrome.py, «Для риелторов») is on every page with the
+    shared header, highlighted (aria-current) only on /rieltor/; the menu equals tests/fixtures/menu.json, «Тарифы» and «Об авторе»
+    are gone from header and footer; the subscription tile links to /#service-rieltor (the catalog's /services/ url through the redirect map);
   * hygiene: no page error, no CSP violation, no foreign request, no call of the order API without a submit,
     no horizontal overflow at 390/901/1024/1440 px, links of the tiles go only to the site itself or to max.ru.
 
@@ -79,6 +81,26 @@ def read(rel: str) -> str:
     return (ROOT / rel).read_bytes().decode("utf-8")
 
 
+def rieltor_label() -> str:
+    """The label of the rieltor tab is one constant of scripts/build_chrome.py (RIELTOR_LABEL); the tests read it from there."""
+    m = re.search(r"""^RIELTOR_LABEL\s*=\s*["']([^"']+)["']""", (ROOT / "scripts" / "build_chrome.py").read_text(encoding="utf-8"), re.M)
+    assert m, "scripts/build_chrome.py has no RIELTOR_LABEL constant"
+    return m.group(1)
+
+
+def menu_ref() -> dict:
+    return json.loads((HERE / "fixtures" / "menu.json").read_text(encoding="utf-8"))
+
+
+def redirect_target(url: str) -> str:
+    """Where tests/fixtures/redirects.json sends an old address (/services/#anchor, /about.html); other addresses stay."""
+    path, hash_, frag = url.partition("#")
+    m = json.loads((HERE / "fixtures" / "redirects.json").read_text(encoding="utf-8")).get(path)
+    if not m:
+        return url
+    return m["anchors"].get(hash_ + frag, m["default"]) if frag else m["default"]
+
+
 def parse_catalog_js(text: str) -> dict:
     key = "window.USLUGI_CATALOG = "
     i = text.index(key) + len(key)
@@ -113,7 +135,7 @@ def expected_tiles(cat: dict) -> list[dict]:
     sub = cat["subscription"]
     sub_open = sub.get("enabled", True) is not False
     sub_tile = dict(id=sub["id"], kind="subscription", enabled=sub_open, title=sub["title"],
-                    price=sub["price_label"] if sub_open else None, href=sub["url"] if sub_open else None)
+                    price=sub["price_label"] if sub_open else None, href=redirect_target(sub["url"]) if sub_open else None)
     out = [sub_tile] if sub_open else []
     for s in cat["services"]:
         out.append(dict(id=s["id"], kind="service", enabled=bool(s["enabled"]), title=s["title"],
@@ -246,21 +268,29 @@ def _(ctx):
 @case("menu.item_on_every_chrome_page")
 def _(ctx):
     import build_chrome
+    label = rieltor_label()
+    assert label == "Для риелторов", f"RIELTOR_LABEL is {label!r}, expected «Для риелторов»"
+    ref = menu_ref()
+    want = [(i["href"], label if i["href"] == PAGE else i["label"]) for i in ref["items"]]
     pages = build_chrome.pages()
     assert "rieltor/index.html" in pages, "rieltor/index.html is not in the shared header's page list"
     bad = []
     for rel in pages:
         nav = re.search(r'<nav class="chrome-nav".*?</nav>', read(rel), re.S)
         links = re.findall(r'<a href="([^"]+)"( aria-current="page")?>([^<]+)</a>', nav.group(0)) if nav else []
-        hit = [x for x in links if x[2] == "Риэлтор"]
-        if len(hit) != 1 or hit[0][0] != PAGE:
-            bad.append(f"{rel}: menu item {hit}")
+        got = [(x[0], x[2]) for x in links]
+        if got != want:
+            bad.append(f"{rel}: menu {got} != {want}")
+        cta = re.search(r'<a class="chrome-cta" href="([^"]+)">([^<]+)</a>', read(rel))
+        if not cta or (cta.group(1), cta.group(2)) != (ref["cta"]["href"], ref["cta"]["label"]):
+            bad.append(f"{rel}: cta {cta.groups() if cta else None}")
     assert not bad, "; ".join(bad[:4])
 
 
 @case("menu.current_only_on_rieltor")
 def _(ctx):
     import build_chrome
+    label = rieltor_label()
     assert "rieltor/index.html" in build_chrome.pages(), "rieltor/index.html is not in the shared header's page list"
     bad = []
     for rel in build_chrome.pages():
@@ -269,24 +299,26 @@ def _(ctx):
             m = re.search(rx, text, re.S)
             cur = re.findall(r'<a href="([^"]+)" aria-current="page">([^<]+)</a>', m.group(0)) if m else []
             if rel == "rieltor/index.html":
-                if cur != [(PAGE, "Риэлтор")]:
+                if cur != [(PAGE, label)]:
                     bad.append(f"{rel} {scope}: current={cur}")
-            elif any(x[1] == "Риэлтор" for x in cur):
-                bad.append(f"{rel} {scope}: «Риэлтор» is highlighted")
+            elif any(x[1] == label for x in cur):
+                bad.append(f"{rel} {scope}: «{label}» is highlighted")
     assert not bad, "; ".join(bad[:4])
 
 
 @case("menu.footer_has_link")
 def _(ctx):
-    foot = re.search(r'<footer class="chrome-foot".*?</footer>', read("services/index.html"), re.S).group(0)
-    assert f'<a href="{PAGE}">Риэлтор</a>' in foot, "footer section list has no link to /rieltor/"
+    foot = re.search(r'<footer class="chrome-foot".*?</footer>', read("index.html"), re.S).group(0)
+    assert f'<a href="{PAGE}">{rieltor_label()}</a>' in foot, "footer section list has no link to /rieltor/"
+    assert "Тарифы" not in foot and "Об авторе" not in foot, "«Тарифы» / «Об авторе» must leave the footer"
+    assert 'href="/services/' not in foot and 'href="/about.html' not in foot, "the footer still links to /services/ or /about.html"
 
 
 @case("build.chrome_id_is_current")
 def _(ctx):
     import build_chrome
     bid = build_chrome.build_id()
-    for rel in ("rieltor/index.html", "services/index.html"):
+    for rel in ("rieltor/index.html", "index.html"):
         assert f'<meta name="build" content="{bid}" />' in read(rel), f"{rel}: build id is not {bid} (run scripts/build_chrome.py --write)"
 
 
@@ -304,9 +336,11 @@ def _(ctx):
 def _(ctx):
     url = catalog()["subscription"]["url"]
     path, _, frag = url.partition("#")
-    assert path == "/services/" and frag, url
-    assert f'id="{frag}"' in read("services/index.html"), f"/services/ has no element #{frag}"
-    assert f'data-service-id="setup-rieltor"' in read("services/index.html")
+    target = redirect_target(url)   # the catalog copy may keep /services/#service-rieltor: the redirect map sends it to /#service-rieltor
+    path, _, frag = target.partition("#")
+    assert path == "/" and frag == "service-rieltor", f"{url} -> {target}"
+    assert f'id="{frag}"' in read("index.html"), f"/ has no element #{frag}"
+    assert f'data-service-id="setup-rieltor"' in read("index.html")
 
 
 # ------------------------------------------------------------------------------------------------ browser plumbing
@@ -413,7 +447,7 @@ def _(ctx):
     s = tiles_of(View(ctx.br, ctx.base))[0]
     assert flat(s["price"] or "") == flat(services_js_price("setup-rieltor")) == flat(cat["subscription"]["price_label"]), f"price {s['price']!r}"
     assert s["price"] == cat["subscription"]["price_label"], "tile price must be the catalog string byte for byte (NBSP)"
-    assert len(s["links"]) == 1 and s["links"][0]["href"] == cat["subscription"]["url"], f"links {s['links']}"
+    assert len(s["links"]) == 1 and s["links"][0]["href"] == redirect_target(cat["subscription"]["url"]), f"links {s['links']}"
     assert s["links"][0]["text"], "button without a text"
 
 
@@ -658,11 +692,14 @@ def _(ctx):
 def _(ctx):
     v = View(ctx.br, ctx.base)
     v.goto(PAGE)
+    label = rieltor_label()
     cur = v.pg.evaluate("[...document.querySelectorAll('.chrome-nav a[aria-current=page]')].map(a => a.textContent.trim() + '|' + a.getAttribute('href'))")
-    assert cur == ["Риэлтор|/rieltor/"], f"highlighted: {cur}"
-    v.goto("/services/")
+    assert cur == [f"{label}|/rieltor/"], f"highlighted: {cur}"
+    v.goto("/")
     cur2 = v.pg.evaluate("[...document.querySelectorAll('.chrome-nav a[aria-current=page]')].map(a => a.textContent.trim())")
-    assert cur2 == ["Тарифы"], f"on /services/ highlighted: {cur2}"
+    assert cur2 == ["Помощник"], f"on / highlighted: {cur2}"
+    labels = v.pg.evaluate("[...document.querySelectorAll('.chrome-nav a')].map(a => a.textContent.trim())")
+    assert "Тарифы" not in labels and "Об авторе" not in labels, f"the header still has a removed item: {labels}"
     v.pg.click(".chrome-nav a[href='/rieltor/']")
     v.pg.wait_for_url("**/rieltor/")
 
@@ -673,7 +710,7 @@ def _(ctx):
     v.goto("/")
     v.pg.click("[data-menu-toggle]")
     v.pg.wait_for_timeout(300)
-    assert v.pg.is_visible(".chrome-panel a[href='/rieltor/']"), "the mobile menu has no «Риэлтор»"
+    assert v.pg.is_visible(".chrome-panel a[href='/rieltor/']"), f"the mobile menu has no «{rieltor_label()}»"
 
 
 # ------------------------------------------------------------------------------------------------ runner

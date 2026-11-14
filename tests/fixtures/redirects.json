@@ -1,0 +1,31 @@
+{
+ "/services/": {
+  "default": "/#tarify",
+  "anchors": {
+   "#services": "/#tarify",
+   "#service-1": "/#tarify",
+   "#service-2": "/#tarify",
+   "#pokaz": "/#tarify",
+   "#documents": "/products.html#documents",
+   "#service-3": "/products.html#documents",
+   "#service-4": "/products.html#documents",
+   "#service-5": "/#service-5",
+   "#setup-start": "/#service-5",
+   "#vip": "/#vip",
+   "#setup-vip": "/#vip",
+   "#rieltor": "/#service-rieltor",
+   "#service-rieltor": "/#service-rieltor",
+   "#setup-rieltor": "/#service-rieltor",
+   "#compare": "/#compare",
+   "#support": "/#support",
+   "#process": "/#process",
+   "#contact": "/#contact"
+  }
+ },
+ "/about.html": {
+  "default": "/",
+  "anchors": {
+   "#p-02": "/"
+  }
+ }
+}

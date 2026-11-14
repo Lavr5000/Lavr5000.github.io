@@ -33,21 +33,21 @@ from urllib.parse import unquote
 sys.path.insert(0, str(Path.home() / ".claude" / "0 ProEKTi" / "browser-service"))
 from svc_tab import Tab  # noqa: E402
 
-PAGES = ["/", "/about.html", "/services/", "/apps/transkribator/", "/products.html", "/blog/",
+# IA step: /about.html and /services/ are static redirect pages without the counter (checked in preview_services_check.py);
+# the tariff cards, order triggers and the payment window of /services/ are now on "/"
+PAGES = ["/", "/apps/transkribator/", "/products.html", "/blog/",
          "/blog/apartment-auditor/", "/blog/dva-prilozheniya/", "/blog/ryazan-obmer-razvertki/",
          "/blog/smeta-osnovanie-list/", "/blog/transkribator-golosom/"]
 GOALS = {  # page -> [(selector, goal id, kind)]; kind "order" = order trigger that opens the order dialog
     "/apps/transkribator/": [('a[href*="github.com/Lavr5000/Transkribator/releases"]', "download_transkribator", "link")],
     "/": [("[data-order]", "order_click", "order"),
           ('#contact a[href^="https://max.ru/"]', "contact_max", "link")],
-    "/services/": [("[data-order]", "order_click", "order"),
-                   ('#contact a[href^="https://max.ru/"]', "contact_max", "link")],
     # the RuStore link of Apartment Auditor moved from the home page to the builders page with layout v2
     "/products.html": [('a[href*="rustore.ru/catalog/app/com.lavr5000xxx.apartmentauditor"]', "download_apartment_auditor", "link"),
                        ("[data-order]", "order_click", "order"),
                        ('#contact a[href^="https://max.ru/"]', "contact_max", "link")],
 }
-PAY_PAGES = ["/", "/services/", "/products.html"]  # pages that carry the payment window
+PAY_PAGES = ["/", "/products.html"]  # pages that carry the payment window
 
 
 # Console errors that are expected and do not fail the gate, each counted and printed separately:
