@@ -23,6 +23,9 @@ Keys
   text_same_home/_builders  word multiset of the rendered text (innerText, all <details> open) equals the baseline; allowed additions:
                         "Подробнее" (home), the R5 words (builders); nothing removed               = ok
   font_min_tel          smallest computed font-size of visible text in <main> on 390 >= baseline
+  font_same_tel         every text element of <main> on 390 (matched by its text) keeps a font-size >= baseline
+  other_pages_style     hash of computed styles of every element of the other pages and /products.html on 390
+                        and 1440 equals the baseline (a recoloured token or a global rule changes it)
   tap_small_tel         links/buttons/summary in <main> on 390 smaller than 44 px both ways     <= baseline
   line_height_tel       median line-height/font-size of <main> paragraphs on 390 in [1.40, 1.55]
   other_pages_h         height of the other pages (390 and 1440) within 1 % of the baseline
@@ -156,6 +159,28 @@ JS_PINNED = r"""
   return cs.position === 'fixed' && r.top <= 80 && r.bottom >= innerHeight - 2 && cs.visibility !== 'hidden'; })()
 """
 
+JS_FONTS = r"""
+(() => { const out = {};
+  for (const el of document.querySelectorAll('main p, main li, main dd, main summary, main h1, main h2, main h3, main a')) {
+    if (!el.getClientRects().length) continue;
+    const k = el.textContent.replace(/\s+/g, ' ').trim().slice(0, 48); if (!k) continue;
+    const f = parseFloat(getComputedStyle(el).fontSize); out[k] = Math.min(out[k] || 99, f);
+  }
+  return out; })()
+"""
+
+JS_STYLE = r"""
+(() => { const P = ['color','backgroundColor','backgroundImage','fontSize','lineHeight','fontWeight','paddingTop',
+  'paddingBottom','paddingLeft','marginTop','marginBottom','borderRadius','backdropFilter','gap'];
+  let s = ''; for (const el of document.querySelectorAll('body *')) {
+    if (el.closest('script,style,noscript,svg,canvas,picture')) continue;
+    const cs = getComputedStyle(el); s += el.tagName + '|' + P.map(k => String(cs[k]).split(location.origin).join('')).join('|') + ';'; }
+  let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; }
+  return h.toString(16); })()
+"""
+
+STYLE_PAGES = OTHER + ["/products.html"]
+
 PAINT = "[data-scene-bg]{background:%s !important} [data-scene-bg] *{visibility:hidden !important}"
 
 
@@ -235,6 +260,7 @@ def collect(br_c, br_w, b, css):
             S["pay_attrs"] = pg.evaluate(JS_PAY)
             S["text_home"] = dict(words(pg.evaluate(JS_TEXT)))
             S["typo_tel"] = pg.evaluate(JS_TYPO)
+            S["fonts_tel"] = pg.evaluate(JS_FONTS)
             exp = 0
             for card in S["tariff_tel"]:
                 loc = pg.locator(f"article#{card['id']} details > summary, article#{card['id']} [aria-expanded]").first
@@ -285,18 +311,21 @@ def collect(br_c, br_w, b, css):
     S["text_builders"] = dict(words(pg.evaluate(JS_TEXT)))
     c.close()
     # other pages keep their height
-    S["other_h"] = {}
+    S["other_h"], S["other_style"] = {}, {}
     for tag, w, h in (("tel", 390, 844), ("pc", 1440, 900)):
         c = ctx(br_c, w, h, css=css)
         V2.preview_api_stub(c, b)
         pg = c.new_page()
-        for path in OTHER:
+        for path in STYLE_PAGES:
             try:
                 pg.goto(b + path, wait_until="load")
                 V2.settle(pg, 300)
-                S["other_h"][f"{tag}{path}"] = pg.evaluate("document.documentElement.scrollHeight")
+                if path in OTHER:
+                    S["other_h"][f"{tag}{path}"] = pg.evaluate("document.documentElement.scrollHeight")
+                S["other_style"][f"{tag}{path}"] = pg.evaluate(JS_STYLE)
             except Exception:  # noqa: BLE001
                 S["other_h"][f"{tag}{path}"] = -1
+                S["other_style"][f"{tag}{path}"] = None
         c.close()
     # WebKit: the owner's phone
     S["tariff_webkit"] = None
@@ -342,6 +371,7 @@ def main(argv=None) -> int:
             "home_tel_h": S["home_tel_h"], "home_pc_h": S["home_pc_h"], "pay_attrs": S["pay_attrs"],
             "text_home": S["text_home"], "text_builders": S["text_builders"],
             "font_min_tel": S["typo_tel"]["fmin"], "tap_small_tel": S["typo_tel"]["small"], "other_h": S["other_h"],
+            "fonts_tel": S["fonts_tel"], "other_style": S["other_style"],
         }, ensure_ascii=False, indent=1), encoding="utf-8")
         print("baseline written", FIX)
     if "--baseline" in argv or "--write-baseline" in argv:
@@ -379,11 +409,17 @@ def main(argv=None) -> int:
     t = S["typo_tel"]
     key("font_min_tel", f"{t['fmin']}(base {BASE.get('font_min_tel')})", t["fmin"] >= BASE.get("font_min_tel", 99))
     key("tap_small_tel", f"{t['small']}(base {BASE.get('tap_small_tel')})", t["small"] <= BASE.get("tap_small_tel", -1))
+    bf = BASE.get("fonts_tel", {})
+    smaller = {k: (S["fonts_tel"][k], v) for k, v in bf.items() if k in S["fonts_tel"] and S["fonts_tel"][k] < v - 0.01}
+    key("font_same_tel", f"{'ok' if not smaller else 'smaller=' + str(dict(list(smaller.items())[:4]))} n={len(bf)}",
+        bool(bf) and not smaller)
     med = round(statistics.median(t["lh"]), 3) if t["lh"] else 0
     key("line_height_tel", med, 1.40 <= med <= 1.55)
     drift = {k: (v, BASE.get("other_h", {}).get(k)) for k, v in S["other_h"].items()
              if not BASE.get("other_h", {}).get(k) or abs(v - BASE["other_h"][k]) > 0.01 * BASE["other_h"][k]}
     key("other_pages_h", "same" if not drift else f"drift={drift}", not drift)
+    sd = [k for k, v in S["other_style"].items() if v is None or v != BASE.get("other_style", {}).get(k)]
+    key("other_pages_style", "same" if not sd else f"changed={sd}", not sd and bool(BASE.get("other_style")))
     col = 0
     for tag, lim in (("tel", 360), ("pc", 10 ** 6)):
         for cd in S[f"tariff_{tag}"]:
