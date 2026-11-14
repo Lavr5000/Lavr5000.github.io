@@ -17,7 +17,7 @@
 
   var API_ORIGIN = 'https://api.ai-vibes.ru';
 
-  /* about.html and products.html render their nav with React AFTER
+  /* products.html renders its nav with React AFTER
    * DOMContentLoaded, so a one-shot querySelector finds nothing there and the link
    * would silently never appear on those pages. Wait for the container, bounded:
    * give up after WAIT_MS rather than observing the document forever. */

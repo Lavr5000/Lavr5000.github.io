@@ -11,7 +11,7 @@
  *   scene_plain                - the home-page scene has switched itself off on a device that does not keep up
  *                                (event `scene:plain` of assets/scene3.js); params at (travel 0..1), gap (ms)
  * place = id of the nearest section or dialog (hero, tarify, contact, order-dialog, ...).
- * The /services/ goal is a page-visit goal and needs no code.
+ * The tariffs goal is a page-visit goal (a visit of the tariffs section on the home page) and needs no code.
  * Disclosed in privacy.html, section "Яндекс Метрика".
  */
 (function (w, d) {
