@@ -42,6 +42,9 @@
 /* "soon": no price, no button, quieter than the available tiles */
 .rl-tile--soon{background:transparent;border-style:dashed}
 .rl-tile--soon .rl-title{color:var(--on-paper-2)}
+/* a held subscription tile loses the dark background above: its copy switches to the paper colours */
+.rl-tile--subscription.rl-tile--soon{color:var(--on-paper);color-scheme:light}
+.rl-tile--subscription.rl-tile--soon :is(.rl-note,.rl-sub-list,.rl-unit){color:var(--on-paper-2)}
 .rl-tile--backlog .rl-title{font-size:21px}
 
 /* without scripts: the generated list of the page */
