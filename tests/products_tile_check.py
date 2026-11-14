@@ -7,9 +7,9 @@ Serves the working tree on 127.0.0.1 (same helper as tests/v2_gate.py) and inter
 https://api.ai-vibes.ru/**. The tile «Таблицы из PDF → Excel» ships hidden in products.js
 (visible:false + gate "pdf_tables"); products.render.js asks GET /api/products/status:
 
-  * {"pdf_tables":"hidden"} -> no tile, the static catalog is intact (6 cards, 2 product tiles);
+  * {"pdf_tables":"hidden"} -> no tile, the static catalog is intact (5 cards, 1 product tile; nakladnaya-m15 closed by PO 14.11);
   * {"pdf_tables":"public"} -> the tile appears as article.card[data-product="pdf-tables"] at its registry
-    order (after nakladnaya-m15), links /pdf-tables.html and shows «499 ₽»;
+    order (after material-takeoff), links /pdf-tables.html and shows «499 ₽»;
   * network failure / HTTP 500 -> the tile stays hidden, the catalog is intact;
   * an answer that arrives later than the client's 4 s timeout -> the tile stays hidden.
 
@@ -31,8 +31,8 @@ from playwright.sync_api import sync_playwright  # noqa: E402
 ROOT = Path(__file__).resolve().parents[1]
 API = "https://api.ai-vibes.ru"
 PAGE = "/products.html"
-STATIC_CARDS = 6          # material-takeoff, nakladnaya-m15 + 2 document services + 2 free apps
-STATIC_PRODUCT_TILES = 2  # material-takeoff (order 10), nakladnaya-m15 (order 60)
+STATIC_CARDS = 5          # material-takeoff + 2 document services + 2 free apps
+STATIC_PRODUCT_TILES = 1  # material-takeoff (order 10); nakladnaya-m15 closed 14.11
 # fetch shim for the timeout scenario: the answer arrives after the client has already given up
 SLOW_FETCH = """
 (() => { const o = window.fetch; window.fetch = (i, n) => o(i, n)
@@ -94,7 +94,7 @@ def run_scenario(browser, served, mode: str, shots=None):
         check(page.locator("article.card").count() == STATIC_CARDS + 1,
               f"public: {STATIC_CARDS + 1} cards ({page.locator('article.card').count()})")
         check(page.locator('[data-product]').count() == STATIC_PRODUCT_TILES + 1,
-              "public: product tiles 2+1")
+              "public: product tiles 1+1")
         check(tile.locator("h3").inner_text() == "Таблицы из PDF → Excel", "public: title")
         check(tile.locator(".card-price").inner_text() == "499 ₽", "public: price 499 ₽")
         check(tile.locator(".tag").inner_text() == "доступен", "public: tag доступен")
@@ -104,10 +104,10 @@ def run_scenario(browser, served, mode: str, shots=None):
         check(len(bullets) == 2 and bullets[0].startswith("Вход: PDF до 25 листов")
               and bullets[1].startswith("Выход: Excel"), f"public: bullets ({bullets})")
         pos = page.evaluate(
-            """() => { const a = document.querySelector('[data-product="nakladnaya-m15"]');
+            """() => { const a = document.querySelector('[data-product="material-takeoff"]');
                  const b = document.querySelector('[data-product="pdf-tables"]');
                  return !a || !b ? 0 : (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING); }""")
-        check(pos, "public: tile after nakladnaya-m15 (order 70)")
+        check(pos, "public: tile after material-takeoff (order 70)")
         if shots:
             page.screenshot(path=str(shots / f"tile-{mode}.png"), full_page=True)
     else:

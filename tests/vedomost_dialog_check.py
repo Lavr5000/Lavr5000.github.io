@@ -156,6 +156,11 @@ def main() -> int:
             ctx = browser.new_context(viewport={"width": 1440, "height": 900})
             api = Api()
             ctx.route(re.compile(r"^https://api\.ai-vibes\.ru/"), api.handle)
+            # nakladnaya.html was closed by PO 14.11.2026; the shared engine is still exercised through the
+            # former order form kept as a test fixture (tests/ is not published)
+            ctx.route(re.compile(r"/nakladnaya\.html(\?.*)?$"), lambda r: r.fulfill(
+                status=200, content_type="text/html; charset=utf-8",
+                body=(Path(__file__).resolve().parent / "fixtures" / "order_flow_nakladnaya.html").read_bytes()))
             ctx.route(re.compile(r"^https://(mc\.yandex\.(ru|com)|yastatic\.net)/"), lambda r: r.abort())
             bank_hits = []
             ctx.route(re.compile(rf"^https://{re.escape(PAY_HOST)}/"),
