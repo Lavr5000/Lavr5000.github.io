@@ -35,7 +35,7 @@ window.USLUGI_CATALOG = {
  "services": [
   {
    "allow_live": true,
-   "decision": "2026-10-25 14:37",
+   "decision": "2026-11-14 15:40",
    "deliver_hours": 2,
    "enabled": true,
    "evidence": {
@@ -222,8 +222,10 @@ window.USLUGI_CATALOG = {
     "city",
     "type"
    ],
-   "price_kop": 1000,
-   "price_label": "10 ₽",
+   "price_kop": 30000,
+   "price_label": "300 ₽",
+   "promo_decision": "2026-11-14 15:40",
+   "promo_price_kop": 15000,
    "result_format": "pdf",
    "review_mode": "auto",
    "skill": "otchet-o-cene",
@@ -647,7 +649,7 @@ window.USLUGI_CATALOG = {
    "version": "0"
   }
  ],
- "sha256": "f5a9e87cbe997383efa9994ef1aea066074929dae55dac198f393500db5b64c9",
+ "sha256": "36993a3e7b58de6b1813945620cfecada29e0fc584d52369e7b0677f4c7cfd4a",
  "subscription": {
   "decision": "2026-10-25 14:37",
   "enabled": false,
