@@ -1,0 +1,11 @@
+{
+ "home_tel_h": 10030,
+ "home_pc_h": 10587,
+ "pay_attrs": [
+  "data-amount=1000|data-consent-version=rieltor-v1-2026-10|data-consent=rieltor|data-order=Настройка помощника риэлтора на одном рабочем месте|data-pay=|data-price-label=10 ₽|data-service-id=setup-rieltor",
+  "data-amount=4500000|data-order=Настройка рабочего помощника VIP на компьютере и телефоне|data-pay=|data-price-label=45 000 ₽|data-service-id=setup-vip",
+  "data-amount=4500000|data-order=Настройка рабочего помощника VIP на компьютере и телефоне|data-pay=|data-price-label=45 000 ₽|data-service-id=setup-vip",
+  "data-amount=750000|data-order=Настройка помощника «Старт» на одном рабочем месте|data-pay=|data-price-label=7 500 ₽|data-service-id=setup-start",
+  "data-amount=750000|data-order=Настройка помощника «Старт» на одном рабочем месте|data-pay=|data-price-label=7 500 ₽|data-service-id=setup-start"
+ ]
+}
