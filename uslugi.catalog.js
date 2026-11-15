@@ -35,7 +35,7 @@ window.USLUGI_CATALOG = {
  "services": [
   {
    "allow_live": true,
-   "decision": "2026-11-14 15:40",
+   "decision": "2026-11-15 08:54",
    "deliver_hours": 2,
    "enabled": true,
    "evidence": {
@@ -224,7 +224,7 @@ window.USLUGI_CATALOG = {
    ],
    "price_kop": 30000,
    "price_label": "300 ₽",
-   "promo_decision": "2026-11-14 15:40",
+   "promo_decision": "2026-11-15 08:54",
    "promo_price_kop": 15000,
    "result_format": "pdf",
    "review_mode": "auto",
@@ -234,7 +234,7 @@ window.USLUGI_CATALOG = {
   },
   {
    "allow_live": true,
-   "decision": "2026-10-25 14:37",
+   "decision": "2026-11-15 08:54",
    "deliver_hours": 24,
    "disclaimer": "Первичная юридическая проверка — не юридическая консультация и не юридическое заключение. Итоговую проверку документов осуществляет юрист.",
    "enabled": true,
@@ -337,8 +337,10 @@ window.USLUGI_CATALOG = {
     }
    ],
    "precheck": [],
-   "price_kop": 1000,
-   "price_label": "10 ₽",
+   "price_kop": 30000,
+   "price_label": "300 ₽",
+   "promo_decision": "2026-11-15 08:54",
+   "promo_price_kop": 15000,
    "result_format": "pdf",
    "review_mode": "auto",
    "skill": "egrn-i-papka",
@@ -347,7 +349,7 @@ window.USLUGI_CATALOG = {
   },
   {
    "allow_live": true,
-   "decision": "2026-10-25 14:37",
+   "decision": "2026-11-15 08:54",
    "deliver_hours": 24,
    "disclaimer": "Пришлите 4–6 фото комнат без людей и документов в кадре. По желанию добавьте эскиз планировки от руки (фото или PDF): по нему нарисуем аккуратный план квартиры с размерами. Срок готовности: 24 ч. Это визуализация, а не фото готового ремонта. В комнате без окон модель размещает картину или предмет интерьера там, где могло бы быть окно. Так задумано.",
    "enabled": true,
@@ -428,8 +430,10 @@ window.USLUGI_CATALOG = {
     }
    ],
    "precheck": [],
-   "price_kop": 1000,
-   "price_label": "10 ₽",
+   "price_kop": 50000,
+   "price_label": "500 ₽",
+   "promo_decision": "2026-11-15 08:54",
+   "promo_price_kop": 25000,
    "result_format": "zip",
    "review_mode": "auto",
    "skill": "foto-posle-remonta",
@@ -438,7 +442,7 @@ window.USLUGI_CATALOG = {
   },
   {
    "allow_live": true,
-   "decision": "2026-10-25 14:37",
+   "decision": "2026-11-15 08:54",
    "deliver_hours": 24,
    "disclaimer": "Пришлите выписку ЕГРН и опишите стороны сделки и расчёты. Срок готовности: 24 ч. Это проект договора, не юридическая консультация; паспортные данные вписываются при подписании. Итоговую проверку документов осуществляет юрист.",
    "enabled": true,
@@ -500,8 +504,10 @@ window.USLUGI_CATALOG = {
     }
    ],
    "precheck": [],
-   "price_kop": 1000,
-   "price_label": "10 ₽",
+   "price_kop": 30000,
+   "price_label": "300 ₽",
+   "promo_decision": "2026-11-15 08:54",
+   "promo_price_kop": 15000,
    "result_format": "zip",
    "review_mode": "auto",
    "skill": "dokument-po-shablonu",
@@ -510,7 +516,7 @@ window.USLUGI_CATALOG = {
   },
   {
    "allow_live": true,
-   "decision": "2026-10-25 14:37",
+   "decision": "2026-11-15 08:54",
    "deliver_hours": 24,
    "disclaimer": "Пришлите выписку ЕГРН, опишите стороны, расчёты и задаток, дату основного договора и что остаётся в квартире. Срок готовности: 24 ч. Это проект предварительного договора, не юридическая консультация; паспортные данные вписываются при подписании. Итоговую проверку документов осуществляет юрист.",
    "enabled": true,
@@ -592,8 +598,10 @@ window.USLUGI_CATALOG = {
     }
    ],
    "precheck": [],
-   "price_kop": 1000,
-   "price_label": "10 ₽",
+   "price_kop": 30000,
+   "price_label": "300 ₽",
+   "promo_decision": "2026-11-15 08:54",
+   "promo_price_kop": 15000,
    "result_format": "zip",
    "review_mode": "auto",
    "skill": "dokument-po-shablonu",
@@ -602,7 +610,7 @@ window.USLUGI_CATALOG = {
   },
   {
    "allow_live": false,
-   "decision": "2026-10-25 14:37",
+   "decision": "2026-11-15 08:54",
    "deliver_hours": 24,
    "enabled": false,
    "id": "arenda",
@@ -640,8 +648,10 @@ window.USLUGI_CATALOG = {
     }
    ],
    "precheck": [],
-   "price_kop": 1000,
-   "price_label": "10 ₽",
+   "price_kop": 30000,
+   "price_label": "300 ₽",
+   "promo_decision": "2026-11-15 08:54",
+   "promo_price_kop": 15000,
    "result_format": "docx",
    "review_mode": "auto",
    "skill": "dokument-po-shablonu",
@@ -649,7 +659,7 @@ window.USLUGI_CATALOG = {
    "version": "0"
   }
  ],
- "sha256": "36993a3e7b58de6b1813945620cfecada29e0fc584d52369e7b0677f4c7cfd4a",
+ "sha256": "296e84c47fc78fba55b5b9d2883f04e638aa10f6e2d0e6daf3f619a47fbfe0ea",
  "subscription": {
   "decision": "2026-10-25 14:37",
   "enabled": false,
