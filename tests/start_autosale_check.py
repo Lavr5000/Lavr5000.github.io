@@ -455,7 +455,7 @@ def main(argv=None) -> int:
         fails.append("vip_post")
     if mode == "held" and stats["posts"]:
         fails.append("post_in_held_mode")
-    ok = not fails and stats["buttons"] >= 6
+    ok = not fails and stats["buttons"] >= 5  # IA: hero 2 + 3 tariff cards on / (services/ is a redirect)
     miss = "" if ok else " miss=" + ",".join(re.sub(r"[\s,]+", "_", f) for f in fails[:10])
     print(f"START-AUTOSALE status={'ok' if ok else 'fail'} mode={mode} buttons={stats['buttons']} cases={stats['cases']} "
           f"posts={stats['posts']} vip_posts={stats['vip_posts']}{miss}")
