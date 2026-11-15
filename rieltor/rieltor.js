@@ -130,11 +130,12 @@
       if (!check.checked) {
         err.textContent = 'Отметьте согласие — без него заказ оформить нельзя.'; err.hidden = false; return;
       }
-      var key = store.get('av-uslugi-key:' + s.id);
+      var keyName = 'av-uslugi-key:' + s.id + (promo.value.trim() ? ':' + promo.value.trim().toLowerCase() : '');   /* a typed promo code is another order */
+      var key = store.get(keyName);
       if (!key || !/^[0-9a-f-]{36}$/.test(key)) {
         key = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : '';
         if (!key) { err.textContent = errText(); err.hidden = false; return; }
-        store.set('av-uslugi-key:' + s.id, key);
+        store.set(keyName, key);
       }
       submit.disabled = true;
       var body = { service: s.id, email: email.value.trim(), consent_version: CONSENT_VERSION };
