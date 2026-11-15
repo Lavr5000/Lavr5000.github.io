@@ -655,6 +655,46 @@ def _(ctx):
     assert not v.api, f"the order API was really called: {v.api[:2]}"
 
 
+@case("pay.promo_code_in_request", browser=True)
+def _(ctx):
+    """15.11: the typed code goes to the order API as is (trimmed; the backend normalizes it), the hint promises
+    the discount only conditionally (the code is checked on the server, never in the page), and the
+    idempotency key of a code is its own and space/case-insensitive ("inna 150" == "INNA150")."""
+    cat = catalog()
+    svc = next(s for s in cat["services"] if s["enabled"] and s.get("promo_price_kop"))
+    sid = svc["id"]
+    v = View(ctx.br, ctx.base)
+    v.ctx.route("**/pay-stub*", lambda r: r.fulfill(status=302, headers={"Location": v.base + "/rieltor/"}))
+    v.pg.add_init_script(MOCK_FETCH)
+    v.goto()
+    tile = v.pg.locator(f'[data-uslugi-id="{sid}"]')
+    tile.locator("button.rl-btn-pay").click()
+    settle(v.pg, 200)
+    hint = tile.locator(".rl-pay-promo-hint")
+    assert tile.locator(".rl-pay-promo").count() == 1, "no promo code field in the pay form"
+    assert not hint.is_visible(), "the promo hint shows without a code"
+    tile.locator(".rl-pay-email").fill("realtor@example.com")
+    tile.locator(".rl-pay-promo").fill(" inna 150 ")
+    settle(v.pg, 100)
+    ht = hint.inner_text()
+    assert hint.is_visible() and ht.startswith("Если промокод действителен"), f"the hint must be conditional: {ht!r}"
+    want = str(svc["promo_price_kop"] // 100)
+    assert re.search(want + r"\s?₽", ht.replace(NB, " ")), f"the hint lacks the promo price {want}: {ht!r}"
+    tile.locator(".rl-pay-check").check()
+    tile.locator(".rl-pay button[type=submit]").click()
+    v.pg.wait_for_url("**/rieltor/**", timeout=8000)
+    settle(v.pg, 300)
+    calls = mock_calls(v)
+    assert len(calls) == 1, f"expected exactly one order request, got {len(calls)}"
+    body = json.loads(calls[0]["opts"]["body"])
+    assert body.get("promo") == "inna 150", body
+    key = calls[0]["opts"]["headers"]["Idempotency-Key"]
+    assert v.pg.evaluate("sessionStorage.getItem('av-uslugi-key:" + sid + ":inna150')") == key, \
+        "the key of a code must be stored under the normalized code"
+    assert v.pg.evaluate("sessionStorage.getItem('av-uslugi-key:" + sid + "')") is None, "the code reused the no-code key"
+    assert not v.api, f"the order API was really called: {v.api[:2]}"
+
+
 @case("page.no_overflow_at_widths", browser=True)
 def _(ctx):
     bad = []

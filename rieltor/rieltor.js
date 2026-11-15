@@ -94,8 +94,9 @@
     function syncPromoHint() {
       var on = promo.value.trim() !== '' && s.promo_price_kop;
       promoHint.hidden = !on;
-      if (on) promoHint.textContent = 'С промокодом — ' + fmt(s.promo_price_kop) + '; итоговую сумму покажет банк.';
+      if (on) promoHint.textContent = 'Если промокод действителен — ' + fmt(s.promo_price_kop) + '; итоговую сумму покажет банк.';
     }
+    function promoKey() { return promo.value.replace(/\s+/g, '').toLowerCase(); }   /* "inna 150" == "INNA150" (the backend compares so) */
     promo.addEventListener('input', syncPromoHint);
     syncPromoHint();
     var checkLabel = el('label', 'rl-pay-l rl-pay-consent');
@@ -130,7 +131,7 @@
       if (!check.checked) {
         err.textContent = 'Отметьте согласие — без него заказ оформить нельзя.'; err.hidden = false; return;
       }
-      var keyName = 'av-uslugi-key:' + s.id + (promo.value.trim() ? ':' + promo.value.trim().toLowerCase() : '');   /* a typed promo code is another order */
+      var keyName = 'av-uslugi-key:' + s.id + (promoKey() ? ':' + promoKey() : '');   /* a typed promo code is another order */
       var key = store.get(keyName);
       if (!key || !/^[0-9a-f-]{36}$/.test(key)) {
         key = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : '';
