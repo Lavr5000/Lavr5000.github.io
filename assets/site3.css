@@ -101,9 +101,17 @@ ul,ol{margin:0;padding:0;list-style:none}
 .scene-cap:first-child .scene-cap-when{color:var(--dawn)}
 /* разделы главной поверх города: светлые — листами, тёмные — тёмным стеклом */
 .scene ~ .band{width:min(1180px,calc(100% - 48px));margin:9vh auto;border-radius:10px;box-shadow:0 30px 80px color-mix(in srgb, var(--pure-dark) 50%, transparent)}
-.scene ~ .band:not(.paper):not(.paper-2){background:color-mix(in srgb, var(--scene-veil) 84%, transparent);box-shadow:0 30px 80px color-mix(in srgb, var(--pure-dark) 50%, transparent),inset 0 0 0 1px var(--line-ink)}
+.scene ~ .band:not(.paper):not(.paper-2){background:color-mix(in srgb, var(--scene-veil) 78%, transparent);box-shadow:0 30px 80px color-mix(in srgb, var(--pure-dark) 50%, transparent),inset 0 0 0 1px var(--line-ink)}
 .scene ~ #tools{padding:0;background:none;box-shadow:none}
 .scene ~ #tools .wrap{padding:0;max-width:none}
+/* G1: светлая бумага и карточки поверх города — полупрозрачные, фон сцены виден на прокрутке.
+   Плитки тарифов стоят на секции: свой фон убран, светит фон секции (78 %); VIP — тёмное стекло.
+   Kicker на полупрозрачной бумаге — цветом чернил: латунь не держит контраст 4.5 на тёмном кадре фона. */
+.scene ~ .band.paper,.scene ~ .band.paper-2{background:color-mix(in srgb, var(--paper) 78%, transparent)}
+.scene ~ .band.paper .kicker,.scene ~ .band.paper-2 .kicker{color:var(--ink)}
+.scene ~ .band .tariff{background:transparent}
+.scene ~ .band .tariff--vip{background:color-mix(in srgb, var(--ink) 80%, transparent)}
+.scene ~ .band .cmp-wrap,.scene ~ .band .note-card{background:color-mix(in srgb, var(--sheet) 70%, transparent)}
 @media (max-width:1000px){
   /* запас фона под сворачивание адресной строки телефона: высота окна меняется, холст не пересобирается */
   .scene-bg{--scene-reserve:100px;height:calc(100vh - var(--c-head-h,68px) + 100px);height:calc(100lvh - var(--c-head-h,68px) + 100px)}
@@ -113,11 +121,26 @@ ul,ol{margin:0;padding:0;list-style:none}
   .scene .hero-in{padding:12px;background:color-mix(in srgb, var(--scene-veil) 74%, transparent);border-radius:8px}
   .scene .hero-text{padding:0;background:none}
   .scene .hero-foot{padding:0;background:none}
-  .scene-caps{gap:24vh;padding:20vh 16px 18vh}
+  .scene-caps{gap:12vh;padding:10vh 16px 8vh}
   .scene-cap,.scene-cap:nth-child(2),.scene-cap:nth-child(3){justify-self:stretch;max-width:none}
   .scene-cap p{font-size:16px}
-  .scene ~ .band{width:calc(100% - 20px);margin:3vh auto;border-radius:8px;padding-block:28px}
+  .scene ~ .band{width:calc(100% - 20px);margin:2vh auto;border-radius:8px;padding-block:20px}
   .scene ~ #tools{padding:0}
+  /* G1: компактный ритм телефона — те же тексты и кегли, меньше воздуха */
+  .scene ~ .band p{line-height:1.5}
+  .scene ~ .band .tariff-price{line-height:1}
+  .scene ~ .band .head{gap:10px;margin-bottom:18px}
+  .scene ~ .band .split{gap:16px}
+  .scene ~ .band .tariffs,.scene ~ .band .steps{gap:12px}
+  .scene ~ .band .tariff{gap:10px;padding:16px}
+  .scene ~ .band .tariff-list{gap:4px}
+  .scene ~ .band .tariff-own{padding-top:10px}
+  .scene ~ .band .note-card{gap:10px;padding:16px}
+  .scene ~ .band .cmp th,.scene ~ .band .cmp td{padding:10px 12px}
+  .scene ~ .band .faq summary{min-height:48px}
+  .scene ~ .band .faq p{padding-bottom:12px}
+  .scene ~ .band .support{padding:14px 16px}
+  .scene ~ .band .step{padding-top:10px}
 }
 @media print{.scene-bg{display:none}}
 /* «меньше движения»: город не меняется, длинные промежутки для наблюдения не нужны */
