@@ -183,6 +183,30 @@ ul,ol{margin:0;padding:0;list-style:none}
 .tariff-own strong{font-weight:500;color:var(--on-paper)}
 .tariff--vip .tariff-own strong{color:var(--on-ink)}
 .tariff .btn-pay{width:100%}
+/* G2: плитки тарифов по умолчанию свёрнуты — список и оговорки за «Подробнее» (нативный <details>, без JS).
+   Summary не flex/grid: в Safari раскрытие ломается; содержимое закрытого details прячем сами —
+   авторский display:grid у списка перебивает скрытие движка. */
+.tariff-more{display:block}
+.tariff-more:not([open]) > :not(summary){display:none}
+.tariff-more-sum{
+  display:block;min-height:44px;padding:10px 14px;margin:0;border:1px solid var(--line-paper);border-radius:4px;
+  text-align:center;font-size:16px;line-height:1.4;color:var(--on-paper);cursor:pointer;list-style:none;
+  user-select:none;-webkit-user-select:none;
+}
+.tariff-more-sum::-webkit-details-marker{display:none}
+.tariff-more-sum::after{
+  content:"";display:inline-block;vertical-align:middle;margin-left:8px;width:8px;height:8px;
+  border:solid var(--brass-deep);border-width:0 2px 2px 0;transform:rotate(45deg);
+  transition:transform .2s var(--ease);
+}
+.tariff-more[open] > .tariff-more-sum::after{transform:rotate(225deg)}
+.tariff-more[open] > .tariff-list{margin-top:12px}
+.tariff--vip .tariff-more-sum{color:var(--on-ink);border-color:var(--line-ink)}
+.tariff--vip .tariff-more-sum::after{border-color:var(--brass)}
+@media (hover:hover){
+  .tariff-more-sum:hover{background:color-mix(in srgb, var(--on-paper) 6%, transparent)}
+  .tariff--vip .tariff-more-sum:hover{background:color-mix(in srgb, var(--on-ink) 8%, transparent)}
+}
 .support{
   margin-top:var(--gap);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 24px;
   padding:18px clamp(18px,3vw,28px);border:1px dashed color-mix(in srgb, var(--on-paper) 35%, transparent);border-radius:6px;
