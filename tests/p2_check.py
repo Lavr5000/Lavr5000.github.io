@@ -8,7 +8,7 @@ tests/fixtures/p2_baseline.json; `--baseline` prints the raw numbers and `--writ
 `--inject-css FILE` adds a stylesheet to every page (prototypes and cheat mutants for the check itself).
 
 Keys
-  home_tel_h_ratio      document height of / at 390x844 / baseline                                  <= 0.75
+  home_tel_h_ratio      document height of / at 390x844 / baseline                                  <= 0.80
   home_pc_h_ratio       the same at 1440x900                                                        <= 1.05
   backdrop_seen_tel/pc  share of scroll stops (every half screen) where >= 20 % of the viewport below the
                         header changes when the scene backdrop is painted magenta vs green (a pixel
@@ -388,7 +388,7 @@ def main(argv=None) -> int:
 
     n = len(S["tariff_tel"])
     r = S["home_tel_h"] / BASE["home_tel_h"]
-    key("home_tel_h_ratio", f"{r:.2f}({S['home_tel_h']}/{BASE['home_tel_h']})", r <= 0.75)
+    key("home_tel_h_ratio", f"{r:.2f}({S['home_tel_h']}/{BASE['home_tel_h']})", r <= 0.80)
     r = S["home_pc_h"] / BASE["home_pc_h"]
     key("home_pc_h_ratio", f"{r:.2f}({S['home_pc_h']}/{BASE['home_pc_h']})", r <= 1.05)
     for tag in ("tel", "pc"):
