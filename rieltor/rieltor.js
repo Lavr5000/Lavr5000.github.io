@@ -96,7 +96,7 @@
       promoHint.hidden = !on;
       if (on) promoHint.textContent = 'Если промокод действителен — ' + fmt(s.promo_price_kop) + '; итоговую сумму покажет банк.';
     }
-    function promoKey() { return promo.value.replace(/\s+/g, '').toLowerCase(); }   /* "inna 150" == "INNA150" (the backend compares so) */
+    function promoKey() { return promo.value.replace(/\s+/g, '').toLowerCase(); }   /* inner spaces and the case never matter (the backend compares so) */
     promo.addEventListener('input', syncPromoHint);
     syncPromoHint();
     var checkLabel = el('label', 'rl-pay-l rl-pay-consent');
