@@ -48,7 +48,7 @@
   w.ym(ID, "hit", location.href, ref ? {title: d.title, referer: ref} : {title: d.title});
 
   var GOALS = [
-    [/github\.com\/Lavr5000\/Transkribator\/releases/i, "download_transkribator"],
+    [/github\.com\/Lavr5000\/Transkribator(?:-releases)?\/releases/i, "download_transkribator"],
     [/rustore\.ru\/catalog\/app\/com\.lavr5000xxx\.apartmentauditor/i, "download_apartment_auditor"]
   ];
 

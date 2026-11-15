@@ -85,7 +85,7 @@ CHECKS = {   # key -> predicate on the value; the verdict is the list of keys wh
     "img_kb_home_d": lambda v: isinstance(v, (int, float)) and 0 < v <= IMG_KB_HOME_D_MAX,
     "assets_versioned_home": lambda v: v == 1,
     "lcp_ms_home_m": lambda v: isinstance(v, (int, float)) and 0 < v <= LCP_MS_HOME_M_MAX,
-    "tariff_cards_home": lambda v: isinstance(v, int) and v >= 3,   # #service-5, #vip, #service-rieltor
+    "tariff_cards_home": lambda v: isinstance(v, int) and v >= 2,   # #service-5, #vip (realtor card removed 2026-11-15)
     "hidden_at_rest": lambda v: v == 0, "hidden_at_rest_rm": lambda v: v == 0,
     "hidden_nojs": lambda v: v == 0, "dead_cta_nojs": lambda v: v == 0, "small_text": lambda v: v == 0,
     "screens_m_home": lambda v: isinstance(v, (int, float)) and 0 < v <= 9,
@@ -94,7 +94,7 @@ CHECKS = {   # key -> predicate on the value; the verdict is the list of keys wh
     "claudecode_raw_home": lambda v: v == 0, "contrast_fail": lambda v: v == 0,
     "hermes_raw": lambda v: v == 0, "removed_offers": lambda v: v == 0, "unready_prices": lambda v: v == 0,
     "llms_txt_200": lambda v: v == 1, "tariff_prices_match": lambda v: v == 1,
-    "pay_buttons_home": lambda v: isinstance(v, int) and v >= 5,   # hero 2 + #service-5, #vip, #service-rieltor
+    "pay_buttons_home": lambda v: isinstance(v, int) and v >= 4,   # hero 2 + #service-5, #vip
     "redirect_pages": lambda v: v == 1,
     "ym_form_protected": lambda v: v == 1,
 }
@@ -688,7 +688,7 @@ def run_gate(base: str, stage: str, exp: str, out_json: str | None) -> tuple[dic
             want_p = services_prices.get(c["id"])
             if want_p is None or norm_price(c["price"]) != norm_price(want_p):
                 mism.append(f"{path} {c['id']}: card {c['price']!r} vs services.js {want_p!r}")
-    S["tariff_prices_match"] = int(ok and found_ids == {"setup-start", "setup-vip", "setup-rieltor"} and not mism and
+    S["tariff_prices_match"] = int(ok and found_ids == {"setup-start", "setup-vip"} and not mism and
                                    all(i in services_prices for i in found_ids))
     detail["tariff_mismatch"] = mism
     # raw scans

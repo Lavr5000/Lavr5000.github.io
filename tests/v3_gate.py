@@ -100,13 +100,13 @@ DOM_JS = r"""() => {
 
 TARIFF_JS = r"""() => {
   const q = s => [...document.querySelectorAll(s)], has = id => !!document.getElementById(id);
-  const full = ['service-5', 'vip', 'service-rieltor'];
+  const full = ['service-5', 'vip'];   // realtor card removed from / (PO 2026-11-15 R-1-V)
   const pays = q('a[data-pay]'), reqs = q('a[data-request]');
   const shortCards = q('#tarify [data-pay]').filter(b => !full.some(id => b.closest('#' + id))).length;
   const legalIn = sel => { const r = document.querySelector(sel); if (!r) return [false, false];
     const hs = [...r.querySelectorAll('a[href]')].map(a => a.getAttribute('href'));
     return [hs.some(h => /oferta\.html/.test(h)), hs.some(h => /privacy\.html/.test(h))]; };
-  return {ids: Object.fromEntries(['service-5', 'vip', 'service-rieltor', 'compare', 'support'].map(i => [i, has(i)])),
+  return {ids: Object.fromEntries(['service-5', 'vip', 'compare', 'support'].map(i => [i, has(i)])),
     pay: pays.length, req: reqs.length, shortCards, tarify: legalIn('#tarify'), dialog: legalIn('#pay-dialog')};
 }"""
 
@@ -646,14 +646,18 @@ class Gate:
                 c.close()
             h = lambda d: {k: hashlib.sha256(v.encode()).hexdigest()[:12] for k, v in d.items()}
             hc, hr = h(cur), h(ref)
+            # PO 2026-11-15 R-1-V: the realtor pay button left /, its consent-version attribute goes with it;
+            # the consent texts themselves must stay byte for byte
+            if "v:setup-rieltor" in hr and "v:setup-rieltor" not in hc:
+                hr = {k: v for k, v in hr.items() if k != "v:setup-rieltor"}
             diff = sorted(k for k in set(hc) | set(hr) if hc.get(k) != hr.get(k))
             self.S["consent_hash_ok"] = f"{len(hr) - len([k for k in diff if k in hr])}/{len(hr)}"
             self.D["consent_diff"] = diff
             self.D["consent_ref_sha"] = git("rev-parse", "--short", "origin/master")
         br.close()
         bad = [k for k, v in t["ids"].items() if not v]
-        if t["pay"] < 5:
-            bad.append(f"data-pay={t['pay']}<5")
+        if t["pay"] < 4:
+            bad.append(f"data-pay={t['pay']}<4")
         if t["req"] < 1:
             bad.append(f"data-request={t['req']}<1")
         if t["shortCards"]:

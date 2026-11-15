@@ -385,7 +385,7 @@ def main(argv=None) -> int:
                 listing.append(f"{url}:{sid.group(1)}")
         need(pay_pages, "no [data-pay] buttons found in the html files")
         home_n = dict(pay_pages).get("/", 0)
-        need(home_n >= 5, f"/: {home_n} data-pay buttons, expected >= 5 (hero 2 + #service-5, #vip, #service-rieltor)")
+        need(home_n >= 4, f"/: {home_n} data-pay buttons, expected >= 4 (hero 2 + #service-5, #vip; realtor card removed, PO 2026-11-15 R-1-V)")
         need("/services/" not in dict(pay_pages), "/services/ must be a redirect page without data-pay buttons")
         print("  DATA-PAY " + " ".join(listing), flush=True)
         need({"setup-vip", "setup-rieltor"} <= held, "setup-vip / setup-rieltor must be in heldServices")
@@ -455,7 +455,7 @@ def main(argv=None) -> int:
         fails.append("vip_post")
     if mode == "held" and stats["posts"]:
         fails.append("post_in_held_mode")
-    ok = not fails and stats["buttons"] >= 5  # IA: hero 2 + 3 tariff cards on / (services/ is a redirect)
+    ok = not fails and stats["buttons"] >= 4  # hero 2 + 2 tariff cards on / (realtor card removed 2026-11-15)
     miss = "" if ok else " miss=" + ",".join(re.sub(r"[\s,]+", "_", f) for f in fails[:10])
     print(f"START-AUTOSALE status={'ok' if ok else 'fail'} mode={mode} buttons={stats['buttons']} cases={stats['cases']} "
           f"posts={stats['posts']} vip_posts={stats['vip_posts']}{miss}")

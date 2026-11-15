@@ -20,16 +20,6 @@
     "price": "45 000 ₽"
    }
   ],
-  "setup-rieltor": [
-   {
-    "kind": "pay",
-    "where": "service-rieltor",
-    "dialog": "order",
-    "consent_for": [],
-    "service": "Настройка помощника риэлтора на одном рабочем месте",
-    "price": "10 ₽"
-   }
-  ],
   "support-monthly": [
    {
     "kind": "request",
@@ -71,26 +61,6 @@
     "consent_for": [],
     "service": "Настройка рабочего помощника VIP на компьютере и телефоне",
     "price": "45 000 ₽"
-   }
-  ],
-  "setup-rieltor": [
-   {
-    "kind": "pay",
-    "where": "service-rieltor",
-    "dialog": "pay",
-    "consent_for": [
-     "setup-rieltor"
-    ],
-    "service": "Настройка помощника риэлтора на одном рабочем месте",
-    "price": "10 ₽",
-    "sent_without_consent": 0,
-    "body": {
-     "product": "setup-rieltor",
-     "email": "gate@example.com",
-     "contact": "@gate_test",
-     "consent_version": "rieltor-v1-2026-10",
-     "website": ""
-    }
    }
   ],
   "support-monthly": [

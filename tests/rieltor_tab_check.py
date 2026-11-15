@@ -336,11 +336,11 @@ def _(ctx):
 def _(ctx):
     url = catalog()["subscription"]["url"]
     path, _, frag = url.partition("#")
-    target = redirect_target(url)   # the catalog copy may keep /services/#service-rieltor: the redirect map sends it to /#service-rieltor
-    path, _, frag = target.partition("#")
-    assert path == "/" and frag == "service-rieltor", f"{url} -> {target}"
-    assert f'id="{frag}"' in read("index.html"), f"/ has no element #{frag}"
-    assert f'data-service-id="setup-rieltor"' in read("index.html")
+    target = redirect_target(url)   # the catalog copy may keep /services/#service-rieltor: the redirect map sends it to /rieltor/
+    # PO 2026-11-15 R-1-V: the realtor assistant is in development, sold nowhere; the home card is gone,
+    # the old anchors land on /rieltor/ where the subscription tile says «скоро»
+    assert target == "/rieltor/", f"{url} -> {target}"
+    assert 'data-service-id="setup-rieltor"' not in read("index.html").replace('data-consent-for="setup-rieltor"', "")
 
 
 # ------------------------------------------------------------------------------------------------ browser plumbing

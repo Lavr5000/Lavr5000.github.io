@@ -39,7 +39,7 @@ PAGES = ["/", "/apps/transkribator/", "/products.html", "/blog/",
          "/blog/apartment-auditor/", "/blog/dva-prilozheniya/", "/blog/ryazan-obmer-razvertki/",
          "/blog/smeta-osnovanie-list/", "/blog/transkribator-golosom/"]
 GOALS = {  # page -> [(selector, goal id, kind)]; kind "order" = order trigger that opens the order dialog
-    "/apps/transkribator/": [('a[href*="github.com/Lavr5000/Transkribator/releases"]', "download_transkribator", "link")],
+    "/apps/transkribator/": [('a[href*="github.com/Lavr5000/Transkribator-releases/releases"]', "download_transkribator", "link")],
     "/": [("[data-order]", "order_click", "order"),
           ('#contact a[href^="https://max.ru/"]', "contact_max", "link")],
     # the RuStore link of Apartment Auditor moved from the home page to the builders page with layout v2

@@ -47,7 +47,7 @@ AGENTS = ["*", "Googlebot", "YandexBot", "GPTBot", "ClaudeBot", "PerplexityBot"]
 EXTRA_PATHS = ["/assets/site2.css", "/assets/site3.css", "/assets/chrome.css"]
 LD_PAGES = ["index.html"]  # the tariffs and the JSON-LD live on the home page since the IA step
 REDIRECT_PAGES = ["services/index.html", "about.html"]  # static redirect pages: out of sitemap.xml and llms.txt
-MIN_TARIFFS = 3  # #service-5, #vip, #service-rieltor
+MIN_TARIFFS = 2  # #service-5, #vip (realtor card removed, PO 2026-11-15 R-1-V)
 BEGIN = "<!-- seo:jsonld:begin (scripts/build_seo_files.py) -->"
 END = "<!-- seo:jsonld:end -->"
 FORBIDDEN_TEXT = ["Hermes", "15 000", "#pokaz", "Покажу агента"]  # replaced offers: must not reach generated files
@@ -285,7 +285,7 @@ def check_jsonld(rel: str, raw: str) -> list[str]:
         if sorted(got) != sorted(want):
             bad.append(f"{rel}: Services {got} differ from the a[data-pay] tariffs {want}")
         if len(want) < MIN_TARIFFS:
-            bad.append(f"{rel}: {len(want)} a[data-pay] tariff cards found, expected >= {MIN_TARIFFS} (#service-5, #vip, #service-rieltor)")
+            bad.append(f"{rel}: {len(want)} a[data-pay] tariff cards found, expected >= {MIN_TARIFFS} (#service-5, #vip)")
         for n in graph:
             if n.get("@type") == "Service":
                 o = n.get("offers") or {}

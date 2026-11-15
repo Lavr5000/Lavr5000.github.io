@@ -48,12 +48,12 @@ if "--shots" in sys.argv:
 # IA step: the tariff cards live on the home page; /services/ and /about.html are static redirect pages
 PAGES = ["/", "/products.html"]
 EXPECTED_IDS = {  # service ids that must be reachable by a trigger on the page
-    "/": {"setup-start", "setup-vip", "setup-rieltor", "support-monthly"},
+    "/": {"setup-start", "setup-vip", "support-monthly"},   # setup-rieltor left the home page: PO 2026-11-15 R-1-V
     "/products.html": {"extract-drawings-data", "as-built-package"},
 }
 MIN_COUNTS = {  # explicit minimums per page: (selector, minimum, what)
-    "/": [("[data-pay]", 5, "data-pay (hero 2 + 3 cards)"), ("[data-request]", 1, "data-request"),
-          ("#service-5, #vip, #service-rieltor", 3, "tariff cards")],
+    "/": [("[data-pay]", 4, "data-pay (hero 2 + 2 cards)"), ("[data-request]", 1, "data-request"),
+          ("#service-5, #vip", 2, "tariff cards")],
 }
 REDIRECT_PAGES = {"/services/": "/#tarify", "/about.html": "/"}  # page -> noscript refresh target
 MAX_URL = "https://max.ru/u/f9LHodD0cOJVteiYLPGUodY6uw7J5k_M_QzRJTDzXbK31nlTIokaEh5ebeM"
