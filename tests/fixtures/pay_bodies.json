@@ -1,0 +1,107 @@
+{
+ "live": {
+  "setup-start": [
+   {
+    "kind": "pay",
+    "where": "service-5",
+    "dialog": "order",
+    "consent_for": [],
+    "service": "Настройка помощника «Старт» на одном рабочем месте",
+    "price": "7 500 ₽"
+   }
+  ],
+  "setup-vip": [
+   {
+    "kind": "pay",
+    "where": "vip",
+    "dialog": "order",
+    "consent_for": [],
+    "service": "Настройка рабочего помощника VIP на компьютере и телефоне",
+    "price": "45 000 ₽"
+   }
+  ],
+  "setup-rieltor": [
+   {
+    "kind": "pay",
+    "where": "service-rieltor",
+    "dialog": "order",
+    "consent_for": [],
+    "service": "Настройка помощника риэлтора на одном рабочем месте",
+    "price": "10 ₽"
+   }
+  ],
+  "support-monthly": [
+   {
+    "kind": "request",
+    "where": "support",
+    "dialog": "order",
+    "consent_for": [],
+    "service": "Поддержка помощника, один месяц",
+    "price": "5 000 ₽"
+   }
+  ]
+ },
+ "unheld": {
+  "setup-start": [
+   {
+    "kind": "pay",
+    "where": "service-5",
+    "dialog": "pay",
+    "consent_for": [
+     "setup-start",
+     "setup-start"
+    ],
+    "service": "Настройка помощника «Старт» на одном рабочем месте",
+    "price": "7 500 ₽",
+    "sent_without_consent": 0,
+    "body": {
+     "product": "setup-start",
+     "email": "gate@example.com",
+     "contact": "@gate_test",
+     "consent_version": "setup-v2-2026-10",
+     "website": ""
+    }
+   }
+  ],
+  "setup-vip": [
+   {
+    "kind": "pay",
+    "where": "vip",
+    "dialog": "order",
+    "consent_for": [],
+    "service": "Настройка рабочего помощника VIP на компьютере и телефоне",
+    "price": "45 000 ₽"
+   }
+  ],
+  "setup-rieltor": [
+   {
+    "kind": "pay",
+    "where": "service-rieltor",
+    "dialog": "pay",
+    "consent_for": [
+     "setup-rieltor"
+    ],
+    "service": "Настройка помощника риэлтора на одном рабочем месте",
+    "price": "10 ₽",
+    "sent_without_consent": 0,
+    "body": {
+     "product": "setup-rieltor",
+     "email": "gate@example.com",
+     "contact": "@gate_test",
+     "consent_version": "rieltor-v1-2026-10",
+     "website": ""
+    }
+   }
+  ],
+  "support-monthly": [
+   {
+    "kind": "request",
+    "where": "support",
+    "dialog": "order",
+    "consent_for": [],
+    "service": "Поддержка помощника, один месяц",
+    "price": "5 000 ₽"
+   }
+  ]
+ }
+}

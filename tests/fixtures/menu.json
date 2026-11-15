@@ -1,0 +1,30 @@
+{
+ "items": [
+  {
+   "label": "Помощник",
+   "href": "/"
+  },
+  {
+   "label": "Для строителей",
+   "href": "/products.html"
+  },
+  {
+   "label": "Для риелторов",
+   "href": "/rieltor/"
+  },
+  {
+   "label": "Статьи",
+   "href": "/blog/"
+  }
+ ],
+ "cta": {
+  "label": "Выбрать тариф",
+  "href": "/#tarify"
+ },
+ "active": {
+  "/": "/",
+  "/products.html": "/products.html",
+  "/rieltor/": "/rieltor/",
+  "/blog/*": "/blog/"
+ }
+}

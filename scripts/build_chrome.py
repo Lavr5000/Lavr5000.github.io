@@ -33,28 +33,26 @@ TG_PERSONAL = "https://t.me/lavr5000"
 TG_CHANNEL = "https://t.me/ai_vibes_coding_ru"
 MAIL = "lavr5000xxx@gmail.com"
 
+RIELTOR_LABEL = "Для риелторов"
+
 # (menu label, href, key)
 MENU = [
     ("Помощник", "/", "home"),
-    ("Тарифы", "/services/", "tariffs"),
     ("Для строителей", "/products.html", "builders"),
-    ("Риэлтор", "/rieltor/", "rieltor"),
+    (RIELTOR_LABEL, "/rieltor/", "rieltor"),
     ("Статьи", "/blog/", "blog"),
-    ("Об авторе", "/about.html", "about"),
 ]
 
 # page path -> (active menu key, has pay dialogs)
 PAGES: dict[str, tuple[str, bool]] = {
     "index.html": ("home", True),
-    "services/index.html": ("tariffs", True),
     "products.html": ("builders", True),
     "rieltor/index.html": ("rieltor", False),
-    "about.html": ("about", False),
     "blog/index.html": ("blog", False),
-    "apps/transkribator/index.html": ("builders", False),
+    "apps/transkribator/index.html": ("", False),
     "oferta.html": ("", False),
     "privacy.html": ("", False),
-    "nakladnaya.html": ("builders", False),
+    "nakladnaya.html": ("", False),
     "rate.html": ("", False),
     "spasibo/index.html": ("", False),
 }
@@ -104,6 +102,10 @@ def header(active: str) -> str:
 </header>"""
 
 
+def footer_links(indent: str) -> str:
+    return "\n".join(f'{indent}<li><a href="{href}">{label}</a></li>' for label, href, _key in MENU)
+
+
 def footer() -> str:
     return f"""<footer class="chrome-foot" data-chrome-foot>
   <div class="chrome-foot-in">
@@ -114,12 +116,7 @@ def footer() -> str:
     <div>
       <p class="chrome-foot-h">Разделы</p>
       <ul>
-        <li><a href="/">Помощник</a></li>
-        <li><a href="/services/">Тарифы</a></li>
-        <li><a href="/products.html">Для строителей</a></li>
-        <li><a href="/rieltor/">Риэлтор</a></li>
-        <li><a href="/blog/">Статьи</a></li>
-        <li><a href="/about.html">Об авторе</a></li>
+{footer_links("        ")}
       </ul>
     </div>
     <div>
@@ -209,7 +206,8 @@ def build_id() -> str:
 
 
 def head_block(bid: str, has_pay: bool) -> str:
-    lines = [f'<meta name="build" content="{bid}" />',
+    lines = [f'<link rel="stylesheet" href="/assets/tokens.css?v={bid}" />',
+             f'<meta name="build" content="{bid}" />',
              f'<link rel="stylesheet" href="/assets/chrome.css?v={bid}" />',
              f'<script defer src="/assets/chrome.js?v={bid}"></script>']
     if has_pay:

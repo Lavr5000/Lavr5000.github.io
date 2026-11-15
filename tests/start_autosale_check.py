@@ -19,7 +19,7 @@ Checks
      page with a payment window carries the two setup-start consent texts (part 1 - the offer, part 2 - personal data,
      a separate checkbox, 152-FZ) whose join "part 1 + blank line + part 2" has the sha256 of tests/fixtures/soglasie-setup-v2.txt
      (without the final newline; the backend compares the same hash) and consentVersions[setup-start] = setup-v2-2026-10.
-  2. browser, one fresh context per [data-pay] button on every such page (index.html x4, services/index.html x2 now):
+  2. browser, one fresh context per [data-pay] button on every such page (index.html: data-pay >= 5 after the IA step - hero 2 + the 3 tariff cards; services/ and about.html are redirect pages without buttons):
      held  -> the request window opens, the payment window stays closed, button reads «Заказать …», 0 API requests,
               and a forged submit of the (closed) payment form creates no POST /api/orders either;
      open  -> the payment window opens with the own consent texts only, both checkboxes unchecked; a submit with the offer
@@ -384,6 +384,9 @@ def main(argv=None) -> int:
                 need(amt and int(amt.group(1)) == CATALOGUE[sid.group(1)], f"{url}: amount of {sid.group(1)}")
                 listing.append(f"{url}:{sid.group(1)}")
         need(pay_pages, "no [data-pay] buttons found in the html files")
+        home_n = dict(pay_pages).get("/", 0)
+        need(home_n >= 5, f"/: {home_n} data-pay buttons, expected >= 5 (hero 2 + #service-5, #vip, #service-rieltor)")
+        need("/services/" not in dict(pay_pages), "/services/ must be a redirect page without data-pay buttons")
         print("  DATA-PAY " + " ".join(listing), flush=True)
         need({"setup-vip", "setup-rieltor"} <= held, "setup-vip / setup-rieltor must be in heldServices")
         cfg = read(ROOT / "services.config.js")
@@ -452,7 +455,7 @@ def main(argv=None) -> int:
         fails.append("vip_post")
     if mode == "held" and stats["posts"]:
         fails.append("post_in_held_mode")
-    ok = not fails and stats["buttons"] >= 6
+    ok = not fails and stats["buttons"] >= 5  # IA: hero 2 + 3 tariff cards on / (services/ is a redirect)
     miss = "" if ok else " miss=" + ",".join(re.sub(r"[\s,]+", "_", f) for f in fails[:10])
     print(f"START-AUTOSALE status={'ok' if ok else 'fail'} mode={mode} buttons={stats['buttons']} cases={stats['cases']} "
           f"posts={stats['posts']} vip_posts={stats['vip_posts']}{miss}")

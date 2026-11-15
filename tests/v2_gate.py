@@ -53,14 +53,15 @@ BLOG_ARTICLES = [p for p in ALL_PAGES if p.startswith("/blog/") and p != "/blog/
 HERMES_EXCLUDE = set(BLOG_ARTICLES) | {"/oferta.html", "/privacy.html"}      # llms.txt is never excluded
 REMOVED_OFFERS_EXCLUDE = {"/oferta.html"}
 UNREADY_EXCLUDE: set[str] = set()
-CONTRAST_PAGES_E3 = ["/", "/services/"]
+CONTRAST_PAGES_E3 = ["/"]    # IA step: the tariff cards of /services/ live on the home page, /services/ is a redirect page
+REDIRECT_PAGES = {"/services/": "/#tarify", "/about.html": "/"}   # page -> noscript meta refresh target (plan 3.2)
 
 E1_KEYS = ["pages_200", "page_errors", "csp_violations", "overflow_pages_m", "nav_variants"]
 HOME_KEYS = ["scene_home", "img_kb_home_m", "img_kb_home_d", "assets_versioned_home", "lcp_ms_home_m", "fold_360x640", "tariff_cards_home", "hidden_at_rest", "hidden_at_rest_rm", "hidden_nojs",
              "dead_cta_nojs", "small_text", "screens_m_home", "js_raw_kb_home", "js_gzip_kb_home",
              "claudecode_raw_home", "contrast_fail"]
 E3_EXTRA = ["hermes_raw", "removed_offers", "unready_prices", "llms_txt_200", "tariff_prices_match",
-            "pay_buttons_services", "screens_m_services"]
+            "pay_buttons_home", "redirect_pages"]
 STAGES = {
     "e1": dict(pages=NO_UPLOAD_PAGES, keys=E1_KEYS, scope_home_only=False),
     "e2": dict(pages=NO_UPLOAD_PAGES, keys=E1_KEYS + HOME_KEYS, scope_home_only=True),
@@ -74,7 +75,7 @@ LCP_MS_HOME_M_MAX = 2500    # Largest Contentful Paint, 390x844, CDP-throttled n
 LCP_NET = dict(offline=False, latency=150, downloadThroughput=int(1.6e6 / 8), uploadThroughput=int(0.75e6 / 8))   # 1.6 / 0.75 Mbit/s, 150 ms
 SCENE_PATH = "/assets/scene/"
 # informational keys printed next to the gated ones (never in miss=)
-INFO_KEYS = ["contrast_skipped", "pay_buttons_home", "claudecode_raw_llms", "small_text_dialog"]
+INFO_KEYS = ["contrast_skipped", "claudecode_raw_llms", "small_text_dialog"]
 
 CHECKS = {   # key -> predicate on the value; the verdict is the list of keys whose predicate is false
     "pages_200": lambda v: isinstance(v, str) and v.split("/")[0] == v.split("/")[1],
@@ -84,7 +85,8 @@ CHECKS = {   # key -> predicate on the value; the verdict is the list of keys wh
     "img_kb_home_d": lambda v: isinstance(v, (int, float)) and 0 < v <= IMG_KB_HOME_D_MAX,
     "assets_versioned_home": lambda v: v == 1,
     "lcp_ms_home_m": lambda v: isinstance(v, (int, float)) and 0 < v <= LCP_MS_HOME_M_MAX,
-    "tariff_cards_home": lambda v: v == 2, "hidden_at_rest": lambda v: v == 0, "hidden_at_rest_rm": lambda v: v == 0,
+    "tariff_cards_home": lambda v: isinstance(v, int) and v >= 3,   # #service-5, #vip, #service-rieltor
+    "hidden_at_rest": lambda v: v == 0, "hidden_at_rest_rm": lambda v: v == 0,
     "hidden_nojs": lambda v: v == 0, "dead_cta_nojs": lambda v: v == 0, "small_text": lambda v: v == 0,
     "screens_m_home": lambda v: isinstance(v, (int, float)) and 0 < v <= 9,
     "js_raw_kb_home": lambda v: isinstance(v, (int, float)) and 0 < v <= 160,
@@ -92,8 +94,8 @@ CHECKS = {   # key -> predicate on the value; the verdict is the list of keys wh
     "claudecode_raw_home": lambda v: v == 0, "contrast_fail": lambda v: v == 0,
     "hermes_raw": lambda v: v == 0, "removed_offers": lambda v: v == 0, "unready_prices": lambda v: v == 0,
     "llms_txt_200": lambda v: v == 1, "tariff_prices_match": lambda v: v == 1,
-    "pay_buttons_services": lambda v: isinstance(v, int) and v >= 2,
-    "screens_m_services": lambda v: isinstance(v, (int, float)) and 0 < v <= 9,
+    "pay_buttons_home": lambda v: isinstance(v, int) and v >= 5,   # hero 2 + #service-5, #vip, #service-rieltor
+    "redirect_pages": lambda v: v == 1,
     "ym_form_protected": lambda v: v == 1,
 }
 
@@ -646,8 +648,7 @@ def run_gate(base: str, stage: str, exp: str, out_json: str | None) -> tuple[dic
         S["small_text"] += S["small_text_dialog"]
     find = lambda path, view: next((r for r in rows if r["path"] == path and r["view"] == view), {})
     S["screens_m_home"] = find("/", "m").get("screens", -1)
-    S["screens_m_services"] = find("/services/", "m").get("screens", -1)
-    S["pay_buttons_services"] = find("/services/", "d").get("payCount", 0)
+    # the former screens_m_services (<= 9 screens on the tariff page) is covered by screens_m_home: the tariffs are on "/"
     S["pay_buttons_home"] = find("/", "d").get("payCount", 0)
     cf = [r["contrast"] for r in ok_rows if "contrast" in r and r["path"] in contrast_pages]
     S["contrast_fail"] = sum(c["fail"] for c in cf) if cf else -1
@@ -682,12 +683,12 @@ def run_gate(base: str, stage: str, exp: str, out_json: str | None) -> tuple[dic
     tariff_cards = [("/", c) for c in hd.get("cards", [])]
     ok = bool(cards) and services_status == 200
     for path, c in tariff_cards:
-        if c["id"] in ("setup-start", "setup-vip"):
+        if c["id"] in ("setup-start", "setup-vip", "setup-rieltor"):
             found_ids.add(c["id"])
             want_p = services_prices.get(c["id"])
             if want_p is None or norm_price(c["price"]) != norm_price(want_p):
                 mism.append(f"{path} {c['id']}: card {c['price']!r} vs services.js {want_p!r}")
-    S["tariff_prices_match"] = int(ok and found_ids == {"setup-start", "setup-vip"} and not mism and
+    S["tariff_prices_match"] = int(ok and found_ids == {"setup-start", "setup-vip", "setup-rieltor"} and not mism and
                                    all(i in services_prices for i in found_ids))
     detail["tariff_mismatch"] = mism
     # raw scans
@@ -718,6 +719,36 @@ def run_gate(base: str, stage: str, exp: str, out_json: str | None) -> tuple[dic
     S["removed_offers"] = sum(sum(c.values()) for c in removed.values())
     S["unready_prices"] = sum(sum(c.values()) for c in unready.values())
     S["llms_txt_200"] = int(llms_status == 200)
+    # redirect pages (/services/, /about.html): static, no-referrer meta first in head, the two synchronous scripts, the
+    # noscript refresh to their own target, canonical of the home page, no noindex, no tariff cards of their own
+    redirect_bad = []
+    for rpath, rtarget in REDIRECT_PAGES.items():
+        st, body = http_get(base + rpath)
+        html = body.decode("utf-8", "replace")
+        hm_ = re.search(r"<head[^>]*>(.*?)</head>", html, re.S | re.I)
+        head = hm_.group(1) if hm_ else ""
+        pre = re.sub(r"<meta\s+charset=[^>]*>", "", head, flags=re.I).lstrip()
+        ns = re.search(r"<noscript>\s*<meta\s+http-equiv=[\"']refresh[\"']\s+content=[\"']0;\s*url=([^\"']+)[\"']", head, re.I)
+        probs = []
+        if st != 200:
+            probs.append(f"status {st}")
+        if not re.match(r"<meta\s+name=[\"']referrer[\"']\s+content=[\"']no-referrer[\"']\s*/?>", pre, re.I):
+            probs.append("no-referrer meta is not first in head")
+        if not 0 <= head.find("/assets/redirect-map.js") < head.find("/assets/redirect.js"):
+            probs.append("redirect-map.js / redirect.js missing or in the wrong order")
+        if re.search(r"<script[^>]*redirect[^>]*(defer|async)", head, re.I):
+            probs.append("redirect script is not synchronous")
+        if not ns or ns.group(1) != rtarget:
+            probs.append(f"noscript refresh target {ns.group(1) if ns else None!r} != {rtarget!r}")
+        if "https://ai-vibes.ru/" not in re.findall(r"""<link[^>]*rel=["']canonical["'][^>]*href=["']([^"']+)""", head):
+            probs.append("canonical is not https://ai-vibes.ru/")
+        if "noindex" in html.lower():
+            probs.append("noindex")
+        if "data-pay" in html or "data-tariff" in html:
+            probs.append("tariff buttons on a redirect page")
+        redirect_bad += [f"{rpath}: {x}" for x in probs]
+    S["redirect_pages"] = int(not redirect_bad)
+    detail["redirect_pages_bad"] = redirect_bad
     # ym protection: every page with pay buttons has the protected dialog and form; at least one page has them
     pay_pages = [r for r in ok_rows if r["view"] == "d" and r.get("payCount", 0) > 0]
     S["ym_form_protected"] = int(bool(pay_pages) and all(r["ym"]["dialog"] and r["ym"]["hide"] and r["ym"]["form"] and r["ym"]["keys"] for r in pay_pages))

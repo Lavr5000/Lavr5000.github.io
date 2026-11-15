@@ -14,7 +14,7 @@
 /* the subscription: first, on the whole row, dark like the VIP tariff; the tall copy sits left, the price column right */
 .rl-tile--subscription{
   grid-column:1 / -1;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px clamp(24px,5vw,64px);align-items:center;
-  padding:clamp(24px,4vw,44px);background:var(--ink);color:var(--on-ink);border-color:rgba(217,169,97,.55);color-scheme:dark;
+  padding:clamp(24px,4vw,44px);background:var(--ink);color:var(--on-ink);border-color:color-mix(in srgb, var(--brass) 55%, transparent);color-scheme:dark;
 }
 .rl-sub-main{grid-column:1;display:grid;gap:12px}
 .rl-tile--subscription .rl-title{font-size:clamp(28px,3.4vw,40px);line-height:1.1}
@@ -34,7 +34,7 @@
 .rl-pay-consent{grid-template-columns:auto 1fr;align-items:start;gap:10px}
 .rl-pay-check{width:20px;height:20px;margin-top:2px;accent-color:var(--brass-deep)}
 .rl-pay-consent a{color:inherit;text-underline-offset:3px}
-.rl-pay-err{color:#8c2f1d;font-size:14px;line-height:1.4}
+.rl-pay-err{color:var(--danger-2);font-size:14px;line-height:1.4}
 .rl-alt{font-size:15px}
 .rl-alt a{color:inherit;text-underline-offset:3px}
 .rl-disclaimer{font-style:italic}
@@ -42,6 +42,9 @@
 /* "soon": no price, no button, quieter than the available tiles */
 .rl-tile--soon{background:transparent;border-style:dashed}
 .rl-tile--soon .rl-title{color:var(--on-paper-2)}
+/* a held subscription tile loses the dark background above: its copy switches to the paper colours */
+.rl-tile--subscription.rl-tile--soon{color:var(--on-paper);color-scheme:light}
+.rl-tile--subscription.rl-tile--soon :is(.rl-note,.rl-sub-list,.rl-unit){color:var(--on-paper-2)}
 .rl-tile--backlog .rl-title{font-size:21px}
 
 /* without scripts: the generated list of the page */

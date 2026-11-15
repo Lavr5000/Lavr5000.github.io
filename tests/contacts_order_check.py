@@ -3,11 +3,13 @@
 
     python tests/contacts_order_check.py [--root DIR] [--allow-placeholders]
 
-Static check over index.html, about.html, products.html and services/index.html in the repository
+Static check over index.html and products.html in the repository (IA step: about.html and services/index.html
+are now static redirect pages without contacts; the tariff cards, `#contact` and the order dialog of /services/ live on
+index.html, which is checked below)
 (or in DIR, e.g. page bodies saved from production with the same relative paths). Per block:
-  * index, about, products, services: the whole `#contact` element (from its opening tag to the
+  * index, products: the whole `#contact` element (from its opening tag to the
     matching closing tag);
-  * index, products, services: the order dialog `dialog#order-dialog` (all three carry the dialogs block
+  * index, products: the order dialog `dialog#order-dialog` (both carry the dialogs block
     of scripts/build_chrome.py);
 the block passes when it has a link whose href is exactly the MAX profile URL, a link starting with the
 personal Telegram URL after it, and a mailto: link after that. (The v1 gate checked MAX before Telegram
@@ -27,12 +29,9 @@ MAX_URL = "https://max.ru/u/f9LHodD0cOJVteiYLPGUodY6uw7J5k_M_QzRJTDzXbK31nlTIoka
 TG_URL = "https://t.me/lavr5000"
 BLOCKS = [  # (page, container id, container tag)
     ("index.html", "contact", "section"),
-    ("about.html", "contact", "section"),
     ("products.html", "contact", "section"),
-    ("services/index.html", "contact", "section"),
     ("index.html", "order-dialog", "dialog"),
     ("products.html", "order-dialog", "dialog"),
-    ("services/index.html", "order-dialog", "dialog"),
 ]
 
 

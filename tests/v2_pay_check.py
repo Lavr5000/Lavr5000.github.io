@@ -5,9 +5,9 @@
 
 Part 1 (always). Playwright intercepts every request to https://api.ai-vibes.ru/** (CORS preflight included) and the
 page's /services.config.js (enabled true/false), so no real API and no bank is ever called. Chromium, 1440x900.
-  * for every `a[data-request]` button of `/`, `/services/` and `/products.html` (services ordered by a message): the
+  * for every `a[data-request]` button of `/` and `/products.html` (services ordered by a message): the
     request window opens with that button's own title and price, the pay window stays closed, no API request is made;
-  * for every `[data-pay]` button of `/` and `/services/` (enumerated by selector): the pay window shows that button's
+  * for every `[data-pay]` button of `/` (enumerated by selector; IA step: the tariff cards of /services/ live on the home page, so >= 5: hero 2 + 3 cards): the pay window shows that button's
     own title and price; a valid submit sends product / consent_version / Idempotency-Key (uuid) / website="" and
     navigates to the payment_url (the navigation is caught by interception: pay hosts are answered with an empty page);
   * sessionStorage["av-pay:<id>"] = {key,email,contact,ts}; "back" (pageshow) unlocks the button and the repeat uses the
@@ -51,8 +51,9 @@ CONSENT_BY_SERVICE = {"setup-start": "setup-v2-2026-10", "setup-rieltor": "rielt
 NEVER_PAY = {"setup-vip"}                                   # assets/pay.js never creates a payment for these ids; tests/start_autosale_check.py covers them
 PAY_HOSTS = ["securepay.tinkoff.ru", "pay.tbank-online.com"]
 AMOUNTS = {"setup-start": 750000, "setup-vip": 4500000, "setup-rieltor": 1000}
-PAGES = ["/", "/services/"]
-REQUEST_PAGES = ["/", "/services/", "/products.html"]      # pages that carry the order windows (a[data-request])
+PAGES = ["/"]
+MIN_PAY = {"/": 5}                 # data-pay buttons per page: hero 2 + #service-5, #vip, #service-rieltor
+REQUEST_PAGES = ["/", "/products.html"]      # pages that carry the order windows (a[data-request])
 UUID_RE = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$", re.I)
 ORDER_RE = re.compile(r"^AV-[0-9A-F]{8}$")
 LOCAL_PAY_RE = re.compile(r"^http://(127\.0\.0\.1|localhost)(:\d+)?/")
@@ -271,7 +272,7 @@ def case_button(br, base, path, idx, btn):
 def first_button(br, base):
     s = Site(br, base, Mock([("ok",)]))
     try:
-        for path in ("/services/", "/"):
+        for path in ("/",):
             s.goto(path)
             for i, b in enumerate(s.buttons()):
                 if b["id"] == "setup-start":
@@ -692,9 +693,9 @@ def main(argv=None) -> int:
                     probe.goto(path)
                     bs = probe.buttons()
                     buttons += [(path, i, b) for i, b in enumerate(bs)]
-                    if len(bs) < 2:
+                    if len(bs) < MIN_PAY.get(path, 2):
                         fails.append(f"buttons:{path}={len(bs)}")
-                        print(f"  FAIL {path}: {len(bs)} [data-pay] buttons, need >= 2")
+                        print(f"  FAIL {path}: {len(bs)} [data-pay] buttons, need >= {MIN_PAY.get(path, 2)}")
             except Exception as e:
                 fails.append("enumerate")
                 print(f"  FAIL enumerate buttons: {type(e).__name__}: {str(e)[:100]}")
@@ -717,9 +718,9 @@ def main(argv=None) -> int:
             finally:
                 probe.close()
             stats["requests"] = len(reqs)
-            if per_page.get("/products.html", 0) < 2 or per_page.get("/services/", 0) < 1:
+            if per_page.get("/products.html", 0) < 2 or per_page.get("/", 0) < 1:
                 fails.append("request_buttons")
-                print(f"  FAIL request buttons per page {per_page}: need >= 2 on /products.html and >= 1 on /services/")
+                print(f"  FAIL request buttons per page {per_page}: need >= 2 on /products.html and >= 1 on /")
             for path, i, b in reqs:
                 run(f"request {path}#{i} {b['id']}", lambda path=path, i=i, b=b: case_request_button(br, base, path, i, b))
             # positives, one run per button

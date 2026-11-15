@@ -3,21 +3,26 @@
 <head>
 <meta charset="utf-8" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://api.ai-vibes.ru" />
+<script src="/assets/js-flag.js?v=20261114-s2"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="canonical" href="https://ai-vibes.ru/rieltor/" />
-<title>Риэлтор — разовые услуги и помощник | AI Vibes</title>
+<title>Для риелторов — разовые услуги и помощник | AI Vibes</title>
 <meta name="description" content="Для риэлторов: разовые услуги по объекту, которые заказывают на сайте или в боте MAX; помощник на вашем компьютере — скоро. Цены и состав — на странице." />
 <link rel="icon" href="/favicon.ico" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 <link rel="stylesheet" href="/assets/fonts.css?v=20260813-vitrina" />
-<link rel="stylesheet" href="/assets/site3.css?v=9667e79a3285" />
-<link rel="stylesheet" href="/rieltor/rieltor.css?v=20261025c" />
+<link rel="stylesheet" href="/assets/site3.css?v=d748a3a7ad48" />
+<link rel="stylesheet" href="/rieltor/rieltor.css?v=20261114-held" />
 <script defer src="/uslugi.catalog.js?v=20261025"></script>
+<script defer src="/assets/scene-guard.js?v=20261114-s2"></script>
+<script defer src="/assets/scene2/photo.js?v=20261114-ph"></script>
+<script defer src="/assets/scene2.js?v=20261114-ph"></script>
 <script defer src="/rieltor/rieltor.js?v=20261025c"></script>
 <!-- chrome:head:begin (scripts/build_chrome.py) -->
-<meta name="build" content="9667e79a3285" />
-<link rel="stylesheet" href="/assets/chrome.css?v=9667e79a3285" />
-<script defer src="/assets/chrome.js?v=9667e79a3285"></script>
+<link rel="stylesheet" href="/assets/tokens.css?v=d748a3a7ad48" />
+<meta name="build" content="d748a3a7ad48" />
+<link rel="stylesheet" href="/assets/chrome.css?v=d748a3a7ad48" />
+<script defer src="/assets/chrome.js?v=d748a3a7ad48"></script>
 <!-- chrome:head:end -->
 </head>
 <body>
@@ -32,35 +37,61 @@
     </a>
     <nav class="chrome-nav" aria-label="Разделы сайта">
       <a href="/">Помощник</a>
-      <a href="/services/">Тарифы</a>
       <a href="/products.html">Для строителей</a>
-      <a href="/rieltor/" aria-current="page">Риэлтор</a>
+      <a href="/rieltor/" aria-current="page">Для риелторов</a>
       <a href="/blog/">Статьи</a>
-      <a href="/about.html">Об авторе</a>
     </nav>
     <a class="chrome-cta" href="/#tarify">Выбрать тариф</a>
     <button class="chrome-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="chrome-panel" aria-label="Открыть меню"><span></span><span></span><span></span></button>
   </div>
   <div class="chrome-panel" id="chrome-panel" data-menu-panel hidden>
     <a href="/">Помощник</a>
-    <a href="/services/">Тарифы</a>
     <a href="/products.html">Для строителей</a>
-    <a href="/rieltor/" aria-current="page">Риэлтор</a>
+    <a href="/rieltor/" aria-current="page">Для риелторов</a>
     <a href="/blog/">Статьи</a>
-    <a href="/about.html">Об авторе</a>
   </div>
   <span class="chrome-progress" data-progress aria-hidden="true"></span>
 </header>
 <!-- chrome:header:end -->
 <main id="main">
 
-<section class="hero" id="hero">
-  <div class="wrap">
-    <div class="hero-text">
-      <h1>Риэлтор: разовые услуги по объекту</h1>
-      <p class="lead">Справка о цене, первичная юридическая проверка, фото до/после и планировка, договор купли-продажи
-        и предварительный договор с задатком. Ничего не нужно ставить: оплачиваете на сайте или в боте MAX и получаете
-        готовые файлы в чате с ботом. Помощник на вашем компьютере (подписка) — скоро.</p>
+<section class="scene2" data-scene2="deal" aria-labelledby="hero-title">
+  <div class="scene2-stage" data-scene2-stage>
+    <canvas data-scene2-canvas aria-hidden="true"></canvas>
+    <picture>
+      <source media="(max-width:767px)" srcset="/assets/scene2/deal_tel.webp" />
+      <img data-scene2-poster src="/assets/scene2/deal_pc.webp" loading="lazy" decoding="async" width="1600" height="1000"
+        alt="Вечер в новой квартире: на подоконнике ключи, за окном огни ночного города" />
+    </picture>
+  </div>
+  <div class="scene2-flow">
+    <div class="scene2-hero" id="hero">
+      <div class="scene2-hero-in">
+        <p class="kicker">Для риелторов</p>
+        <h1 id="hero-title">Из сотен объявлений — к одной сделке</h1>
+        <p class="lead">Справка о цене, первичная юридическая проверка, фото до/после и планировка, договор купли-продажи
+          и предварительный договор с задатком. Ничего не нужно ставить: оплачиваете на сайте или в боте MAX и получаете
+          готовые файлы в чате с ботом. Помощник на вашем компьютере (подписка) — скоро.</p>
+        <a class="btn-line scene2-go" href="#uslugi">К услугам</a>
+      </div>
+    </div>
+    <div class="scene2-caps">
+      <div class="scene2-cap" data-scene2-cap>
+        <h2>Сотни объявлений → справка о цене</h2>
+        <p>Цена объекта среди похожих — с обоснованием.</p>
+      </div>
+      <div class="scene2-cap" data-scene2-cap>
+        <h2>Фото до/после и планировка</h2>
+        <p>Аккуратный план квартиры с размерами по эскизу от руки.</p>
+      </div>
+      <div class="scene2-cap" data-scene2-cap>
+        <h2>Первичная юридическая проверка</h2>
+        <p>Документы, долги, обременения — до задатка.</p>
+      </div>
+      <div class="scene2-cap" data-scene2-cap>
+        <h2>Договор и ключи</h2>
+        <p>Проект договора, акт и расписка — к дню сделки.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -152,11 +183,9 @@
       <p class="chrome-foot-h">Разделы</p>
       <ul>
         <li><a href="/">Помощник</a></li>
-        <li><a href="/services/">Тарифы</a></li>
         <li><a href="/products.html">Для строителей</a></li>
-        <li><a href="/rieltor/">Риэлтор</a></li>
+        <li><a href="/rieltor/">Для риелторов</a></li>
         <li><a href="/blog/">Статьи</a></li>
-        <li><a href="/about.html">Об авторе</a></li>
       </ul>
     </div>
     <div>

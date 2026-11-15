@@ -111,7 +111,7 @@ window.AI_PRODUCTS = [
     tier: "paid", free_quota: null,
   },
   {
-    id: "nakladnaya-m15", slug: "nakladnaya-m15", order: 60, visible: true,
+    id: "nakladnaya-m15", slug: "nakladnaya-m15", order: 60, visible: false, // closed by PO 14.11.2026
     status: "available", icon: "list", serviceType: "request_form",
     categories: ["pto", "procurement", "estimators"],
     price: { ru: "79", en: "79" },

@@ -5,20 +5,20 @@
    Разметку шапки и подвала вставляет scripts/build_chrome.py.
    ============================================================ */
 :root{
-  --c-ink:#0A111E;
-  --c-ink-2:#131E32;
-  --c-paper:#F2EADD;
-  --c-paper-2:#E7DCCB;
-  --c-text:#F1F3F7;
-  --c-text-2:#C2CBDA;
-  --c-dark:#101826;
-  --c-dark-2:#4E3F3A;
-  --c-brass:#D9A961;
-  --c-brass-2:#F0C888;
-  --c-brass-ink:#0A111E;
-  --c-line:rgba(200,220,255,.16);
-  --c-line-dark:rgba(16,24,38,.16);
-  --c-err:#8E2B1E;
+  --c-ink:var(--ink);
+  --c-ink-2:var(--chrome-ink-2);
+  --c-paper:var(--paper);
+  --c-paper-2:var(--paper-2);
+  --c-text:var(--on-ink);
+  --c-text-2:var(--on-ink-2);
+  --c-dark:var(--on-paper);
+  --c-dark-2:var(--on-paper-2);
+  --c-brass:var(--brass);
+  --c-brass-2:var(--brass-2);
+  --c-brass-ink:var(--ink);
+  --c-line:var(--line-ink);
+  --c-line-dark:var(--line-paper);
+  --c-err:var(--danger);
   --c-display:'Prata','Times New Roman',serif;
   --c-sans:'Golos Text','Segoe UI',system-ui,sans-serif;
   --c-mono:'JetBrains Mono',ui-monospace,'Consolas',monospace;
@@ -33,7 +33,7 @@ html:root{scroll-behavior:auto}
 /* ---------- шапка ---------- */
 .chrome{
   position:sticky;top:0;z-index:90;
-  background:rgba(10,17,30,.92);
+  background:color-mix(in srgb, var(--ink) 92%, transparent);
   -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
   border-bottom:1px solid var(--c-line);
   color:var(--c-text);font-family:var(--c-sans);
@@ -44,7 +44,7 @@ html:root{scroll-behavior:auto}
   display:flex;align-items:center;gap:24px;
 }
 .chrome-brand{display:inline-flex;align-items:center;gap:12px;color:var(--c-text);text-decoration:none;min-height:44px}
-.chrome-mark{width:34px;height:34px;display:grid;place-items:center;border:1px solid rgba(217,169,97,.5)}
+.chrome-mark{width:34px;height:34px;display:grid;place-items:center;border:1px solid color-mix(in srgb, var(--brass) 50%, transparent)}
 .chrome-mark svg{width:18px;height:18px;fill:none;stroke:var(--c-brass);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .chrome-name{font-family:var(--c-display);font-size:21px;letter-spacing:-.01em;white-space:nowrap}
 .chrome-nav{display:flex;align-items:center;gap:4px;margin-left:auto}
@@ -136,34 +136,34 @@ html:root{scroll-behavior:auto}
 /* ---------- окна заказа и оплаты ---------- */
 .dlg{
   width:min(560px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto;
-  padding:0;border:1px solid rgba(217,169,97,.45);border-radius:4px;
+  padding:0;border:1px solid color-mix(in srgb, var(--brass) 45%, transparent);border-radius:4px;
   background:var(--c-paper);color:var(--c-dark);font-family:var(--c-sans);font-size:16px;line-height:1.55;
   color-scheme:light;
 }
 .chrome-panel[hidden]{display:none}
-.dlg::backdrop{background:rgba(10,5,7,.72)}
+.dlg::backdrop{background:color-mix(in srgb, var(--scrim) 72%, transparent)}
 .dlg-in{padding:28px 20px 30px;padding-inline:clamp(18px,5vw,36px);display:grid;gap:16px}
 .dlg-fields{display:grid;gap:16px}
 .dlg-close{
   position:absolute;right:10px;top:10px;width:44px;height:44px;border:1px solid var(--c-line-dark);border-radius:3px;
   background:transparent;color:var(--c-dark);font-size:22px;line-height:1;cursor:pointer;
 }
-.dlg-kicker{margin:0;font-family:var(--c-mono);font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:#7A5418}
+.dlg-kicker{margin:0;font-family:var(--c-mono);font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--brass-deep)}
 .dlg h2{margin:0;font-family:var(--c-display);font-weight:400;font-size:clamp(24px,5vw,30px);line-height:1.2;padding-right:44px;text-wrap:balance}
 .dlg p{margin:0}
-.dlg-item{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:14px 16px;background:var(--c-paper-2);border:1px solid rgba(138,98,34,.35);border-radius:3px}
+.dlg-item{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:14px 16px;background:var(--c-paper-2);border:1px solid color-mix(in srgb, var(--brass-deep-2) 35%, transparent);border-radius:3px}
 .dlg-item strong{font-weight:500}
 .dlg h2.dlg-title-item{font-size:clamp(21px,4.4vw,26px)}
 .dlg-item span{font-family:var(--c-mono);font-size:17px;white-space:nowrap}
 .dlg label{display:grid;gap:6px;font-size:15px;font-weight:500}
 .dlg input[type="email"],.dlg input[type="text"]{
-  min-height:50px;padding:0 14px;border:1px solid rgba(16,24,38,.4);border-radius:3px;background:#FFFDF8;color:var(--c-dark);
+  min-height:50px;padding:0 14px;border:1px solid color-mix(in srgb, var(--on-paper) 40%, transparent);border-radius:3px;background:var(--sheet);color:var(--c-dark);
   font:inherit;font-weight:400;width:100%;
 }
-.dlg input:focus-visible{outline:2px solid #7A5418;outline-offset:2px}
+.dlg input:focus-visible{outline:2px solid var(--brass-deep);outline-offset:2px}
 .dlg-hint{font-size:14px;font-weight:400;color:var(--c-dark-2)}
 .dlg-consent{display:grid;grid-template-columns:24px 1fr;gap:12px;align-items:start;font-weight:400;font-size:15px}
-.dlg-consent input{width:22px;height:22px;margin:2px 0 0;accent-color:#7A5418}
+.dlg-consent input{width:22px;height:22px;margin:2px 0 0;accent-color:var(--brass-deep)}
 .dlg-consent a,.dlg-note a{color:inherit;text-decoration:underline;text-underline-offset:3px}
 .dlg-trap{position:absolute!important;left:-9999px;width:1px;height:1px;opacity:0}
 .dlg .btn-pay{width:100%}

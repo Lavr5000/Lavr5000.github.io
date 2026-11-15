@@ -1,0 +1,29 @@
+{
+ "sha": "22934bd",
+ "font_kb_site2": 238.8,
+ "cls_site2": 0,
+ "font": {
+  "/blog/": 196.7,
+  "/blog/smeta-osnovanie-list/": 196.7,
+  "/blog/apartment-auditor/": 196.7,
+  "/blog/dva-prilozheniya/": 196.7,
+  "/blog/transkribator-golosom/": 196.7,
+  "/blog/ryazan-obmer-razvertki/": 196.7,
+  "/apps/transkribator/": 196.7,
+  "/oferta.html": 227.4,
+  "/privacy.html": 227.4,
+  "/nakladnaya.html": 238.8
+ },
+ "cls": {
+  "/blog/": 0,
+  "/blog/smeta-osnovanie-list/": 0,
+  "/blog/apartment-auditor/": 0,
+  "/blog/dva-prilozheniya/": 0,
+  "/blog/transkribator-golosom/": 0,
+  "/blog/ryazan-obmer-razvertki/": 0,
+  "/apps/transkribator/": 0,
+  "/oferta.html": 0,
+  "/privacy.html": 0,
+  "/nakladnaya.html": 0
+ }
+}

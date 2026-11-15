@@ -4,15 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://api.ai-vibes.ru">
-  <title>AI Vibes — печатная накладная М-15 по скану</title>
-  <meta name="description" content="Загрузите PDF со сканом печатной накладной М-15 и получите Excel после OCR-обработки.">
-  <link rel="canonical" href="https://ai-vibes.ru/nakladnaya.html">
-  <meta property="og:type" content="website">
-  <meta property="og:site_name" content="AI Vibes">
-  <meta property="og:title" content="AI Vibes — печатная накладная М-15 по скану">
-  <meta property="og:description" content="Загрузите PDF со сканом печатной формы М-15 и получите Excel-результат на email после обработки.">
-  <meta property="og:url" content="https://ai-vibes.ru/nakladnaya.html">
-  <meta property="og:image" content="https://ai-vibes.ru/assets/og-docs-1200x630.jpg">
+  <title>AI Vibes — сервис накладных М-15 закрыт</title>
+  <meta name="robots" content="noindex">
+  <meta name="description" content="Сервис распознавания накладных М-15 больше не принимает заказы.">
   <link rel="icon" href="/favicon.ico">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="stylesheet" href="/assets/fonts.css?v=20260813-forms">
@@ -22,9 +16,10 @@
   <script defer src="/assets/nav-inject.js"></script>
   <script defer src="/assets/soft-prompt.js"></script>
 <!-- chrome:head:begin (scripts/build_chrome.py) -->
-<meta name="build" content="9667e79a3285" />
-<link rel="stylesheet" href="/assets/chrome.css?v=9667e79a3285" />
-<script defer src="/assets/chrome.js?v=9667e79a3285"></script>
+<link rel="stylesheet" href="/assets/tokens.css?v=d748a3a7ad48" />
+<meta name="build" content="d748a3a7ad48" />
+<link rel="stylesheet" href="/assets/chrome.css?v=d748a3a7ad48" />
+<script defer src="/assets/chrome.js?v=d748a3a7ad48"></script>
 <!-- chrome:head:end -->
 </head>
 <body>
@@ -40,22 +35,18 @@
     </a>
     <nav class="chrome-nav" aria-label="Разделы сайта">
       <a href="/">Помощник</a>
-      <a href="/services/">Тарифы</a>
-      <a href="/products.html" aria-current="page">Для строителей</a>
-      <a href="/rieltor/">Риэлтор</a>
+      <a href="/products.html">Для строителей</a>
+      <a href="/rieltor/">Для риелторов</a>
       <a href="/blog/">Статьи</a>
-      <a href="/about.html">Об авторе</a>
     </nav>
     <a class="chrome-cta" href="/#tarify">Выбрать тариф</a>
     <button class="chrome-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="chrome-panel" aria-label="Открыть меню"><span></span><span></span><span></span></button>
   </div>
   <div class="chrome-panel" id="chrome-panel" data-menu-panel hidden>
     <a href="/">Помощник</a>
-    <a href="/services/">Тарифы</a>
-    <a href="/products.html" aria-current="page">Для строителей</a>
-    <a href="/rieltor/">Риэлтор</a>
+    <a href="/products.html">Для строителей</a>
+    <a href="/rieltor/">Для риелторов</a>
     <a href="/blog/">Статьи</a>
-    <a href="/about.html">Об авторе</a>
   </div>
   <span class="chrome-progress" data-progress aria-hidden="true"></span>
 </header>
@@ -66,67 +57,10 @@
 <section class="hero hero-page" id="hero" aria-labelledby="nakladnaya-title">
   <div class="hero-atmos" aria-hidden="true"></div>
   <div class="wrap">
-    <p class="hero-eyebrow"><s aria-hidden="true"></s>Форма М-15 · OCR · Excel</p>
-    <h1 id="nakladnaya-title">Загрузите скан печатной накладной М-15</h1>
-    <p class="hero-lead" data-reveal>Примем один PDF со сканом печатной формы, распознаем данные
-      и отправим Excel-результат на email после оплаты и обработки.</p>
-
-    <dl class="stamp" data-reveal>
-      <div><dt>Формат</dt><dd>PDF · до 200 МБ</dd></div>
-      <div><dt>Распознавание</dt><dd>OCR сканов</dd></div>
-      <div><dt>Результат</dt><dd>Excel на email</dd></div>
-      <div><dt>Цена</dt><dd>79 ₽ за заказ</dd></div>
-    </dl>
-  </div>
-</section>
-
-<section class="band band-deep band-seam" id="order" aria-labelledby="form-title">
-  <div class="wrap work-grid">
-    <div class="work-form">
-      <div class="sec-head" data-reveal>
-        <p class="kicker">01 · Заказ</p>
-        <h2 class="h2" id="form-title">Передайте PDF со сканом</h2>
-      </div>
-
-      <form id="orderForm" class="form" novalidate>
-        <div class="field file-field">
-          <label class="upload-zone" for="file">
-            <span class="upload-zone__icon" aria-hidden="true"></span>
-            <span class="upload-zone__title">Загрузить печатную накладную</span>
-            <span class="upload-zone__text">PDF со сканом печатной формы М-15. Один файл на заказ.</span>
-            <span class="dropzone-hint">PDF · до 200 МБ · один файл</span>
-            <span class="upload-zone__check" aria-hidden="true"></span>
-            <span class="upload-zone__file" id="file-selected-name" aria-live="polite"></span>
-            <span class="upload-zone__replace-hint">Нажмите на область, чтобы заменить файл</span>
-            <input id="file" name="file" type="file" accept="application/pdf,.pdf" aria-describedby="file-selected-name" required>
-          </label>
-          <button type="button" class="upload-zone__remove" id="removeFile">Убрать файл</button>
-        </div>
-        <div class="field">
-          <label for="email">Email для результата</label>
-          <input id="email" name="email" type="email" autocomplete="email" required placeholder="name@example.com">
-          <div class="hint">На этот адрес придёт статус и готовый Excel.</div>
-        </div>
-        <div class="hp" aria-hidden="true">
-          <label for="website">Website</label>
-          <input id="website" name="website" tabindex="-1" autocomplete="off">
-        </div>
-            <label class="check"><input id="consent" type="checkbox" required> <span>Загружая файл, я соглашаюсь, что для распознавания мой документ — <strong>изображения страниц и извлечённые из них данные</strong> — будет автоматически передан внешнему AI-сервису распознавания (<strong>OpenRouter</strong>) исключительно для формирования результата (Excel). Исходный файл и распознанные данные <strong>удаляются после доставки</strong> результата на указанный email; при неуспешной обработке хранятся <strong>не более 7 дней</strong> для разбора качества и затем удаляются. Я ознакомлен(а) с <a href="https://ai-vibes.ru/oferta.html">офертой</a> и подтверждаю, что вправе передавать этот документ.</span></label>
-        <button id="submitBtn" class="btn btn-primary" type="submit">Отправить заказ</button>
-      </form>
-      <div id="message" class="notice" role="status">Выберите PDF, укажите email и подтвердите согласие.</div>
-      <div id="status" class="status" aria-live="polite"></div>
-    </div>
-
-    <aside class="work-side" data-reveal>
-      <p class="kicker">02 · OCR и оплата</p>
-      <h2 class="h3">Что происходит</h2>
-      <ul>
-        <li>Файл проверяется локально: размер и сигнатура <span class="mono">%PDF-</span>.</li>
-        <li>Для OCR изображения страниц и извлечённые данные передаются во внешний AI-сервис OpenRouter.</li>
-        <li>Если в статусе появится ссылка на оплату, здесь будет кнопка оплаты.</li>
-      </ul>
-    </aside>
+    <h1 id="nakladnaya-title">Сервис накладных М-15 закрыт</h1>
+    <p class="hero-lead">Распознавание накладных М-15 больше не принимает заказы.
+      Другие сервисы — в разделе «Для строителей».</p>
+    <p><a class="btn-pay" href="/products.html">Сервисы для строителей</a></p>
   </div>
 </section>
 
@@ -143,11 +77,9 @@
       <p class="chrome-foot-h">Разделы</p>
       <ul>
         <li><a href="/">Помощник</a></li>
-        <li><a href="/services/">Тарифы</a></li>
         <li><a href="/products.html">Для строителей</a></li>
-        <li><a href="/rieltor/">Риэлтор</a></li>
+        <li><a href="/rieltor/">Для риелторов</a></li>
         <li><a href="/blog/">Статьи</a></li>
-        <li><a href="/about.html">Об авторе</a></li>
       </ul>
     </div>
     <div>
@@ -171,6 +103,5 @@
 
 
 
-<script type="module" src="nakladnaya.js?v=m15-v1-2026-06"></script>
 </body>
 </html>

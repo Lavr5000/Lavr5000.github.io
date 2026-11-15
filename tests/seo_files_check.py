@@ -11,16 +11,18 @@ Offline, stdlib only. Checks over the repository (or DIR):
      YandexBot, GPTBot, ClaudeBot, PerplexityBot, and names the sitemap;
   d. every price in roubles, every label and every explanation of llms.txt is found word for word
      in the pages;
-  e. index.html and services/index.html carry exactly one generated JSON-LD block, the JSON parses;
-     the home page has WebSite + Organization + Person and no Service; /services/ has Organization + Person
-     and exactly one Service/Offer per tariff `a[data-pay]` (name = data-order, price = digits of
-     data-price-label, url = /services/#<id of the tariff card>: #service-5 and #vip);
+  e. index.html carries exactly one generated JSON-LD block, the JSON parses; it has WebSite + Organization +
+     Person (Person.url = https://ai-vibes.ru/#author) and exactly one Service/Offer per tariff `a[data-pay]`
+     inside a tariff card (name = data-order, price = digits of data-price-label, url = /#<id of the card>:
+     #service-5, #vip, #service-rieltor - at least 3). IA step: the tariffs moved from /services/ to the home page;
+     services/index.html and about.html are redirect pages: canonical of the home page, no noindex, listed in
+     neither sitemap.xml nor llms.txt; /rieltor/ is indexable (no noindex) and listed in both;
   f. the published files carry no archived service (services.js `archived: true`), no Hermes, no "15 000 ₽",
      no #pokaz, and /spasibo/ (noindex) is in neither sitemap.xml nor llms.txt;
   g. the two generators do not fight: on a scratch copy of the tree, seo -> chrome -> seo and
      chrome -> seo -> chrome leave every page and generated file byte-identical (compared as LF text) to
      the starting state, which must itself be the fixed point.
-Built-in negative probes (each one must be caught): `Disallow: /`; `Allow: /` + `Disallow: /services/`;
+Built-in negative probes (each one must be caught): `Disallow: /`; `Allow: /` + `Disallow: /rieltor/`;
 a price that is on no page; a trailing comma in the JSON; a Service with a wrong Offer price; a Hermes line
 with 15 000 in llms.txt.
 Last line: SEO_FILES_CHECK status=<ok|fail> pages=<n> neg=<caught>/6
@@ -43,7 +45,9 @@ SITE = "https://ai-vibes.ru"
 SKIP_DIRS = {".git", "node_modules", "tests", "docs", "idm", "scripts", "out", ".next"}
 AGENTS = ["*", "Googlebot", "YandexBot", "GPTBot", "ClaudeBot", "PerplexityBot"]
 EXTRA_PATHS = ["/assets/site2.css", "/assets/site3.css", "/assets/chrome.css"]
-LD_PAGES = ["index.html", "services/index.html"]
+LD_PAGES = ["index.html"]  # the tariffs and the JSON-LD live on the home page since the IA step
+REDIRECT_PAGES = ["services/index.html", "about.html"]  # static redirect pages: out of sitemap.xml and llms.txt
+MIN_TARIFFS = 3  # #service-5, #vip, #service-rieltor
 BEGIN = "<!-- seo:jsonld:begin (scripts/build_seo_files.py) -->"
 END = "<!-- seo:jsonld:end -->"
 FORBIDDEN_TEXT = ["Hermes", "15 000", "#pokaz", "Покажу агента"]  # replaced offers: must not reach generated files
@@ -237,7 +241,7 @@ def _keys(node):
 
 
 def expected_tariffs(raw: str) -> list[tuple[str, str, str]]:
-    """(data-order, price digits, url) for every `a[data-pay]` of /services/, url from the card's own id."""
+    """(data-order, price digits, url) for every `a[data-pay]` inside a tariff card of the home page, url from the card's own id."""
     out = []
     for art in re.finditer(r"<article\b([^>]*)>(.*?)</article>", raw, re.S):
         cid = re.search(r'\bid="([^"]+)"', art.group(1))
@@ -245,7 +249,7 @@ def expected_tariffs(raw: str) -> list[tuple[str, str, str]]:
             order = re.search(r'\bdata-order="([^"]*)"', tag)
             label = re.search(r'\bdata-price-label="([^"]*)"', tag)
             if order and label and cid:
-                out.append((norm(order.group(1)), re.sub(r"\D", "", label.group(1)), f"{SITE}/services/#{cid.group(1)}"))
+                out.append((norm(order.group(1)), re.sub(r"\D", "", label.group(1)), f"{SITE}/#{cid.group(1)}"))
     return out
 
 
@@ -270,18 +274,18 @@ def check_jsonld(rel: str, raw: str) -> list[str]:
     graph = data.get("@graph", [])
     types = [n.get("@type") for n in graph]
     if rel == "index.html":
-        if sorted(types) != ["Organization", "Person", "WebSite"]:
-            bad.append(f"{rel}: expected WebSite, Organization, Person; got {types}")
-    if rel == "services/index.html":
-        if [t for t in types if t != "Service"] != ["Organization", "Person"]:
-            bad.append(f"{rel}: expected Organization and Person besides the Services; got {types}")
+        if sorted(t for t in types if t != "Service") != ["Organization", "Person", "WebSite"]:
+            bad.append(f"{rel}: expected WebSite, Organization, Person besides the Services; got {types}")
+        for n in graph:
+            if n.get("@type") == "Person" and n.get("url") != f"{SITE}/#author":
+                bad.append(f"{rel}: Person.url must be {SITE}/#author, got {n.get('url')!r}")
         want = expected_tariffs(raw)
         got = [(n.get("name"), (n.get("offers") or {}).get("price"), n.get("url"))
                for n in graph if n.get("@type") == "Service"]
         if sorted(got) != sorted(want):
             bad.append(f"{rel}: Services {got} differ from the a[data-pay] tariffs {want}")
-        if not want:
-            bad.append(f"{rel}: no a[data-pay] tariff found, nothing to compare the Services with")
+        if len(want) < MIN_TARIFFS:
+            bad.append(f"{rel}: {len(want)} a[data-pay] tariff cards found, expected >= {MIN_TARIFFS} (#service-5, #vip, #service-rieltor)")
         for n in graph:
             if n.get("@type") == "Service":
                 o = n.get("offers") or {}
@@ -306,6 +310,38 @@ def archived_titles(root: Path) -> list[str]:
 
 def check_forbidden(name: str, text: str, titles: list[str]) -> list[str]:
     return [f"{name} contains {w!r}" for w in FORBIDDEN_TEXT + titles if w in text]
+
+
+def check_ia_pages(pages: dict[str, Page], sitemap: str, llms: str) -> list[str]:
+    """IA step: redirect pages are out of the SEO files and carry the home canonical without noindex;
+    /rieltor/ is indexable and listed in sitemap.xml and llms.txt."""
+    bad = []
+    for rel in REDIRECT_PAGES:
+        p = pages.get(rel)
+        if p is None:
+            bad.append(f"{rel}: redirect page is missing")
+            continue
+        if p.canonical != SITE + "/":
+            bad.append(f"{rel}: canonical must be {SITE}/, got {p.canonical!r}")
+        if p.noindex:
+            bad.append(f"{rel}: redirect page must not carry noindex")
+        url = loc_of(rel)
+        stem = url[: -len("index.html")] if url.endswith("index.html") else url
+        for name, text in (("sitemap.xml", sitemap), ("llms.txt", llms)):
+            if stem in text or url in text:
+                bad.append(f"{name} lists the redirect page {stem}")
+    r = pages.get("rieltor/index.html")
+    if r is None:
+        bad.append("rieltor/index.html is missing")
+    else:
+        if r.noindex:
+            bad.append("/rieltor/ must be indexable: noindex is still there")
+        if r.canonical != SITE + "/rieltor/":
+            bad.append(f"/rieltor/ canonical must be {SITE}/rieltor/, got {r.canonical!r}")
+    for name, text in (("sitemap.xml", sitemap), ("llms.txt", llms)):
+        if SITE + "/rieltor/" not in text:
+            bad.append(f"{name} does not list {SITE}/rieltor/")
+    return bad
 
 
 def check_spasibo(sitemap: str, llms: str) -> list[str]:
@@ -358,13 +394,13 @@ def check_generators_commute(root: Path, here: Path) -> list[str]:
 def negative_probes(robots: str, llms: str, pages: dict[str, Page], paths: list[str], svc_raw: str) -> int:
     caught = 0
     caught += bool(check_robots("User-agent: *\nDisallow: /\n\nSitemap: %s/sitemap.xml\n" % SITE, paths))
-    caught += bool(check_robots("User-agent: *\nAllow: /\nDisallow: /services/\n\nSitemap: %s/sitemap.xml\n" % SITE, paths))
+    caught += bool(check_robots("User-agent: *\nAllow: /\nDisallow: /rieltor/\n\nSitemap: %s/sitemap.xml\n" % SITE, paths))
     first = PRICE.search(llms)
     probe = llms.replace(first.group(0), "1 500 ₽", 1) if first else llms + "- [x](%s/): 1 500 ₽\n" % SITE
     caught += bool(check_llms(probe, pages))
-    caught += bool(check_jsonld("services/index.html", svc_raw.replace("}</script>", ",}</script>", 1)))
-    caught += bool(check_jsonld("services/index.html", svc_raw.replace('"price":"7500"', '"price":"7400"', 1)))
-    caught += bool(check_forbidden("llms.txt", llms + "- [Hermes Agent](%s/services/): 15 000 ₽\n" % SITE, []))
+    caught += bool(check_jsonld("index.html", svc_raw.replace("}</script>", ",}</script>", 1)))
+    caught += bool(check_jsonld("index.html", svc_raw.replace('"price":"7500"', '"price":"7400"', 1)))
+    caught += bool(check_forbidden("llms.txt", llms + "- [Hermes Agent](%s/#service-5): 15 000 ₽\n" % SITE, []))
     return caught
 
 
@@ -398,8 +434,9 @@ def main() -> int:
         block = raw[raw.find(BEGIN): raw.find(END)]
         bad += check_forbidden(rel + " (JSON-LD)", block, titles)
     bad += check_spasibo(sitemap, llms)
+    bad += check_ia_pages(pages, sitemap, llms)
     bad += check_generators_commute(root, here)
-    neg = negative_probes(robots, llms, pages, paths, raws["services/index.html"])
+    neg = negative_probes(robots, llms, pages, paths, raws["index.html"])
     for line in bad:
         print("FAIL " + line)
     ok = not bad and neg == 6
