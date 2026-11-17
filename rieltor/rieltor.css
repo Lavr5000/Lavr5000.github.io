@@ -37,6 +37,9 @@
 .rl-pay-check{width:20px;height:20px;margin-top:2px;accent-color:var(--brass-deep)}
 .rl-pay-consent a{color:inherit;text-underline-offset:3px}
 .rl-pay-err{color:var(--danger-2);font-size:14px;line-height:1.4}
+/* 2026-11-17 (inna-free-mode): the answer of the personal free code — the form is replaced by the MAX button */
+.rl-pay-free{font-size:15px;line-height:1.45;color:var(--on-paper);margin:0 0 4px}
+.rl-pay-free-hint{font-size:14px;line-height:1.4;color:var(--on-paper-2)}
 .rl-alt{font-size:15px}
 .rl-alt a{color:inherit;text-underline-offset:3px}
 .rl-disclaimer{font-style:italic}

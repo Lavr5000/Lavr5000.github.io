@@ -34,6 +34,16 @@
    * the discounted amount is confirmed by the bank page (the button keeps the catalog price). */
   var pm = /[?&]promo=([^&]*)/.exec(window.location.search || '');
   var PROMO_PRESET = pm ? decodeURIComponent(pm[1].replace(/\+/g, '%20')) : '';
+  /* 2026-11-17: a personal free code must not stay in the address bar (a screenshot, a shared link, the browser
+     history): it is read once above and stripped at once. Other parameters stay as they were. */
+  if (pm) {
+    try {
+      var usp = new URLSearchParams(window.location.search);
+      usp.delete('promo');
+      var qs = usp.toString();
+      history.replaceState(null, '', window.location.pathname + (qs ? '?' + qs : '') + window.location.hash);
+    } catch (e) { /* an old browser: the page still works, the code just stays in the URL */ }
+  }
 
   function el(tag, cls, text) {
     var e = document.createElement(tag);
@@ -122,6 +132,20 @@
     wrap.appendChild(err);
     t.appendChild(wrap);
 
+    /* 2026-11-17: the free road — the backend answered a deep link, so the order is made in the bot MAX. The form
+       (e-mail, promo, consent, pay) gives way to one button: no payment page, no receipt, no bank. */
+    function showFree(link) {
+      while (wrap.firstChild) wrap.removeChild(wrap.firstChild);
+      wrap.appendChild(el('p', 'rl-pay-free', 'Заказ бесплатный — оформлю его в MAX. Нажмите кнопку, дальше всё в чате.'));
+      var go = el('a', 'btn-pay rl-btn', 'Продолжить в MAX');
+      go.href = link;
+      go.target = '_blank';
+      go.rel = 'noopener';
+      wrap.appendChild(go);
+      var back = el('p', 'rl-pay-free-hint', 'Это персональная ссылка: в MAX заказ сделают бесплатно, без оплаты и чека.');
+      wrap.appendChild(back);
+    }
+
     wrap.addEventListener('submit', function (ev) {
       ev.preventDefault();
       err.hidden = true;
@@ -152,6 +176,13 @@
       }).then(function (res) {
         return res.json().then(function (j) { return { ok: res.ok, j: j }; });
       }).then(function (r) {
+        /* 2026-11-17 (inna-free-mode, З-2): the personal code of the free road does NOT make an order here — the
+           backend answers a deep link into the bot, where the free order is made by the chat itself. No bank, no
+           receipt, no e-mail needed; the form gives way to the MAX button. */
+        if (r.ok && r.j && r.j.free === true && typeof r.j.link === 'string' && /^https:\/\//.test(r.j.link)) {
+          showFree(r.j.link);
+          return;
+        }
         if (r.ok && r.j && typeof r.j.payment_url === 'string' && /^https:\/\//.test(r.j.payment_url)) {
           store.set('av-uslugi-r:' + r.j.order, r.j.r || '');
           window.location.href = r.j.payment_url;
