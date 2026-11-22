@@ -82,13 +82,13 @@ import { API_ORIGIN } from './vedomost.config.js?v=vedomost-v3-2026-10';
     row.className = 'card-row';
     var price = document.createElement('span');
     price.className = 'card-price';
-    price.textContent = formatPrice(product.price.ru);
+    price.textContent = (product.price_from ? 'от ' : '') + formatPrice(product.price.ru);
     row.appendChild(price);
 
     var cta = document.createElement('a');
     cta.className = 'btn-pay';
     cta.href = product.cta && product.cta.url ? product.cta.url : '#';
-    cta.textContent = 'Загрузить PDF';
+    cta.textContent = (product.cta && product.cta.label && product.cta.label.ru) || 'Загрузить PDF';
     // the order dialog on this page (pdf-tables-dialog.js) opens instead; href stays as the no-JS path
     if (product.gate === 'pdf_tables') cta.setAttribute('data-pt-open', '');
     row.appendChild(cta);

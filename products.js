@@ -145,4 +145,24 @@ window.AI_PRODUCTS = [
     // price.ru "499" must equal backend pdf-tables price 49900 коп
     tier: "paid", free_quota: null,
   },
+  {
+    id: "id-komplekt", slug: "id-komplekt", order: 80, visible: false,
+    status: "available", icon: "list", serviceType: "request_form",
+    gate: "idk",
+    categories: ["pto", "estimators"],
+    price: { ru: "3500", en: "3500" },
+    price_from: true,
+    title:   { ru: "Комплект исполнительной документации", en: "As-built documentation kit" },
+    tagline: { ru: "По вашей КС-2 или смете готовлю черновик комплекта ИД: акты скрытых работ, реестр, журналы и список недостающего. Оплата — после бесплатного разбора.",
+               en: "From your KS-2 or estimate I prepare a draft as-built documentation kit: hidden-work acts, register, logs and a list of what is missing. Payment only after a free analysis." },
+    input:   { ru: "КС-2 или смета; при наличии — рабочая документация, приказы, паспорта, протоколы (до 20 файлов)",
+               en: "KS-2 or estimate; if available — working drawings, orders, certificates, test reports (up to 20 files)" },
+    output:  { ru: "Архив: акты АОСР, реестр ИД, журналы, перечень недостающих документов, ведомость допусков",
+               en: "Archive: hidden-work acts, documentation register, logs, a list of missing documents, an allowance sheet" },
+    cta: { url: "/id-komplekt.html", label: { ru: "Загрузить документы", en: "Upload documents" },
+           tgText: { ru: "Здравствуйте! Интересует «Комплект исполнительной документации». С офертой ознакомлен(а): https://ai-vibes.ru/oferta.html",
+                     en: "Hi! I'm interested in the “As-built documentation kit”. I have read the offer terms: https://ai-vibes.ru/oferta.html" } },
+    // price.ru "3500" = the first tier (3 500 / 6 000 / 9 000 RUB, see oferta.html section 21); the server shows the final amount
+    tier: "paid", free_quota: null,
+  },
 ];
