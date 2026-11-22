@@ -1,7 +1,7 @@
 import http from 'node:http';
 import crypto from 'node:crypto';
 
-const PORT = 8787;
+const PORT = Number(process.env.MOCK_PORT || 8787);
 const MAX_SIZE = 25 * 1024 * 1024;
 const ACCEPTED = new Set(['dev-0']);
 const ALLOW = new Set([
@@ -33,12 +33,17 @@ function runPaymentValidatorSelfCheck() {
   console.log('payment validator self-check ok: valid renders button; http/wrong-host render no button');
 }
 
+const LOOPBACK = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
+function originAllowed(origin) {
+  return Boolean(origin) && (ALLOW.has(origin) || LOOPBACK.test(origin));
+}
+
 function cors(req, res) {
   const origin = req.headers.origin;
-  if (origin && ALLOW.has(origin)) res.setHeader('Access-Control-Allow-Origin', origin);
+  if (originAllowed(origin)) res.setHeader('Access-Control-Allow-Origin', origin);
   res.setHeader('Vary', 'Origin');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type, Idempotency-Key');
   res.setHeader('Access-Control-Max-Age', '600');
 }
 
@@ -89,7 +94,7 @@ function clientIp(req) {
 function checkOrigin(req) {
   const origin = req.headers.origin;
   const referer = req.headers.referer ? new URL(req.headers.referer).origin : '';
-  return (origin && ALLOW.has(origin)) || (referer && ALLOW.has(referer));
+  return originAllowed(origin) || originAllowed(referer);
 }
 
 function parseMultipart(buf, type) {
@@ -113,6 +118,117 @@ function parseMultipart(buf, type) {
   return parts;
 }
 
+// ---- id-komplekt (Комплект исполнительной документации) -------------------------------------------------
+// Offline preview of the client flow: queued -> awaiting_payment (quote + pay URL) -> idk_paid -> delivered.
+// Stages are time-driven after /api/idk/submit and can be forced: POST /__mock/idk/advance {order_token, stage};
+// POST /__mock/idk/pay {order_token} simulates the return from the bank (awaiting_payment -> idk_paid).
+const IDK_CONSENT = 'idk-v1-2026-11';
+const IDK_EXT = new Set(['xlsx', 'xls', 'pdf', 'docx', 'jpg', 'jpeg', 'png', 'zip']);
+const IDK_MAX_FILES = 20;
+const IDK_MAX_TOTAL = 200 * 1024 * 1024;
+const IDK_CONTACT = /^[A-Za-zА-Яа-яЁё0-9 +\-()@._]{3,80}$/;
+const idkOrders = new Map();
+const idemKeys = new Map();
+
+function idkCreate(req, res, data, idemKey) {
+  if (data.website) return send(req, res, 202, { order_id: 'accepted' });
+  if (data.consent_version !== IDK_CONSENT) return err(req, res, 403, 'bad_consent_version', 'Версия согласия не принята.', null);
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(data.email || ''))) return err(req, res, 422, 'bad_email', 'Укажите корректный адрес почты.', null);
+  if (data.contact && !IDK_CONTACT.test(String(data.contact))) return err(req, res, 422, 'bad_contact', 'Контакт содержит недопустимые знаки.', null);
+  if (idemKey && idemKeys.has(idemKey)) return send(req, res, 200, idemKeys.get(idemKey));
+  const order_id = token('ord');
+  const order = {
+    order_id, order_number: `IDK-${String(idkOrders.size + 1).padStart(4, '0')}`,
+    order_token: token('order'), upload_token: token('upload'),
+    files: [], total: 0, submitted_at: 0, forced: null, paid_at: 0, idk: true
+  };
+  idkOrders.set(order.order_token, order);
+  uploads.set(order.upload_token, order);
+  const reply = {
+    order_id, order_number: order.order_number, order_token: order.order_token, upload_token: order.upload_token,
+    max_files: IDK_MAX_FILES, max_total_bytes: IDK_MAX_TOTAL
+  };
+  if (idemKey) idemKeys.set(idemKey, reply);
+  send(req, res, 200, reply);
+}
+
+async function idkUpload(req, res, order) {
+  if (order.submitted_at) return err(req, res, 409, 'order_submitted', 'Заказ уже отправлен на разбор.', null);
+  const buf = await body(req);
+  const files = parseMultipart(buf, req.headers['content-type']);
+  if (files.length !== 1) return err(req, res, 400, 'one_file_required', 'Нужен ровно один файл.', null);
+  const name = /filename="([^"]*)"/i.exec(files[0].head)?.[1] || '';
+  const ext = name.split('.').pop().toLowerCase();
+  if (!IDK_EXT.has(ext)) return err(req, res, 415, 'bad_file_type', 'Этот тип файла не принимается.', null);
+  if (order.files.length + 1 > IDK_MAX_FILES) return err(req, res, 409, 'too_many_files', 'Слишком много файлов.', null);
+  if (order.total + files[0].data.length > IDK_MAX_TOTAL) return err(req, res, 413, 'total_too_large', 'Общий размер файлов слишком велик.', null);
+  order.files.push(name);
+  order.total += files[0].data.length;
+  send(req, res, 200, { ok: true, size: files[0].data.length, files_count: order.files.length });
+}
+
+function idkStage(order) {
+  if (order.forced) return order.forced;
+  if (!order.submitted_at) return 'awaiting_upload';
+  if (order.paid_at) return Date.now() - order.paid_at < 3000 ? 'idk_paid' : 'delivered';
+  return Date.now() - order.submitted_at < 4000 ? 'queued' : 'awaiting_payment';
+}
+
+function idkStatus(req, res, order) {
+  const stage = idkStage(order);
+  const out = { stage, idk: true, submitted: Boolean(order.submitted_at), files_count: order.files.length, message: null, payment_url: null };
+  const messages = {
+    queued: 'Файлы получены, идёт бесплатный разбор.',
+    awaiting_payment: 'Разбор готов: проверьте состав комплекта и оплатите.',
+    idk_paid: 'Оплата получена, собираем комплект.',
+    delivered: 'Комплект готов.',
+    failed: 'По этим файлам комплект собрать не удалось: не найден акт КС-2 или смета.',
+    service_refunded: 'Оплата возвращена.'
+  };
+  out.message = messages[stage] || null;
+  if (['awaiting_payment', 'idk_paid', 'delivered'].includes(stage)) {
+    out.quote = {
+      tier: 'project', acts_count: 34, amount: 6400,
+      composition: [
+        { title: 'Акты освидетельствования скрытых работ (АОСР)', count: 34 },
+        { title: 'Реестр исполнительной документации', count: 1 },
+        { title: 'Общий журнал работ', count: 1 },
+        { title: 'Журнал входного контроля', count: 1 },
+        { title: 'Ведомость допусков', count: 1 }
+      ],
+      missing: ['Паспорта и сертификаты на трубы ПНД', 'Протокол испытания бетона (класс B25)', 'Исполнительная схема на участок 3']
+    };
+  }
+  if (stage === 'awaiting_payment') out.payment_url = 'https://securepay.tinkoff.ru/new/mock-idk';
+  if (stage === 'delivered') {
+    out.download_url = 'https://api.ai-vibes.ru/k/' + crypto.createHash('sha256').update(order.order_token).digest('base64url').slice(0, 32);
+    out.download_expires_at = new Date(Date.now() + 72 * 3600 * 1000).toISOString();
+  }
+  send(req, res, 200, out);
+}
+
+async function idkRoute(req, res) {
+  if (req.url === '/api/idk/submit' && req.method === 'POST') {
+    const order = idkOrders.get(bearer(req) || '');
+    if (!order) { err(req, res, 403, 'bad_order_token', 'Недействительный order token.', null); return true; }
+    if (!order.files.length) { err(req, res, 409, 'no_files', 'Нет загруженных файлов.', null); return true; }
+    if (!order.submitted_at) order.submitted_at = Date.now();
+    send(req, res, 200, { ok: true, stage: 'queued' });
+    return true;
+  }
+  if ((req.url === '/__mock/idk/advance' || req.url === '/__mock/idk/pay') && req.method === 'POST') {
+    let data = {};
+    try { data = JSON.parse((await body(req)).toString('utf8') || '{}'); } catch { /* keep empty */ }
+    const order = idkOrders.get(data.order_token || '');
+    if (!order) { err(req, res, 404, 'not_found', 'Unknown order.', null); return true; }
+    if (req.url.endsWith('/pay')) { order.forced = null; order.paid_at = Date.now(); }
+    else order.forced = data.stage || null;
+    send(req, res, 200, { ok: true });
+    return true;
+  }
+  return false;
+}
+
 async function createOrder(req, res) {
   const ip = clientIp(req);
   const count = ipOrders.get(ip) || 0;
@@ -120,6 +236,7 @@ async function createOrder(req, res) {
   let data;
   try { data = JSON.parse((await body(req)).toString('utf8') || '{}'); }
   catch { return err(req, res, 400, 'bad_json', 'Некорректный JSON.', null); }
+  if (data.product === 'id-komplekt') return idkCreate(req, res, data, req.headers['idempotency-key'] || '');
   if (data.website) return send(req, res, 202, { order_id: 'accepted' });
   if (!ACCEPTED.has(data.consent_version)) return err(req, res, 403, 'bad_consent_version', 'Версия согласия не принята.', null);
   const order_id = token('ord');
@@ -138,6 +255,7 @@ async function upload(req, res) {
   const order = uploads.get(rawToken);
   if (!order) return err(req, res, 403, 'bad_upload_token', 'Недействительный upload token.', null);
   if (!checkOrigin(req)) return err(req, res, 403, 'bad_origin', 'Origin или Referer не разрешён.', null);
+  if (order.idk) return idkUpload(req, res, order);
   const key = `${clientIp(req)}:${rawToken}`;
   const hits = ipTokenHits.get(key) || 0;
   if (hits > 20) return err(req, res, 429, 'rate_limited', 'Слишком много попыток загрузки.', 30);
@@ -161,6 +279,8 @@ async function upload(req, res) {
 function status(req, res) {
   const rawToken = bearer(req);
   if (!rawToken) return err(req, res, 401, 'missing_bearer', 'Нужен Authorization: Bearer.', null);
+  const idkOrder = idkOrders.get(rawToken);
+  if (idkOrder) return idkStatus(req, res, idkOrder);
   const order = orders.get(rawToken);
   if (!order) return err(req, res, 403, 'bad_order_token', 'Недействительный order token.', null);
   const age = Date.now() - order.created;
@@ -183,6 +303,7 @@ const server = http.createServer(async (req, res) => {
     if (req.url === '/api/orders' && req.method === 'POST') return createOrder(req, res);
     if (req.url === '/api/upload' && req.method === 'POST') return upload(req, res);
     if (req.url === '/api/status' && req.method === 'GET') return status(req, res);
+    if (await idkRoute(req, res)) return;
     err(req, res, 404, 'not_found', 'Endpoint not found.', null);
   } catch {
     err(req, res, 500, 'server_error', 'Mock API error.', null);

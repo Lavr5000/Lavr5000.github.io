@@ -19,7 +19,7 @@
 .idk-price th{font-weight:400}
 .idk-price td{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:19px;font-weight:500;text-align:right;white-space:nowrap}
 
-.idk-steps{margin:0;padding:0 0 0 22px;display:grid;gap:8px;font-size:16px;color:var(--on-paper-2)}
+.idk-steps{list-style:decimal;margin:0;padding:0 0 0 22px;display:grid;gap:8px;font-size:16px;color:var(--on-paper-2)}
 .idk-steps li::marker{font-family:var(--mono);color:var(--brass-deep)}
 .idk-steps strong{font-weight:500;color:var(--on-paper)}
 
