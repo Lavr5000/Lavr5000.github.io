@@ -150,8 +150,8 @@ window.AI_PRODUCTS = [
     status: "available", icon: "list", serviceType: "request_form",
     gate: "idk",
     categories: ["pto", "estimators"],
-    price: { ru: "3500", en: "3500" },
-    price_from: true,
+    price: { ru: "1000", en: "1000" },
+    price_from: false,
     title:   { ru: "Комплект исполнительной документации", en: "As-built documentation kit" },
     tagline: { ru: "По вашей КС-2 или смете готовлю черновик комплекта ИД: акты скрытых работ, реестр, журналы и список недостающего. Оплата — после бесплатного разбора.",
                en: "From your KS-2 or estimate I prepare a draft as-built documentation kit: hidden-work acts, register, logs and a list of what is missing. Payment only after a free analysis." },
@@ -162,7 +162,7 @@ window.AI_PRODUCTS = [
     cta: { url: "/id-komplekt.html", label: { ru: "Загрузить документы", en: "Upload documents" },
            tgText: { ru: "Здравствуйте! Интересует «Комплект исполнительной документации». С офертой ознакомлен(а): https://ai-vibes.ru/oferta.html",
                      en: "Hi! I'm interested in the “As-built documentation kit”. I have read the offer terms: https://ai-vibes.ru/oferta.html" } },
-    // price.ru "3500" = the first tier (3 500 / 6 000 / 9 000 RUB, see oferta.html section 21); the server shows the final amount
+    // price.ru "1000" = flat beta price (see oferta.html section 21); the server shows the final amount
     tier: "paid", free_quota: null,
   },
 ];

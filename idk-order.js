@@ -31,6 +31,9 @@ const FAST_POLL_COUNT = 24;                  // 2 minutes at 5 s, then 15 s
 const MAX_POLL_ATTEMPTS = 480;               // about 2 hours; past it a calm notice shows
 
 const STEPS = ['Файлы загружены', 'Бесплатный разбор', 'Оплата', 'Сборка комплекта', 'Комплект готов'];
+const BETA_NOTICE = 'Услуга в бета-тестировании. В ходе тестирования возможны ошибки. Оплата не возвращается, но услуга будет оказана до конца: при сбое к заказу подключится менеджер или система будет доработана и ваши файлы обработают повторно.';
+const CREDIT_NOTICE = 'Оплата не нужна: за вами закреплён бесплатный заказ.';
+
 const STAGE_STEP = { awaiting_upload: 0, queued: 1, awaiting_payment: 2, idk_paid: 3, delivered: 4 };
 const TIER_TEXT = {
   ks2: 'Исходные документы: только КС-2 или смета',
@@ -360,7 +363,25 @@ export function mountIdkOrder(root) {
       if (data.quote) statusBox.append(quoteBlock(data.quote));
       const amount = data.quote && data.quote.amount;
       const url = data.payment_url;
-      if (typeof url === 'string' && isValidPaymentUrl(url, PAYMENT_ALLOWED_HOSTS) && Number.isFinite(Number(amount))) {
+      const isCredit = Boolean(data.credit || (data.quote && data.quote.credit));
+      if (isCredit && !(Number(amount) > 0) && !url) {
+        // a free order by credit: nothing to pay, no bank; the button only refreshes the status
+        const free = document.createElement('p');
+        free.className = 'idk-amount idk-amount--free';
+        free.textContent = CREDIT_NOTICE;
+        const go = document.createElement('button');
+        go.type = 'button';
+        go.className = 'btn-pay idk-continue';
+        go.textContent = 'Продолжить';
+        go.addEventListener('click', () => {
+          go.disabled = true;
+          setMessage('Запускаем сборку комплекта…', 'ok');
+          shownSig = '';
+          poll();
+        });
+        statusBox.append(free, go);
+        setMessage(data.message || 'Разбор готов. Проверьте состав комплекта и нажмите «Продолжить» — комплект уйдёт в сборку.', 'ok');
+      } else if (typeof url === 'string' && isValidPaymentUrl(url, PAYMENT_ALLOWED_HOSTS) && Number.isFinite(Number(amount))) {
         const price = document.createElement('p');
         price.className = 'idk-amount';
         price.textContent = formatRubles(amount);
@@ -373,7 +394,7 @@ export function mountIdkOrder(root) {
           setMessage('Открываем оплату…', 'ok');
           window.location.assign(url);
         });
-        statusBox.append(price, pay);
+        statusBox.append(price, note(BETA_NOTICE, 'idk-beta'), pay);
         setMessage(data.message || 'Разбор готов. Проверьте состав комплекта и оплатите — после оплаты комплект сразу уйдёт в сборку.', 'ok');
       } else {
         setMessage('Разбор готов, ссылка на оплату готовится. Статус обновится сам.', 'ok');

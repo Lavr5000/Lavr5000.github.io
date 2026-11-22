@@ -88,6 +88,8 @@
 .idk-comp-count{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
 .idk-missing li{padding-left:16px;position:relative;color:var(--on-paper-2)}
 .idk-missing li::before{content:"";position:absolute;left:0;top:.65em;width:6px;height:6px;border-radius:50%;background:var(--danger)}
+.idk-beta{margin:0;padding:10px 14px;border-left:3px solid currentColor;font-size:15px}
+.idk-amount--free{font-family:inherit;font-size:clamp(18px,2.4vw,22px)}
 .idk-amount{margin:0;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:clamp(28px,4vw,38px);font-weight:500}
 .idk-pay,.idk-download{width:100%;text-decoration:none}
 .idk-again{width:100%;color:var(--on-paper)}
