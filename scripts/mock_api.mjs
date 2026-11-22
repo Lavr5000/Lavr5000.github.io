@@ -140,7 +140,7 @@ function idkCreate(req, res, data, idemKey) {
   const order = {
     order_id, order_number: `IDK-${String(idkOrders.size + 1).padStart(4, '0')}`,
     order_token: token('order'), upload_token: token('upload'),
-    files: [], total: 0, submitted_at: 0, forced: null, paid_at: 0, idk: true
+    email: String(data.email || ''), files: [], total: 0, submitted_at: 0, forced: null, paid_at: 0, idk: true
   };
   idkOrders.set(order.order_token, order);
   uploads.set(order.upload_token, order);
@@ -188,7 +188,7 @@ function idkStatus(req, res, order) {
   out.message = messages[stage] || null;
   if (['awaiting_payment', 'idk_paid', 'delivered'].includes(stage)) {
     out.quote = {
-      tier: 'project', acts_count: 34, amount: 6400,
+      tier: 'project', acts_count: 34, amount: order.credit ? 0 : 1000, ...(order.credit ? { credit: true } : {}),
       composition: [
         { title: 'Акты освидетельствования скрытых работ (АОСР)', count: 34 },
         { title: 'Реестр исполнительной документации', count: 1 },
@@ -199,7 +199,8 @@ function idkStatus(req, res, order) {
       missing: ['Паспорта и сертификаты на трубы ПНД', 'Протокол испытания бетона (класс B25)', 'Исполнительная схема на участок 3']
     };
   }
-  if (stage === 'awaiting_payment') out.payment_url = 'https://securepay.tinkoff.ru/new/mock-idk';
+  if (order.credit) out.credit = true;
+  if (stage === 'awaiting_payment' && !order.credit) out.payment_url = 'https://securepay.tinkoff.ru/new/mock-idk';
   if (stage === 'delivered') {
     out.download_url = 'https://api.ai-vibes.ru/k/' + crypto.createHash('sha256').update(order.order_token).digest('base64url').slice(0, 32);
     out.download_expires_at = new Date(Date.now() + 72 * 3600 * 1000).toISOString();
@@ -213,6 +214,7 @@ async function idkRoute(req, res) {
     if (!order) { err(req, res, 403, 'bad_order_token', 'Недействительный order token.', null); return true; }
     if (!order.files.length) { err(req, res, 409, 'no_files', 'Нет загруженных файлов.', null); return true; }
     if (!order.submitted_at) order.submitted_at = Date.now();
+    if (/credit/i.test(String(order.email || ''))) order.credit = true;   // the backend gives a free order to a client with a credit
     send(req, res, 200, { ok: true, stage: 'queued' });
     return true;
   }

@@ -6,7 +6,7 @@
 Serves the working tree on 127.0.0.1 (helper of tests/v2_gate.py), starts scripts/mock_api.mjs on a free port and
 forwards every request to https://api.ai-vibes.ru/** to it (CORS preflight answered here); the bank and Metrika
 are intercepted. Checks:
-  а) the page is noindex, has the consent checkbox, the approved short text, 3 500 / 6 000 / 9 000 prices;
+  а) the page is noindex, has the consent checkbox, the approved short text, a flat 1 000 RUB beta price and the beta notice;
   б) the checkbox text equals the backend registry text verbatim (read from the backend repo; skipped when absent);
   в) client checks: no files / bad extension / more than 20 files / more than 200 MB / bad email / no consent /
      bad contact -> Russian message and NO request to the API;
@@ -47,6 +47,11 @@ RESULTS: list[tuple[bool, str]] = []
 SHORT_TEXT = ("Сервис готовит черновики документов. Всё, что он рассчитал сам, перечислено в ведомости допусков — "
               "проверьте её до подписания. Подписи, паспорта партий, протоколы и исполнительные схемы — за вами. "
               "Документы хранятся 30 дней и удаляются автоматически.")
+
+
+BETA_TEXT = ("Услуга в бета-тестировании. В ходе тестирования возможны ошибки. Оплата не возвращается, но услуга будет оказана "
+             "до конца: при сбое к заказу подключится менеджер или система будет доработана и ваши файлы обработают повторно.")
+BETA_RULE = "Оплата не возвращается, но услуга будет оказана до конца"
 
 
 def check(ok: bool, name: str) -> bool:
@@ -166,7 +171,14 @@ def main(argv=None) -> int:
     check('<meta name="robots" content="noindex"' in src, "noindex until the launch")
     check(SHORT_TEXT in norm(src), "approved short text is on the page")
     price_text = norm(src)
-    check(all(x in price_text for x in ("3 500 ₽", "6 000 ₽", "9 000 ₽", "100 ₽")), "price block 3500/6000/9000 and +100")
+    check("1 000 ₽" in price_text and not any(x in price_text for x in ("3 500", "6 000 ₽", "9 000", "100 ₽ за")),
+          "landing: flat 1 000 RUB beta price, no old tiers")
+    check(BETA_TEXT in price_text, "landing: the beta notice near the price")
+    oferta = norm((ROOT / "oferta.html").read_text(encoding="utf-8"))
+    s21 = oferta[oferta.index('21 Услуга'):]
+    check(BETA_RULE in s21 and "1 000 ₽ за комплект" in s21 and "3 500" not in s21 and "9 000" not in s21
+          and "возвращает оплату" not in s21, "oferta s21: beta price and no-refund rule")
+    check("Редакция 1.11 от 22.11.2026" in oferta and "2026-11-22" in oferta, "oferta: edition of 22.11.2026")
     check("href=\"/oferta.html#s21\"" in src and 'id="s21"' in (ROOT / "oferta.html").read_text(encoding="utf-8"),
           "the page links to oferta section 21 and it exists")
     # --- б) consent text equals the registry ---
@@ -217,7 +229,7 @@ def main(argv=None) -> int:
             check("контакт" in msg(page).lower(), "bad contact -> a hint")
             check(len(router.calls) == before, "client validation sends nothing to the API")
             limits = page.evaluate("""async () => {
-              const m = await import('/idk-order.js?v=20261122-idk');
+              const m = await import('/idk-order.js?v=20261122-idk2');
               const mk = (n, size, i) => ({name: n, size, lastModified: i});
               const many = Array.from({length: 22}, (_, i) => mk('f' + i + '.pdf', 10, i));
               const r1 = m.checkNewFiles(many, []);
@@ -248,7 +260,8 @@ def main(argv=None) -> int:
             st = page.locator('[data-idk="status"]').inner_text()
             check("Акты освидетельствования скрытых работ" in st and "× 34" in st, "awaiting_payment: composition with counts")
             check("Паспорта и сертификаты на трубы ПНД" in st, "awaiting_payment: the missing list")
-            check("6\u00a0400\u00a0₽" in st or "6 400 ₽" in st, "awaiting_payment: the amount comes from the server")
+            check("1 000 ₽" in st or "1 000 ₽" in st, "awaiting_payment: the amount comes from the server")
+            check(BETA_TEXT in norm(st), "awaiting_payment: the beta notice is shown before the pay button")
             check("Оплатить" in page.locator(".idk-pay").inner_text(), "the pay button")
             page.screenshot(path=str(shots / "03-awaiting-payment-desktop.png"), full_page=True)
             page.click(".idk-pay")
@@ -275,6 +288,24 @@ def main(argv=None) -> int:
             page.goto(base + PAGE)
             page.wait_for_selector(".idk-again", timeout=8000)
             check(page.locator(".idk-download").count() == 0, "a foreign download host renders no link")
+            # --- credit order (amount 0, no payment_url) and the owner price (10 RUB) ---
+            cq = {"tier": "ks2", "acts_count": 3, "amount": 0, "credit": True, "composition": [{"title": "АОСР", "count": 3}], "missing": []}
+            router.status_override = {"stage": "awaiting_payment", "credit": True, "quote": cq}
+            page.goto(base + PAGE)
+            page.wait_for_selector(".idk-continue", timeout=8000)
+            ct = page.locator('[data-idk="status"]').inner_text()
+            check("Оплата не нужна: за вами закреплён бесплатный заказ" in ct and page.locator(".idk-pay").count() == 0,
+                  "credit: free-order message, no pay button")
+            before = len(router.calls)
+            page.click(".idk-continue")
+            page.wait_for_timeout(500)
+            check("securepay" not in page.url and len(router.calls) > before, "credit: the continue button stays off the bank and refreshes the status")
+            router.status_override = {"stage": "awaiting_payment", "payment_url": "https://securepay.tinkoff.ru/new/x",
+                                      "quote": {**cq, "amount": 10, "credit": False}}
+            page.goto(base + PAGE)
+            page.wait_for_selector(".idk-pay", timeout=8000)
+            check("Оплатить 10 ₽" in page.locator(".idk-pay").inner_text(), "owner price: 10 RUB renders as «10 ₽»")
+            router.status_override = None
             router.status_override = {"stage": "failed", "message": "По этим файлам комплект собрать не удалось."}
             page.goto(base + PAGE)
             page.wait_for_selector(".idk-again", timeout=8000)
