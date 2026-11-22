@@ -3,7 +3,7 @@
 // its href stays as the no-JS fallback. The dialog also opens by itself for #pdf-tables in the address and
 // after the return from the bank (a stored order token). While the browser goes to the bank the dialog is
 // locked: Esc, the backdrop and the close button do nothing.
-import { mountPdfTablesOrder, hasStoredOrder } from './pdf-tables-order.js?v=20261026-dlg';
+import { mountPdfTablesOrder, hasStoredOrder } from './pdf-tables-order.js?v=20261122-idk';
 
 const dialog = document.getElementById('pt-dialog');
 
