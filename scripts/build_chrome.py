@@ -59,7 +59,8 @@ PAGES: dict[str, tuple[str, bool]] = {
 }
 # files whose normalised text forms the build id (a new article does not change it)
 BUILD_INPUTS = ["assets/chrome.css", "assets/chrome.js", "assets/site3.css", "assets/site3.js",
-                "assets/scene3.js", "assets/pay.js", "services.config.js"]
+                "assets/scene3.js", "assets/pay.js", "services.config.js",
+                "assets/home4.css", "assets/home4.js"]
 
 MARK = "(scripts/build_chrome.py)"
 
@@ -226,7 +227,7 @@ def marker_re(name: str) -> re.Pattern[str]:
 
 
 # page assets outside the head block that carry the build id too (a cached page must not mix old and new files)
-VERSIONED = re.compile(r'(/assets/(?:site3\.css|site3\.js|scene3\.js))(?:\?v=[^"]*)?"')
+VERSIONED = re.compile(r'(/assets/(?:site3\.css|site3\.js|scene3\.js|home4\.css|home4\.js))(?:\?v=[^"]*)?"')
 LEGACY_HEADER = re.compile(r'<header class="nav" id="nav">.*?</header>\s*(?:<div class="drawer" id="drawer".*?</div>\s*)?(?=<main)', re.S)
 LEGACY_FOOTER = re.compile(r'<footer class="foot">.*?</footer>', re.S)
 LEGACY_MODAL = re.compile(r'(?:<!-- =+ МОДАЛКА ЗАЯВКИ =+ -->\s*)?<div class="modal" id="order-modal".*?</div>\s*</div>\s*(?=</body>)', re.S)

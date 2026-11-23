@@ -20,23 +20,25 @@
 <link rel="icon" href="/favicon.ico" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 <link rel="stylesheet" href="/assets/fonts.css?v=20260813-vitrina" />
-<link rel="stylesheet" href="/assets/site3.css?v=d748a3a7ad48" />
-<script defer src="/assets/scene3.js?v=d748a3a7ad48"></script>
-<script defer src="/assets/site3.js?v=d748a3a7ad48"></script>
+<link rel="stylesheet" href="/assets/site3.css?v=218d5e428db9" />
+<script defer src="/assets/scene3.js?v=218d5e428db9"></script>
+<script defer src="/assets/site3.js?v=218d5e428db9"></script>
+<link rel="stylesheet" href="/assets/home4.css?v=218d5e428db9" />
+<script defer src="/assets/home4.js?v=218d5e428db9"></script>
 <script defer src="/assets/metrika.js?v=20261115-tr"></script>
 <!-- chrome:head:begin (scripts/build_chrome.py) -->
-<link rel="stylesheet" href="/assets/tokens.css?v=d748a3a7ad48" />
-<meta name="build" content="d748a3a7ad48" />
-<link rel="stylesheet" href="/assets/chrome.css?v=d748a3a7ad48" />
-<script defer src="/assets/chrome.js?v=d748a3a7ad48"></script>
-<script defer src="/services.config.js?v=d748a3a7ad48"></script>
-<script defer src="/assets/pay.js?v=d748a3a7ad48"></script>
+<link rel="stylesheet" href="/assets/tokens.css?v=218d5e428db9" />
+<meta name="build" content="218d5e428db9" />
+<link rel="stylesheet" href="/assets/chrome.css?v=218d5e428db9" />
+<script defer src="/assets/chrome.js?v=218d5e428db9"></script>
+<script defer src="/services.config.js?v=218d5e428db9"></script>
+<script defer src="/assets/pay.js?v=218d5e428db9"></script>
 <!-- chrome:head:end -->
 <!-- seo:jsonld:begin (scripts/build_seo_files.py) -->
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://ai-vibes.ru/#website","name":"AI Vibes","url":"https://ai-vibes.ru/","inLanguage":"ru"},{"@type":"Organization","@id":"https://ai-vibes.ru/#org","name":"AI Vibes","url":"https://ai-vibes.ru/","email":"lavr5000xxx@gmail.com","member":{"@id":"https://ai-vibes.ru/#person"}},{"@type":"Person","@id":"https://ai-vibes.ru/#person","name":"Денис Лавров","url":"https://ai-vibes.ru/#author","sameAs":["https://max.ru/u/f9LHodD0cOJVteiYLPGUodY6uw7J5k_M_QzRJTDzXbK31nlTIokaEh5ebeM","https://t.me/lavr5000"]},{"@type":"Service","@id":"https://ai-vibes.ru/#service-5","name":"Настройка помощника «Старт» на одном рабочем месте","url":"https://ai-vibes.ru/#service-5","provider":{"@id":"https://ai-vibes.ru/#org"},"offers":{"@type":"Offer","price":"7500","priceCurrency":"RUB","url":"https://ai-vibes.ru/#service-5"}},{"@type":"Service","@id":"https://ai-vibes.ru/#vip","name":"Настройка рабочего помощника VIP на компьютере и телефоне","url":"https://ai-vibes.ru/#vip","provider":{"@id":"https://ai-vibes.ru/#org"},"offers":{"@type":"Offer","price":"45000","priceCurrency":"RUB","url":"https://ai-vibes.ru/#vip"}}]}</script>
 <!-- seo:jsonld:end -->
 </head>
-<body>
+<body class="home4">
 <a class="skip" href="#main">Перейти к содержанию</a>
 
 <!-- chrome:header:begin (scripts/build_chrome.py) -->
@@ -89,37 +91,45 @@
   </picture></noscript>
 </div>
 <section class="hero" id="hero">
-  <div class="wrap hero-in">
-    <div class="hero-text">
+  <div class="wrap h4-hero">
+    <div class="h4-panel">
       <h1>Разберёт ваши документы, письма и таблицы — <em>по просьбе обычными словами</em></h1>
       <p class="lead">Настраиваю помощника на вашем компьютере под ваши задачи и показываю на вашем же файле.
         Дальше вы работаете с ним сами.</p>
-    </div>
-    <div class="hero-tariffs" aria-label="Тарифы">
-      <div class="hero-tile">
-        <span class="hero-tile-name">«Старт»</span>
-        <span class="hero-tile-note">одно рабочее место, компьютер</span>
-        <a class="btn-pay" data-pay data-service-id="setup-start" data-order="Настройка помощника «Старт» на одном рабочем месте" data-price-label="7 500 ₽" data-amount="750000" href="/#contact">Оплатить 7 500 ₽</a>
+      <div class="h4-tiles" aria-label="Тарифы" data-hero-tariffs>
+        <div class="h4-tile">
+          <p class="h4-tile-top"><span class="h4-tile-name">«Старт»</span> <span class="h4-tile-price">7 500 ₽</span></p>
+          <p class="h4-tile-note">одно рабочее место, компьютер</p>
+          <a class="btn-pay" data-pay data-service-id="setup-start" data-order="Настройка помощника «Старт» на одном рабочем месте" data-price-label="7 500 ₽" data-amount="750000" href="/#contact">Заказать за 7 500 ₽</a>
+        </div>
+        <div class="h4-tile h4-tile--vip">
+          <p class="h4-tile-top"><span class="h4-tile-name">VIP</span> <span class="h4-tile-price">45 000 ₽</span></p>
+          <p class="h4-tile-note">компьютер и телефон, лучшие мировые модели</p>
+          <a class="btn-pay" data-pay data-service-id="setup-vip" data-order="Настройка рабочего помощника VIP на компьютере и телефоне" data-price-label="45 000 ₽" data-amount="4500000" href="/#contact">Заказать за 45 000 ₽</a>
+        </div>
       </div>
-      <div class="hero-tile hero-tile--vip">
-        <span class="hero-tile-name">VIP</span>
-        <span class="hero-tile-note">лучшие мировые модели</span>
-        <a class="btn-pay" data-pay data-service-id="setup-vip" data-order="Настройка рабочего помощника VIP на компьютере и телефоне" data-price-label="45 000 ₽" data-amount="4500000" href="/#contact">Оплатить 45 000 ₽</a>
-      </div>
-      <p class="hero-foot"><a class="more" href="#tarify">Что входит в каждый тариф</a></p>
+      <p class="h4-more"><a class="more" href="#tarify">Что входит в каждый тариф</a></p>
     </div>
+    <ul class="h4-trust" aria-label="Коротко о настройке">
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V9l7-5 7 5v12M10 21v-6h4v6"/></svg>Инженер-строитель, 14 лет в стройке</li>
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6zM14 3v5h5"/></svg>Показываю на вашем файле</li>
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Удалённо, в Тольятти приезжаю</li>
+    </ul>
   </div>
 </section>
 <div class="scene-caps">
-  <div class="scene-cap" data-scene-cap><h2><span class="scene-cap-when">Сейчас</span> Документы, таблицы и переписка живут отдельно</h2><p>Сроки тянутся, мелкие ошибки копятся, нужное приходится искать.</p></div>
-  <div class="scene-cap" data-scene-cap><h2><span class="scene-cap-when">Помощник</span> Проходит по вашим задачам</h2><p>Читает документы, сводит данные, готовит черновики. Вы говорите обычными словами.</p></div>
-  <div class="scene-cap" data-scene-cap><h2><span class="scene-cap-when">После</span> Всё на своих местах</h2><p>Порядок в файлах, понятные сроки. Вы проверяете и подписываете.</p></div>
+  <div class="h4-caps-head">
+    <h2 class="h2">Что меняется после настройки</h2>
+  </div>
+  <div class="scene-cap" data-scene-cap><p class="h4-step"><span>01 · Сейчас</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h7v5H4zM13 4h7v7h-7zM6 14h6v6H6zM15 15h5v4h-5z"/></svg></p><h2>Документы, таблицы и переписка живут отдельно</h2><p>Сроки тянутся, мелкие ошибки копятся, нужное приходится искать.</p></div>
+  <div class="scene-cap" data-scene-cap><p class="h4-step"><span>02 · Помощник</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h12M12 6l6 6-6 6"/></svg></p><h2>Проходит по вашим задачам</h2><p>Читает документы, сводит данные, готовит черновики. Вы говорите обычными словами.</p></div>
+  <div class="scene-cap" data-scene-cap><p class="h4-step"><span>03 · После</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg></p><h2>Всё на своих местах</h2><p>Порядок в файлах, понятные сроки. Вы проверяете и подписываете.</p></div>
 </div>
 </div>
 </section>
 
 <!-- ============================ ТАРИФЫ ============================ -->
-<section class="band paper" id="tarify">
+<section class="band" id="tarify">
   <span class="anchor" id="services"></span>
   <span class="anchor" id="service-1"></span>
   <span class="anchor" id="service-2"></span>
@@ -134,14 +144,14 @@
     <div class="tariffs">
 <article class="tariff" data-tariff="setup-start" id="service-5">
         <div class="tariff-top">
-          <h2 class="tariff-name">«Старт»</h2>
+          <p class="tariff-head"><span class="tariff-name" role="heading" aria-level="3">«Старт»</span> <span class="h4-pill">компьютер</span></p>
           <p class="tariff-for">Попробовать помощника в работе без больших трат.</p>
         </div>
         <div>
           <p class="tariff-price">7 500 ₽</p>
           <p class="tariff-unit">за одно рабочее место</p>
         </div>
-        <a class="btn-pay" data-pay data-service-id="setup-start" data-order="Настройка помощника «Старт» на одном рабочем месте" data-price-label="7 500 ₽" data-amount="750000" href="/#contact">Оплатить 7 500 ₽</a>
+        <a class="btn-pay" data-pay data-service-id="setup-start" data-order="Настройка помощника «Старт» на одном рабочем месте" data-price-label="7 500 ₽" data-amount="750000" href="/#contact">Заказать за 7 500 ₽</a>
         <details class="tariff-more">
           <summary class="tariff-more-sum">Подробнее</summary>
         <ul class="tariff-list">
@@ -160,14 +170,14 @@
       </article>
 <article class="tariff tariff--vip" data-tariff="setup-vip" id="vip">
         <div class="tariff-top">
-          <h2 class="tariff-name">VIP</h2>
+          <p class="tariff-head"><span class="tariff-name" role="heading" aria-level="3">VIP</span> <span class="h4-pill">компьютер + телефон</span></p>
           <p class="tariff-for">Рабочий помощник на каждый день, на лучших мировых моделях.</p>
         </div>
         <div>
           <p class="tariff-price">45 000 ₽</p>
           <p class="tariff-unit">компьютер и телефон одного человека</p>
         </div>
-        <a class="btn-pay" data-pay data-service-id="setup-vip" data-order="Настройка рабочего помощника VIP на компьютере и телефоне" data-price-label="45 000 ₽" data-amount="4500000" href="/#contact">Оплатить 45 000 ₽</a>
+        <a class="btn-pay" data-pay data-service-id="setup-vip" data-order="Настройка рабочего помощника VIP на компьютере и телефоне" data-price-label="45 000 ₽" data-amount="4500000" href="/#contact">Заказать за 45 000 ₽</a>
         <details class="tariff-more">
           <summary class="tariff-more-sum">Подробнее</summary>
         <ul class="tariff-list">
@@ -186,7 +196,7 @@
   </div>
 </section>
 
-<section class="band paper-2" id="compare">
+<section class="band" id="compare">
   <div class="wrap">
     <div class="head">
       <p class="kicker">Сравнение</p>
@@ -194,36 +204,36 @@
     </div>
     <div class="cmp-wrap">
       <table class="cmp">
-        <thead><tr><th scope="col"></th><th scope="col">«Старт»</th><th scope="col">VIP</th></tr></thead>
+        <thead><tr><th scope="col"><span class="h4-sr">Что сравниваем</span></th><th scope="col">«Старт»</th><th scope="col" class="vip">VIP</th></tr></thead>
         <tbody>
-          <tr><th scope="row">Цена настройки</th><td>7 500 ₽</td><td>45 000 ₽</td></tr>
-          <tr><th scope="row">Компьютер</th><td class="yes">да</td><td class="yes">да</td></tr>
-          <tr><th scope="row">Телефон</th><td>нет</td><td class="yes">да</td></tr>
-          <tr><th scope="row">Модель</th><td>младший тариф</td><td>лучшие мировые модели</td></tr>
-          <tr><th scope="row">Лимиты</th><td>на спокойную работу</td><td>повышенные</td></tr>
-          <tr><th scope="row">Задач на совместном разборе</th><td>одна</td><td>ваши рабочие задачи</td></tr>
+          <tr><th scope="row">Цена настройки</th><td>7 500 ₽</td><td class="vip">45 000 ₽</td></tr>
+          <tr><th scope="row">Компьютер</th><td class="yes">да</td><td class="vip yes">да</td></tr>
+          <tr><th scope="row">Телефон</th><td>нет</td><td class="vip yes">да</td></tr>
+          <tr><th scope="row">Модель</th><td>младший тариф</td><td class="vip">лучшие мировые модели</td></tr>
+          <tr><th scope="row">Лимиты</th><td>на спокойную работу</td><td class="vip">повышенные</td></tr>
+          <tr><th scope="row">Задач на совместном разборе</th><td>одна</td><td class="vip">ваши рабочие задачи</td></tr>
         </tbody>
       </table>
     </div>
   </div>
 </section>
 
-<section class="band paper" id="support">
+<section class="band" id="support">
   <div class="wrap split">
     <div class="prose">
       <p class="kicker">После настройки</p>
-      <h2 class="h2">Поддержка — 5 000 ₽ в месяц</h2>
+      <h2 class="h2">Поддержка — <span class="h4-nb">5 000 ₽</span> в месяц</h2>
       <p>Дополнение к любому тарифу. Остаюсь на связи после настройки: донастраиваю помощника под новые задачи,
         разбираю то, что не получилось, обновляю правила, когда меняется ваша работа.</p>
       <p>Подключается по желанию, после настройки. Отказаться можно в любой месяц.</p>
       <p><a class="btn-line" data-request data-service-id="support-monthly" data-order="Поддержка помощника, один месяц" data-price-label="5 000 ₽" href="/#contact">Обсудить поддержку</a></p>
     </div>
-    <div class="note-card">
+    <div class="note-card h4-honest">
       <h3>Что не входит ни в один тариф</h3>
-      <ul class="plain-list">
-        <li>Доступ к моделям и подписки на них — вы платите сами.</li>
-        <li>Настройка десятков рабочих мест в отделе: отдельный объём, обсуждаем заранее.</li>
-        <li>Обещание конкретной экономии часов и денег: считаем по факту на ваших задачах.</li>
+      <ul class="h4-xlist">
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg>Доступ к моделям и подписки на них — вы платите сами.</li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg>Настройка десятков рабочих мест в отделе: отдельный объём, обсуждаем заранее.</li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg>Обещание конкретной экономии часов и денег: считаем по факту на ваших задачах.</li>
       </ul>
     </div>
   </div>
@@ -247,7 +257,7 @@
 </section>
 
 <!-- ============================ КТО НАСТРАИВАЕТ / ЧЕСТНО ============================ -->
-<section class="band paper" id="author">
+<section class="band" id="author">
   <div class="wrap split">
     <div class="prose">
       <p class="kicker">Кто настраивает</p>
@@ -256,12 +266,12 @@
         госконтракты, сметы. Помощника сначала настроил себе, чтобы закрывать собственные ведомости, письма и документы.</p>
       <p>Поэтому настройка идёт от вашего рабочего дня, а не от списка функций: сначала задача, потом инструмент.</p>
     </div>
-    <div class="note-card" id="fit">
+    <div class="note-card h4-honest" id="fit">
       <h3>Чего не обещаю</h3>
-      <ul class="plain-list">
-        <li>Конкретной экономии часов и денег: она зависит от ваших задач, считаем по факту.</li>
-        <li>Результата «под ключ» без вашего участия: помощник настраивается на ваших примерах.</li>
-        <li>Что помощник не ошибается. Он показывает, откуда взял данные, — проверка остаётся за вами.</li>
+      <ul class="h4-xlist">
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg><b>Конкретной экономии часов и денег:</b> она зависит от ваших задач, считаем по факту.</li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg><b>Результата «под ключ» без вашего участия:</b> помощник настраивается на ваших примерах.</li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg><b>Что помощник не ошибается.</b> Он показывает, откуда взял данные, — проверка остаётся за вами.</li>
       </ul>
       <p>Десятки рабочих мест в отделе считаю отдельно: это другой объём.</p>
     </div>
@@ -269,7 +279,7 @@
 </section>
 
 <!-- ============================ ВОПРОСЫ ============================ -->
-<section class="band paper-2" id="faq">
+<section class="band" id="faq">
   <div class="wrap">
     <div class="head">
       <p class="kicker">Частые вопросы</p>
@@ -336,6 +346,7 @@
 </section>
 
 </main>
+<div class="h4-mcta is-off" data-mcta><a class="btn-pay" href="#tarify">Выбрать тариф — от 7 500 ₽</a></div>
 
 <!-- chrome:footer:begin (scripts/build_chrome.py) -->
 <footer class="chrome-foot" data-chrome-foot>

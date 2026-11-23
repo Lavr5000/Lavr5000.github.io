@@ -1,0 +1,154 @@
+/* Главная (body.home4): вёрстка по варианту Claude поверх сцены «Город и мост».
+   Сцена, её фон и эффекты не трогаются (site3.css, scene3.js). Здесь только блоки страницы:
+   тёмное стекло без размытия (backdrop-filter в <main> запрещён), сцена видна по краям и между блоками.
+   Цвета — только токены tokens.css. Подключается одной главной, другие страницы не меняются. */
+
+.h4-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.home4 .h4-tag{margin:0;font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--brass)}
+.home4 h1,.home4 .h2,.home4 .band h3{font-family:var(--sans);font-weight:500;letter-spacing:-.02em}
+.home4 .h2{font-size:clamp(28px,3.6vw,44px);line-height:1.12}
+.home4 .band h3{font-size:22px;line-height:1.25}
+.home4 .btn-pay,.home4 .h4-nb{white-space:nowrap}
+.home4 .scene ~ .band{padding-block:clamp(36px,5vw,72px)}
+.home4 .faq summary{font-family:var(--sans);font-weight:500}
+
+/* ---------- первый экран ---------- */
+.home4 .h4-hero{display:grid;gap:12px}
+.home4 .h4-panel{
+  display:grid;gap:clamp(12px,1.6vw,18px);max-width:1000px;padding:clamp(18px,2.6vw,34px);
+  background:color-mix(in srgb, var(--scene-veil) 80%, transparent);border:1px solid var(--line-ink);border-radius:10px;
+}
+.home4 .hero h1{font-size:clamp(30px,4.2vw,54px);line-height:1.08;color:var(--pure-light)}
+.home4 .hero h1 em{font-style:normal;color:var(--brass-2)}
+.home4 .hero .lead{max-width:60ch}
+.home4 .h4-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:4px}
+.home4 .h4-tile{
+  display:grid;gap:10px;align-content:start;padding:16px 18px;border:1px solid var(--line-ink);border-radius:8px;
+  background:color-mix(in srgb, var(--ink-2) 88%, transparent);color:var(--on-ink);
+}
+.home4 .h4-tile--vip{border-color:color-mix(in srgb, var(--brass) 60%, transparent);background:linear-gradient(135deg,color-mix(in srgb, var(--brass) 16%, var(--ink-2)),var(--ink-2) 65%)}
+.home4 .h4-tile-top{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 12px;margin:0}
+.home4 .h4-tile-name{font-size:21px;font-weight:500;line-height:1.2}
+.home4 .h4-tile-price{font-family:var(--mono);font-size:21px;font-weight:600;color:var(--brass-2);white-space:nowrap;font-variant-numeric:tabular-nums}
+.home4 .h4-tile-note{margin:0;font-size:15px;line-height:1.45;color:var(--on-ink-2)}
+.home4 .h4-tile .btn-pay{width:100%;margin-top:auto}
+.home4 .h4-tile:not(.h4-tile--vip) .btn-pay{background:transparent;color:var(--on-ink);border-color:color-mix(in srgb, var(--brass) 70%, transparent)}
+.home4 .h4-tile:not(.h4-tile--vip) .btn-pay:hover{background:color-mix(in srgb, var(--brass) 18%, transparent)}
+.home4 .h4-more{margin:0}
+.home4 .h4-trust{
+  display:flex;flex-wrap:wrap;gap:8px 28px;margin:0;padding:12px 18px;list-style:none;max-width:1000px;
+  background:color-mix(in srgb, var(--scene-veil) 84%, transparent);border:1px solid var(--line-ink);border-radius:8px;
+  font-size:15px;color:var(--on-ink);
+}
+.home4 .h4-trust li{display:flex;align-items:center;gap:10px}
+.home4 main svg{flex:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.home4 .h4-trust svg{color:var(--brass)}
+
+/* ---------- «Что меняется»: три карточки 01 · 02 · 03 (подписи сцены) ----------
+   Ступенькой, без пустых провалов: порядок сверху вниз сохраняется (контракт сцены), город виден вокруг. */
+.home4 .scene-caps{grid-template-columns:repeat(3,minmax(0,1fr));align-items:start;gap:16px;padding:22vh var(--pad) 30vh}
+.home4 .h4-caps-head{grid-column:1 / -1;display:grid;gap:8px;max-width:760px;padding:16px 20px;background:color-mix(in srgb, var(--scene-veil) 80%, transparent);border-radius:8px}
+.home4 .scene-cap,.home4 .scene-cap:nth-child(2),.home4 .scene-cap:nth-child(3){justify-self:stretch;max-width:none;text-align:left}
+.home4 .scene-cap{display:grid;gap:8px;align-content:start;padding:18px 20px;background:color-mix(in srgb, var(--scene-veil) 82%, transparent)}
+.home4 .scene-cap:nth-child(3){margin-top:56px}
+.home4 .scene-cap:nth-child(4){margin-top:112px}
+.home4 .scene-cap h2{margin:0;font-family:var(--sans);font-weight:500;font-size:22px;line-height:1.25;letter-spacing:-.01em}
+.home4 .h4-step{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0;font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--sky)}
+.home4 .scene-cap:nth-child(2) .h4-step{color:var(--dawn)}
+.home4 .scene-cap:nth-child(4) .h4-step{color:var(--brass-2)}
+
+/* ---------- разделы: тёмное стекло вместо светлой бумаги ---------- */
+.home4 .scene ~ .band{width:min(1080px,calc(100% - 48px));margin:7vh auto}
+.home4 .band .lead,.home4 .band p{color:var(--on-ink-2)}
+.home4 .band .kicker{color:var(--brass)}
+.home4 .tariff,.home4 .scene ~ .band .tariff{background:color-mix(in srgb, var(--ink-2) 72%, transparent);border-color:var(--line-ink);color:var(--on-ink);color-scheme:dark}
+.home4 .scene ~ .band .tariff--vip{background:linear-gradient(160deg,color-mix(in srgb, var(--brass) 14%, var(--ink)),var(--ink) 55%);border-color:color-mix(in srgb, var(--brass) 65%, transparent)}
+.home4 .tariff-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:0}
+.home4 .tariff-name{font-family:var(--sans);font-weight:500;letter-spacing:-.02em}
+.home4 .h4-pill{display:inline-block;padding:3px 10px;border:1px solid color-mix(in srgb, var(--brass) 55%, transparent);border-radius:99px;font-family:var(--mono);font-size:13px;line-height:1.4;color:var(--brass-2);white-space:nowrap}
+.home4 .tariff-for,.home4 .tariff-unit,.home4 .tariff-own{color:var(--on-ink-2)}
+.home4 .tariff-own{border-top-color:var(--line-ink)}
+.home4 .tariff-own strong{color:var(--on-ink)}
+.home4 .tariff-price{color:var(--brass-2)}
+.home4 .tariff-list li::before{border-color:var(--brass)}
+.home4 .tariff-more-sum{color:var(--on-ink);border-color:var(--line-ink)}
+.home4 .tariff-more-sum::after{border-color:var(--brass)}
+@media (hover:hover){
+  .home4 .tariff-more-sum:hover{background:color-mix(in srgb, var(--on-ink) 8%, transparent)}
+  .home4 .tariff:hover{box-shadow:0 24px 48px color-mix(in srgb, var(--pure-dark) 45%, transparent)}
+}
+.home4 .scene ~ .band .cmp-wrap,.home4 .scene ~ .band .note-card{background:color-mix(in srgb, var(--ink-2) 72%, transparent);border-color:var(--line-ink);color:var(--on-ink)}
+.home4 .cmp{table-layout:fixed}
+.home4 .cmp th,.home4 .cmp td{border-bottom-color:var(--line-ink);overflow-wrap:break-word}
+.home4 .cmp thead th{font-family:var(--sans);font-weight:500}
+.home4 .cmp tbody th{color:var(--on-ink-2)}
+.home4 .cmp .yes{color:var(--brass-2)}
+.home4 .cmp .vip{background:color-mix(in srgb, var(--brass) 9%, transparent)}
+.home4 .cmp thead .vip{color:var(--brass-2)}
+.home4 .support{border-color:color-mix(in srgb, var(--on-ink) 35%, transparent)}
+.home4 .faq details{border-bottom-color:var(--line-ink)}
+.home4 .faq details:first-child{border-top-color:var(--line-ink)}
+.home4 .faq summary::after{color:var(--brass)}
+.home4 .faq p{color:var(--on-ink-2)}
+.home4 .h4-honest{border:1px solid color-mix(in srgb, var(--dawn) 35%, transparent)}
+.home4 .h4-xlist{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.home4 .h4-xlist li{position:relative;padding-left:30px;color:var(--on-ink-2)}
+.home4 .h4-xlist svg{position:absolute;left:0;top:3px;color:var(--dawn)}
+.home4 .h4-xlist b{font-weight:500;color:var(--on-ink)}
+.home4 .scene ~ #tools .strip{padding:clamp(18px,2.4vw,28px);border:1px solid var(--line-ink);border-radius:10px;background:color-mix(in srgb, var(--scene-veil) 82%, transparent)}
+
+/* ---------- закреплённая кнопка на телефоне ---------- */
+.h4-mcta{display:none}
+
+/* ---------- появление при прокрутке: только анимация, содержимое видно и без неё ---------- */
+@keyframes h4-rise{from{opacity:.25;transform:translateY(18px)}to{opacity:1;transform:none}}
+.h4-rise{animation:h4-rise .5s var(--ease) both}
+@media (hover:hover) and (prefers-reduced-motion:no-preference){
+  .home4 .h4-tile{transition:transform .2s var(--ease),border-color .2s}
+  .home4 .h4-tile:hover{transform:translateY(-2px);border-color:color-mix(in srgb, var(--brass) 75%, transparent)}
+}
+@media (prefers-reduced-motion:reduce){.h4-rise{animation:none}}
+
+@media (max-width:1000px){
+  .home4 .scene-caps{grid-template-columns:1fr;gap:10px;padding:16vh var(--pad) 20vh}
+  .home4 .scene-cap:nth-child(3),.home4 .scene-cap:nth-child(4){margin-top:0}
+  .home4 .scene-cap{max-width:560px}
+}
+@media (max-width:767px){
+  .home4{padding-bottom:84px}
+  .home4 .scene .hero{padding-block:12px 0}
+  .home4 .h4-hero{padding-inline:12px}
+  .home4 .h4-panel{gap:12px;padding:16px}
+  .home4 .h4-tiles{grid-template-columns:1fr;gap:10px}
+  .home4 .h4-tile{gap:8px;padding:14px}
+  .home4 .h4-tile .btn-pay{min-height:48px;font-size:16px;padding:0 14px}
+  .home4 .h4-trust{flex-direction:column;gap:8px;padding:12px 14px}
+  .home4 .scene-caps{padding:10vh 12px 12vh}
+  .home4 .h4-caps-head{padding:14px 16px}
+  .home4 .scene-cap{padding:14px 16px;gap:6px}
+  .home4 .scene ~ .band{width:calc(100% - 24px);margin:2vh auto;padding-block:20px}
+  .home4 #compare .wrap{padding-inline:12px}
+  .home4 .scene ~ .band .cmp-wrap{padding:4px 6px;border:0;background:none}
+  .home4 .cmp{min-width:0}
+  .home4 .scene ~ .band .cmp th,.home4 .scene ~ .band .cmp td{padding:10px 4px}
+  .home4 .scene ~ .band .cmp th:first-child{padding-left:5px}
+  .home4 .cmp thead th{font-size:18px}
+  .home4 .cmp thead th:first-child{width:36%}
+  .home4 .cmp thead th:nth-child(2){width:29.5%}
+  .home4 .scene ~ #tools .wrap{padding-inline:0}
+  .home4 .scene ~ #tools .strip{padding:16px}
+  .h4-mcta{
+    display:block;position:fixed;left:12px;right:12px;bottom:max(12px,env(safe-area-inset-bottom));z-index:40;
+    transition:transform .25s var(--ease),opacity .25s;
+  }
+  .h4-mcta .btn-pay{width:100%;min-height:52px;box-shadow:0 10px 30px color-mix(in srgb, var(--pure-dark) 55%, transparent)}
+  .h4-mcta.is-off{transform:translateY(140%);opacity:0;pointer-events:none;visibility:hidden}
+}
+@media (max-width:767px) and (prefers-reduced-motion:reduce){.h4-mcta{transition:none}}
+@media (max-height:500px) and (min-width:640px){
+  .home4 .h4-panel{padding:12px 14px;gap:8px}
+  .home4 .hero h1{font-size:24px}
+  .home4 .h4-tile-note,.home4 .h4-trust{display:none}
+  .home4 .h4-tile{padding:8px 12px;gap:6px}
+}
+@media print{.h4-mcta{display:none}}
