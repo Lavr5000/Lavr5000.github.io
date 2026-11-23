@@ -1,7 +1,7 @@
 {
- "check_id": "43827807087-1",
- "checked_at": "2026-11-16T08:01:31Z",
- "snapshot_sha256": "038bffe23e74d34671718a720f4b46e5a46c9d316dafeb275ac15e393536d80a",
+ "check_id": "45144267300-1",
+ "checked_at": "2026-11-23T09:09:30Z",
+ "snapshot_sha256": "1ccbe91714673a043523f581d03c8fe78f06afb9ff39038d4d624d9ded64a3c6",
  "rows": 758,
  "active": 552,
  "published": 1
