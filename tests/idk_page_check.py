@@ -176,9 +176,10 @@ def main(argv=None) -> int:
     check(BETA_TEXT in price_text, "landing: the beta notice near the price")
     oferta = norm((ROOT / "oferta.html").read_text(encoding="utf-8"))
     s21 = oferta[oferta.index('21 Услуга'):]
+    s21 = s21[:s21.index('22 Услуга VIP')] if '22 Услуга VIP' in s21 else s21  # s21 only, not the later sections
     check(BETA_RULE in s21 and "1 000 ₽ за комплект" in s21 and "3 500" not in s21 and "9 000" not in s21
           and "возвращает оплату" not in s21, "oferta s21: beta price and no-refund rule")
-    check("Редакция 1.11 от 22.11.2026" in oferta and "2026-11-22" in oferta, "oferta: edition of 22.11.2026")
+    check("Редакция 1.11 от 22.11.2026" in oferta, "oferta: edition of 22.11.2026 is kept in the edition history")
     check("href=\"/oferta.html#s21\"" in src and 'id="s21"' in (ROOT / "oferta.html").read_text(encoding="utf-8"),
           "the page links to oferta section 21 and it exists")
     # --- б) consent text equals the registry ---

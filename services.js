@@ -58,9 +58,9 @@ window.AI_SERVICES = [
   {
     id: "as-built-package",
     title: { ru: "Формирование комплекта исполнительной документации" },
-    price: { ru: "3500" },
+    price: { ru: "1000" },
     pricingModel: "fixed",
-    priceLabel: { ru: "3 500 ₽" },
+    priceLabel: { ru: "1 000 ₽" },
     unit:  { ru: "один комплект по одному объекту: до 20 актов освидетельствования скрытых работ и один реестр ИД" },
   },
   {
