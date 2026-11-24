@@ -24,7 +24,7 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-SCENES = {"crane": "/products.html", "deal": "/rieltor/"}
+SCENES = {"house": "/products.html", "deal": "/rieltor/"}
 POSTERS = {"pc": dict(viewport={"width": 1440, "height": 900}, device_scale_factor=1600 / 1440),
            "tel": dict(viewport={"width": 390, "height": 844}, device_scale_factor=2, is_mobile=True, has_touch=True)}
 FRAMES = {"pc": dict(viewport={"width": 1440, "height": 900}),
@@ -76,6 +76,8 @@ def render(base: str) -> dict:
                     c.close()
                     break
                 pg.evaluate(f"() => window.__scene2.go(1, '{name}')")
+                pg.wait_for_timeout(1500)  # frame-sequence drawers fetch the frame for P first; paint again once it is here
+                pg.evaluate(f"() => window.__scene2.go(1, '{name}')")
                 url = pg.evaluate(f"() => document.querySelector('section[data-scene2=\"{name}\"] canvas[data-scene2-canvas]').toDataURL('image/png')")
                 out[f"assets/scene2/{name}_{vk}.webp"] = Image.open(io.BytesIO(base64.b64decode(url.split(",", 1)[1]))).convert("RGB")
                 c.close()
@@ -84,6 +86,8 @@ def render(base: str) -> dict:
                     c = br.new_context(**kw)
                     pg = c.new_page()
                     pg.goto(f"{base}{path}?scene-test=1", wait_until="load")
+                    pg.evaluate(f"() => window.__scene2.go(0, '{name}')")
+                    pg.wait_for_timeout(1500)
                     pg.evaluate(f"() => window.__scene2.go(0, '{name}')")
                     shot = pg.locator(f'section[data-scene2="{name}"] :is([data-scene2-stage], .scene2-stage)').screenshot()
                     out[f"tests/fixtures/scene2/{name}_p0_{vk}.png"] = Image.open(io.BytesIO(shot)).convert("RGB")
