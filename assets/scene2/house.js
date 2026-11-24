@@ -75,16 +75,16 @@
     var b = (fr > 0.02 && i0 + 1 < N && s.f[i0 + 1].ok && a === i0) ? i0 + 1 : -1;
     var im = s.f[a].im, iw = im.naturalWidth, ih = im.naturalHeight, sc, ox, oy;
     if (phone) {
-      /* a blurred, darkened cover of the first frame behind (built once per screen size), the sharp frame as a band */
-      if (!soft || soft.width !== ctx.canvas.width || soft.height !== ctx.canvas.height) {
+      /* a blurred, darkened cover of frame 0 behind (built once per screen size, so every P gets the same one), the sharp frame as a band */
+      if (s.f[0].ok && (!soft || soft.width !== ctx.canvas.width || soft.height !== ctx.canvas.height)) {
         var tiny = g.document.createElement('canvas'); tiny.width = 36; tiny.height = 30;
-        tiny.getContext('2d').drawImage(im, 0, 0, 36, 30);
+        tiny.getContext('2d').drawImage(s.f[0].im, 0, 0, 36, 30);
         soft = g.document.createElement('canvas'); soft.width = ctx.canvas.width; soft.height = ctx.canvas.height;
         var sx = soft.getContext('2d'), k2 = Math.max(soft.width / 36, soft.height / 30);
         sx.drawImage(tiny, (soft.width - 36 * k2) / 2, (soft.height - 30 * k2) / 2, 36 * k2, 30 * k2);
         sx.fillStyle = 'rgba(0,0,0,.35)'; sx.fillRect(0, 0, soft.width, soft.height);
       }
-      ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(soft, 0, 0); ctx.restore();
+      if (soft) { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(soft, 0, 0); ctx.restore(); }
       b = -1;
       sc = W * 1.24 / iw; ox = (W - iw * sc) / 2 - W * 0.02; oy = H * 0.56 - ih * sc / 2;
     } else {
