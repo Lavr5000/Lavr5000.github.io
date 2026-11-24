@@ -35,7 +35,7 @@ window.USLUGI_CATALOG = {
  "services": [
   {
    "allow_live": true,
-   "decision": "2026-11-24 08:16",
+   "decision": "2026-11-24 08:53",
    "deliver_minutes": 30,
    "enabled": true,
    "evidence": {
@@ -222,8 +222,10 @@ window.USLUGI_CATALOG = {
     "city",
     "type"
    ],
-   "price_kop": 5000,
-   "price_label": "50 ₽",
+   "price_kop": 7500,
+   "price_label": "75 ₽",
+   "promo_decision": "2026-11-24 08:53",
+   "promo_price_kop": 5625,
    "result_format": "pdf",
    "review_mode": "auto",
    "skill": "otchet-o-cene",
@@ -232,7 +234,7 @@ window.USLUGI_CATALOG = {
   },
   {
    "allow_live": true,
-   "decision": "2026-11-24 08:16",
+   "decision": "2026-11-24 08:53",
    "deliver_minutes": 30,
    "disclaimer": "Первичная юридическая проверка — не юридическая консультация и не юридическое заключение. Итоговую проверку документов осуществляет юрист.",
    "enabled": true,
@@ -337,6 +339,8 @@ window.USLUGI_CATALOG = {
    "precheck": [],
    "price_kop": 5000,
    "price_label": "50 ₽",
+   "promo_decision": "2026-11-24 08:53",
+   "promo_price_kop": 3750,
    "result_format": "pdf",
    "review_mode": "auto",
    "skill": "egrn-i-papka",
@@ -345,9 +349,9 @@ window.USLUGI_CATALOG = {
   },
   {
    "allow_live": true,
-   "decision": "2026-11-24 08:16",
+   "decision": "2026-11-24 08:53",
    "deliver_minutes": 30,
-   "disclaimer": "Пришлите 1–2 фото комнат без людей и документов в кадре. По желанию добавьте эскиз планировки от руки (фото или PDF): по нему нарисуем аккуратный план квартиры с размерами. Срок готовности: 30 мин. Это визуализация, а не фото готового ремонта. В комнате без окон модель размещает картину или предмет интерьера там, где могло бы быть окно. Так задумано.",
+   "disclaimer": "Пришлите 4–6 фото комнат без людей и документов в кадре. По желанию добавьте эскиз планировки от руки (фото или PDF): по нему нарисуем аккуратный план квартиры с размерами. Срок готовности: 30 мин. Это визуализация, а не фото готового ремонта. В комнате без окон модель размещает картину или предмет интерьера там, где могло бы быть окно. Так задумано.",
    "enabled": true,
    "evidence": {
     "owner_override": "2026-10-27 17:45"
@@ -359,12 +363,12 @@ window.USLUGI_CATALOG = {
     {
      "key": "photos",
      "kind": "file",
-     "prompt": "Фото комнат без людей и документов в кадре, 1–2 снимка.",
+     "prompt": "Фото комнат без людей и документов в кадре, 4–6 снимков.",
      "required": true,
      "validate": {
       "count": [
-       1,
-       2
+       4,
+       6
       ],
       "ext": [
        "jpg",
@@ -426,8 +430,10 @@ window.USLUGI_CATALOG = {
     }
    ],
    "precheck": [],
-   "price_kop": 7500,
-   "price_label": "75 ₽",
+   "price_kop": 15000,
+   "price_label": "150 ₽",
+   "promo_decision": "2026-11-24 08:53",
+   "promo_price_kop": 11250,
    "result_format": "zip",
    "review_mode": "auto",
    "skill": "foto-posle-remonta",
@@ -436,7 +442,7 @@ window.USLUGI_CATALOG = {
   },
   {
    "allow_live": true,
-   "decision": "2026-11-24 08:16",
+   "decision": "2026-11-24 08:53",
    "deliver_minutes": 30,
    "disclaimer": "Пришлите выписку ЕГРН и опишите стороны сделки и расчёты. Срок готовности: 30 мин. Это проект договора, не юридическая консультация; паспортные данные вписываются при подписании. Итоговую проверку документов осуществляет юрист.",
    "enabled": true,
@@ -500,6 +506,8 @@ window.USLUGI_CATALOG = {
    "precheck": [],
    "price_kop": 5000,
    "price_label": "50 ₽",
+   "promo_decision": "2026-11-24 08:53",
+   "promo_price_kop": 3750,
    "result_format": "zip",
    "review_mode": "auto",
    "skill": "dokument-po-shablonu",
@@ -508,7 +516,7 @@ window.USLUGI_CATALOG = {
   },
   {
    "allow_live": true,
-   "decision": "2026-11-24 08:16",
+   "decision": "2026-11-24 08:53",
    "deliver_minutes": 30,
    "disclaimer": "Пришлите выписку ЕГРН, опишите стороны, расчёты и задаток, дату основного договора и что остаётся в квартире. Срок готовности: 30 мин. Это проект предварительного договора, не юридическая консультация; паспортные данные вписываются при подписании. Итоговую проверку документов осуществляет юрист.",
    "enabled": true,
@@ -592,6 +600,8 @@ window.USLUGI_CATALOG = {
    "precheck": [],
    "price_kop": 5000,
    "price_label": "50 ₽",
+   "promo_decision": "2026-11-24 08:53",
+   "promo_price_kop": 3750,
    "result_format": "zip",
    "review_mode": "auto",
    "skill": "dokument-po-shablonu",
@@ -600,7 +610,7 @@ window.USLUGI_CATALOG = {
   },
   {
    "allow_live": false,
-   "decision": "2026-11-24 08:16",
+   "decision": "2026-11-24 08:53",
    "deliver_minutes": 30,
    "enabled": false,
    "id": "arenda",
@@ -640,6 +650,8 @@ window.USLUGI_CATALOG = {
    "precheck": [],
    "price_kop": 5000,
    "price_label": "50 ₽",
+   "promo_decision": "2026-11-24 08:53",
+   "promo_price_kop": 3750,
    "result_format": "docx",
    "review_mode": "auto",
    "skill": "dokument-po-shablonu",
@@ -647,7 +659,7 @@ window.USLUGI_CATALOG = {
    "version": "0"
   }
  ],
- "sha256": "77c8b44240d3384cc3e483f5fa3ff0e2ba310b18b5184c93ea32ba21fde6a2a2",
+ "sha256": "2cbabbfb221fe12aa84025f3fb9aebff90ca12cc77a44507f3ef59540dca0801",
  "subscription": {
   "decision": "2026-10-25 14:37",
   "enabled": false,
