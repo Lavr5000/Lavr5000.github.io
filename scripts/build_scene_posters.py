@@ -24,7 +24,7 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-SCENES = {"house": "/products.html", "deal": "/rieltor/"}
+SCENES = {"house": "/products.html", "kvartira": "/rieltor/"}
 POSTERS = {"pc": dict(viewport={"width": 1440, "height": 900}, device_scale_factor=1600 / 1440),
            "tel": dict(viewport={"width": 390, "height": 844}, device_scale_factor=2, is_mobile=True, has_touch=True)}
 FRAMES = {"pc": dict(viewport={"width": 1440, "height": 900}),

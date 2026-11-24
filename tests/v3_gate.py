@@ -50,7 +50,7 @@ from v2_gate import (ALL_PAGES, INIT_CSP, METRIKA, PAGE_JS, ROOT, Served, block_
 BASE_SHA = "22934bd"
 FIX = ROOT / "tests" / "fixtures"
 PAGES = ALL_PAGES + ["/rieltor/"]
-SCENES = {"builders": ("/products.html", "house"), "rieltor": ("/rieltor/", "deal")}
+SCENES = {"builders": ("/products.html", "house"), "rieltor": ("/rieltor/", "kvartira")}
 RIELTOR_LABEL_EXPECTED = "Для риелторов"
 REDIRECT_PAGE_FILES = {"services/index.html", "about.html"}
 OLD_LINK_EXEMPT = REDIRECT_PAGE_FILES | {"assets/redirect-map.js", "rieltor/uslugi.catalog.js", "uslugi.catalog.js"}

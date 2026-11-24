@@ -1,4 +1,4 @@
-/* Scroll scenes of the section pages (/products.html "crane", /rieltor/ "deal").
+/* Scroll scenes of the section pages (/products.html "house", /rieltor/ "kvartira").
    Markup: section.scene2[data-scene2="<name>"] > .scene2-stage[data-scene2-stage] (sticky, one screen high) holding
    canvas[data-scene2-canvas] and picture > img[data-scene2-poster] (the final frame); the first screen and the
    captions [data-scene2-cap] scroll over the stage in the normal flow. The drawer is Scene2Draw[<name>](ctx, W, H,
