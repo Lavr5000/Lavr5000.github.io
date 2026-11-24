@@ -63,7 +63,7 @@
   function fit(ctx, im, x, y, w, h) { ctx.drawImage(im, x, y, w, h); }
 
   function draw(ctx, W, H, P) {
-    var ink = tok('--ink', '#0b1220'), brass = tok('--brass', '#c9a35b');
+    var ink = tok('--ink', ''), brass = tok('--brass', ink), paper = tok('--on-ink', ink);
     var phone = W < 768, s = frames(phone ? 't' : 'p');
     var t = cl((P - HOLD0) / (HOLD1 - HOLD0)), fx = t * (N - 1), i0 = Math.floor(fx), fr = fx - i0;
     s.want = i0; pump(s);
@@ -82,7 +82,7 @@
         soft = g.document.createElement('canvas'); soft.width = ctx.canvas.width; soft.height = ctx.canvas.height;
         var sx = soft.getContext('2d'), k2 = Math.max(soft.width / 36, soft.height / 30);
         sx.drawImage(tiny, (soft.width - 36 * k2) / 2, (soft.height - 30 * k2) / 2, 36 * k2, 30 * k2);
-        sx.fillStyle = 'rgba(0,0,0,.35)'; sx.fillRect(0, 0, soft.width, soft.height);
+        sx.globalAlpha = 0.35; sx.fillStyle = ink; sx.fillRect(0, 0, soft.width, soft.height); sx.globalAlpha = 1;
       }
       if (soft) { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(soft, 0, 0); ctx.restore(); }
       b = -1;
@@ -92,19 +92,22 @@
     }
     fit(ctx, im, ox, oy, iw * sc, ih * sc);
     if (b >= 0) { ctx.globalAlpha = fr; fit(ctx, s.f[b].im, ox, oy, iw * sc, ih * sc); ctx.globalAlpha = 1; }
-    if (phone) {
-      var top = oy, bot = oy + ih * sc, gt = ctx.createLinearGradient(0, top, 0, top + 36), gb = ctx.createLinearGradient(0, bot - 36, 0, bot);
-      gt.addColorStop(0, 'rgba(0,0,0,.45)'); gt.addColorStop(1, 'rgba(0,0,0,0)');
-      gb.addColorStop(0, 'rgba(0,0,0,0)'); gb.addColorStop(1, 'rgba(0,0,0,.45)');
-      ctx.fillStyle = gt; ctx.fillRect(0, top, W, 36); ctx.fillStyle = gb; ctx.fillRect(0, bot - 36, W, 36);
+    if (phone) { /* soften the band edges: stacked strips of ink, fading inwards */
+      var top = oy, bot = oy + ih * sc, st;
+      ctx.fillStyle = ink;
+      for (st = 0; st < 9; st++) {
+        ctx.globalAlpha = 0.05 * (9 - st);
+        ctx.fillRect(0, top + st * 4, W, 4); ctx.fillRect(0, bot - st * 4 - 4, W, 4);
+      }
+      ctx.globalAlpha = 1;
     }
     var label = '', k;
     for (k = 0; k < STAGES.length; k++) if (t < STAGES[k][0]) { label = STAGES[k][1]; break; }
     ctx.font = (phone ? '12px' : '13px') + ' "JetBrains Mono",ui-monospace,monospace';
     ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'right';
     var lx = W - (phone ? 12 : 28), ly = H - (phone ? 14 : 24), lw = ctx.measureText(label).width + 20;
-    ctx.fillStyle = 'rgba(10,8,10,.6)'; ctx.fillRect(lx - lw + 10, ly - 16, lw, 24);
-    ctx.fillStyle = 'rgba(243,234,216,.92)'; ctx.fillText(label, lx, ly);
+    ctx.globalAlpha = 0.6; ctx.fillStyle = ink; ctx.fillRect(lx - lw + 10, ly - 16, lw, 24);
+    ctx.globalAlpha = 0.92; ctx.fillStyle = paper; ctx.fillText(label, lx, ly); ctx.globalAlpha = 1;
     ctx.textAlign = 'left'; ctx.fillStyle = brass; ctx.fillRect(0, H - 3, W * cl(P), 3);
   }
 
