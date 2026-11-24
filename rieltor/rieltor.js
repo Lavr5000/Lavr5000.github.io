@@ -222,6 +222,20 @@
     t.appendChild(alt);
   }
 
+  /* 2026-11-24: «Демонстрация услуги» — a scripted MAX chat in a modal (rieltor/demo/demo.js, window.AVDemo).
+     Only for the services that have a demo; its last button «Заказать» leads to the same bot order as the tile. */
+  var DEMO_KEY = { 'spravka-cena': 'spravka', 'yurproverka': 'yur', 'foto-plan': 'foto', 'dkp': 'dkp', 'predv-dkp': 'pdkp' };
+  function demoButton(t, id, botHref) {
+    var key = DEMO_KEY[id];
+    var demo = window.AVDemo;
+    if (!key || !demo || typeof demo.open !== 'function' || !demo.has(key)) return;
+    var b = el('button', 'btn-line rl-btn-demo', 'Демонстрация услуги');
+    b.type = 'button';
+    b.setAttribute('aria-haspopup', 'dialog');
+    b.addEventListener('click', function () { demo.open(key, botHref); });
+    t.appendChild(b);
+  }
+
   function build() {
     var frag = document.createDocumentFragment();
     var sub = cat.subscription;
@@ -263,6 +277,7 @@
       if (s.enabled) {
         if (s.disclaimer) t.appendChild(el('p', 'rl-note rl-disclaimer', s.disclaimer));
         t.appendChild(el('p', 'rl-note', PAY_NOTE));
+        demoButton(t, s.id, botLink(s.id));
         row(t, s, botLink(s.id));
       } else {
         soon(t);

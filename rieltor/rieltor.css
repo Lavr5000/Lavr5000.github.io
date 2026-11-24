@@ -43,6 +43,10 @@
 .rl-alt{font-size:15px}
 .rl-alt a{color:inherit;text-underline-offset:3px}
 .rl-disclaimer{font-style:italic}
+/* 2026-11-24: «Демонстрация услуги» — quiet outline button above the price; the demo itself is rieltor/demo/demo.css */
+.rl-btn-demo{justify-self:start;min-height:44px;padding:0 18px;font-size:16px;color:var(--on-paper);border-color:var(--line-paper);background:transparent}
+.rl-btn-demo::before{content:"";width:0;height:0;border-style:solid;border-width:6px 0 6px 10px;border-color:transparent transparent transparent var(--brass-deep)}
+.rl-btn-demo:hover{border-color:var(--brass-deep)}
 
 /* "soon": no price, no button, quieter than the available tiles */
 .rl-tile--soon{background:transparent;border-style:dashed}

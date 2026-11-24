@@ -32,6 +32,7 @@ How the next suite finds things (for tools/dev/rieltor_eval/suites/_uslugi_site.
   tile:            `#uslugi-tiles > [data-uslugi-id]`   attributes data-uslugi-id, data-enabled ("1"/"0"), data-kind (subscription|service|bundle|backlog)
   title / price:   `.rl-title` / `.rl-price` (absent on «скоро» tiles)
   «скоро» label:   `.rl-soon` (text «скоро»); enabled tile has none; a «скоро» tile has no `a` and no `button` inside
+  demo button:     `button.rl-btn-demo` («Демонстрация услуги») on the tiles of DEMO_IDS, opens the modal of rieltor/demo/demo.js
   pay button:      the only `button.rl-btn-pay` of the tile («Оплатить <цена>»), opens `.rl-pay` with `.rl-pay-email`,
                    `.rl-pay-check` and the submit `button[type=submit]`
   bot link:        `.rl-alt a` («Или заказать в боте MAX», `?start=usl-<id>`)
@@ -62,7 +63,8 @@ BOT = "https://max.ru/id644404692540_3_bot?start="
 PAGE = "/rieltor/"
 KIT_DEFAULT = Path(os.path.expanduser("~")) / ".claude" / "0 ProEKTi" / "client-agent-kit-rl-uslugi"
 MARK_B, MARK_E = "<!-- USLUGI:BEGIN -->", "<!-- USLUGI:END -->"
-PAY_NOTE = "закажите в боте"   # every enabled tile explains both ways: pay on the site or order in the bot
+PAY_NOTE = "закажите в боте"
+DEMO_IDS = {"spravka-cena", "yurproverka", "foto-plan", "dkp", "predv-dkp"}   # tiles with the «Демонстрация услуги» button   # every enabled tile explains both ways: pay on the site or order in the bot
 CONSENT_VERSION = "uslugi-site-v3-2026-11"
 
 SKIP = object()
@@ -378,7 +380,8 @@ class View:
           return {id: e.dataset.uslugiId, enabled: e.dataset.enabled, kind: e.dataset.kind, title: t ? t.textContent : null,
             titleSize: t ? parseFloat(getComputedStyle(t).fontSize) : 0, price: p ? p.textContent : null, soon: s ? s.textContent.trim() : null,
             links: [...e.querySelectorAll('a')].map(a => ({text: a.textContent.trim(), href: a.getAttribute('href'), cls: a.className, rel: a.rel})),
-            buttons: e.querySelectorAll('button').length, w: r.width, h: r.height, x: r.x, y: r.y, text: e.innerText}; })""")
+            buttons: e.querySelectorAll('button').length, pay: e.querySelectorAll('button.rl-btn-pay').length,
+            demo: e.querySelectorAll('button.rl-btn-demo').length, w: r.width, h: r.height, x: r.x, y: r.y, text: e.innerText}; })""")
 
     def close(self):
         self.ctx.close()
@@ -462,7 +465,9 @@ def _(ctx):
         seen += 1
         x = t[s["id"]]
         assert x["enabled"] == "1" and x["price"] == s["price_label"], f"{s['id']}: price {x['price']!r}"
-        assert x["buttons"] == 1, f"{s['id']}: expected the single pay button, buttons={x['buttons']}"
+        assert x["pay"] == 1, f"{s['id']}: expected the single pay button, pay={x['pay']}"
+        want_demo = 1 if s["id"] in DEMO_IDS else 0   # 2026-11-24: «Демонстрация услуги» opens the chat demo (rieltor/demo/)
+        assert x["demo"] == want_demo and x["buttons"] == 1 + want_demo, f"{s['id']}: buttons={x['buttons']} demo={x['demo']}"
         assert "Оплатить" in x["text"] and s["price_label"] in x["text"], f"{s['id']}: no «Оплатить <цена>» on the tile"
         alt = [a for a in x["links"] if a["href"] == cat["bot_link_prefix"] + "usl-" + s["id"]]
         assert len(alt) == 1 and "в боте" in alt[0]["text"], f"{s['id']}: the bot link as the second way {x['links']}"
@@ -513,7 +518,7 @@ def _(ctx):
     assert len(t) == 1 + len(cat["services"]) + len(cat.get("bundles", [])) + 1, f"{len(t)} tiles after the catalog changed"
     y = t["yurproverka"]
     assert y["enabled"] == "1" and y["price"] == cat["services"][1]["price_label"], y
-    assert any(a["href"].endswith("?start=usl-yurproverka") for a in y["links"]) and y["buttons"] == 1, y
+    assert any(a["href"].endswith("?start=usl-yurproverka") for a in y["links"]) and y["pay"] == 1 and y["buttons"] == 1 + y["demo"], y
     sp = t["spravka-cena"]
     assert sp["soon"] == "скоро" and not sp["links"] and sp["price"] is None and sp["buttons"] == 0, sp   # the site half of the kill switch
 
