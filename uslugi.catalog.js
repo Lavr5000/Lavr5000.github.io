@@ -802,6 +802,7 @@ window.USLUGI_CATALOG = {
    "precheck": [],
    "price_kop": 10000,
    "price_label": "100 ₽",
+   "promo_price_kop": 7500,
    "result_format": "pdf",
    "review_mode": "auto",
    "skill": "invest-podbor",
@@ -809,7 +810,7 @@ window.USLUGI_CATALOG = {
    "version": "0"
   }
  ],
- "sha256": "9d234a91146977e72b982f2fb5c2c2243512c7747ea50fa80ca84bc79d15f180",
+ "sha256": "6a473aec7e1ad0b9203d35c91b32b3107a538ad48adbf4c9e55e128a9e050f73",
  "subscription": {
   "decision": "2026-10-25 14:37",
   "enabled": false,
