@@ -657,9 +657,159 @@ window.USLUGI_CATALOG = {
    "skill": "dokument-po-shablonu",
    "title": "Договор аренды с описью, актами и графиком платежей",
    "version": "0"
+  },
+  {
+   "allow_live": true,
+   "decision": "2026-11-26 18:02 · INVEST",
+   "deliver_minutes": 105,
+   "disclaimer": "Пришлите от 3 до 7 квартир в Самаре (другие города позже): адрес, цену, площадь и число комнат. Срок готовности: 105 мин. Доход от сдачи посчитан по запрашиваемым ставкам открытых объявлений Циана, Яндекс Недвижимости, Авито и ДомКлика в трёх сценариях. Это расчёт, а не инвестиционная рекомендация.",
+   "enabled": true,
+   "evidence": {
+    "owner_override": "2026-11-26 18:02 · INVEST"
+   },
+   "id": "invest-podbor",
+   "input_deadline_h": 72,
+   "inputs": [
+    {
+     "key": "city",
+     "kind": "text",
+     "prompt": "В каком городе квартиры?",
+     "required": true,
+     "validate": {
+      "max_len": 120
+     }
+    },
+    {
+     "key": "objects",
+     "kind": "text",
+     "prompt": "Квартиры — каждая с новой строки: адрес; цена; площадь; комнаты; год дома (если знаете); площадь по документам (если отличается); ссылка (если есть). От 3 до 7 квартир.",
+     "required": true,
+     "validate": {
+      "max_len": 3000
+     }
+    },
+    {
+     "key": "term",
+     "kind": "choice",
+     "prompt": "Срок владения",
+     "required": true,
+     "validate": {
+      "labels": {
+       "3": "3 года",
+       "5": "5 лет",
+       "7": "7 лет",
+       "other": "другое"
+      },
+      "options": [
+       "3",
+       "5",
+       "7",
+       "other"
+      ]
+     }
+    },
+    {
+     "key": "start",
+     "kind": "choice",
+     "prompt": "Когда сдавать",
+     "required": true,
+     "validate": {
+      "labels": {
+       "12m": "через 12 месяцев",
+       "6m": "через 6 месяцев",
+       "now": "сразу",
+       "unknown": "не знаю"
+      },
+      "options": [
+       "now",
+       "6m",
+       "12m",
+       "unknown"
+      ]
+     }
+    },
+    {
+     "key": "exit",
+     "kind": "choice",
+     "prompt": "Что в конце срока",
+     "required": true,
+     "validate": {
+      "labels": {
+       "keep": "оставим",
+       "live": "будем жить",
+       "sell": "продаём",
+       "unknown": "не знаю"
+      },
+      "options": [
+       "sell",
+       "live",
+       "keep",
+       "unknown"
+      ]
+     }
+    },
+    {
+     "key": "tax",
+     "kind": "choice",
+     "prompt": "Налог со сдачи",
+     "required": true,
+     "validate": {
+      "labels": {
+       "ip": "ИП 6 %",
+       "ndfl": "НДФЛ 13 %",
+       "npd": "самозанятый (НПД 4 %)",
+       "unknown": "не знаю"
+      },
+      "options": [
+       "npd",
+       "ndfl",
+       "ip",
+       "unknown"
+      ]
+     }
+    },
+    {
+     "key": "budget",
+     "kind": "number",
+     "prompt": "Бюджет покупки, ₽ (можно пропустить)",
+     "required": false,
+     "validate": {
+      "integer": true,
+      "max": 10000000000,
+      "min": 100000,
+      "unit": "rub"
+     }
+    },
+    {
+     "key": "expenses",
+     "kind": "text",
+     "prompt": "Расходы, которые вы планируете (можно пропустить)",
+     "required": false,
+     "validate": {
+      "max_len": 1000
+     }
+    },
+    {
+     "key": "own_rates",
+     "kind": "text",
+     "prompt": "Свои ориентиры аренды (можно пропустить)",
+     "required": false,
+     "validate": {
+      "max_len": 1000
+     }
+    }
+   ],
+   "precheck": [],
+   "price_kop": 10000,
+   "price_label": "100 ₽",
+   "result_format": "pdf",
+   "review_mode": "auto",
+   "skill": "invest-podbor",
+   "title": "Инвестподбор квартиры под аренду",
+   "version": "0"
   }
  ],
- "sha256": "2cbabbfb221fe12aa84025f3fb9aebff90ca12cc77a44507f3ef59540dca0801",
+ "sha256": "9d234a91146977e72b982f2fb5c2c2243512c7747ea50fa80ca84bc79d15f180",
  "subscription": {
   "decision": "2026-10-25 14:37",
   "enabled": false,

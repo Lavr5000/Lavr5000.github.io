@@ -119,7 +119,7 @@
   async function opening(svc,id){
     step(1); await wait(400,id);
     await bot('Здравствуйте! Я помощник риэлтора. Что подготовить по объекту?',id,700);
-    var list=['Справка о цене','Юридическая проверка','Фото до/после и планировка','Договор купли-продажи','Предварительный договор'];
+    var list=['Справка о цене','Юридическая проверка','Фото до/после и планировка','Договор купли-продажи','Предварительный договор','Инвестподбор под аренду'];
     await chips(list,list.indexOf(svc.menu),id);
     bubble('sys','Оплата получена ✓ · осталось ответить на несколько вопросов');
     await wait(500,id);
@@ -204,6 +204,21 @@
     pins.forEach(function(p){ s+='<g class="pin"><path d="M'+p[0]+' '+(p[1]+2)+' c-9 -12 -9 -26 0 -26 c9 0 9 14 0 26z" fill="#e5484d" stroke="#fff" stroke-width="1.5"/><text x="'+p[0]+'" y="'+(p[1]-12)+'" text-anchor="middle" font-size="10" font-weight="700" fill="#fff" font-family="Inter,sans-serif">'+p[2]+'</text></g>'; });
     s+='<g><circle cx="160" cy="120" r="8" fill="#5b4bff" stroke="#fff" stroke-width="3"/><rect x="118" y="90" width="84" height="18" rx="9" fill="#5b4bff"/><text x="160" y="103" text-anchor="middle" font-size="10.5" font-weight="700" fill="#fff" font-family="Inter,sans-serif">Ваш объект</text></g></svg>';
     w.innerHTML=s; w.appendChild(el('span','cap2','схема для примера · аналоги в радиусе 5 км')); return w;
+  }
+
+  /* ---------- invest helpers ---------- */
+  function investCard(){
+    var m=el('div','msg in'); m.style.width='92%'; m.style.maxWidth='92%';
+    m.appendChild(el('div','hd2','На руки за 3 года · базовый сценарий'));
+    var p=el('div','price');
+    var rows=[['ул. Мехзаводская, 15','27 500 ₽/мес · 3,47 % в год',1075417,'var(--accent)',92],
+              ['ул. Аминева, 7','26 000 ₽/мес · малая выборка',1020990,'#1f9d61',87],
+              ['ул. Димитрова, 29','26 000 ₽/мес · выше бюджета',657803,'#f5a524',56],
+              ['ул. Стара Загора, 31','24 000 ₽/мес · 3,08 % в год',583638,'#8a8f98',50]];
+    var bars=[], vals=[];
+    rows.forEach(function(r,i){ var row=el('div','row'+(i===0?' rec':'')); var top=el('div','top'); top.appendChild(el('span',null,r[0])); top.appendChild(el('span',null,r[1])); row.appendChild(top);
+      var v=el('div','val','0 ₽'); v.dataset.suf=' ₽'; row.appendChild(v); var tr=el('div','track'); var b=el('i'); b.style.background=r[3]; tr.appendChild(b); row.appendChild(tr); p.appendChild(row); bars.push([b,r[4]]); vals.push([v,r[2]]); });
+    m.appendChild(p); return {m:m,bars:bars,vals:vals};
   }
 
   /* ---------- scenarios ---------- */
@@ -403,7 +418,46 @@
         await wait(500,id);
         legal('Это проект предварительного договора, не юридическая консультация. Итоговую проверку документов осуществляет юрист');
         await wait(1500,id);
-      }}
+      }},
+    invest:{menu:'Инвестподбор под аренду',endTitle:'Сравнение готово',endText:'Какая квартира даст больше «на руки» от сдачи — в трёх сценариях, с аналогами и Excel.',
+      steps:['Выбираете услугу','Пишете город','Присылаете 3–7 квартир списком','Отвечаете на 4 вопроса','Бот собирает ставки аренды рядом','Получаете сравнение и Excel'],
+      run:async function(id){
+        step(2);
+        await bot('В каком городе квартиры?',id,700);
+        await type('Самара',id);
+        step(3);
+        await bot('Квартиры — каждая с новой строки: адрес; цена; площадь; комнаты. Можно добавить год дома и ссылку. От 3 до 7 квартир.',id);
+        await type('Мехзаводская, 15; 6 390 000; 34; 1 · Аминева, 7; 6 200 000; 36; 1 · Димитрова, 29; 5 800 000; 33; 1 · Стара Загора, 31; 6 100 000; 35; 1',id);
+        step(4);
+        await bot('Сколько лет планируете владеть?',id,700);
+        await chips(['3 года','5 лет','7 лет','другое'],0,id);
+        await bot('Когда начнёте сдавать?',id,600);
+        await chips(['сразу','через 6 месяцев','через 12 месяцев','не знаю'],0,id);
+        await bot('Что с квартирой в конце срока?',id,600);
+        await chips(['продаём','будем жить','оставим','не знаю'],0,id);
+        await bot('Как будете платить налог со сдачи?',id,600);
+        await chips(['самозанятый (НПД 4 %)','НДФЛ 13 %','ИП 6 %','не знаю'],0,id);
+        await bot('Бюджет, расходы и свои ориентиры аренды можно пропустить.',id,600);
+        await chips(['Пропустить'],0,id);
+        await progress(['Ищу объявления о сдаче рядом с каждой квартирой','Беру Циан, Яндекс Недвижимость, Авито и ДомКлик','Отбираю похожие квартиры по площади и комнатам','Считаю три сценария на 3 года'],id);
+        step(5);
+        var st=card('in'); var sl=el('div','stat'); var n1=el('b',null,'0'); var n2=el('b',null,'0');
+        sl.appendChild(n1); sl.appendChild(el('span',null,'объявлений о сдаче →')); sl.appendChild(n2); sl.appendChild(el('span',null,'в расчёте ставок'));
+        st.appendChild(sl); stamp(st); await Promise.all([countUp(n1,64,id,900),countUp(n2,29,id,1300)]); await wait(400,id);
+        step(6);
+        var ic=investCard(); stamp(ic.m); await wait(150,id);
+        ic.bars.forEach(function(b,i){ setTimeout(function(){ b[0].style.width=b[1]+'%'; }, i*220); });
+        await Promise.all(ic.vals.map(function(v,i){ return wait(i*220,id).then(function(){ return countUp(v[0],v[1],id,1100); }); }));
+        await wait(500,id);
+        await bot('В базовом сценарии сильнее Мехзаводская, 15. В осторожном впереди Димитрова, 29 — порядок неустойчив, это объяснено в отчёте.',id,800);
+        await peek('Инвестподбор',['/rieltor/demo/img/invest-p1.webp','/rieltor/demo/img/invest-p2.webp'],id,'· PDF, 6 страниц');
+        fileMsg('PDF','invest_podbor.pdf','отчёт, 6 страниц · 180 КБ');
+        await wait(350,id);
+        fileMsg('XLSX','invest_podbor.xlsx','расчёт по годам и аналоги · 22 КБ');
+        await wait(600,id);
+        legal('Расчёт по запрашиваемым ставкам объявлений — не инвестиционная рекомендация и не гарантия дохода');
+        await wait(1500,id);
+      }},
   };
 
   function buildRail(svc){

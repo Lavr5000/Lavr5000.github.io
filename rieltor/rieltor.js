@@ -224,7 +224,7 @@
 
   /* 2026-11-24: «Демонстрация услуги» — a scripted MAX chat in a modal (rieltor/demo/demo.js, window.AVDemo).
      Only for the services that have a demo; its last button «Заказать» leads to the same bot order as the tile. */
-  var DEMO_KEY = { 'spravka-cena': 'spravka', 'yurproverka': 'yur', 'foto-plan': 'foto', 'dkp': 'dkp', 'predv-dkp': 'pdkp' };
+  var DEMO_KEY = { 'spravka-cena': 'spravka', 'yurproverka': 'yur', 'foto-plan': 'foto', 'dkp': 'dkp', 'predv-dkp': 'pdkp', 'invest-podbor': 'invest' };
   function demoButton(t, id, botHref) {
     var key = DEMO_KEY[id];
     var demo = window.AVDemo;

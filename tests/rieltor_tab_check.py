@@ -64,7 +64,7 @@ PAGE = "/rieltor/"
 KIT_DEFAULT = Path(os.path.expanduser("~")) / ".claude" / "0 ProEKTi" / "client-agent-kit-rl-uslugi"
 MARK_B, MARK_E = "<!-- USLUGI:BEGIN -->", "<!-- USLUGI:END -->"
 PAY_NOTE = "закажите в боте"
-DEMO_IDS = {"spravka-cena", "yurproverka", "foto-plan", "dkp", "predv-dkp"}   # tiles with the «Демонстрация услуги» button   # every enabled tile explains both ways: pay on the site or order in the bot
+DEMO_IDS = {"spravka-cena", "yurproverka", "foto-plan", "dkp", "predv-dkp", "invest-podbor"}   # tiles with the «Демонстрация услуги» button   # every enabled tile explains both ways: pay on the site or order in the bot
 CONSENT_VERSION = "uslugi-site-v3-2026-11"
 
 SKIP = object()
